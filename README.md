@@ -30,6 +30,7 @@ title: Adapted Strength Web Application
 - David Castrejon
 - Casey Paras
 - Joshua Cupler
+    - Discord: Johncup
 - Blake Danz
 
 ### Product Owner
