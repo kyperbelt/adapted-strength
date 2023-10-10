@@ -22,6 +22,7 @@ title: Adapted Strength Web Application
 
 ### Development 
 - Jonathan Camarena Camacho
+    - Discord: kyperbelt
 - Danny Zhou
 - Jeff Huang
 - Ahmed Taeha
