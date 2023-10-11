@@ -25,6 +25,7 @@ title: Adapted Strength Web Application
     - Discord: kyperbelt
 - Danny Zhou
 - Jeff Huang
+    - Discord: `mrb1ue`
 - Ahmed Taeha
 - Amir Talakoob
 - David Castrejon
