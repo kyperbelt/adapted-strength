@@ -24,6 +24,7 @@ title: Adapted Strength Web Application
 - Jonathan Camarena Camacho
     - Discord: kyperbelt
 - Danny Zhou
+    - Discord: Timid
 - Jeff Huang
 - Ahmed Taeha
 - Amir Talakoob
