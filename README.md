@@ -1,4 +1,4 @@
----
+- 	--
 title: Adapted Strength Web Application
 ---
 
@@ -29,6 +29,7 @@ title: Adapted Strength Web Application
 - Amir Talakoob
 - David Castrejon
 - Casey Paras
+    - Discord: Lumikha
 - Joshua Cupler
     - Discord: Johncup
 - Blake Danz
