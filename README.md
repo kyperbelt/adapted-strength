@@ -1,4 +1,4 @@
----
+- 	--
 title: Adapted Strength Web Application
 ---
 
