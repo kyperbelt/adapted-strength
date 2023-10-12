@@ -26,6 +26,7 @@ title: Adapted Strength Web Application
 - Danny Zhou
     - Discord: Timid
 - Jeff Huang
+    - Discord: `mrb1ue`
 - Ahmed Taeha
 - Amir Talakoob
 - David Castrejon
