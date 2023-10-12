@@ -35,6 +35,6 @@ title: Adapted Strength Web Application
 - Joshua Cupler
     - Discord: Johncup
 - Blake Danz
-
+    - Discord: Buh la key
 ### Product Owner
 - Alex-Andre B. Palting
