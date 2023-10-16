@@ -28,6 +28,7 @@ title: Adapted Strength Web Application
 - Jeff Huang
     - Discord: `mrb1ue`
 - Ahmed Taeha
+    - Discord: 'ataeha'
 - Amir Talakoob
 - David Castrejon
 - Casey Paras
