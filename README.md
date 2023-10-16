@@ -30,6 +30,7 @@ title: Adapted Strength Web Application
 - Ahmed Taeha
 - Amir Talakoob
 - David Castrejon
+    - Discord: 'bartholamewthethird'
 - Casey Paras
     - Discord: Lumikha
 - Joshua Cupler
