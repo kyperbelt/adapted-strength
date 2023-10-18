@@ -1,4 +1,4 @@
----
+- 	--
 title: Adapted Strength Web Application
 ---
 
@@ -24,15 +24,19 @@ title: Adapted Strength Web Application
 - Jonathan Camarena Camacho
     - Discord: kyperbelt
 - Danny Zhou
+    - Discord: Timid
 - Jeff Huang
+    - Discord: `mrb1ue`
 - Ahmed Taeha
+    - Discord: 'ataeha'
 - Amir Talakoob
 - David Castrejon
+    - Discord: 'bartholamewthethird'
 - Casey Paras
     - Discord: Lumikha
 - Joshua Cupler
     - Discord: Johncup
 - Blake Danz
-
+    - Discord: Buh la key
 ### Product Owner
 - Alex-Andre B. Palting
