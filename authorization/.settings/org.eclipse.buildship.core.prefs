@@ -1,11 +1,11 @@
-arguments=--init-script /home/kyperbelt/.cache/jdtls/config/org.eclipse.osgi/135/0/.cp/gradle/init/init.gradle
+arguments=--init-script C\:\\Users\\casey\\AppData\\Roaming\\Code\\User\\globalStorage\\redhat.java\\1.23.0\\config_win\\org.eclipse.osgi\\57\\0\\.cp\\gradle\\init\\init.gradle --init-script C\:\\Users\\casey\\AppData\\Roaming\\Code\\User\\globalStorage\\redhat.java\\1.23.0\\config_win\\org.eclipse.osgi\\57\\0\\.cp\\gradle\\protobuf\\init.gradle
 auto.sync=false
 build.scans.enabled=false
-connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
+connection.gradle.distribution=GRADLE_DISTRIBUTION(VERSION(7.4.2))
 connection.project.dir=
 eclipse.preferences.version=1
 gradle.user.home=
-java.home=/usr/lib/jvm/java-17-amazon-corretto
+java.home=C\:/Program Files/Java/jdk-14.0.1
 jvm.arguments=
 offline.mode=false
 override.workspace.settings=true
