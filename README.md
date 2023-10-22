@@ -31,11 +31,12 @@ title: Adapted Strength Web Application
     - Discord: 'ataeha'
 - Amir Talakoob
 - David Castrejon
+    - Discord: 'bartholamewthethird'
 - Casey Paras
     - Discord: Lumikha
 - Joshua Cupler
     - Discord: Johncup
 - Blake Danz
-
+    - Discord: Buh la key
 ### Product Owner
 - Alex-Andre B. Palting
