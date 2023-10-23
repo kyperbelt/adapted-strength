@@ -30,6 +30,7 @@ title: Adapted Strength Web Application
 - Ahmed Taeha
     - Discord: 'ataeha'
 - Amir Talakoob
+    - Discord: darkscorpion13
 - David Castrejon
     - Discord: 'bartholamewthethird'
 - Casey Paras
