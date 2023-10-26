@@ -13,23 +13,27 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <img src={icon} className="App-icon" alt="lady icon" />
+      </header>
+      <nav class = "App-nav">
+        <NavBar> Txt in navigation bar </NavBar>
+      </nav>
+      <body> 
+      <img src={icon} className="App-icon" alt="lady icon" />
         <p>
           READY TO GET FIT?
         </p>
         <p>
           Get started below!
         </p>
-        <a className="App-link"
+      </body>
+      <footer> 
+      <a className="App-link"
           href="https://adaptedstrength.com"
           target="_blank"
           rel="noopener noreferrer">
           Link to beta app
         </a>
-      </header>
-      <nav class = "App-nav">
-        <NavBar> Txt in navigation bar </NavBar>
-      </nav>
+      </footer>
     </div>
   );
 }
