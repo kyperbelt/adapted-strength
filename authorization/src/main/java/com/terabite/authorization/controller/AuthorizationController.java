@@ -1,5 +1,6 @@
-package com.terabite.authorization;
+package com.terabite.authorization.controller;
 
+import com.terabite.authorization.Payload;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
