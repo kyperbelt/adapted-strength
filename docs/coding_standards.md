@@ -27,11 +27,13 @@ These standards establish the following:
 ## Git and Version control standards
 - Developers MUST NOT push directly to main. Instead, developers MUST develop feature branches, which are to be merged into main after review.
     - There SHALL be one exception: Developers can force push to main, for extreme circumstances. Usage of this exception SHOULD be avoided, and developers SHALL notify the team upon usage
+- Developers SHOULD remove feature branches that are merged to main.
 - Developers SHALL be subject to a code review before feature branches are to be merged to main.
     - Specfically, there MUST be at least one approval before a branch can be merged to main.
     - There SHALL be one exception: Developers can force push to main without review, for extreme circumstances. Usage of this exception SHOULD be avoided, and developers SHALL notify the team upon usage
 - Developers SHALL format their commit messages using [yaml](https://learnxinyminutes.com/docs/yaml/) syntax.
-- Developers SHOULD remove feature branches that are merged to main.
+- Developers SHALL prefix their PR name with the Jira Ticket
+    - Example title: `[Adapted-##] Title of the PR`
 
 ## Microservice Standards
 
@@ -42,13 +44,12 @@ These standards establish the following:
 
 ### Package Structure
 The following package struture SHOULD be used:
+- Each microservice SHALL have a package structure
 - All application code and packages SHOULD live in `/src/main/**`
     - Java source code SHOULD live in `/src/main/java/**`
     - Web Controllers SHOULD live in `/src/main/java/**/web/`
-        - 
-        - 
-    - 
-    - 
+    - Service specific code SHOULD live in `/src/main/java/**/core` or `/src/main/java/**/service`
+    - Persistence related code, including repositories, models, and DTOs, should live in the `/src/main/java/**/data/**`
 - All test code and packages SHOULD live in `/src/test/**`
     - The structure of unit testing code SHOULD mirror the application code exactly, starting from `/src/test/unit/**`
     - The structure of functional testing SHOULD be packaged based on the what function they target, starting from `/src/test/functional/**`
@@ -56,4 +57,15 @@ The following package struture SHOULD be used:
 
 ### REST standards
 - REST endpoints SHALL be versioned
-- 
+    - Example:  `v1/endpoint/{resource}`
+- REST endpoints SHALL be documented
+    - Documentation SHOULD consist of the following:
+        - HTTP Method and Endpoint
+        - Accepted Parameters of both header and payload
+        - Possible 2xx Response codes
+        - Possible 4xx Response codes
+        - Possible 5xx Reponse codes
+        - Example payload and reqponse
+
+## Jira standards
+    - Developers SHALL be responsible for updating their own tickets in JIRA
