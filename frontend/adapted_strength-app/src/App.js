@@ -1,28 +1,33 @@
+
 /*
 
 Module: App.js
 Team: TeraBITE
 */
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Layout from "./pages/Layout";
+import Home from "./pages/Home";
+import ForgotPassword from "./pages/ForgotPassword";
+import NotFound from "./pages/NotFound.jsx";
+
+// import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            {/* Add more routes here the same way as above */}
+            {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+
+            {/* When no route available we go to not found */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
