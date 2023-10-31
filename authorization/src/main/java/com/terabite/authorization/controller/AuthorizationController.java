@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/user")
 public class AuthorizationController {
-
-
     @PostMapping("/signup")
     public Payload userSignupPost() {
         return new Payload("Reached signup POST");
@@ -21,7 +19,7 @@ public class AuthorizationController {
     }
 
     @PostMapping("/logout")
-    public Payload userLogout() {
+    public Payload userLogoutPost() {
         return new Payload("Reached logout POST");
     }
 }
