@@ -4,7 +4,8 @@ Version: 1.0.0
 ---
 
 ## Document Disclaimer and Purpose
-This document 
+This document contains the coding that for the Adapted Straength website.
+Ideally, this is a living document that improves as the team decides coding standards, and serves as a single source of truth on how the project should be structured.
 
 ## Document Standards
 
@@ -40,7 +41,7 @@ These standards establish the following:
 ### Repository Standards
 - Each microservice SHALL have it's own top level directory.
     - This directory SHALL be considered the root directory for the microservice.
-- Each microservice SHOULD have it's own readme, for service specific information, rest endpoint documenttation / usage, etc.
+- Each microservice SHOULD have it's own readme, for service specific information, rest endpoint documentation / usage, etc.
 
 ### Package Structure
 The following package struture SHOULD be used:
@@ -65,7 +66,7 @@ The following package struture SHOULD be used:
         - Possible 2xx Response codes
         - Possible 4xx Response codes
         - Possible 5xx Reponse codes
-        - Example payload and reqponse
+        - Example payload and response
 
 ## Jira standards
     - Developers SHALL be responsible for updating their own tickets in JIRA
