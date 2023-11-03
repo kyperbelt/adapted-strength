@@ -1,5 +1,4 @@
 /*
-
 Module: App.js
 Team: TeraBITE
 */
@@ -28,7 +27,7 @@ function App() {
         </a>
       </header>
       <nav class = "App-nav">
-        <NavBar> Txt in navigation bar </NavBar>
+        <NavBar></NavBar>
       </nav>
     </div>
   );

@@ -37,7 +37,7 @@ title: Adapted Strength Web Application
     - Discord: `darkscorpion13`
 - Joshua Cupler
     - Discord: `johncup`
-### Frontend develoeprs
+### Frontend developers
 - Casey Paras
     - Discord: `lumikha`
 - Ahmed Taeha
