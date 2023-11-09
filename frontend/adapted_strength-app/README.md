@@ -14,6 +14,14 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
+### `npm run start`
+
+NOTE FROM CASEY: This command also works for the same purposes as above.
+The app will run in development mode in both [http://localhost:3000](http://localhost:3000) 
+and your own network `http://1XX.XX.XXX.XXX:XXXX`
+
+The page will also reload when changes are saved in your code editor/IDE of choice.
+
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\

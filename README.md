@@ -1,4 +1,4 @@
-- 	--
+---
 title: Adapted Strength Web Application
 ---
 
@@ -20,24 +20,28 @@ title: Adapted Strength Web Application
 
 ## Team
 
-### Development 
+### Team Leader 
 - Jonathan Camarena Camacho
-    - Discord: kyperbelt
+    - Discord: `kyperbelt`
+### Database developers
 - Danny Zhou
-    - Discord: Timid
+    - Discord: `timid`
+- David Castrejon
+    - Discord: `bartholamewthethird`
+### Backend developers
 - Jeff Huang
     - Discord: `mrb1ue`
-- Ahmed Taeha
-    - Discord: 'ataeha'
-- Amir Talakoob
-    - Discord: darkscorpion13
-- David Castrejon
-    - Discord: 'bartholamewthethird'
-- Casey Paras
-    - Discord: Lumikha
-- Joshua Cupler
-    - Discord: Johncup
 - Blake Danz
-    - Discord: Buh la key
+    - Discord: `buh_la_key`
+- Amir Talakoob
+    - Discord: `darkscorpion13`
+- Joshua Cupler
+    - Discord: `johncup`
+### Frontend developers
+- Casey Paras
+    - Discord: `lumikha`
+- Ahmed Taeha
+    - Discord: `ataeha`
+
 ### Product Owner
 - Alex-Andre B. Palting
