@@ -1,6 +1,8 @@
 package com.terabite.authorization.controller;
 
 import com.terabite.authorization.Payload;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,8 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/user")
 public class AuthorizationController {
     @PostMapping("/signup")
-    public Payload userSignupPost() {
-        return new Payload("Reached signup POST");
+    public ResponseEntity<Object> userSignupPost()
+    {
+        return new ResponseEntity<>("Reached signup POST", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
