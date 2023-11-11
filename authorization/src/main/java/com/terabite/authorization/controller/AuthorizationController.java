@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/user")
 public class AuthorizationController {
     @PostMapping("/signup")
-    public ResponseEntity<Object> userSignupPost()
+    public ResponseEntity<String> userSignupPost()
     {
         return new ResponseEntity<>("Reached signup POST", HttpStatus.CREATED);
     }
