@@ -1,6 +1,7 @@
 package com.terabite.authorization.service;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.Date;
-import java.util.Map;
 
 @Entity
 public class Member
@@ -27,12 +27,12 @@ public class Member
     private String last_name;
 
     @NotNull
-    @Pattern(message = "Enter date of birth in this format: MM/DD/YYYY", regexp = "^\\d{2}/\\d{2}/\\d{4}$")
+    @JsonFormat(pattern = "MM/DD/YYYY")
     private Date date_of_birth;
 
     @NotNull
-    @Pattern(message = "Enter either 'M' or 'F'", regexp = "^[M,F]$")
-    private char sex;
+    @Pattern(message = "Enter either 'M' or 'F'", regexp = "^[MF]$")
+    private String sex;
 
 
     //private String shirt_size;
@@ -47,4 +47,52 @@ public class Member
 
 
     //private Map<String, String> emergency_contact;
+
+    public long getMember_id() {
+        return member_id;
+    }
+
+    public void setMember_id(long member_id) {
+        this.member_id = member_id;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
+    }
+
+    public Date getDate_of_birth() {
+        return date_of_birth;
+    }
+
+    public void setDate_of_birth(Date date_of_birth) {
+        this.date_of_birth = date_of_birth;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

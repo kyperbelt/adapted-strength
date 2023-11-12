@@ -3,34 +3,34 @@ package com.terabite.authorization.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.Payload;
+import com.terabite.authorization.accessingdatamysql.MemberRepository;
 import com.terabite.authorization.service.Member;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/v1/user")
 public class AuthorizationController {
+    @Autowired
+    private MemberRepository memberRepository;
+
     @PostMapping("/signup")
-    public ResponseEntity<String> userSignupPost(@RequestBody String request) throws JsonProcessingException {
+    public ResponseEntity<Member> userSignupPost(@RequestBody String request) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
+        Member m = objectMapper.readValue(request, Member.class);
 
-        try
-        {
-            Member member = objectMapper.readValue(request, Member.class);
-            System.out.println();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
 
-        return new ResponseEntity<>(request, HttpStatus.CREATED);
+        memberRepository.save(m);
+        return new ResponseEntity<>(m, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/getmembers")
+    public @ResponseBody Iterable<Member> getMembers() {
+        return memberRepository.findAll();
     }
 
     @PostMapping("/login")
