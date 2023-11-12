@@ -34,7 +34,8 @@
   background-color: #EDF2F4;
   color: blue;
 }
-.App-nav{
+
+.App-login-button {
   background-color: #EDF2F4;
   margin: 1em;
   padding: 1em;
@@ -42,10 +43,12 @@
   background-color: red;
   color: #EDF2F4;
 }
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
