@@ -10,6 +10,8 @@ export default function NavBar() {
         <Link to="forgot-password">Forgot Password</Link>
         <span> | </span>
         <Link to="reset-password">*Reset Password</Link>
+        <span> | </span>
+        <Link to="sign-up">Sign Up</Link>
       </nav>
     </header>
   );
