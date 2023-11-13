@@ -63,7 +63,7 @@ function HandleSubmit(event){
     window.location.href="/";
 }
 
-document/*.getElementById('sign-up')*/.addEventListener('submit', HandleSubmit); 
+document/*.getElementById('sign-up') // TODO: ADAPTEDS-89*/.addEventListener('submit', HandleSubmit); 
 
 function AdaptedStrengthLogo() {
     return (<div className="flex flex-col items-center mt-12">
