@@ -1,7 +1,7 @@
 import logo from '../assets/logo.png';
 
-
-/*function validatePasswordMatch() {
+// TODO: ADAPTEDS-89 
+/*function validatePasswordMatch() {   
     var password = document.getElementById("password").value;
     var password_conf = document.getElementById("password_conf").value;
 
@@ -20,10 +20,10 @@ function EmailField() {
 function PasswordField() {
     return (<input type="text" placeholder="Password" id="password" name="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,255}$" 
     title="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character. It should be between 8 and 255 characters long."
-    /*onchange="validatePasswordMatch()"*/ required/>);
+    /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required/>);
 }
 function PasswordConfirmationField() {
-    return (<input type="text" placeholder="Re-Enter Password" id="password_conf" name="password_confirmation" /*onchange="validatePasswordMatch()"*/ required/>);
+    return (<input type="text" placeholder="Re-Enter Password" id="password_conf" name="password_confirmation" /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required/>);
 }
 function SubmitButton() {
     return (<button type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >Next</button>);
@@ -31,16 +31,16 @@ function SubmitButton() {
 
 function HandleSubmit(event){
     event.preventDefault();
-    //if (validatePasswordMatch()){
-        window.location.href="/sign-up-additional";
-        //store info
-        this.reset();
+    //if (validatePasswordMatch()){ // TODO: ADAPTEDS-89 
+    window.location.href="/sign-up-additional";
+    //store info // TODO: ADAPTEDS-89 
+    this.reset();
     //}
 }
     
     
 
-document/*.getElementById('sign-up')*/.addEventListener('submit', HandleSubmit); 
+document/*.getElementById('sign-up') // TODO: ADAPTEDS-89 */.addEventListener('submit', HandleSubmit); 
 
 function AdaptedStrengthLogo() {
     return (<div className="flex flex-col items-center mt-12">
