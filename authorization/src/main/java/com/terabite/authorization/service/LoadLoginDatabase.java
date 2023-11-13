@@ -21,10 +21,8 @@ public class LoadLoginDatabase {
         loginRepository.save(testLogin);
 
 
-        return args -> {
-            log.info("Preloading " + loginRepository.findAll().stream()
-                    .map(Login::toString)
-                    .toList());
-        };
+        return args -> log.info("Preloading " + loginRepository.findAll().stream()
+                .map(Login::toString)
+                .toList());
     }
 }

@@ -1,21 +1,18 @@
 package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.ListIndexBase;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 @Table(name = "login_table")
 public class Login {
     private LoginStatus loginStatus;
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private Long id;
     @OneToOne(mappedBy = "login")
     private UserInformation userInformation;
     @NotNull
@@ -25,11 +22,13 @@ public class Login {
     private String email;
     @NotBlank
     private String password;
+
     public Login(String email, String password) {
         this.email = email;
         this.password = password;
         this.loginStatus = LoginStatus.LOGGED_OUT;
     }
+
     public Login() {
 
     }
@@ -46,14 +45,6 @@ public class Login {
     public String toString() {
         return "{ " + " email:" + this.email + " password:" + this.password + " }";
     }
-
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(long loginId) {
-//        this.id = id;
-//    }
 
     public UserInformation getUserInformation() {
         return userInformation;
