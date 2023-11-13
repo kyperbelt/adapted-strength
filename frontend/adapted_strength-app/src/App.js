@@ -11,6 +11,8 @@ import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from './pages/ResetPassword';
+import SignUp from './pages/SignUp';
+import SignUpAdditional from './pages/SignUpAdditional';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 
@@ -32,6 +34,8 @@ function App() {
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="login" element={<Login />} />
+            <Route path="sign-up" element={<SignUp />} />
+            <Route path="sign-up-additional" element={<SignUpAdditional />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
