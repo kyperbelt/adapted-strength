@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.service.annotation.HttpExchange;
 
 @RestController
 @RequestMapping("/v1/user")
@@ -17,6 +18,7 @@ public class AuthorizationController {
     private UserRepository memberRepository;
 
     @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
     public UserInformation userSignupPost(@RequestBody UserInformation userInformation) throws JsonProcessingException
     {
         memberRepository.save(userInformation);
