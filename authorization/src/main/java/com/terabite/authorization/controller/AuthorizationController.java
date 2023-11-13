@@ -1,21 +1,27 @@
 package com.terabite.authorization.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.Payload;
+import com.terabite.authorization.model.LoginStatus;
+import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.repository.UserRepository;
-import com.terabite.authorization.service.UserInformation;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.UserInformation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.HttpExchange;
 
 @RestController
 @RequestMapping("/v1/user")
 public class AuthorizationController {
-    @Autowired
-    private UserRepository memberRepository;
+    private final LoginRepository loginRepository;
+    private final UserRepository memberRepository;
+
+    public AuthorizationController(UserRepository memberRepository, LoginRepository loginRepository) {
+        this.memberRepository = memberRepository;
+        this.loginRepository = loginRepository;
+    }
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
@@ -26,8 +32,12 @@ public class AuthorizationController {
     }
 
     @PostMapping("/login")
-    public Payload userLoginPost() {
-        return new Payload("Reached login POST");
+    public ResponseEntity<?> userLoginPost(@RequestBody Login login) {
+        login.setLoginStatus(LoginStatus.LOGGED_IN);
+        loginRepository.save(login);
+
+        return ResponseEntity.ok(loginRepository.findByEmail(login.getEmail())
+                        .orElseThrow(() -> new LoginNotFoundException(login.getEmail())));
     }
 
     @PostMapping("/logout")
