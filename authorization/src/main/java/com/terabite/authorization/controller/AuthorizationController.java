@@ -17,12 +17,10 @@ public class AuthorizationController {
     private UserRepository memberRepository;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> userSignupPost(@RequestBody String request) throws JsonProcessingException
+    public UserInformation userSignupPost(@RequestBody UserInformation userInformation) throws JsonProcessingException
     {
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserInformation userInformation = objectMapper.readValue(request, UserInformation.class);
         memberRepository.save(userInformation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(String.format("Created user:\n      Name: %s %s\n  Username: %s", userInformation.getFirstName(), userInformation.getLastName(), userInformation.getLogin().getEmail()));
+        return userInformation;
     }
 
     @PostMapping("/login")

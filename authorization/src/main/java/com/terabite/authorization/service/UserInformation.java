@@ -1,6 +1,7 @@
 package com.terabite.authorization.service;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,10 +9,11 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user_information_table")
-public class UserInformation
+public class UserInformation implements Serializable
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
