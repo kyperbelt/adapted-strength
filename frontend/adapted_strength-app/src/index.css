@@ -11,6 +11,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@layer base {
+
+  html,
+  body,
+  #root {
+    @apply rounded-2xl h-full;
+  }
+
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
