@@ -10,10 +10,9 @@ function PasswordField() {
     return (<input type="password" placeholder="Password" id="password" name="password" className="w-4/5 border-b-4 p-0" />);
 }
 function NextButton() {
-    
     return (<button href="./profile" type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >
             <Link className="App-Nav_link"
-                to="profile">
+                to="../profile">
                 GO
             </Link>
           </button>);
@@ -77,14 +76,14 @@ export default function Login() {
                 type="button"
                 className="inline-block rounded bg-red-500 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             >
-                <a href="./">Login with Google</a>
+                <a href="../profile">Login with Google</a>
             </button>
             <p className="relative mx-0 text-white top-4 px-8 text-center bottom-4">
                 Dont have an account?
                 <a
                     href="./sign-up"
                     className="text-red-500 text-color-white transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-                > Sign up here</a>
+                > Sign up here</a>  
             </p>
 
         </div>

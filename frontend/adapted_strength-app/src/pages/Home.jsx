@@ -6,9 +6,6 @@ import NavBar from '../components/navBar';
 export default function Home() {
     return (<div>
         <header className="App-header">
-            <p>
-                THIS IS THE HOME PAGE
-            </p>
             <img src={logo} className="App-logo" alt="logo" />
             <img src={icon} className="App-icon" alt="lady icon" />
             <p>
