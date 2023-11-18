@@ -15,6 +15,7 @@ import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile"
 
 
 // import './App.css';
@@ -36,6 +37,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
