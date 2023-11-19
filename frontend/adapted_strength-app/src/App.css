@@ -53,3 +53,43 @@
     transform: rotate(360deg);
   }
 }
+
+.border {
+  border: 1px solid #ddd;
+  /* Adjust color and width as needed */
+}
+
+.border-b-2 {
+  border-bottom: 2px solid #ccc;
+  /* Adjust color and width as needed */
+}
+
+.text-custom-dark {
+  color: #333;
+  /* Replace with your custom color */
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+/* Additional spacing and padding as needed */
+.p-4 {
+  padding: 1rem;
+  /* Adjust as needed */
+}
+
+.mt-4 {
+  margin-top: 1rem;
+  /* Adjust as needed */
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+  /* Adjust as needed */
+}
+
+/* You can also add media queries for responsive design */
+@media (max-width: 768px) {
+  /* Responsive adjustments */
+}
