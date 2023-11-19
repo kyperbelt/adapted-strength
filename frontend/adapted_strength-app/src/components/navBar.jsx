@@ -7,6 +7,8 @@ export default function NavBar() {
         {/* We want to use Link instead of anchor tags when we link internally */}
         <Link to="/">Home</Link>
         <span> | </span>
+        <Link to="/about">About Us</Link>
+        <span> | </span>
         <Link to="forgot-password">Forgot Password</Link>
         <span> | </span>
         <Link to="profile">Profile</Link>

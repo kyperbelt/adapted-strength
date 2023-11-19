@@ -15,7 +15,8 @@ import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile"
+import About from "./pages/About.jsx";
+// import footer from '../footer'
 
 
 // import './App.css';
@@ -35,9 +36,9 @@ function App() {
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="login" element={<Login />} />
+            <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
-            <Route path="profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
