@@ -15,13 +15,13 @@ import org.springframework.web.service.annotation.HttpExchange;
 @RequestMapping("/v1/user")
 public class AuthorizationController {
     @Autowired
-    private UserRepository memberRepository;
+    private UserRepository userRepository;
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public UserInformation userSignupPost(@RequestBody UserInformation userInformation) throws JsonProcessingException
     {
-        memberRepository.save(userInformation);
+        userRepository.save(userInformation);
         return userInformation;
     }
 
