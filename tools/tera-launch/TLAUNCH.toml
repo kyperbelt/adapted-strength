@@ -1,0 +1,9 @@
+[global_variables]
+value = "value"
+
+[targets.all]
+[targets.all.variables]
+test = "value"
+[[targets.all.steps]]
+command = "echo"
+args = ["This is from the test command"]
