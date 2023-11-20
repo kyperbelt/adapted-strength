@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 use clap::Parser;
 use clap::Subcommand;
@@ -63,14 +64,43 @@ struct Step {
     piped: Option<bool>,
 }
 
-fn run_target(target_name: String, file: String) -> bool {
-    let tlaunch = read_tlaunch_file(file);
+fn run_target(target_name: String, tlaunch: TLaunch, run_dependencies: bool) -> bool {
     let target = tlaunch.targets.get(&target_name);
     if target.is_none() {
         println!("Target {} not found", target_name);
         return false;
     }
+
     let target = target.unwrap();
+
+    // make sure dependencies have no cycles
+    if run_dependencies {
+        let mut sorted_dependencies: Vec<String> = vec![];
+        let mut start: HashSet<String> = HashSet::new();
+        let mut edges: HashMap<String, Vec<String>> = HashMap::new();
+        for dependency in target.clone().dependencies.unwrap_or(vec![]) {
+            edges.insert(dependency, vec![]);
+        }
+
+        for dependency in target.clone().dependencies.unwrap_or(vec![]) {
+            if tlaunch.clone().targets.contains_key(&dependency) {
+                start.insert(dependency);
+            } else {
+                println!(
+                    "Dependency {} not found for target[{}]",
+                    dependency, target_name
+                );
+                return false;
+            }
+        }
+
+        while start.len() > 0 {
+            let target_dep_name = start.iter().next().unwrap().clone();
+            sorted_dependencies.push(target_dep_name.clone());
+            let target_dep = tlaunch.clone().targets.get(&target_dep_name).unwrap();
+        }
+    }
+
     print!("Running target {}", target_name);
     for (i, step) in target.clone().steps.iter().enumerate() {
         print!("\n\tStep [{}]: {}", i, step.command);
@@ -85,9 +115,6 @@ fn run_target(target_name: String, file: String) -> bool {
         if let Some(piped) = step.piped.clone() {
             print!(" | {}", piped);
         }
-        // run the command
-        // if it fails, return false
-        // if it succeeds, continue
 
         let mut command = std::process::Command::new(step.command.clone());
         command.args(step.args.clone().unwrap_or(vec![]));
@@ -103,6 +130,11 @@ fn run_target(target_name: String, file: String) -> bool {
     true
 }
 
+fn run_target_start(target_name: String, file: String) -> bool {
+    let tlaunch = read_tlaunch_file(file.clone());
+    return run_target(target_name, tlaunch, true);
+}
+
 fn list_targets(file: String) {}
 
 fn main() {
@@ -110,7 +142,7 @@ fn main() {
     let default_file = "TLAUNCH.toml".to_string();
     println!("{:?}", cli);
     if let Commands::Run { target, file } = cli.cmd {
-        run_target(
+        run_target_start(
             target.unwrap_or("all".to_string()),
             file.unwrap_or(default_file),
         );

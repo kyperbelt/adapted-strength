@@ -2,9 +2,28 @@
 value = "value"
 
 [targets.all]
+dependencies = ["test"]
 [targets.all.variables]
 test = "value"
 [[targets.all.steps]]
 command = "echo"
 args = ["This is from the test command"]
 output = "test.txt"
+
+[targets.test]
+dependencies = ["test2", "test3"]
+[[targets.test.steps]]
+command = "ls"
+args = ["-l"]
+output = "ls.txt"
+
+[targets.test2]
+dependencies = ["test3"]
+[[targets.test2.steps]]
+command = "ls"
+args = ["-a"]
+
+[targets.test3]
+[[targets.test3.steps]]
+command = "echo"
+args = ["This is from the test3 command"]
