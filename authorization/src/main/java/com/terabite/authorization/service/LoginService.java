@@ -32,9 +32,8 @@ public class LoginService {
 
     public void updatePassword(Login login, String newPassword){
 
-        login.setPassword(newPassword);
         //we should have password encoding here
-        //set user password, need to hear back from jeff, create instance of login?
+        login.setPassword(newPassword);
 
         login.setResetPasswordToken(null);
         loginRepository.save(login);
