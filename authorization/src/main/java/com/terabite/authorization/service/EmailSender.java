@@ -1,15 +1,10 @@
 package com.terabite.authorization.service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Properties;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class EmailSender {
 
     @Autowired
-    //probably shouldn't have this. Needed right now due to bean being in same class(I think)
-    @Lazy
     private JavaMailSender mailSender;
 
     @Autowired
@@ -30,14 +23,6 @@ public class EmailSender {
 
     @Autowired
     private UserService userService;
-    
-    
-    @Value("${ADAPTED_STRENGTH_EMAIL}")
-    private String adaptedStrengthEmail;
-
-    //this environment variable should be an application password
-    @Value("${ADAPTED_STRENGTH_PASSWORD}")
-    private String adaptedStrengthPassword;
 
     public void sendEmailWithLink(String recipientEmail, String link, String subject, String body) throws MessagingException, UnsupportedEncodingException{
         MimeMessage message = mailSender.createMimeMessage();
@@ -47,8 +32,10 @@ public class EmailSender {
         helper.setSubject(subject);
         helper.setText(body);
         mailSender.send(message);
+        
     }
 
+    /*
     public void sendForgotPasswordEmail(HttpServletRequest request){
         String email = request.getParameter("email");
         //This will change with jwt tokens
@@ -83,22 +70,33 @@ public class EmailSender {
         }
         
     }
+    */
 
-    @Bean
-    public JavaMailSender getJavaMailSender(){
-        JavaMailSenderImpl mailSender= new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+    public void sendForgotPasswordEmail(String email) throws UnsupportedEncodingException, MessagingException{
+        //This will change with jwt tokens
+        //random 32 character string
+        String token = UUID.randomUUID().toString();
+        try{
+            loginService.updatePasswordResetToken(token, email);
+        }
+        catch(UserNotFoundException u){
 
-        mailSender.setUsername(adaptedStrengthEmail);
-        mailSender.setPassword(adaptedStrengthPassword);
+        }
+        
+        String siteURL = "whatever";
 
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        String resetPasswordLink=siteURL+"/reset_password?token="+token;
 
-        return mailSender;
+        String subject = "Here's the link to reset your password";
+
+        String body ="\nHello,\n"
+        + "\nYou have requested to reset your password.\n"
+        + "\nClick the link below to change your password:\n"
+        + "\n" + resetPasswordLink + "\n"
+        + "\nIf you did not make this request, ignore this email";
+
+        sendEmailWithLink(email, resetPasswordLink, subject, body);
+        
     }
+    
 }

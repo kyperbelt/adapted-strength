@@ -7,7 +7,10 @@ import com.terabite.authorization.repository.UserRepository;
 import com.terabite.authorization.service.EmailSender;
 import com.terabite.authorization.service.UserInformation;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.UnsupportedEncodingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,9 +45,16 @@ public class AuthorizationController {
         return new Payload("Reached logout POST");
     }
 
+    /*
     @PostMapping("/forgot_password")
     public void processForgotPassword(HttpServletRequest request){
         emailSender.sendForgotPasswordEmail(request);
+    }
+    */
+    
+    @PostMapping("/forgot_password")
+    public void processForgotPassword(@RequestBody String email) throws UnsupportedEncodingException, MessagingException{
+        emailSender.sendForgotPasswordEmail(email);
     }
 
     @PostMapping("/reset_password")
