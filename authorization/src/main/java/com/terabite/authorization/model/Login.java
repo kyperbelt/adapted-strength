@@ -3,7 +3,6 @@ package com.terabite.authorization.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,8 +12,7 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "login_table")
 public class Login {
     private LoginStatus loginStatus;
-    @OneToOne(mappedBy = "login")
-    private UserInformation userInformation;
+
     @NotNull
     @Email
     @JsonAlias("username")
@@ -44,14 +42,6 @@ public class Login {
     @Override
     public String toString() {
         return "{ " + " email:" + this.email + " password:" + this.password + " }";
-    }
-
-    public UserInformation getUserInformation() {
-        return userInformation;
-    }
-
-    public void setUserInformation(UserInformation userInformation) {
-        this.userInformation = userInformation;
     }
 
     public String getEmail() {
