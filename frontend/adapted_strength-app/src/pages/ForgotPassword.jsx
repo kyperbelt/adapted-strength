@@ -1,18 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import PageContainer1 from '../components/PageContainer';
-
-function EmailField({ pattern, name, autoComplete }) {
-    return (<input type="email" name={name} autoComplete={autoComplete} placeholder="Email Address" className="w-4/5 border-b-4 p-0" pattern={pattern} />);
-}
-
-function SubmitButton({ onClick }) {
-    return (<button type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={onClick} >Reset</button>);
-}
+import EmailField from '../components/forms/EmailField';
+import SubmitButton from '../components/forms/SubmitButton';
 
 function resetPassword(email) {
     console.log("Resetting password for email: " + email);
 }
-
 
 export default function ForgotPassword() {
     const nav = useNavigate();

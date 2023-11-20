@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import icon from '../assets/ladyIcon.png'
-import NavBar from '../components/navBar';
+import navBar from '../components/navBar';
+// import footer from '../footer'
 
 export default function Home() {
     return (<div>
@@ -21,7 +22,7 @@ export default function Home() {
                 Link to beta app
             </a>
         </header>
-        <button class="w-3/4 App-login-button">
+        <button className="w-3/4 App-login-button">
             <Link className="App-Nav_link"
                 to="login">
                 LOGIN
@@ -29,4 +30,5 @@ export default function Home() {
         </button>
     </div>);
 }
+
 
