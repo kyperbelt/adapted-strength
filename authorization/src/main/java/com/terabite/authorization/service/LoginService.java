@@ -38,4 +38,9 @@ public class LoginService {
         login.setResetPasswordToken(null);
         loginRepository.save(login);
     }
+
+    public Login findByEmail(String email){
+        Login login = loginRepository.findByEmail(email);
+        return login;
+    }
 }
