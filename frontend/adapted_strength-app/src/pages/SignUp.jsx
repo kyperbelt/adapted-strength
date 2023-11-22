@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 // TODO: ADAPTEDS-89 
@@ -15,32 +16,24 @@ import logo from '../assets/logo.png';
 
 
 function EmailField() {
-    return (<input type="email" placeholder="Email Address" id="email" name="email" required/>);
+    return (<input type="email" placeholder="Email Address" id="email" name="email" required />);
 }
 function PasswordField() {
-    return (<input type="text" placeholder="Password" id="password" name="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,255}$" 
-    title="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character. It should be between 8 and 255 characters long."
-    /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required/>);
+    return (<input type="text" placeholder="Password" id="password" name="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,255}$"
+        title="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character. It should be between 8 and 255 characters long."
+    /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required />);
 }
 function PasswordConfirmationField() {
-    return (<input type="text" placeholder="Re-Enter Password" id="password_conf" name="password_confirmation" /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required/>);
+    return (<input type="text" placeholder="Re-Enter Password" id="password_conf" name="password_confirmation" /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required />);
 }
 function SubmitButton() {
     return (<button type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >Next</button>);
 }
 
-function HandleSubmit(event){
-    event.preventDefault();
-    //if (validatePasswordMatch()){ // TODO: ADAPTEDS-89 
-    window.location.href="/sign-up-additional";
-    //store info // TODO: ADAPTEDS-89 
-    this.reset();
-    //}
-}
-    
-    
 
-document/*.getElementById('sign-up') // TODO: ADAPTEDS-89 */.addEventListener('submit', HandleSubmit); 
+
+
+// document/*.getElementById('sign-up') // TODO: ADAPTEDS-89 */.addEventListener('submit', HandleSubmit); 
 
 function AdaptedStrengthLogo() {
     return (<div className="flex flex-col items-center mt-12">
@@ -49,16 +42,28 @@ function AdaptedStrengthLogo() {
 }
 
 export default function SignUp() {
+    const nav = useNavigate();
+    let HandleSubmit = (event) => {
+        event.preventDefault();
+        window.alert("clicked");
+
+        nav("/sign-up-additional");
+        //if (validatePasswordMatch()){ // TODO: ADAPTEDS-89 
+        // window.location.href = "/sign-up-additional";
+        //store info // TODO: ADAPTEDS-89 
+        // this.reset();
+        //}
+    };
     return (
         <div className="h-full my-0 content-center w-full top-[100px]">
             <div className="h-56 bg-header-background1">
-            <AdaptedStrengthLogo />
+                <AdaptedStrengthLogo />
             </div>
             <div className="bg-[#161A1D] h-full">
                 <div className="relative bottom-20">
                     <h1 className="relative mx-0 text-center text-2xl bottom-4">Sign Up</h1>
                     <div className="flex w-full justify-center" >
-                        <form id="sign-up" className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
+                        <form onSubmit={HandleSubmit} id="sign-up" className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
                             <div className="w-full flex flex-col items-center px-0 pt-8">
                                 <EmailField />
                             </div>

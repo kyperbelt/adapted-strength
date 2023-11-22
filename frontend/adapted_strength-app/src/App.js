@@ -11,6 +11,7 @@ import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from './pages/ResetPassword';
+import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional';
 import NotFound from "./pages/NotFound";
@@ -28,12 +29,13 @@ function App() {
         <Routes className="">
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
             {/* Add more routes here the same way as above */}
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
 
             {/* When no route available we go to not found */}
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="login" element={<Login />} />
             <Route path="About" element={<About />} />
