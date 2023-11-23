@@ -23,11 +23,10 @@ public class UserInformation implements Serializable
     @JsonAlias("first_name")
     private String firstName;
 
-    @NotBlank
+    @NotNull
     @JsonAlias("last_name")
     private String lastName;
 
-    @NotBlank
     @JsonAlias("subscription_tier")
     private int subscriptionTier;
 
