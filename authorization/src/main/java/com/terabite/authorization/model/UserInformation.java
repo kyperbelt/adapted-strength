@@ -27,6 +27,10 @@ public class UserInformation implements Serializable
     @JsonAlias("last_name")
     private String lastName;
 
+    @NotBlank
+    @JsonAlias("subscription_tier")
+    private int subscriptionTier;
+
     @NotNull
     @JsonAlias("date_of_birth")
     @Column(columnDefinition = "date")
@@ -89,6 +93,8 @@ public class UserInformation implements Serializable
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+    public void setSubscriptionTier(int tier) { this.subscriptionTier = tier; }
+    public int getSubscriptionTier() { return subscriptionTier; }
 
     public Date getDateOfBirth() {
         return dateOfBirth;

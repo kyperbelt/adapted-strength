@@ -7,6 +7,7 @@ import com.terabite.authorization.repository.UserRepository;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.service.LoginService;
+import com.terabite.authorization.service.SubscriptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,13 @@ public class AuthorizationController {
     private final UserRepository memberRepository;
 
     private final LoginService loginService;
+    private final SubscriptionService subscriptionService;
 
-    public AuthorizationController(UserRepository memberRepository, LoginRepository loginRepository, LoginService loginService) {
+    public AuthorizationController(UserRepository memberRepository, LoginRepository loginRepository, LoginService loginService, SubscriptionService subscriptionService) {
         this.memberRepository = memberRepository;
         this.loginRepository = loginRepository;
         this.loginService = loginService;
+        this.subscriptionService = subscriptionService;
     }
 
     @PostMapping("/signup")
