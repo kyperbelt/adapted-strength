@@ -1,9 +1,11 @@
+
 -- TABLE 1: login
 CREATE TABLE login (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
+
 
 -- TABLE 2: member
 CREATE TABLE member(
@@ -40,5 +42,4 @@ CREATE TABLE emergency_contact (
     emergency_last_name VARCHAR2(50),
     emergency_phone CHAR(10),
     FOREGIN KEY (user_id) REFERENCES member(user_id)
-);
 
