@@ -69,8 +69,8 @@ public class UserInformation implements Serializable
     @JsonAlias("how_did_you_hear")
     private String howDidYouHear;
 
-    public long getId() {
-        return id;
+    public int getId() {
+        return (int) id;
     }
 
     public void setId(long userId) {

@@ -8,9 +8,12 @@ import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SubscriptionService;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/user")
@@ -45,5 +48,25 @@ public class AuthorizationController {
     @PostMapping("/logout")
     public Payload userLogoutPost() {
         return new Payload("Reached logout POST");
+    }
+
+    @PostMapping("/subscribe")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> subscribe(@RequestBody UserInformation userInformation) {
+        // Retrieve user information from the repository
+        Optional<UserInformation> existingUser = memberRepository.findById((int) userInformation.getId());
+
+        if (existingUser.isPresent()) {
+            // Update the subscription tier
+            existingUser.get().setSubscriptionTier(userInformation.getSubscriptionTier());
+
+            // Save the updated user information
+            memberRepository.save(existingUser.get());
+
+            // You can return any response you want, for example, a success message
+            return ResponseEntity.ok("Subscription updated successfully\n" + existingUser.get().getSubscriptionTier());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
 }
