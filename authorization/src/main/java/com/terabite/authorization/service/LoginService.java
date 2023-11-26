@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.User;
 import com.terabite.authorization.repository.LoginRepository;
 
 import jakarta.transaction.Transactional;

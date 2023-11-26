@@ -4,27 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.Payload;
 import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.repository.UserRepository;
 import com.terabite.authorization.service.Email;
 import com.terabite.authorization.service.EmailSender;
-import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.Password;
-import com.terabite.authorization.service.UserInformation;
 import com.terabite.authorization.service.UserNotFoundException;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.UnsupportedEncodingException;
 
-
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.HttpExchange;
 
 @RestController
 @RequestMapping("/v1/user")

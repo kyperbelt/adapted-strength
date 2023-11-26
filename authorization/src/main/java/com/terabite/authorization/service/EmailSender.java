@@ -8,13 +8,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
-import com.terabite.authorization.repository.UserRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class EmailSender {
@@ -28,11 +25,7 @@ public class EmailSender {
     @Autowired
     private LoginRepository loginRepository;
 
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private UserRepository uRepository;
 
     public void sendEmail(String recipientEmail, String subject, String body) throws MessagingException, UnsupportedEncodingException{
         MimeMessage message = mailSender.createMimeMessage();

@@ -1,7 +1,8 @@
 package com.terabite.authorization.repository;
 
-import com.terabite.authorization.service.UserInformation;
 import org.springframework.data.repository.CrudRepository;
+
+import com.terabite.authorization.model.UserInformation;
 
 public interface UserRepository extends CrudRepository<UserInformation, Integer>
 {

@@ -1,7 +1,8 @@
-package com.terabite.authorization.service;
+package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.terabite.authorization.model.Login;
+import com.terabite.authorization.service.Address;
+import com.terabite.authorization.service.EmergencyContact;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

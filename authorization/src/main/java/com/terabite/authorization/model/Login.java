@@ -1,7 +1,6 @@
 package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.terabite.authorization.service.UserInformation;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -19,7 +18,6 @@ public class Login
     @OneToOne(mappedBy = "login")
     private UserInformation userInformation;
 
-
     @NotNull
     @Email
     @JsonAlias("username")
@@ -33,10 +31,6 @@ public class Login
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(long loginId) {
-        this.id = id;
     }
 
     public UserInformation getUserInformation() {
