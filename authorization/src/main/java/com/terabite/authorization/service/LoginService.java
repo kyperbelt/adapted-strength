@@ -1,6 +1,5 @@
 package com.terabite.authorization.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.terabite.authorization.model.Login;
@@ -12,10 +11,13 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class LoginService {
     
-    @Autowired
     private LoginRepository loginRepository;
 
-    public void updatePasswordResetToken(String token, String email) throws UserNotFoundException {
+    public LoginService(LoginRepository loginRepository){
+        this.loginRepository=loginRepository;
+    }
+
+    public void updatePasswordResetToken(String token, String email) throws LoginNotFoundException {
         
         Login login=loginRepository.findByEmail(email);
         
@@ -24,22 +26,7 @@ public class LoginService {
             loginRepository.save(login);
         }
         else{
-            //not sure about this, we don't want expose emails to attackers
-            throw new UserNotFoundException("Could not find a user with the email "+email);
+            throw new LoginNotFoundException("Could not find a user with the token: "+token);
         }
-    }
-
-    public void updatePassword(Login login, String newPassword){
-
-        //we should have password encoding here
-        login.setPassword(newPassword);
-
-        login.setResetPasswordToken(null);
-        loginRepository.save(login);
-    }
-
-    public Login findByEmail(String email){
-        Login login = loginRepository.findByEmail(email);
-        return login;
     }
 }
