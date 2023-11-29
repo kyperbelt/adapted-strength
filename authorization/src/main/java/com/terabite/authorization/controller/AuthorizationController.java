@@ -8,6 +8,7 @@ import com.terabite.authorization.service.ForgotPasswordHelper;
 import com.terabite.authorization.service.LoginNotFoundException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,14 +44,13 @@ public class AuthorizationController {
     }
     
     @PutMapping("/forgot_password")
-    @ResponseStatus(HttpStatus.OK)
-    public void forgotPassword(@RequestBody String jsonEmail) {
-        forgotPasswordHelper.processForgotPassword(jsonEmail);
+    public ResponseEntity<String> forgotPassword(@RequestBody String jsonEmail) {
+        return forgotPasswordHelper.processForgotPassword(jsonEmail);
     }
 
     @PutMapping("/reset_password")
-    @ResponseStatus(HttpStatus.OK)
-    public void resetPassword(@RequestParam String token, @RequestBody String jsonPassword) throws JsonProcessingException, LoginNotFoundException{
-        forgotPasswordHelper.processResetPassword(token, jsonPassword);
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody String jsonPassword) throws JsonProcessingException, LoginNotFoundException{
+        return forgotPasswordHelper.processResetPassword(token, jsonPassword);
+
     }
 }

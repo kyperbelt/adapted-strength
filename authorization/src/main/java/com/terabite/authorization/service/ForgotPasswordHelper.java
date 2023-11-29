@@ -1,5 +1,7 @@
 package com.terabite.authorization.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,35 +22,40 @@ public class ForgotPasswordHelper {
     }
 
 
-    public void processForgotPassword(String jsonEmail){
+    public ResponseEntity<String> processForgotPassword(String jsonEmail){
         ObjectMapper objectMapper = new ObjectMapper();
-        Email email;
+        String email; 
         Login login;
 		try {
-			email = objectMapper.readValue(jsonEmail, Email.class);
-            login=loginRepository.findByEmail(email.getEmail());
+			email = objectMapper.writeValueAsString(jsonEmail);
+            login=loginRepository.findByEmail(email);
             if(login!= null){
-                emailSender.sendForgotPasswordEmail(email.getEmail());
+                emailSender.sendForgotPasswordEmail(email);
+                return ResponseEntity.status(HttpStatus.OK).body("User found");
             }
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} 
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user found");
 
     }
 
-    public void processResetPassword(String token, String jsonPassword){
+    public ResponseEntity<String> processResetPassword(String token, String jsonPassword){
         ObjectMapper objectMapper = new ObjectMapper();
         Login login;
+        String password;
         try {
-            Password password=objectMapper.readValue(jsonPassword, Password.class);
+            password=objectMapper.writeValueAsString(jsonPassword);
             login=loginRepository.findByPasswordResetToken(token);
             if(login!=null){
-                login.setPassword(password.getPassword());
+                login.setPassword(password);
                 login.setResetPasswordToken(null);
                 loginRepository.save(login);
+                return ResponseEntity.status(HttpStatus.OK).body("User found");
             }
             else{
                 throw new LoginNotFoundException("Could not find user with token: "+token);
+                
             }
 
         } catch (JsonProcessingException e) {
@@ -56,5 +63,6 @@ public class ForgotPasswordHelper {
         } catch (LoginNotFoundException e) {
             e.printStackTrace();
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user found");
     }
 }
