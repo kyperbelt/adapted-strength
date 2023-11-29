@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
@@ -24,10 +25,12 @@ public class ForgotPasswordHelper {
 
     public ResponseEntity<String> processForgotPassword(String jsonEmail){
         ObjectMapper objectMapper = new ObjectMapper();
-        String email; 
+        JsonNode jsonNode;
         Login login;
+        String email; 
 		try {
-			email = objectMapper.writeValueAsString(jsonEmail);
+			jsonNode = objectMapper.readTree(jsonEmail);
+            email = jsonNode.get("email").asText();
             login=loginRepository.findByEmail(email);
             if(login!= null){
                 emailSender.sendForgotPasswordEmail(email);
@@ -36,17 +39,20 @@ public class ForgotPasswordHelper {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user found");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user found with provided email");
 
     }
 
     public ResponseEntity<String> processResetPassword(String token, String jsonPassword){
         ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode;
         Login login;
         String password;
         try {
-            password=objectMapper.writeValueAsString(jsonPassword);
+            jsonNode=objectMapper.readTree(jsonPassword);
+            password=jsonNode.get("password").asText();
             login=loginRepository.findByPasswordResetToken(token);
+
             if(login!=null){
                 login.setPassword(password);
                 login.setResetPasswordToken(null);
@@ -54,8 +60,7 @@ public class ForgotPasswordHelper {
                 return ResponseEntity.status(HttpStatus.OK).body("User found");
             }
             else{
-                throw new LoginNotFoundException("Could not find user with token: "+token);
-                
+                throw new LoginNotFoundException("Could not find user with token: "+token);   
             }
 
         } catch (JsonProcessingException e) {
@@ -63,6 +68,6 @@ public class ForgotPasswordHelper {
         } catch (LoginNotFoundException e) {
             e.printStackTrace();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user found");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Could not find user with token: "+token);
     }
 }
