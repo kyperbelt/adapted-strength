@@ -74,7 +74,7 @@ The project aims to take existing processes necessary to run the business that r
     - Discord: `kyperbelt`
 ### Database developers
 - Danny Zhou
-    - Discord: `timid`
+    - Discord: `ztimid`
 - David Castrejon
     - Discord: `bartholamewthethird`
 ### Backend developers
