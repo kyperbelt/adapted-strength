@@ -1,42 +1,36 @@
 package com.terabite.authorization.controller;
 
 import com.terabite.authorization.Payload;
-import com.terabite.authorization.model.LoginStatus;
-import com.terabite.authorization.repository.LoginRepository;
-import com.terabite.authorization.repository.UserRepository;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.service.LoginService;
-import org.springframework.http.HttpStatus;
+import com.terabite.authorization.service.SignupService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/user")
 public class AuthorizationController {
-    private final LoginRepository loginRepository;
-    private final UserRepository memberRepository;
-
     private final LoginService loginService;
+    private final SignupService signupService;
 
-    public AuthorizationController(UserRepository memberRepository, LoginRepository loginRepository, LoginService loginService) {
-        this.memberRepository = memberRepository;
-        this.loginRepository = loginRepository;
+
+    public AuthorizationController(LoginService loginService, SignupService signupService) {
         this.loginService = loginService;
+        this.signupService = signupService;
     }
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserInformation userSignupPost(@RequestBody UserInformation userInformation) {
-        userInformation.getLogin().setLoginStatus(LoginStatus.LOGGED_OUT); // temp, find a better way of setting column default
-        memberRepository.save(userInformation);
-        return userInformation;
+    public ResponseEntity<?> userSignupPost(@RequestBody UserInformation userInformation) {
+        return signupService.signup(userInformation);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLoginPost(@RequestBody Login login) {
-        // Manual DI, I don't know how through Spring cuz skill issue
-        return loginService.login(login, loginRepository);
+        return loginService.login(login);
     }
 
     @PostMapping("/logout")
