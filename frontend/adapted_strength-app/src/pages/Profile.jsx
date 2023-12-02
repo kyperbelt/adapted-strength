@@ -3,10 +3,10 @@ import { Outlet, Link } from "react-router-dom";
 import icon from '../assets/ladyIcon.png'
 
 function NameField() {
-    return (<input type="name" placeholder="Team" id="name" name="name" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="name" placeholder="Team TeraBITE" id="name" name="name" required className="w-4/5 border-b-4 p-0" />);
 }
 function EmailField() {
-    return (<input type="email" placeholder="TeraBITE" id="email" name="email" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="email" placeholder="terabite@gmail.com" id="email" name="email" required className="w-4/5 border-b-4 p-0" />);
 }
 function SxField() {
     return (<input type="sex" placeholder="Male" id="sex" name="sex" required className="w-4/5 border-b-4 p-0" />);
@@ -29,27 +29,29 @@ export default function Profile() {
                 terabite@gmail.com
             </p>
             <Outlet className="" />
-            <div className="flex">
-                <div className="w-1/3 p-4 text-right">
-                    <a> Name: </a>
-                </div>
-                <div className="w-1/2 p-4 text-left">
+            <div className="container place-content-center">
+                <div className="w-full p-4 text-left place-content-center">
+                    <a> Full Name: </a>
+                    <div>
                     <NameField />
+                    </div>
                 </div>
             </div>
-            <div className="flex">
-                <div className="w-1/3 p-4 text-right">
+            <div className="container place-content-center">
+                <div className="w-full p-4 text-left">
                     <a> Email: </a>
-                </div>
-                <div className="w-1/2 p-4 text-left">
+                    <div>
                     <EmailField />
+                    </div>
+                    
                 </div>
-            </div><div className="flex">
-                <div className="w-1/3 p-4 text-right">
+            </div>
+            <div className="container place-content-center">
+                <div className="w-full p-4 text-left">
                     <a> Sex: </a>
-                </div>
-                <div className="w-1/2 p-4 text-left">
+                    <div>
                     <SxField />
+                    </div>
                 </div>
             </div>
         </div >
