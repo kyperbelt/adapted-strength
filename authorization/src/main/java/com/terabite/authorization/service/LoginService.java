@@ -1,5 +1,8 @@
 package com.terabite.authorization.service;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.terabite.authorization.model.Login;
@@ -10,7 +13,7 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class LoginService {
-    
+    @Autowired
     private LoginRepository loginRepository;
 
     public LoginService(LoginRepository loginRepository){
@@ -19,10 +22,10 @@ public class LoginService {
 
     public void updatePasswordResetToken(String token, String email) throws LoginNotFoundException {
         
-        Login login=loginRepository.findByEmail(email);
+        Optional<Login> login=loginRepository.findByEmail(email);
         
         if(login!=null){
-            login.setResetPasswordToken(token);
+            login.orElseThrow().setResetPasswordToken(token);
             loginRepository.save(login);
         }
         else{

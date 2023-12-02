@@ -1,5 +1,8 @@
 package com.terabite.authorization.service;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,7 +15,7 @@ import com.terabite.authorization.repository.LoginRepository;
 
 @Service
 public class ForgotPasswordHelper {
-
+    @Autowired
     private LoginRepository loginRepository;
 
     private EmailSender emailSender;
@@ -26,7 +29,7 @@ public class ForgotPasswordHelper {
     public ResponseEntity<String> processForgotPassword(String jsonEmail){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode;
-        Login login;
+        Optional<Login> login;
         String email; 
 		try {
 			jsonNode = objectMapper.readTree(jsonEmail);
@@ -46,7 +49,7 @@ public class ForgotPasswordHelper {
     public ResponseEntity<String> processResetPassword(String token, String jsonPassword){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode;
-        Login login;
+        Optional<Login> login;
         String password;
         try {
             jsonNode=objectMapper.readTree(jsonPassword);
@@ -54,8 +57,8 @@ public class ForgotPasswordHelper {
             login=loginRepository.findByPasswordResetToken(token);
 
             if(login!=null){
-                login.setPassword(password);
-                login.setResetPasswordToken(null);
+                login.orElseThrow().setPassword(password);
+                login.orElseThrow().setResetPasswordToken(null);
                 loginRepository.save(login);
                 return ResponseEntity.status(HttpStatus.OK).body("User found");
             }
