@@ -11,11 +11,18 @@ import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from './pages/ResetPassword';
+import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional';
+import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+<<<<<<< HEAD
 import Profile from "./pages/Profile"
+=======
+import About from "./pages/About.jsx";
+// import footer from '../footer'
+>>>>>>> b2daaef7399936408d00c9a3d4f0bc4711759de8
 
 
 // import './App.css';
@@ -27,17 +34,23 @@ function App() {
         <Routes className="">
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
             {/* Add more routes here the same way as above */}
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
 
             {/* When no route available we go to not found */}
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="login" element={<Login />} />
+            <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
+<<<<<<< HEAD
             <Route path="profile" element={<Profile />} />
+=======
+            <Route path="memberships" element={<Memberships />} />
+>>>>>>> b2daaef7399936408d00c9a3d4f0bc4711759de8
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
