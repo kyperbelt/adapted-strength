@@ -54,6 +54,8 @@ The project aims to take existing processes necessary to run the business that r
    cd ../frontend/adapted_strength-app
    ```
     And then Run `npm install && npm start`
+## Timeline
+![](https://drive.google.com/uc?export=view&id=1fbYiMPkHQYXknti6dgBGD8rmw68XBUmh)
 
 
 ## Team Tenets
