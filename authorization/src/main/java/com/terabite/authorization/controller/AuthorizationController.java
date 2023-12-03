@@ -1,33 +1,36 @@
 package com.terabite.authorization.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.Payload;
-import com.terabite.authorization.repository.UserRepository;
-import com.terabite.authorization.service.UserInformation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.UserInformation;
+import com.terabite.authorization.service.LoginService;
+import com.terabite.authorization.service.SignupService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/user")
 public class AuthorizationController {
-    @Autowired
-    private UserRepository memberRepository;
+    private final LoginService loginService;
+    private final SignupService signupService;
+
+
+    public AuthorizationController(LoginService loginService, SignupService signupService) {
+        this.loginService = loginService;
+        this.signupService = signupService;
+    }
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserInformation userSignupPost(@RequestBody UserInformation userInformation) throws JsonProcessingException
-    {
-        memberRepository.save(userInformation);
-        return userInformation;
+    public ResponseEntity<?> userSignupPost(@RequestBody UserInformation userInformation) {
+        return signupService.signup(userInformation);
     }
 
     @PostMapping("/login")
-    public Payload userLoginPost() {
-        return new Payload("Reached login POST");
+    public ResponseEntity<?> userLoginPost(@RequestBody Login login) {
+        return loginService.login(login);
     }
 
     @PostMapping("/logout")

@@ -1,4 +1,4 @@
-package com.terabite.authorization.service;
+package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
@@ -60,7 +60,7 @@ public class UserInformation implements Serializable
     private EmergencyContact emergencyContact;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "login_id", referencedColumnName = "id")
+    @JoinColumn(name = "login_name", referencedColumnName = "email")
     private Login login;
 
     @JsonAlias("how_did_you_hear")
