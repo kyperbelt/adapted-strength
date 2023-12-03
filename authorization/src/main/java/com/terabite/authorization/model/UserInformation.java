@@ -1,4 +1,4 @@
-package com.terabite.authorization.service;
+package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
@@ -23,9 +23,12 @@ public class UserInformation implements Serializable
     @JsonAlias("first_name")
     private String firstName;
 
-    @NotBlank
+    @NotNull
     @JsonAlias("last_name")
     private String lastName;
+
+    @JsonAlias("subscription_tier")
+    private int subscriptionTier;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -60,14 +63,14 @@ public class UserInformation implements Serializable
     private EmergencyContact emergencyContact;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "login_id", referencedColumnName = "id")
+    @JoinColumn(name = "login_name", referencedColumnName = "email")
     private Login login;
 
     @JsonAlias("how_did_you_hear")
     private String howDidYouHear;
 
-    public long getId() {
-        return id;
+    public int getId() {
+        return (int) id;
     }
 
     public void setId(long userId) {
@@ -89,6 +92,8 @@ public class UserInformation implements Serializable
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+    public void setSubscriptionTier(int tier) { this.subscriptionTier = tier; }
+    public int getSubscriptionTier() { return subscriptionTier; }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
