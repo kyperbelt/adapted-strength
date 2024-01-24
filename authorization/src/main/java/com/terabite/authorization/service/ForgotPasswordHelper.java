@@ -1,7 +1,5 @@
 package com.terabite.authorization.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +27,13 @@ public class ForgotPasswordHelper {
     public ResponseEntity<String> processForgotPassword(String jsonEmail){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode;
-        Optional<Login> login;
+        //Optional<Login> login;
+        Login login;
         String email; 
 		try {
 			jsonNode = objectMapper.readTree(jsonEmail);
             email = jsonNode.get("email").asText();
-            login=loginRepository.findByEmail(email);
+            login=loginRepository.findOneByEmail(email);
             if(login!= null){
                 emailSender.sendForgotPasswordEmail(email);
                 return ResponseEntity.status(HttpStatus.OK).body("User found");
@@ -49,16 +48,19 @@ public class ForgotPasswordHelper {
     public ResponseEntity<String> processResetPassword(String token, String jsonPassword){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode;
-        Optional<Login> login;
+        // Optional<Login> login;
+        Login login;
         String password;
         try {
             jsonNode=objectMapper.readTree(jsonPassword);
             password=jsonNode.get("password").asText();
-            login=loginRepository.findByPasswordResetToken(token);
+            login=loginRepository.findOneByPasswordResetToken(token);
 
             if(login!=null){
-                login.orElseThrow().setPassword(password);
-                login.orElseThrow().setResetPasswordToken(null);
+                // login.orElseThrow().setPassword(password);
+                // login.orElseThrow().setResetPasswordToken(null);
+                login.setPassword(password);
+                login.setResetPasswordToken(null);
                 loginRepository.save(login);
                 return ResponseEntity.status(HttpStatus.OK).body("User found");
             }

@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface LoginRepository extends JpaRepository<Login, Long> {
-    Optional <Login> findByEmail(String email);
+    //Optional <Login> findOneByEmail(String email);
 
-    Optional <Login> findByPasswordResetToken(String passwordResetToken);
-
+    //Optional <Login> findOneByPasswordResetToken(String passwordResetToken);
+    Login findOneByPasswordResetToken(String passwordResetToken);
+    Login findOneByEmail(String email);
     void save(Optional<Login> login);
 
 }

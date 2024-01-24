@@ -3,6 +3,8 @@ package com.terabite.authorization.service;
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,6 +20,8 @@ public class EmailSender {
     
     private LoginService loginService;
 
+    private static final Logger log = LoggerFactory.getLogger(EmailSender.class);
+
     public EmailSender(JavaMailSender javaMailSender, LoginService loginService){
         this.loginService=loginService;
         this.javaMailSender=javaMailSender;
@@ -27,7 +31,7 @@ public class EmailSender {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
-            helper.setFrom("noreply@adaptedstrength.com", "Adapted Strength Support");
+            helper.setFrom("support-donotreply@adaptedstrength.com", "Adapted Strength Support");
             helper.setTo(recipientEmail);
             helper.setSubject(subject);
             helper.setText(body);
@@ -41,6 +45,7 @@ public class EmailSender {
         //This will change with jwt tokens
         //random 32 character string
         String token = UUID.randomUUID().toString();
+        log.info("Password reset token: "+token);
         try {
             loginService.updatePasswordResetToken(token, email);
         } catch (LoginNotFoundException e) {
