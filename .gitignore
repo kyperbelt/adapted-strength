@@ -18,9 +18,6 @@ local.properties
 .idea/
 .vscode/
 
-### VSCode ###
-.vscode
-
 # External tool builders
 .externalToolBuilders/
 
@@ -406,4 +403,3 @@ sketch
 # Ignore all local history of files
 .history
 .ionide
-/.idea/
