@@ -1,6 +1,7 @@
-package com.terabite.authorization.service;
+package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +18,6 @@ public class Login
     @OneToOne(mappedBy = "login")
     private UserInformation userInformation;
 
-
     @NotNull
     @Email
     @JsonAlias("username")
@@ -26,12 +26,11 @@ public class Login
     @NotBlank
     private String password;
 
+    @Column(name= "reset_password_token")
+    private String passwordResetToken;
+
     public Long getId() {
         return id;
-    }
-
-    public void setId(long loginId) {
-        this.id = id;
     }
 
     public UserInformation getUserInformation() {
@@ -56,5 +55,13 @@ public class Login
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordResetToken(){
+        return this.passwordResetToken;
+    }
+
+    public void setResetPasswordToken(String passwordResetToken){
+        this.passwordResetToken=passwordResetToken;
     }
 }

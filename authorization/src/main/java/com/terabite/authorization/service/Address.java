@@ -1,6 +1,7 @@
 package com.terabite.authorization.service;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.terabite.authorization.model.UserInformation;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
