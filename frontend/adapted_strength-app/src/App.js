@@ -13,11 +13,13 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from './pages/ResetPassword';
 import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
-import SignUpAdditional from './pages/SignUpAdditional';
+import SignUpAdditional from './pages/SignUpAdditional.jsx';
 import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import TermsOfService from './pages/TermsOfService.jsx';
+import HealthQuestionnaire from './pages/HealthQuestionnaire';
 // import footer from '../footer'
 
 
@@ -42,6 +44,8 @@ function App() {
             <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
+            <Route path="terms-of-service" element={<TermsOfService />} />
+            <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
             <Route path="*" element={<NotFound />} />
           </Route>
