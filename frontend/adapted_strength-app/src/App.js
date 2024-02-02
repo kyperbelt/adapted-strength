@@ -14,6 +14,7 @@ import ResetPassword from './pages/ResetPassword';
 import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional';
+import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
@@ -41,6 +42,7 @@ function App() {
             <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
+            <Route path="memberships" element={<Memberships />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
