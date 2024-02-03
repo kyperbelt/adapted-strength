@@ -1,44 +1,51 @@
 package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "login_table")
-public class Login
-{
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-    @OneToOne(mappedBy = "login")
-    private UserInformation userInformation;
+public class Login {
+    private LoginStatus loginStatus;
 
     @NotNull
     @Email
     @JsonAlias("username")
+    @Id
     private String email;
-
     @NotBlank
     private String password;
 
-    @Column(name= "reset_password_token")
+    @Column(name = "reset_password_token")
     private String passwordResetToken;
 
-    public Long getId() {
-        return id;
+    public Login(String email, String password) {
+        this.email = email;
+        this.password = password;
+        this.loginStatus = LoginStatus.LOGGED_OUT;
     }
 
-    public UserInformation getUserInformation() {
-        return userInformation;
+    public Login() {
+
     }
 
-    public void setUserInformation(UserInformation userInformation) {
-        this.userInformation = userInformation;
+    public LoginStatus getLoginStatus() {
+        return loginStatus;
+    }
+
+    public void setLoginStatus(LoginStatus loginStatus) {
+        this.loginStatus = loginStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "{ " + " email:" + this.email + " password:" + this.password + " }";
     }
 
     public String getEmail() {
@@ -57,11 +64,11 @@ public class Login
         this.password = password;
     }
 
-    public String getPasswordResetToken(){
+    public String getPasswordResetToken() {
         return this.passwordResetToken;
     }
 
-    public void setResetPasswordToken(String passwordResetToken){
-        this.passwordResetToken=passwordResetToken;
+    public void setResetPasswordToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
     }
 }
