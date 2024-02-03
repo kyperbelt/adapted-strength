@@ -5,6 +5,8 @@ import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
+import com.terabite.authorization.service.SubscriptionService;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +19,13 @@ public class AuthorizationController {
     private final LoginService loginService;
     private final SignupService signupService;
 
+    private final SubscriptionService subscriptionService;
 
-    public AuthorizationController(LoginService loginService, SignupService signupService) {
+
+    public AuthorizationController(LoginService loginService, SignupService signupService, SubscriptionService subscriptionService) {
         this.loginService = loginService;
         this.signupService = signupService;
+        this.subscriptionService = subscriptionService;
     }
 
     @PostMapping("/signup")
@@ -36,5 +41,10 @@ public class AuthorizationController {
     @PostMapping("/logout")
     public Payload userLogoutPost() {
         return new Payload("Reached logout POST");
+    }
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<?> userSubscribePost(@RequestBody UserInformation userInformation) {
+        return subscriptionService.subscribe(userInformation);
     }
 }
