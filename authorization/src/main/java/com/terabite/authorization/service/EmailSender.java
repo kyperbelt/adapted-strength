@@ -1,30 +1,27 @@
 package com.terabite.authorization.service;
 
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
-
+import com.terabite.authorization.repository.LoginNotFoundException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 @Service
 public class EmailSender {
-    
-    private JavaMailSender javaMailSender;
-    
-    private LoginService loginService;
 
     private static final Logger log = LoggerFactory.getLogger(EmailSender.class);
+    private final JavaMailSender javaMailSender;
+    private final LoginService loginService;
 
-    public EmailSender(JavaMailSender javaMailSender, LoginService loginService){
-        this.loginService=loginService;
-        this.javaMailSender=javaMailSender;
+    public EmailSender(JavaMailSender javaMailSender, LoginService loginService) {
+        this.loginService = loginService;
+        this.javaMailSender = javaMailSender;
     }
 
     public void sendEmail(String recipientEmail, String subject, String body) {
@@ -45,7 +42,7 @@ public class EmailSender {
         //This will change with jwt tokens
         //random 32 character string
         String token = UUID.randomUUID().toString();
-        log.info("Password reset token: "+token);
+        log.info("Password reset token: " + token);
         try {
             loginService.updatePasswordResetToken(token, email);
         } catch (LoginNotFoundException e) {
@@ -57,10 +54,10 @@ public class EmailSender {
         String subject = "Here's the link to reset your password";
 
         String body = "\nHello,\n"
-            + "\nYou have requested to reset your password.\n"
-            + "\nClick the link below to change your password:\n"
-            + "\n" + resetPasswordLink + "\n"
-            + "\nIf you did not make this request, ignore this email";
+                + "\nYou have requested to reset your password.\n"
+                + "\nClick the link below to change your password:\n"
+                + "\n" + resetPasswordLink + "\n"
+                + "\nIf you did not make this request, ignore this email";
 
         sendEmail(email, subject, body);
     }

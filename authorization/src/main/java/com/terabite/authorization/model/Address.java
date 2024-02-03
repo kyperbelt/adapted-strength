@@ -1,6 +1,4 @@
-package com.terabite.authorization.service;
-
-import com.terabite.authorization.model.UserInformation;
+package com.terabite.authorization.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -8,8 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "address_table")
-public class Address
-{
+public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

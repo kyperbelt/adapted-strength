@@ -1,8 +1,6 @@
-package com.terabite.authorization.service;
+package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.terabite.authorization.model.UserInformation;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,8 +8,7 @@ import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "emergency_contact_table")
-public class EmergencyContact
-{
+public class EmergencyContact {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
