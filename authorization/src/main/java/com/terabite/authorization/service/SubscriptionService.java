@@ -5,7 +5,6 @@ import com.terabite.authorization.model.SubscribeRequest;
 import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
