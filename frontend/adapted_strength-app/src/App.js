@@ -18,6 +18,7 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import EditProfile from './pages/EditProfile.jsx';
 // import footer from '../footer'
 
 
@@ -38,6 +39,7 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="edit-profile" element={<EditProfile />} />
             <Route path="login" element={<Login />} />
             <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />

@@ -24,7 +24,6 @@ public class AuthorizationController {
         this.signupService = signupService;
     }
 
-
     @PostMapping("/signup")
     public ResponseEntity<?> userSignupPost(@RequestBody UserInformation userInformation) {
         return signupService.signup(userInformation);
