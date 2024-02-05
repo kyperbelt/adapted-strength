@@ -1,9 +1,9 @@
 package com.terabite.authorization.service;
 
+import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.LoginStatus;
-import com.terabite.authorization.model.UserInformation;
 import com.terabite.authorization.repository.LoginRepository;
-import com.terabite.authorization.repository.UserRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,28 +13,32 @@ import org.springframework.stereotype.Service;
 public class SignupService {
     LoginRepository loginRepository;
 
-    UserRepository userRepository;
-
     PasswordEncoder passwordEncoder;
 
-    public SignupService(LoginRepository loginRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public SignupService(LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
         this.loginRepository = loginRepository;
-        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    public ResponseEntity<?> signup(final Login login) {
+        if (loginRepository.findByEmail(login.getEmail()).isEmpty()) {
+            // login.setLoginStatus(LoginStatus.LOGGED_OUT); // temp, find a better way of
+            String plaintextPassword = login.getPassword();
+            login.setPassword(passwordEncoder.encode(plaintextPassword));
+            // TODO: Here we should create the session token that will be used to
+            // authenticate the user
+            // during the rest of the account creation process
 
-    public ResponseEntity<?> signup(UserInformation userInformation) {
-        if (loginRepository.findByEmail(userInformation.getLogin().getEmail()).isEmpty()) {
-            userInformation.getLogin().setLoginStatus(LoginStatus.LOGGED_OUT); // temp, find a better way of setting column default
+            // login.setJwtToken("<token>");
 
-            // Password hashing stuff
-            String plaintextPassword = userInformation.getLogin().getPassword();
-            userInformation.getLogin().setPassword(passwordEncoder.encode(plaintextPassword));
-            userRepository.save(userInformation);
-            return new ResponseEntity<>(userInformation, HttpStatus.CREATED);
+            // login the user so that they can be authorized to do things
+            // FIXME: this is a temporary solution, we should be using JWTs
+            login.setLoginStatus(LoginStatus.LOGGED_IN);
+            loginRepository.save(login);
+            return new ResponseEntity<>(String.format("authorized:%s-%s", login.getEmail(), login.getLoginStatus()),
+                    HttpStatus.CREATED);
         } else {
-            return ResponseEntity.badRequest().body(userInformation);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to create user.");
         }
     }
 }

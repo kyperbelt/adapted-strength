@@ -1,4 +1,4 @@
-package com.terabite.authorization.model;
+package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;

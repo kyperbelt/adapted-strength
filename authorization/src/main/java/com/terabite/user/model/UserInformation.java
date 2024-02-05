@@ -1,4 +1,4 @@
-package com.terabite.authorization.model;
+package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
@@ -13,6 +13,7 @@ import java.util.Date;
 @Entity
 @Table(name = "user_information_table")
 public class UserInformation implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -57,9 +58,11 @@ public class UserInformation implements Serializable {
     @JsonAlias("emergency_contact")
     private EmergencyContact emergencyContact;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "login_name", referencedColumnName = "email")
-    private Login login;
+    // @OneToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "login_name", referencedColumnName = "email")
+    // private Login login;
+    @JsonAlias("email") 
+    private String email;
 
     @JsonAlias("how_did_you_hear")
     private String howDidYouHear;
@@ -144,13 +147,13 @@ public class UserInformation implements Serializable {
         this.emergencyContact = emergencyContact;
     }
 
-    public Login getLogin() {
-        return login;
-    }
-
-    public void setLogin(Login login) {
-        this.login = login;
-    }
+    // public Login getLogin() {
+    //     return login;
+    // }
+    //
+    // public void setLogin(Login login) {
+    //     this.login = login;
+    // }
 
     public String getHowDidYouHear() {
         return howDidYouHear;
