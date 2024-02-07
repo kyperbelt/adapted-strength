@@ -1,3 +1,7 @@
+/*
+Module: navBar.jsx
+Team: TeraBITE
+*/
 import { Link } from "react-router-dom";
 
 export default function NavBar() {
@@ -9,11 +13,13 @@ export default function NavBar() {
         <span> | </span>
         <Link to="/about">About Us</Link>
         <span> | </span>
-        <Link to="forgot-password">Forgot Password</Link>
+        <Link to="/forgot-password">Forgot Password</Link>
         <span> | </span>
-        <Link to="profile">Profile</Link>
+        <Link to="/profile">Profile</Link>
         <span> | </span>
-        <Link to="sign-up">Sign Up</Link>
+        <Link to="/sign-up">Sign Up</Link>
+        <span> | </span>
+        <Link to="/prog-up">Coach Program Upload</Link>
       </nav>
     </header>
   );

@@ -1,4 +1,9 @@
+/*
+Module: Profile.jsx
+Team: TeraBITE
+*/
 import { Outlet, Link } from "react-router-dom";
+
 
 import icon from '../assets/ladyIcon.png'
 

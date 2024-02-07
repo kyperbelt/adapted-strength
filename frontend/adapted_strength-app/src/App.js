@@ -1,4 +1,3 @@
-
 /*
 Module: App.js
 Team: TeraBITE
@@ -16,6 +15,18 @@ import SignUpAdditional from './pages/SignUpAdditional';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import Profile from './pages/Profile.jsx';
+import UploadProgram from './pages/ProgramUpload.jsx';
+
+/*
+IMPORTS FOR PROGRAM PAGES
+*/
+//--------------------------------------------------
+  import BodyBuild from './pages/program_pages/BodyBuild.jsx';
+  import Oly from './pages/program_pages/Oly.jsx';
+  import Power from './pages/program_pages/Power.jsx';
+  import General from './pages/program_pages/General.jsx';
+//--------------------------------------------------
 // import footer from '../footer'
 
 
@@ -36,9 +47,20 @@ function App() {
             {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="login" element={<Login />} />
-            <Route path="About" element={<About />} />
+            <Route path="about" element={<About />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
+            <Route path="prog-up" element={<UploadProgram />} />
+
+            /* ROUTES FOR PROGRAM PAGES */
+            //--------------------------------------------------
+            <Route path="bodybuild" element={<BodyBuild />} />
+            <Route path="power-lifting" element={<Power />} />
+            <Route path="oly-lifting" element={<Oly />} />
+            <Route path="general-program" element={<General />} />
+            //--------------------------------------------------
+
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

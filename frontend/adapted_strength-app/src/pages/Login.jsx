@@ -1,3 +1,7 @@
+/*
+Module: Login.jsx
+Team: TeraBITE
+*/
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import google from '../assets/google_icon.webp';
