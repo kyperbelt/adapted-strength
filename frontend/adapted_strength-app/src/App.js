@@ -5,6 +5,7 @@ Team: TeraBITE
 */
 import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {lazy, Suspense} from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
 // They are still only react components
@@ -18,8 +19,10 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
-import EditProfile from './pages/EditProfile.jsx';
+const EditProfile = lazy(()=> import('./pages/EditProfile.jsx'));
 // import footer from '../footer'
+
+
 
 
 // import './App.css';
@@ -39,7 +42,9 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="edit-profile" element={<EditProfile />} />
+            <Route path="edit-profile" element={<Suspense fallback="...">
+              <EditProfile />
+            </Suspense>} />
             <Route path="login" element={<Login />} />
             <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />

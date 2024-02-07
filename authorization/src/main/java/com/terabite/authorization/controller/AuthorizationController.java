@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthorizationController {
@@ -114,7 +115,7 @@ public class AuthorizationController {
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
         Cookie newCookie = new Cookie(cookie, value);
         newCookie.setHttpOnly(true);
-        newCookie.setSecure(true);
+        newCookie.setSecure(false);
         newCookie.setPath("/");
         newCookie.setMaxAge(maxAge);
         newCookie.setDomain(domainUrl);
