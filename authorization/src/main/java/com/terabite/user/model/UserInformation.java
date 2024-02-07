@@ -61,7 +61,9 @@ public class UserInformation implements Serializable {
     // @OneToOne(cascade = CascadeType.ALL)
     // @JoinColumn(name = "login_name", referencedColumnName = "email")
     // private Login login;
-    @JsonAlias("email") 
+    @JsonAlias("email")
+    @Column(unique = true)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
 
     @JsonAlias("how_did_you_hear")
@@ -148,11 +150,11 @@ public class UserInformation implements Serializable {
     }
 
     // public Login getLogin() {
-    //     return login;
+    // return login;
     // }
     //
     // public void setLogin(Login login) {
-    //     this.login = login;
+    // this.login = login;
     // }
 
     public String getHowDidYouHear() {
@@ -161,5 +163,13 @@ public class UserInformation implements Serializable {
 
     public void setHowDidYouHear(String howDidYouHear) {
         this.howDidYouHear = howDidYouHear;
+    }
+
+    public void setEmail(String string) {
+        this.email = string;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

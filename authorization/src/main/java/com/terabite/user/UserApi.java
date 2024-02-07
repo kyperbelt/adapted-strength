@@ -18,4 +18,5 @@ package com.terabite.user;
  */
 public class UserApi {
 
+
 }

@@ -26,6 +26,10 @@ public class SignupService {
             String plaintextPassword = login.getPassword();
             login.setPassword(passwordEncoder.encode(plaintextPassword));
             // TODO: Here we should create the session token that will be used to
+
+            // MOVE THIS TOKEN LOGIC INTO SOME KIND OF COMMON LIBRARY THAT WILL CREATE AND PARSE
+            // TOKENS USING User LOGIN INFORMATION 
+
             // authenticate the user
             // during the rest of the account creation process
 
@@ -35,6 +39,7 @@ public class SignupService {
             // FIXME: this is a temporary solution, we should be using JWTs
             login.setLoginStatus(LoginStatus.LOGGED_IN);
             loginRepository.save(login);
+
             return new ResponseEntity<>(String.format("authorized:%s-%s", login.getEmail(), login.getLoginStatus()),
                     HttpStatus.CREATED);
         } else {

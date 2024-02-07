@@ -22,7 +22,6 @@ import com.terabite.authorization.model.LoginStatus;
  * authorization service instead of the authorization database, or
  * authorization related utilities.
  */
-@Service
 public class AuthorizationApi {
     // README | FIX: This is probably best left as part of a commons library that will parse JWT tokens, 
     // since the main reason to use JWT is that we can verify the token without having to make a request to the authorization service.
