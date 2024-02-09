@@ -34,18 +34,19 @@ export class UserApi {
   * UserApi.updateProfileInformation({ first_name: 'John', last_name: 'Doe', email: 'example@mail.com', phone: '1234567890', address: '1234 Example St', city: 'Example', state: 'EX', zip: '12345', country: 'USA' })
   * .then(response => console.log(response));
   */
-  static updateProfileInformation({ first_name, last_name, email, phone, address, city, state, zip, country }) {
+  static updateProfileInformation({ first_name, last_name, phone, address, city, state, zipcode, country }) {
     const profile = {
       first_name,
       last_name,
-      email,
-      phone,
+      cell_phone: phone,
       address,
       city,
       state,
-      zip,
+      zipcode,
       country
     };
+    console.log(JSON.stringify(profile));
+
     const promise = ApiUtils.apiPut('user/profile', profile);
     return promise;
   }

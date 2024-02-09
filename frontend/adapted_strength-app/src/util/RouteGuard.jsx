@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 export default function RouteGuard({ state, children, routeTo = "/" }) {
         const nav = useNavigate();
         useEffect(() => {
-                if (!state) {
+                if (!state()) {
                         nav(routeTo);
                 }
         }, [routeTo, state, nav]);

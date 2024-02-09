@@ -21,7 +21,7 @@ export default function EditProfile() {
                     // TODO: same as error, redirect to login page or display error message
                 }
             }).catch((error) => {
-                console.error(error);
+                console.error(`ERROR HAPPENED: ${error}`);
                 setIsLoading(false);
                 //TODO: User was unable to get profile information, 
                 //     redirect to login page or display error message
@@ -38,9 +38,24 @@ export default function EditProfile() {
 }
 
 function EditProfileContent({ info }) {
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        console.log("Edit Profile");
+        const formData = new FormData(e.target);
+        const data = {
+            first_name: formData.get("fname"),
+            last_name: formData.get("lname"),
+            address: formData.get("address1"),
+            city: formData.get("city"),
+            state: formData.get("state"),
+            zipcode: formData.get("zip"),
+            phone: formData.get("phone")
+        };
+        await UserApi.updateProfileInformation(data)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log("Profile updated successfully");
+                }
+            });
     }
 
     const fname = info.firstName ?? "";
@@ -62,12 +77,11 @@ function EditProfileContent({ info }) {
                     <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
                         <LabeledInputField type="text" id="fname" name="fname" required={true} placeholder="First Name" defaultValue={fname} />
                         <LabeledInputField className="mt-5" type="text" id="lname" name="lname" required={true} placeholder="Last Name" defaultValue={lname} />
-                        <LabeledInputField className="mt-5" type="text" id="address1" name="address1" required={true} placeholder="Address 1" defaultValue={address1} />
-                        <LabeledInputField className="mt-5" type="text" id="address2" name="address2" required={false} placeholder="Address 2" />
+                        <LabeledInputField className="mt-5" type="text" id="address1" name="address1" required={true} placeholder="Address" defaultValue={address1} />
                         <LabeledInputField className="mt-5" type="text" id="city" name="city" required={true} placeholder="City" defaultValue={city} />
                         <LabeledInputField className="mt-5" type="text" id="state" name="state" required={true} placeholder="State" defaultValue={state} />
                         <LabeledInputField className="mt-5" type="number" id="zip" name="zip" required={true} placeholder="Zip" defaultValue={zip} />
-                        <LabeledInputField className="mt-5" type="tel" id="phone" name="phone" required={true} placeholder="Phone" pattern="([0-9]{3}-[0-9]{2}-[0-9]{3}|[0-9]{10})" defaultValue={phone} />
+                        <LabeledInputField className="mt-5" type="tel" id="cell_phone" name="phone" required={true} placeholder="Phone Number" pattern="([0-9]{3}-[0-9]{2}-[0-9]{3}|[0-9]{10})" defaultValue={phone} />
                         <div className="flex justify-center w-full relative top-14">
                             <SubmitButton text="Save" onClick={console.log("clicked")} />
                         </div>

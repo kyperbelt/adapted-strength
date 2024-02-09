@@ -38,7 +38,9 @@ export class AuthApi {
     // make a request to the server with an invalid token. Then the server 
     // will respond with an error, and the user will be logged out.
     const authTokenName = "adapted-strength_auth-token";
-    console.log("Checking if user is logged in");
-    return document.cookie.includes(authTokenName);
+    const tokenExists = document.cookie.includes(authTokenName);
+
+    console.log("Checking if user is logged in: ", tokenExists ? "Yes" : "No");
+    return tokenExists;
   }
 }

@@ -1,16 +1,14 @@
 package com.terabite.user.controller;
 
-import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-
+/**
+ * This class is used to map the request body of the update information request.
+ * Its different because we dont want to allow updating all the fields after
+ * initial account setup.
+ * For example, the user should not be able to change their email address after
+ * the account is created since that is the unique identifier for the account.
+ */
 public class UpdateInformationRequestBody {
         @JsonAlias("first_name")
         private String firstName;
@@ -18,21 +16,8 @@ public class UpdateInformationRequestBody {
         @JsonAlias("last_name")
         private String lastName;
 
-        @NotNull
-        @JsonAlias("date_of_birth")
-        @Column(columnDefinition = "date")
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        @Temporal(TemporalType.DATE)
-        private Date dateOfBirth;
-
-        @JsonAlias("shirt_size")
-        private String shirtSize;
-
         @JsonAlias("cell_phone")
         private String cellPhone;
-
-        @JsonAlias("home_phone")
-        private String homePhone;
 
         @JsonAlias("address")
         private String address;
@@ -62,36 +47,12 @@ public class UpdateInformationRequestBody {
                 this.lastName = lastName;
         }
 
-        public Date getDateOfBirth() {
-                return dateOfBirth;
-        }
-
-        public void setDateOfBirth(Date dateOfBirth) {
-                this.dateOfBirth = dateOfBirth;
-        }
-
-        public String getShirtSize() {
-                return shirtSize;
-        }
-
-        public void setShirtSize(String shirtSize) {
-                this.shirtSize = shirtSize;
-        }
-
         public String getCellPhone() {
                 return cellPhone;
         }
 
         public void setCellPhone(String cellPhone) {
                 this.cellPhone = cellPhone;
-        }
-
-        public String getHomePhone() {
-                return homePhone;
-        }
-
-        public void setHomePhone(String homePhone) {
-                this.homePhone = homePhone;
         }
 
         public String getAddress() {

@@ -1,9 +1,6 @@
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import icon from '../assets/ladyIcon.png'
-import navBar from '../components/navBar';
-// import footer from '../footer'
-//
 
 export default function Home() {
     return (<div className="flex flex-col items-center">

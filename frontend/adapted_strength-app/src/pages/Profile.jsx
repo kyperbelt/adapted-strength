@@ -3,19 +3,17 @@ import { Outlet, Link } from "react-router-dom";
 import icon from '../assets/ladyIcon.png'
 
 function FNameField() {
-    return (<input type="fname" value="First Name" id="fname" name="fname" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="fname" defaultValue="First Name" id="fname" name="fname" required className="w-4/5 border-b-4 p-0" />);
 }
 function LNameField() {
-    return (<input type="lname" value="Last Name" id="lname" name="lname" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="lname" defaultValue="Last Name" id="lname" name="lname" required className="w-4/5 border-b-4 p-0" />);
 }
 function SxField() {
-    return (<input type="sex" value="Sex" id="sex" name="sex" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="sex" defaultValue="Sex" id="sex" name="sex" required className="w-4/5 border-b-4 p-0" />);
 }
 
 
 export default function Profile() {
-    
-
 
     return (
         <div className="w-full h-full flex flex-col bottom-20">

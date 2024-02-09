@@ -27,7 +27,7 @@ export default function NavBar() {
         <Link to="profile">Profile</Link>
         <span> | </span>
         <Link to="sign-up">Sign Up</Link>
-         <StateGuard state={AuthApi.isLoggedIn()}><span> | 
+         <StateGuard state={() => AuthApi.isLoggedIn()}><span> | 
           <button className="ml-1" type="button" onClick={onLogOut}>Log Out</button></span>
         </StateGuard>
       </nav>

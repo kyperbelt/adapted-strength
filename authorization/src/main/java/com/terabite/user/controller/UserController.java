@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
+import com.terabite.authorization.Payload;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 
@@ -48,7 +49,8 @@ public class UserController {
                 this.userRepository = userRepository;
         }
 
-        // TODO| README: Accounts are created by the authorization service and not by the user
+        // TODO| README: Accounts are created by the authorization service and not by
+        // the user
         // service.
         // This service will only be repsonsible for creating, updating, and deleting
         // and retrieving user information.
@@ -57,8 +59,8 @@ public class UserController {
                         @RequestBody final UserInformation userInformation,
                         HttpServletRequest request) {
 
-                final Optional<Cookie> token = Arrays.stream(request.getCookies())
-                                .filter(cookie -> authCookieName.equals(cookie.getName())).findFirst();
+                final Optional<Cookie> token = getTokenCookie(request);
+
                 if (token.isEmpty()) {
                         log.error("No token found in request");
                         return ResponseEntity.status(401).body("Unauthorized");
@@ -84,36 +86,39 @@ public class UserController {
                 return ResponseEntity.ok("Account information created successfully");
         }
 
-        @PutMapping("/update")
-        public ResponseEntity<String> updateAccountInformation(@RequestBody final UpdateInformationRequestBody updateInformationRequestBody, HttpServletRequest request) {
+        @PutMapping("/profile")
+        public ResponseEntity<Payload> updateAccountInformation(
+                        @RequestBody final UpdateInformationRequestBody updateInformationRequestBody,
+                        HttpServletRequest request) {
 
-                final Optional<Cookie> token = Arrays.stream(request.getCookies())
-                                .filter(cookie -> authCookieName.equals(cookie.getName())).findFirst();
+                final Optional<Cookie> token = getTokenCookie(request);
                 if (token.isEmpty()) {
+
                         log.error("No token found in request");
-                        return ResponseEntity.status(401).body("Unauthorized");
+                        return ResponseEntity.status(401).body(new Payload("Unauthorized"));
                 }
 
                 final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
                 if (email.isEmpty()) {
                         log.error("No email found in token");
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
                 }
 
                 final Optional<UserInformation> userInformation = userRepository.findByEmail(email.get());
 
                 if (userInformation.isEmpty()) {
                         log.error("No user information found for email: " + email.get());
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User information not found");
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                        .body(new Payload("User information not found"));
                 }
-                
+
                 final UserInformation userInformationToUpdate = userInformation.get();
                 userInformationToUpdate.setFirstName(updateInformationRequestBody.getFirstName());
                 userInformationToUpdate.setLastName(updateInformationRequestBody.getLastName());
-                userInformationToUpdate.setDateOfBirth(updateInformationRequestBody.getDateOfBirth());
-                userInformationToUpdate.setShirtSize(updateInformationRequestBody.getShirtSize());
+                // userInformationToUpdate.setDateOfBirth(updateInformationRequestBody.getDateOfBirth());
+                // userInformationToUpdate.setShirtSize(updateInformationRequestBody.getShirtSize());
                 userInformationToUpdate.setCellPhone(updateInformationRequestBody.getCellPhone());
-                userInformationToUpdate.setHomePhone(updateInformationRequestBody.getHomePhone());
+                // userInformationToUpdate.setHomePhone(updateInformationRequestBody.getHomePhone());
                 userInformationToUpdate.getAddress().setAddress(updateInformationRequestBody.getAddress());
                 userInformationToUpdate.getAddress().setCity(updateInformationRequestBody.getCity());
                 userInformationToUpdate.getAddress().setState(updateInformationRequestBody.getState());
@@ -123,15 +128,16 @@ public class UserController {
 
                 log.info("Account information updated successfully");
 
-                return ResponseEntity.ok("Account information updated successfully");
+                return ResponseEntity.ok(new Payload("Account information updated successfully"));
         }
 
         @GetMapping("/profile")
         public ResponseEntity<UserInformation> getProfile(HttpServletRequest request) {
 
-                final Optional<Cookie> token = Arrays.stream(request.getCookies())
-                                .filter(cookie -> authCookieName.equals(cookie.getName())).findFirst();
+                final Optional<Cookie> token = getTokenCookie(request);
+
                 if (token.isEmpty()) {
+
                         log.error("No token found in request");
                         return ResponseEntity.status(401).body(null);
                 }
@@ -150,6 +156,14 @@ public class UserController {
                 }
 
                 return ResponseEntity.ok(userInformation.get());
+        }
+
+        private Optional<Cookie> getTokenCookie(HttpServletRequest request) {
+                if (request.getCookies() == null) {
+                        return Optional.empty();
+                }
+                return Arrays.stream(request.getCookies()).filter(cookie -> authCookieName.equals(cookie.getName()))
+                                .findFirst();
         }
 
 }
