@@ -19,7 +19,9 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import RouteGuard from "./util/RouteGuard";
 import Profile from './pages/Profile';
+import {AuthApi} from './api/AuthApi';
 // TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(()=> import('./pages/EditProfile.jsx'));
 
@@ -43,7 +45,7 @@ function App() {
               <EditProfile />
             </Suspense>} />
             <Route path="profile" element={<Profile />} />
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<RouteGuard state={!AuthApi.isLoggedIn()}><Login /></RouteGuard>} />
             <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />

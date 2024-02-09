@@ -71,7 +71,7 @@ public class AuthorizationController {
             // log that token is present and cookie is being sent
             log.info("Token is present and cookie is being sent");
             // set a cookie
-            Cookie cookie = createAuthorizationCookie("login-token", token.get(), 60 * 60 * 24 * 7);
+            Cookie cookie = createAuthorizationCookie(authCookieName, token.get(), 60 * 60 * 24 * 7);
 
             response.addCookie(cookie);
             // we probably should only return ok without the token since it is sent back as
@@ -93,12 +93,12 @@ public class AuthorizationController {
         // users are able to
         // log in and get a new token
 
-        Optional<Cookie> tokenCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("login-token")).findFirst();
+        Optional<Cookie> tokenCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(authCookieName)).findFirst();
 
         Cookie cookie = createAuthorizationCookie(authCookieName, "", 0);
         response.addCookie(cookie);
 
-        return new Payload(String.format("logged out:%s", tokenCookie.orElseGet(() -> new Cookie("login-token", "none")).getValue()));
+        return new Payload(String.format("logged out:%s", tokenCookie.orElseGet(() -> new Cookie(authCookieName, "none")).getValue()));
     }
 
     @PutMapping("/forgot_password")
@@ -115,8 +115,6 @@ public class AuthorizationController {
 
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
         Cookie newCookie = new Cookie(cookie, value);
-        newCookie.setHttpOnly(true);
-        newCookie.setSecure(false);
         newCookie.setPath("/");
         newCookie.setMaxAge(maxAge);
         newCookie.setDomain(domainUrl);

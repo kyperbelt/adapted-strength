@@ -13,7 +13,7 @@ public class GlobalConfiguration {
 	public static final String BEAN_NAME_AUTH_COOKIE_NAME = "authCookieName";
 	public static final String BEAN_NAME_DOMAIN_URL = "domainUrl";
 
-	@Value("${AUTH_COOKIE_NAME:login-token}")
+	@Value("${AUTH_COOKIE_NAME:adapted-strength_auth-token}")
 	private String authCookieName;
 
 
@@ -38,7 +38,7 @@ public class GlobalConfiguration {
 
 	@Bean(name = BEAN_NAME_AUTH_COOKIE_NAME)
 	public String getSessionCookieName() {
-		return "login-token";
+		return authCookieName;
 	}
 
 	@Bean(name = BEAN_NAME_DOMAIN_URL)

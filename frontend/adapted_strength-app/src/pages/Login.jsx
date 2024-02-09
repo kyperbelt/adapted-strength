@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthApi } from '../api/AuthApi';
 import logo from '../assets/logo.png';
@@ -35,7 +36,23 @@ function GoogleLogo() {
 
 export default function Login() {
     const nav = useNavigate();
-
+    // const [checkedLoggedIn, setCheckedLoggedIn] = useState(false);
+    //
+    // useEffect(() => {
+    //     console.log("Checking if user is logged in");
+    //     if (AuthApi.isLoggedIn()) {
+    //         console.log("User is already logged in");
+    //         nav("/profile");
+    //     } else { setCheckedLoggedIn(true) }
+    // }, [nav]);
+    //
+    // console.log("User is not logged in");
+    //
+    // // we dont display the login form until we know if the user is not logged in
+    // if (!checkedLoggedIn) {
+    //     <div>checking...</div>
+    // }
+    //
     const onSubmit = (e) => {
         e.preventDefault();
         console.log("Logging in");
@@ -46,13 +63,13 @@ export default function Login() {
                 if (response.status === 200) {
                     console.log("Logged in");
                     nav("/profile");
-                }else{
+                } else {
                     console.error("Error logging in", response);
                 }
             }).catch((error) => {
                 console.error("Error logging in", error);
             });
-        
+
     };
 
 

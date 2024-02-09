@@ -4,24 +4,9 @@ import icon from '../assets/ladyIcon.png'
 import navBar from '../components/navBar';
 // import footer from '../footer'
 //
-function login(){
-    // post request to localhost:8080/v1/user/login
-    // with body {username: "username", password: "password"}
-    // solve for CORS issue
-    return fetch('http://localhost:8080/v1/auth/login', {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({username: "jonathancamarenacamacho@gmail.com", password: "Password#123"}),
-    }).then(response => response.json());
-};
-
-const data = login();
 
 export default function Home() {
-    return (<div>
+    return (<div className="flex flex-col items-center">
         <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <img src={icon} className="App-icon" alt="lady icon" />
@@ -38,12 +23,10 @@ export default function Home() {
                 Link to beta app
             </a>
         </header>
-        <button className="w-3/4 App-login-button">
-            <Link className="App-Nav_link"
-                to="login">
-                LOGIN
-            </Link>
-        </button>
+        <Link className="w-3/4 bg-red-600 hover:bg-red-900 focus:bg-red-800 text-xl text-white p-4 rounded-2xl"
+            to="login">
+            LOGIN
+        </Link>
     </div>);
 }
 

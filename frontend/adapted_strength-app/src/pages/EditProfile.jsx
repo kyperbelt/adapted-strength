@@ -17,7 +17,7 @@ export default function EditProfile() {
                 if (response.status === 200) {
                     setProfileInfo(response.data);
                     setIsLoading(false);
-                }else{
+                } else {
                     // TODO: same as error, redirect to login page or display error message
                 }
             }).catch((error) => {

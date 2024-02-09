@@ -28,4 +28,17 @@ export class AuthApi {
     const promise = ApiUtils.apiPost('auth/signup', credentials);
     return promise;
   }
+
+  static isLoggedIn() {
+    // TODO: README:
+    // We might want to do a more sophisticated check here, 
+    // but for now we just check if the token cookie exists. 
+    //
+    // I think this might sort itself out if for example, someone tries to 
+    // make a request to the server with an invalid token. Then the server 
+    // will respond with an error, and the user will be logged out.
+    const authTokenName = "adapted-strength_auth-token";
+    console.log("Checking if user is logged in");
+    return document.cookie.includes(authTokenName);
+  }
 }
