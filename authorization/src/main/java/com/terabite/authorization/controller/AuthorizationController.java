@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,8 +79,8 @@ public class AuthorizationController {
             return ResponseEntity.ok(new Payload(token.get()));
         }
 
-        log.error("Invalid login");
-        return ResponseEntity.badRequest().body(new Payload("Invalid login"));
+        log.error("Was unable to login with the given credentials. Invalid login for email: {}, and password: {}", login.getEmail(), login.getPassword());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Payload("Invalid login"));
 
     }
 

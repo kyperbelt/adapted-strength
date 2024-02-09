@@ -43,8 +43,11 @@ public class LoginService {
         // README: See signup service for more detaisl on where else we will need jwt
         // tokens.
 
-        Login storedLogin = loginRepository.findByEmail(login.getEmail())
-                .orElseThrow(() -> new LoginNotFoundException(login.getEmail()));
+        Login storedLogin = loginRepository.findByEmail(login.getEmail()).orElse(null);
+        if (storedLogin == null) {
+            return Optional.empty();
+        }
+
 
         String storedHash = storedLogin.getPassword();
         String password = login.getPassword();

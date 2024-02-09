@@ -19,13 +19,10 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import Profile from './pages/Profile';
+// TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(()=> import('./pages/EditProfile.jsx'));
-// import footer from '../footer'
 
-
-
-
-// import './App.css';
 
 function App() {
   return (
@@ -45,6 +42,7 @@ function App() {
             <Route path="edit-profile" element={<Suspense fallback="...">
               <EditProfile />
             </Suspense>} />
+            <Route path="profile" element={<Profile />} />
             <Route path="login" element={<Login />} />
             <Route path="About" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
