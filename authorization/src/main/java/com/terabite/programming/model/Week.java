@@ -1,4 +1,4 @@
-package com.terabite.authorization.service;
+package com.terabite.programming.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
-@Table(name = "program_week_table")
-public class ProgramWeek 
+@Table(name = "program_week")
+public class Week 
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,12 +22,16 @@ public class ProgramWeek
     @JsonAlias("week_data")
     private String weekData;
 
-    public ProgramWeek(String weekName, String weekData){
+    @ManyToOne
+    @JoinColumn(name = "block_id", nullable = false)
+    private Block programBlock;
+
+    public Week(String weekName, String weekData){
         this.weekData=weekData;
         this.weekName=weekName;
     }
 
-    public ProgramWeek(){
+    public Week(){
         
     }
 
@@ -47,11 +51,11 @@ public class ProgramWeek
         this.weekData = weekData;
     }    
     
-    public String getWeekName() {
+    public String getName() {
         return weekName;
     }
 
-    public void setWeekName(String weekName) {
+    public void setName(String weekName) {
         this.weekName = weekName;
     }
 }

@@ -1,4 +1,4 @@
-package com.terabite.authorization.service;
+package com.terabite.programming.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,35 +7,36 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terabite.authorization.repository.ProgramWeekRepository;
+import com.terabite.programming.model.Week;
+import com.terabite.programming.repository.WeekRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-public class ProgramService {
-    ProgramWeekRepository programWeekRepository;
+public class WeekService {
+    WeekRepository programWeekRepository;
 
-    public ProgramService(ProgramWeekRepository programWeekRepository){
+    public WeekService(WeekRepository programWeekRepository){
         this.programWeekRepository=programWeekRepository;
     }
 
-    public ResponseEntity<?> createNewProgramWeek(ProgramWeek programWeek){
-        if(programWeekRepository.findByWeekName(programWeek.getWeekName()).isEmpty()){
+    public ResponseEntity<?> createNewProgramWeek(Week programWeek){
+        if(programWeekRepository.findByWeekName(programWeek.getName()).isEmpty()){
             programWeekRepository.save(programWeek);
             return new ResponseEntity<>(programWeek, HttpStatus.CREATED);
         }
         else{
-            return ResponseEntity.badRequest().body("Error: There is already a program week with the name: "+programWeek.getWeekName());
+            return ResponseEntity.badRequest().body("Error: There is already a program week with the name: "+programWeek.getName());
         }
     }
 
-    public ResponseEntity<?> updateProgramWeek(ProgramWeek programWeek){
-        if(programWeekRepository.findByWeekName(programWeek.getWeekName()).isEmpty()){
-            return ResponseEntity.badRequest().body(programWeek);
+    public ResponseEntity<?> updateProgramWeek(Week programWeek){
+        if(programWeekRepository.findByWeekName(programWeek.getName()).isEmpty()){
+            return ResponseEntity.badRequest().body("Error: There is no program week by the name: "+programWeek.getName());
         }
         else{
-            ProgramWeek toBeUpdated= programWeekRepository.findOneByWeekName(programWeek.getWeekName());
+            Week toBeUpdated= programWeekRepository.findOneByWeekName(programWeek.getName());
             toBeUpdated.setWeekData(programWeek.getWeekData());
             return new ResponseEntity<>(programWeek, HttpStatus.ACCEPTED);
         }
@@ -44,7 +45,7 @@ public class ProgramService {
     public ResponseEntity<?> getProgramWeek(String jsonWeekName){
         ObjectMapper objectMapper=new ObjectMapper();
         JsonNode jsonNode;
-        ProgramWeek programWeek;
+        Week programWeek;
         String weekName;
         try{
             jsonNode=objectMapper.readTree(jsonWeekName);
@@ -67,7 +68,7 @@ public class ProgramService {
     public ResponseEntity<?> deleteProgramWeek(String jsonWeekName){
         ObjectMapper objectMapper=new ObjectMapper();
         JsonNode jsonNode;
-        ProgramWeek programWeek;
+        Week programWeek;
         String weekName;
         try{
             jsonNode=objectMapper.readTree(jsonWeekName);
