@@ -8,7 +8,7 @@ export default function RouteGuard({ state, children, routeTo = "/" }) {
                         nav(routeTo);
                 }
         }, [routeTo, state, nav]);
-        return (<>{state && children}</>);
+        return (<>{state() && children}</>);
 }
 
 
