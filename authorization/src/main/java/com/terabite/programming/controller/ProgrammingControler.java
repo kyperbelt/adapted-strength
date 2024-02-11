@@ -6,10 +6,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
+import com.terabite.programming.model.RepCycle;
 import com.terabite.programming.model.Block;
+import com.terabite.programming.model.Day;
 import com.terabite.programming.model.Week;
 import com.terabite.programming.service.BlockService;
+import com.terabite.programming.service.DayService;
 import com.terabite.programming.service.ProgramService;
+import com.terabite.programming.service.RepCycleService;
 import com.terabite.programming.service.WeekService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,79 +26,125 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("/v1/programming")
 public class ProgrammingControler {
     
-    private final WeekService programWeekService;
-    private final BlockService programBlockService;
+    private final RepCycleService repCycleService;
+    private final DayService dayService;
+    private final WeekService weekService;
+    private final BlockService blockService;
     private final ProgramService programService;
 
-    public ProgrammingControler(WeekService programWeekService, BlockService programBlockService, ProgramService programService){
-        this.programBlockService=programBlockService;
-        this.programWeekService=programWeekService;
+    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, BlockService blockService, ProgramService programService){
+        this.repCycleService=repCycleService;
+        this.dayService=dayService;
+        this.blockService=blockService;
+        this.weekService=weekService;
         this.programService=programService;
     }
 
     //Program endpoints
     @PutMapping("/program")
-    public ResponseEntity<?> programPost(@RequestBody Program program) {
+    public ResponseEntity<?> putProgram(@RequestBody Program program) {
         return programService.createNewProgram(program);
     }
 
     @PostMapping("/program")
-    public ResponseEntity<?> programPut(@RequestBody Program program) {
+    public ResponseEntity<?> postProgram(@RequestBody Program program) {
         return programService.updateProgram(program);
     }
 
     @GetMapping("/program")
-    public ResponseEntity<?> getProgramByName(@RequestBody String jsonProgramName) {
-        return programService.getProgram(jsonProgramName);
+    public ResponseEntity<?> getProgram(@RequestBody Program program) {
+        return programService.getProgram(program);
     }
 
     @DeleteMapping("/program")
-    public ResponseEntity<?> deleteProgramByName(@RequestBody String jsonProgramName){
-        return programService.deleteProgram(jsonProgramName);
+    public ResponseEntity<?> deleteProgram(@RequestBody Program program){
+        return programService.deleteProgram(program);
     }
 
 
     //Block endpoints
     @PutMapping("/block")
-    public ResponseEntity<?> programBlockPost(@RequestBody Block programBlock) {
-        return programBlockService.createNewProgramBlock(programBlock);
+    public ResponseEntity<?> putBlock(@RequestBody Block block) {
+        return blockService.createNewBlock(block);
     }
 
     @PostMapping("/block")
-    public ResponseEntity<?> programBlockPut(@RequestBody Block programBlock) {
-        return programBlockService.updateProgramBlock(programBlock);
+    public ResponseEntity<?> postBlock(@RequestBody Block block) {
+        return blockService.updateBlock(block);
     }
 
     @GetMapping("/block")
-    public ResponseEntity<?> getProgramBlockByName(@RequestBody String jsonBlockName) {
-        return programBlockService.getProgramBlock(jsonBlockName);
+    public ResponseEntity<?> getBlock(@RequestBody Block block) {
+        return blockService.getBlock(block);
     }
 
     @DeleteMapping("/block")
-    public ResponseEntity<?> deleteProgramBlockByName(@RequestBody String jsonBlockName){
-        return programBlockService.deleteProgramBlock(jsonBlockName);
+    public ResponseEntity<?> deleteBlock(@RequestBody Block block){
+        return blockService.deleteBlock(block);
     }
 
 
 
     //Week endpoints
     @PutMapping("/week")
-    public ResponseEntity<?> programWeekPost(@RequestBody Week programWeek) {
-        return programWeekService.createNewProgramWeek(programWeek);
+    public ResponseEntity<?> putWeek(@RequestBody Week week) {
+        return weekService.createNewWeek(week);
     }
 
     @PostMapping("/week")
-    public ResponseEntity<?> programWeekPut(@RequestBody Week programWeek) {
-        return programWeekService.updateProgramWeek(programWeek);
+    public ResponseEntity<?> postWeek(@RequestBody Week week) {
+        return weekService.updateWeek(week);
     }
 
     @GetMapping("/week")
-    public ResponseEntity<?> getProgramWeekByName(@RequestBody String jsonWeekName) {
-        return programWeekService.getProgramWeek(jsonWeekName);
+    public ResponseEntity<?> getWeek(@RequestBody Week week) {
+        return weekService.getWeek(week);
     }
 
     @DeleteMapping("/week")
-    public ResponseEntity<?> deleteProgramWeekByName(@RequestBody String jsonWeekName){
-        return programWeekService.deleteProgramWeek(jsonWeekName);
+    public ResponseEntity<?> deleteWeek(@RequestBody Week week){
+        return weekService.deleteWeekByName(week);
+    }
+
+    //Day endpoints
+    @PutMapping("/day")
+    public ResponseEntity<?> putDay(@RequestBody Day day) {
+        return dayService.createNewDay(day);
+    }
+
+    @PostMapping("/day")
+    public ResponseEntity<?> postDay(@RequestBody Day day) {
+        return dayService.updateDay(day);
+    }
+
+    @GetMapping("/day")
+    public ResponseEntity<?> getDay(@RequestBody Day day) {
+        return dayService.getDay(day);
+    }
+
+    @DeleteMapping("/day")
+    public ResponseEntity<?> deleteDay(@RequestBody Day day){
+        return dayService.deleteDay(day);
+    }
+
+    //RepCycle endpoints
+    @PutMapping("/rep_cycle")
+    public ResponseEntity<?> putRepCycle(@RequestBody RepCycle repCycle) {
+        return repCycleService.createNewRepCycle(repCycle);
+    }
+
+    @PostMapping("/rep_cycle")
+    public ResponseEntity<?> postRepCycle(@RequestBody RepCycle repCycle) {
+        return repCycleService.updateRepCycle(repCycle);
+    }
+
+    @GetMapping("/rep_cycle")
+    public ResponseEntity<?> getRepCycle(@RequestBody RepCycle repCycle) {
+        return repCycleService.getRepCycle(repCycle);
+    }
+
+    @DeleteMapping("/rep_cycle")
+    public ResponseEntity<?> deleteRepCycle(@RequestBody RepCycle repCycle){
+        return repCycleService.deleteRepCycle(repCycle);
     }
 }

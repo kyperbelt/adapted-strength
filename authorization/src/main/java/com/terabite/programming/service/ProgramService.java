@@ -4,9 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.programming.model.Program;
 import com.terabite.programming.repository.ProgramRepository;
 
@@ -22,68 +19,36 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> createNewProgram(Program program) {
-        if(programRepository.findByProgramName(program.getName()).isEmpty()){
-            programRepository.save(program);
-            return new ResponseEntity<>(program, HttpStatus.CREATED);
-        }
-        else{
-            return ResponseEntity.badRequest().body("Error: There is already a program with the name: " +program.getName());
-        }
+        programRepository.save(program);
+        return new ResponseEntity<>(program, HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> updateProgram(Program program) {
-        if(programRepository.findByProgramName(program.getName()).isEmpty()){
-            return ResponseEntity.badRequest().body("Error: There is no program block by the name: "+program.getName());
+        if(programRepository.findById(program.getId()).isEmpty()){
+            return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{
-            Program toBeUpdated= programRepository.findOneByProgramName(program.getName());
-            toBeUpdated.setProgramBlocks(program.getProgramBlocks());
+            programRepository.save(program);
             return new ResponseEntity<>(program, HttpStatus.ACCEPTED);
         }
     }
 
-    public ResponseEntity<?> getProgram(String jsonProgramName) {
-        ObjectMapper objectMapper=new ObjectMapper();
-        JsonNode jsonNode;
-        Program program;
-        String programName;
-        try{
-            jsonNode=objectMapper.readTree(jsonProgramName);
-            programName=jsonNode.get("program_name").asText();
-            program=programRepository.findOneByProgramName(programName);
-            if(program!=null){
-                return new ResponseEntity<>(program, HttpStatus.FOUND);
-            }
-            else{
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+    public ResponseEntity<?> getProgram(Program program) {
+        if(programRepository.findById(program.getId()).isEmpty()){
+            return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
-        catch (JsonProcessingException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        else{
+            return new ResponseEntity<>(programRepository.findOneById(program.getId()), HttpStatus.FOUND);
         }
     }
 
-    public ResponseEntity<?> deleteProgram(String jsonProgramName) {
-        ObjectMapper objectMapper=new ObjectMapper();
-        JsonNode jsonNode;
-        Program program;
-        String programName;
-        try{
-            jsonNode=objectMapper.readTree(jsonProgramName);
-            programName=jsonNode.get("program_name").asText();
-            program=programRepository.findOneByProgramName(programName);
-            if(program!=null){
-                programRepository.delete(program);
-                return new ResponseEntity<>(program, HttpStatus.OK);
-            }
-            else{
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+    public ResponseEntity<?> deleteProgram(Program program) {
+        if(programRepository.findById(program.getId()).isEmpty()){
+            return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
-        catch (JsonProcessingException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        else{
+            programRepository.delete(program);
+            return new ResponseEntity<>(program, HttpStatus.ACCEPTED);
         }
     }
 

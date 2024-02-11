@@ -1,13 +1,12 @@
 package com.terabite.programming.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-
+import java.util.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
-@Table(name = "program_week")
+@Table(name = "week")
 public class Week 
 {
     @Id
@@ -15,20 +14,19 @@ public class Week
     private long id;
 
     @NotBlank
-    @JsonAlias("week_name")
-    private String weekName;
-
-    @NotBlank
-    @JsonAlias("week_data")
-    private String weekData;
+    private String name;
 
     @ManyToOne
-    @JoinColumn(name = "block_id", nullable = false)
-    private Block programBlock;
+    @JoinColumn(name = "id", nullable = false)
+    private Block block;
 
-    public Week(String weekName, String weekData){
-        this.weekData=weekData;
-        this.weekName=weekName;
+    @OneToMany(mappedBy = "week")
+    private List<Day> days;
+
+    public Week(String name, Block block, List<Day> days){
+        this.name=name;
+        this.block=block;
+        this.days=days;
     }
 
     public Week(){
@@ -42,20 +40,28 @@ public class Week
     public void setId(long id) {
         this.id = id;
     }
-
-    public String getWeekData() {
-        return weekData;
-    }
-
-    public void setWeekData(String weekData) {
-        this.weekData = weekData;
-    }    
     
     public String getName() {
-        return weekName;
+        return name;
     }
 
-    public void setName(String weekName) {
-        this.weekName = weekName;
+    public void setName(String name){
+        this.name=name;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public void setBlock(Block block) {
+        this.block = block;
+    }
+    
+    public List<Day> getDays() {
+        return days;
+    }
+
+    public void setDays(List<Day> days) {
+        this.days = days;
     }
 }

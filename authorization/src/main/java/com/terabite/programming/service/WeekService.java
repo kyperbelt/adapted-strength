@@ -4,9 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.programming.model.Week;
 import com.terabite.programming.repository.WeekRepository;
 
@@ -15,76 +12,42 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class WeekService {
-    WeekRepository programWeekRepository;
+    WeekRepository weekRepository;
 
-    public WeekService(WeekRepository programWeekRepository){
-        this.programWeekRepository=programWeekRepository;
+    public WeekService(WeekRepository weekRepository){
+        this.weekRepository=weekRepository;
     }
 
-    public ResponseEntity<?> createNewProgramWeek(Week programWeek){
-        if(programWeekRepository.findByWeekName(programWeek.getName()).isEmpty()){
-            programWeekRepository.save(programWeek);
-            return new ResponseEntity<>(programWeek, HttpStatus.CREATED);
+    public ResponseEntity<?> createNewWeek(Week week){
+        weekRepository.save(week);
+        return new ResponseEntity<>(week, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<?> updateWeek(Week week){
+        if(weekRepository.findById(week.getId()).isEmpty()){
+            return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);        }
+        else{
+            weekRepository.save(week);
+            return new ResponseEntity<>(week, HttpStatus.ACCEPTED);
+        }
+    }
+
+    public ResponseEntity<?> getWeek(Week week){
+        if(weekRepository.findById(week.getId()).isEmpty()){
+            return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
         }
         else{
-            return ResponseEntity.badRequest().body("Error: There is already a program week with the name: "+programWeek.getName());
+            return new ResponseEntity<>(weekRepository.findOneById(week.getId()), HttpStatus.FOUND);
         }
     }
 
-    public ResponseEntity<?> updateProgramWeek(Week programWeek){
-        if(programWeekRepository.findByWeekName(programWeek.getName()).isEmpty()){
-            return ResponseEntity.badRequest().body("Error: There is no program week by the name: "+programWeek.getName());
+    public ResponseEntity<?> deleteWeekByName(Week week){
+        if(weekRepository.findById(week.getId()).isEmpty()){
+            return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
         }
         else{
-            Week toBeUpdated= programWeekRepository.findOneByWeekName(programWeek.getName());
-            toBeUpdated.setWeekData(programWeek.getWeekData());
-            return new ResponseEntity<>(programWeek, HttpStatus.ACCEPTED);
-        }
-    }
-
-    public ResponseEntity<?> getProgramWeek(String jsonWeekName){
-        ObjectMapper objectMapper=new ObjectMapper();
-        JsonNode jsonNode;
-        Week programWeek;
-        String weekName;
-        try{
-            jsonNode=objectMapper.readTree(jsonWeekName);
-            weekName=jsonNode.get("week_name").asText();
-            programWeek=programWeekRepository.findOneByWeekName(weekName);
-            if (programWeek!=null){
-                return new ResponseEntity<>(programWeek, HttpStatus.FOUND);
-            }
-            else{
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (JsonProcessingException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-    }
-
-    public ResponseEntity<?> deleteProgramWeek(String jsonWeekName){
-        ObjectMapper objectMapper=new ObjectMapper();
-        JsonNode jsonNode;
-        Week programWeek;
-        String weekName;
-        try{
-            jsonNode=objectMapper.readTree(jsonWeekName);
-            weekName=jsonNode.get("week_name").asText();
-            programWeek=programWeekRepository.findOneByWeekName(weekName);
-            if (programWeek!=null){
-                programWeekRepository.delete(programWeek);
-                return new ResponseEntity<>(programWeek, HttpStatus.OK);
-            }
-            else{
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (JsonProcessingException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            weekRepository.delete(week);
+            return new ResponseEntity<>(weekRepository.findOneById(week.getId()), HttpStatus.FOUND);
         }
     }
 }

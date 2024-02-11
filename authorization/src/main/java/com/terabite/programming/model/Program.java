@@ -1,8 +1,5 @@
 package com.terabite.programming.model;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonAlias;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -12,18 +9,17 @@ public class Program
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long programID;
+    private long id;
     
     @NotBlank
-    @JsonAlias("program_name")
-    private String programName;
+    private String name;
 
     @OneToMany(mappedBy = "program")
-    private List<Block> programBlocks;
+    private List<Block> blocks;
 
-    public Program(String programName, List<Block> programBlocks){
-        this.programName=programName;
-        this.programBlocks=programBlocks;
+    public Program(String name, List<Block> blocks){
+        this.name=name;
+        this.blocks=blocks;
     }
 
     public Program(){
@@ -31,27 +27,27 @@ public class Program
     }
 
     public long getId(){
-        return this.programID;
+        return this.id;
     }
 
-    public void setId(long programId){
-        this.programID=programId;
+    public void setId(long id){
+        this.id=id;
     }
 
     public String getName(){
-        return this.programName;
+        return this.name;
     }
 
-    public void setName(String programName){
-        this.programName=programName;
+    public void setName(String name){
+        this.name=name;
     }
 
-    public List<Block> getProgramBlocks(){
-        return this.programBlocks;
+    public List<Block> getBlocks(){
+        return this.blocks;
     }
 
-    public void setProgramBlocks(List<Block> programBlocks){
-        this.programBlocks=programBlocks;
+    public void setBlocks(List<Block> blocks){
+        this.blocks=blocks;
     }
 }
 
