@@ -10,6 +10,6 @@ public interface BlockRepository extends JpaRepository<Block, Long>
 {
     Optional <Block> findByName(String blockName);
     Block findOneByName(String blockName);
-    Optional <Block> findByID(Long id);
-    Block findOneById(Long id);
+    Optional <Block> findByBlockId(Long id);
+    Block findOneByBlockId(Long id);
 }

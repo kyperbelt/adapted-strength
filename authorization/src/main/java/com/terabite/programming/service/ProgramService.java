@@ -24,7 +24,7 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> updateProgram(Program program) {
-        if(programRepository.findById(program.getId()).isEmpty()){
+        if(programRepository.findById(program.getProgramId()).isEmpty()){
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{
@@ -34,11 +34,11 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> getProgram(Program program) {
-        if(programRepository.findById(program.getId()).isEmpty()){
+        if(programRepository.findById(program.getProgramId()).isEmpty()){
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(programRepository.findOneById(program.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(programRepository.findOneByProgramId(program.getProgramId()), HttpStatus.FOUND);
         }
     }
 
@@ -47,7 +47,7 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> deleteProgram(Program program) {
-        if(programRepository.findById(program.getId()).isEmpty()){
+        if(programRepository.findById(program.getProgramId()).isEmpty()){
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{

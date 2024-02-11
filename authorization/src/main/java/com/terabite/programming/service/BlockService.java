@@ -23,7 +23,7 @@ public class BlockService {
     }
 
 	public ResponseEntity<?> updateBlock(Block block) {
-        if(blockRepository.findById(block.getId()).isEmpty()){
+        if(blockRepository.findById(block.getBlockId()).isEmpty()){
             return new ResponseEntity<>(block, HttpStatus.NOT_FOUND);        }
         else{
             blockRepository.save(block);
@@ -32,11 +32,11 @@ public class BlockService {
     }
 
 	public ResponseEntity<?> getBlock(Block block) {
-		if(blockRepository.findById(block.getId()).isEmpty()){
+		if(blockRepository.findById(block.getBlockId()).isEmpty()){
             return new ResponseEntity<>(block, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(blockRepository.findOneById(block.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(blockRepository.findOneByBlockId(block.getBlockId()), HttpStatus.FOUND);
         }
 	}
 
@@ -45,12 +45,12 @@ public class BlockService {
     }
 
 	public ResponseEntity<?> deleteBlock(Block block) {
-		if(blockRepository.findById(block.getId()).isEmpty()){
+		if(blockRepository.findById(block.getBlockId()).isEmpty()){
             return new ResponseEntity<>(block, HttpStatus.NOT_FOUND);
         }
         else{
             blockRepository.delete(block);
-            return new ResponseEntity<>(blockRepository.findOneById(block.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(block, HttpStatus.FOUND);
         }
 	}
 }

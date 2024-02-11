@@ -10,6 +10,6 @@ public interface ProgramRepository extends JpaRepository<Program, Long>
 {
     Optional<Program> findByName(String progamName);
     Program findOneByName(String programName);
-    Optional <Program> findByID(Long id);
-    Program findOneById(Long id);
+    Optional <Program> findByProgramId(Long id);
+    Program findOneByProgramId(Long id);
 }

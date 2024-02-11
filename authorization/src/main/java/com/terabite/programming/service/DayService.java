@@ -2,10 +2,14 @@ package com.terabite.programming.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.terabite.programming.model.Day;
 import com.terabite.programming.repository.DayRepository;
+import jakarta.transaction.Transactional;
 
+@Service
+@Transactional
 public class DayService {
     DayRepository dayRepository;
 
@@ -15,7 +19,7 @@ public class DayService {
     }
 
     public ResponseEntity<?> updateDay(Day day) {
-        if(dayRepository.findById(day.getId()).isEmpty()){
+        if(dayRepository.findById(day.getDayId()).isEmpty()){
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);        }
         else{
             dayRepository.save(day);
@@ -24,11 +28,11 @@ public class DayService {
     }
 
     public ResponseEntity<?> getDay(Day day) {
-        if(dayRepository.findById(day.getId()).isEmpty()){
+        if(dayRepository.findById(day.getDayId()).isEmpty()){
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(dayRepository.findOneById(day.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(dayRepository.findOneByDayId(day.getDayId()), HttpStatus.FOUND);
         }
     }
 
@@ -37,12 +41,12 @@ public class DayService {
     }
 
     public ResponseEntity<?> deleteDay(Day day) {
-        if(dayRepository.findById(day.getId()).isEmpty()){
+        if(dayRepository.findById(day.getDayId()).isEmpty()){
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }
         else{
             dayRepository.delete(day);
-            return new ResponseEntity<>(dayRepository.findOneById(day.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(day, HttpStatus.FOUND);
         }
     }
     

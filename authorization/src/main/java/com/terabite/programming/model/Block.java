@@ -11,7 +11,8 @@ public class Block
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "block_id", nullable = false)
+    private long blockId;
 
     @NotBlank
     private String name;
@@ -33,12 +34,12 @@ public class Block
 
     }
     
-    public long getId() {
-        return id;
+    public long getBlockId() {
+        return blockId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setBlockId(long id) {
+        this.blockId = id;
     }
     public String getName() {
         return name;

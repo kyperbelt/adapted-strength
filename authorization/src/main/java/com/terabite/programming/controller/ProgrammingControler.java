@@ -41,6 +41,7 @@ public class ProgrammingControler {
         this.programService=programService;
     }
 
+
     //Program endpoints
     @PutMapping("/program")
     public ResponseEntity<?> putProgram(@RequestBody Program program) {
@@ -57,7 +58,7 @@ public class ProgrammingControler {
         return programService.getProgram(program);
     }
 
-    @GetMapping("/program/all_programss")
+    @GetMapping("/program/all_programs")
     public ResponseEntity<?> getAllPrograms() {
         return programService.getAllPrograms();
     }
@@ -95,7 +96,6 @@ public class ProgrammingControler {
     }
 
 
-
     //Week endpoints
     @PutMapping("/week")
     public ResponseEntity<?> putWeek(@RequestBody Week week) {
@@ -117,11 +117,11 @@ public class ProgrammingControler {
         return weekService.getAllWeeks();
     }
     
-
     @DeleteMapping("/week")
     public ResponseEntity<?> deleteWeek(@RequestBody Week week){
         return weekService.deleteWeekByName(week);
     }
+
 
     //Day endpoints
     @PutMapping("/day")
@@ -149,6 +149,7 @@ public class ProgrammingControler {
         return dayService.deleteDay(day);
     }
 
+
     //RepCycle endpoints
     @PutMapping("/rep_cycle")
     public ResponseEntity<?> putRepCycle(@RequestBody RepCycle repCycle) {
@@ -174,4 +175,5 @@ public class ProgrammingControler {
     public ResponseEntity<?> deleteRepCycle(@RequestBody RepCycle repCycle){
         return repCycleService.deleteRepCycle(repCycle);
     }
+
 }

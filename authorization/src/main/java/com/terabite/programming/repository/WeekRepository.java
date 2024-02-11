@@ -10,6 +10,6 @@ public interface WeekRepository extends JpaRepository<Week, Long>
 {    
     Optional <Week> findByName(String weekName);
     Week findOneByName(String weekName);
-    Optional <Week> findByID(Long id);
-    Week findOneById(Long id);
+    Optional <Week> findByWeekId(Long id);
+    Week findOneByWeekId(Long id);
 }

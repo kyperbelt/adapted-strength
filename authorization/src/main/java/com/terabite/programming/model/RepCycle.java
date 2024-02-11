@@ -2,6 +2,7 @@ package com.terabite.programming.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +18,8 @@ public class RepCycle
 {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long id;
+    @Column(name = "rep_cycle_id", nullable = false)
+    private long repCycleId;
 
     @NotBlank
     private String name;
@@ -57,12 +59,12 @@ public class RepCycle
         
     }
 
-    public long getId() {
-        return id;
+    public long getRepCycleId() {
+        return repCycleId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setRepCycleId(long id) {
+        this.repCycleId = id;
     }
     
     public String getName() {

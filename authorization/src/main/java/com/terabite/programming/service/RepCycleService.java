@@ -2,9 +2,15 @@ package com.terabite.programming.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import com.terabite.programming.model.RepCycle;
 import com.terabite.programming.repository.RepCycleRepository;
 
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
 public class RepCycleService {
 
     RepCycleRepository repCycleRepository;
@@ -19,7 +25,7 @@ public class RepCycleService {
     }
 
     public ResponseEntity<?> updateRepCycle(RepCycle repCycle) {
-        if(repCycleRepository.findById(repCycle.getId()).isEmpty()){
+        if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
@@ -29,11 +35,11 @@ public class RepCycleService {
     }
 
     public ResponseEntity<?> getRepCycle(RepCycle repCycle) {
-        if(repCycleRepository.findById(repCycle.getId()).isEmpty()){
+        if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(repCycleRepository.findOneById(repCycle.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(repCycleRepository.findOneByRepCycleId(repCycle.getRepCycleId()), HttpStatus.FOUND);
         }
     }
 
@@ -42,12 +48,12 @@ public class RepCycleService {
     }
 
     public ResponseEntity<?> deleteRepCycle(RepCycle repCycle) {
-        if(repCycleRepository.findById(repCycle.getId()).isEmpty()){
+        if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
             repCycleRepository.delete(repCycle);
-            return new ResponseEntity<>(repCycleRepository.findOneById(repCycle.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(repCycle, HttpStatus.FOUND);
         }
     }
     

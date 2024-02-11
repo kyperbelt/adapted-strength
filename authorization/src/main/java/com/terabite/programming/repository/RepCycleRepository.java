@@ -10,6 +10,6 @@ public interface RepCycleRepository extends JpaRepository<RepCycle, Long>
 {
     Optional <RepCycle> findByName(String repCycleName);    
     RepCycle findOneByName(String repCycleName);
-    Optional <RepCycle> findByID(Long id);
-    RepCycle findOneById(Long id);
+    Optional <RepCycle> findByRepCycleId(Long id);
+    RepCycle findOneByRepCycleId(Long id);
 }

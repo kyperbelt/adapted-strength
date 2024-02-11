@@ -24,7 +24,7 @@ public class WeekService {
     }
 
     public ResponseEntity<?> updateWeek(Week week){
-        if(weekRepository.findById(week.getId()).isEmpty()){
+        if(weekRepository.findById(week.getWeekId()).isEmpty()){
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);        }
         else{
             weekRepository.save(week);
@@ -34,11 +34,11 @@ public class WeekService {
 
     //maybe get rid of individual get in favor of getting all
     public ResponseEntity<?> getWeek(Week week){
-        if(weekRepository.findById(week.getId()).isEmpty()){
+        if(weekRepository.findById(week.getWeekId()).isEmpty()){
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(weekRepository.findOneById(week.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(weekRepository.findOneByWeekId(week.getWeekId()), HttpStatus.FOUND);
         }
     }
 
@@ -47,12 +47,12 @@ public class WeekService {
     }
 
     public ResponseEntity<?> deleteWeekByName(Week week){
-        if(weekRepository.findById(week.getId()).isEmpty()){
+        if(weekRepository.findById(week.getWeekId()).isEmpty()){
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
         }
         else{
             weekRepository.delete(week);
-            return new ResponseEntity<>(weekRepository.findOneById(week.getId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(week, HttpStatus.FOUND);
         }
     }
 

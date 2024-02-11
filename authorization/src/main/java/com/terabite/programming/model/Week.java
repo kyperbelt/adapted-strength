@@ -11,7 +11,8 @@ public class Week
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "week_id", nullable = false)
+    private long weekId;
 
     @NotBlank
     private String name;
@@ -33,12 +34,12 @@ public class Week
         
     }
 
-    public long getId() {
-        return id;
+    public long getWeekId() {
+        return weekId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setWeekId(long id) {
+        this.weekId = id;
     }
     
     public String getName() {

@@ -2,6 +2,7 @@ package com.terabite.programming.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +19,8 @@ public class Day
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "day_id", nullable = false)
+    private long dayId;
 
     @NotBlank
     private String name;
@@ -40,12 +42,12 @@ public class Day
 
     }
 
-    public long getId() {
-        return id;
+    public long getDayId() {
+        return dayId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setDayId(long id) {
+        this.dayId = id;
     }
     
     public String getName() {

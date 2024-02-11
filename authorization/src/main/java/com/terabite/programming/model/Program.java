@@ -9,7 +9,8 @@ public class Program
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "program_id", nullable = false)
+    private long programId;
     
     @NotBlank
     private String name;
@@ -26,12 +27,12 @@ public class Program
 
     }
 
-    public long getId(){
-        return this.id;
+    public long getProgramId(){
+        return this.programId;
     }
 
-    public void setId(long id){
-        this.id=id;
+    public void setProgramId(long id){
+        this.programId=id;
     }
 
     public String getName(){
