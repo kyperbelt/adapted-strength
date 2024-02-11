@@ -11,9 +11,6 @@ import com.terabite.authorization.service.ForgotPasswordHelper;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
 
-<<<<<<< HEAD
-import org.springframework.http.HttpStatus;
-=======
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +21,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 
->>>>>>> main
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -125,10 +121,6 @@ public class AuthorizationController {
         return forgotPasswordHelper.processResetPassword(token, jsonPassword);
     }
 
-<<<<<<< HEAD
-    }    
-    
-=======
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
         Cookie newCookie = new Cookie(cookie, value);
         newCookie.setPath("/");
@@ -136,5 +128,4 @@ public class AuthorizationController {
         newCookie.setDomain(domainUrl);
         return newCookie;
     }
->>>>>>> main
 }
