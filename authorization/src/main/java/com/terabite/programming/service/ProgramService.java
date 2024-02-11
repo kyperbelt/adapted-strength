@@ -42,6 +42,10 @@ public class ProgramService {
         }
     }
 
+    public ResponseEntity<?> getAllPrograms() {
+        return new ResponseEntity<>(programRepository.findAll(), HttpStatus.ACCEPTED);
+    }
+
     public ResponseEntity<?> deleteProgram(Program program) {
         if(programRepository.findById(program.getId()).isEmpty()){
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);

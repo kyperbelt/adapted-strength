@@ -32,6 +32,10 @@ public class DayService {
         }
     }
 
+    public ResponseEntity<?> getAllDays() {
+        return new ResponseEntity<>(dayRepository.findAll(), HttpStatus.ACCEPTED);
+    }
+
     public ResponseEntity<?> deleteDay(Day day) {
         if(dayRepository.findById(day.getId()).isEmpty()){
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);

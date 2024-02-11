@@ -32,6 +32,7 @@ public class WeekService {
         }
     }
 
+    //maybe get rid of individual get in favor of getting all
     public ResponseEntity<?> getWeek(Week week){
         if(weekRepository.findById(week.getId()).isEmpty()){
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
@@ -39,6 +40,10 @@ public class WeekService {
         else{
             return new ResponseEntity<>(weekRepository.findOneById(week.getId()), HttpStatus.FOUND);
         }
+    }
+
+    public ResponseEntity<?> getAllWeeks() {
+        return new ResponseEntity<>(weekRepository.findAll(), HttpStatus.ACCEPTED);
     }
 
     public ResponseEntity<?> deleteWeekByName(Week week){
@@ -50,4 +55,6 @@ public class WeekService {
             return new ResponseEntity<>(weekRepository.findOneById(week.getId()), HttpStatus.FOUND);
         }
     }
+
+    
 }

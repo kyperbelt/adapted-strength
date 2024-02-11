@@ -40,6 +40,10 @@ public class BlockService {
         }
 	}
 
+    public ResponseEntity<?> getAllBlocks() {
+        return new ResponseEntity<>(blockRepository.findAll(), HttpStatus.ACCEPTED);
+    }
+
 	public ResponseEntity<?> deleteBlock(Block block) {
 		if(blockRepository.findById(block.getId()).isEmpty()){
             return new ResponseEntity<>(block, HttpStatus.NOT_FOUND);
