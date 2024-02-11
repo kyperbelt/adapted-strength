@@ -30,7 +30,15 @@ dependencies {
 	// implementation 'jakarta.mail:jakarta.mail-api:2.1.2' might be needed for password reset
 }
 
+// when ./gradlew bootRun is executed first require that the application 
+// runs a shell script located ../../scripts/check_env_vars.sh
+bootRun {
+	dependsOn 'checkEnvVars'
+}
 
+task checkEnvVars(type: Exec) {
+	commandLine 'bash', '../scripts/check_env_vars.sh'
+}
 
 
 tasks.named('test') {
