@@ -1,4 +1,4 @@
-package com.terabite.authorization.model;
+package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
@@ -13,6 +13,7 @@ import java.util.Date;
 @Entity
 @Table(name = "user_information_table")
 public class UserInformation implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -24,6 +25,10 @@ public class UserInformation implements Serializable {
     @NotBlank
     @JsonAlias("last_name")
     private String lastName;
+
+    @JsonAlias("subscriptionTier")
+    //@Min(value = 1, message = "Subscription tier must be at least 1")
+    private int subscriptionTier;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -57,9 +62,13 @@ public class UserInformation implements Serializable {
     @JsonAlias("emergency_contact")
     private EmergencyContact emergencyContact;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "login_name", referencedColumnName = "email")
-    private Login login;
+    // @OneToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "login_name", referencedColumnName = "email")
+    // private Login login;
+    @JsonAlias("email")
+    @Column(unique = true)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    private String email;
 
     @JsonAlias("how_did_you_hear")
     private String howDidYouHear;
@@ -87,6 +96,10 @@ public class UserInformation implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void setSubscriptionTier(int subscriptionTier) {this.subscriptionTier = subscriptionTier; }
+
+    public int getSubscriptionTier() {return subscriptionTier; }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
@@ -144,13 +157,13 @@ public class UserInformation implements Serializable {
         this.emergencyContact = emergencyContact;
     }
 
-    public Login getLogin() {
-        return login;
-    }
-
-    public void setLogin(Login login) {
-        this.login = login;
-    }
+    // public Login getLogin() {
+    // return login;
+    // }
+    //
+    // public void setLogin(Login login) {
+    // this.login = login;
+    // }
 
     public String getHowDidYouHear() {
         return howDidYouHear;
@@ -158,5 +171,13 @@ public class UserInformation implements Serializable {
 
     public void setHowDidYouHear(String howDidYouHear) {
         this.howDidYouHear = howDidYouHear;
+    }
+
+    public void setEmail(String string) {
+        this.email = string;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

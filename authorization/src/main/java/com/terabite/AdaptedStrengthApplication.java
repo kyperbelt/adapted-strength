@@ -1,13 +1,13 @@
-package com.terabite.authorization;
+package com.terabite;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AuthorizationApplication {
+public class AdaptedStrengthApplication {
 
 	public static void main(String[] args) {		
-		SpringApplication.run(AuthorizationApplication.class, args);
+		SpringApplication.run(AdaptedStrengthApplication.class, args);
 	}
 
 }
