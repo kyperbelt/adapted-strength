@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.Payload;
+import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.SubscriptionService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UserController {
 
         private final UserRepository userRepository;
+        private final SubscriptionService subscriptionService;
         private final AuthorizationApi authorizationApi;
 
         private final String authCookieName;
@@ -39,10 +42,12 @@ public class UserController {
         private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
         public UserController(
+                        SubscriptionService subscriptionService,
                         UserRepository userRepository, AuthorizationApi authorizationApi,
                         @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,
                         @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl) {
 
+                this.subscriptionService = subscriptionService;
                 this.authorizationApi = authorizationApi;
                 this.authCookieName = authCookieName;
                 this.domainUrl = domainUrl;
@@ -137,9 +142,8 @@ public class UserController {
                 final Optional<Cookie> token = getTokenCookie(request);
 
                 if (token.isEmpty()) {
-
                         log.error("No token found in request");
-                        return ResponseEntity.status(401).body(null);
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
                 }
 
                 final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
@@ -149,7 +153,6 @@ public class UserController {
                 }
 
                 final Optional<UserInformation> userInformation = userRepository.findByEmail(email.get());
-
                 if (userInformation.isEmpty()) {
                         log.error("No user information found for email: " + email.get());
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -164,6 +167,18 @@ public class UserController {
                 }
                 return Arrays.stream(request.getCookies()).filter(cookie -> authCookieName.equals(cookie.getName()))
                                 .findFirst();
+        }
+
+        @PostMapping("/subscribe")
+        public ResponseEntity<?> userSubscribePost(@RequestBody SubscribeRequest request,
+                        HttpServletRequest httpRequest) {
+                Optional<Cookie> token = getTokenCookie(httpRequest);
+                if (token.isEmpty()) {
+                        log.error("No token found in request");
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
+                }
+
+                return subscriptionService.subscribe(request);
         }
 
 }

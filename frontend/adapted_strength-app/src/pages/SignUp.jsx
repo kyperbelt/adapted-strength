@@ -30,11 +30,6 @@ function SubmitButton() {
     return (<button type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >Next</button>);
 }
 
-
-
-
-// document/*.getElementById('sign-up') // TODO: ADAPTEDS-89 */.addEventListener('submit', HandleSubmit); 
-
 function AdaptedStrengthLogo() {
     return (<div className="flex flex-col items-center mt-12">
         <img src={logo} className="w-3/4" />
@@ -42,12 +37,15 @@ function AdaptedStrengthLogo() {
 }
 
 export default function SignUp() {
-    const nav = useNavigate();
+    const navigate = useNavigate();
     let HandleSubmit = (event) => {
         event.preventDefault();
-        window.alert("clicked");
+        // user registration logic here
+        // ...
 
-        nav("/sign-up-additional");
+        // After successful registration, redirect to the Terms of Service page
+        navigate("/terms-of-service");
+
         //if (validatePasswordMatch()){ // TODO: ADAPTEDS-89 
         // window.location.href = "/sign-up-additional";
         //store info // TODO: ADAPTEDS-89 
@@ -83,5 +81,3 @@ export default function SignUp() {
         </div>
     );
 }
-
-

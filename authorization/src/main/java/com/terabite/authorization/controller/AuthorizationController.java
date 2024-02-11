@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,7 +111,6 @@ public class AuthorizationController {
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody String jsonPassword)
             throws LoginNotFoundException {
         return forgotPasswordHelper.processResetPassword(token, jsonPassword);
-
     }
 
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
