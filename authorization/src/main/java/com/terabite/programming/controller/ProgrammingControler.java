@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
 
 
+
 @RestController
 @RequestMapping("/v1/programming")
 public class ProgrammingControler {
@@ -56,6 +57,11 @@ public class ProgrammingControler {
         return programService.getProgram(program);
     }
 
+    @GetMapping("/program/all_programss")
+    public ResponseEntity<?> getAllPrograms() {
+        return programService.getAllPrograms();
+    }
+
     @DeleteMapping("/program")
     public ResponseEntity<?> deleteProgram(@RequestBody Program program){
         return programService.deleteProgram(program);
@@ -76,6 +82,11 @@ public class ProgrammingControler {
     @GetMapping("/block")
     public ResponseEntity<?> getBlock(@RequestBody Block block) {
         return blockService.getBlock(block);
+    }
+
+    @GetMapping("/block/all_blocks")
+    public ResponseEntity<?> getAllBlocks() {
+        return blockService.getAllBlocks();
     }
 
     @DeleteMapping("/block")
@@ -101,6 +112,12 @@ public class ProgrammingControler {
         return weekService.getWeek(week);
     }
 
+    @GetMapping("/week/all_weeks")
+    public ResponseEntity<?> getAllWeeks() {
+        return weekService.getAllWeeks();
+    }
+    
+
     @DeleteMapping("/week")
     public ResponseEntity<?> deleteWeek(@RequestBody Week week){
         return weekService.deleteWeekByName(week);
@@ -122,6 +139,11 @@ public class ProgrammingControler {
         return dayService.getDay(day);
     }
 
+    @GetMapping("/day/all_days")
+    public ResponseEntity<?> getAllDays() {
+        return dayService.getAllDays();
+    }
+
     @DeleteMapping("/day")
     public ResponseEntity<?> deleteDay(@RequestBody Day day){
         return dayService.deleteDay(day);
@@ -141,6 +163,11 @@ public class ProgrammingControler {
     @GetMapping("/rep_cycle")
     public ResponseEntity<?> getRepCycle(@RequestBody RepCycle repCycle) {
         return repCycleService.getRepCycle(repCycle);
+    }
+
+    @GetMapping("/rep_cycle/all_rep_cycles")
+    public ResponseEntity<?> getAllRepCycles() {
+        return repCycleService.getAllRepCycles();
     }
 
     @DeleteMapping("/rep_cycle")
