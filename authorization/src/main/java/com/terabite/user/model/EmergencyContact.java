@@ -1,6 +1,8 @@
-package com.terabite.authorization.model;
+package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +15,7 @@ public class EmergencyContact {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "emergencyContact")
     private UserInformation userInformation;
 

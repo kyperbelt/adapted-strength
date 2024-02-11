@@ -14,10 +14,13 @@ import jakarta.validation.constraints.NotNull;
 public class Login {
     private LoginStatus loginStatus;
 
+    // TODO: might have to change this email/user name schema to include an actual 
+    // unique username, otherwise we cannot allow multiple users with the same email
+    // we have to check that the email is also case-sensitive when we do this. 
     @NotNull
     @Email
-    @JsonAlias("username")
     @Id
+    @JsonAlias("username")
     private String email;
     @NotBlank
     private String password;
