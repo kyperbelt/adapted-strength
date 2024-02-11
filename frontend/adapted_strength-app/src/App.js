@@ -24,9 +24,11 @@ import Profile from './pages/Profile';
 import { AuthApi } from './api/AuthApi';
 import TermsOfService from './pages/TermsOfService.jsx';
 import HealthQuestionnaire from './pages/HealthQuestionnaire';
+import VideoLibrary from './pages/VideoLibrary.jsx';
 
 // TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
+
 // import footer from '../footer'
 
 
@@ -58,6 +60,7 @@ function App() {
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
+            <Route path='video-library' element={<VideoLibrary />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
