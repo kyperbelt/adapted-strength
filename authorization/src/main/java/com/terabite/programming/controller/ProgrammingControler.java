@@ -43,13 +43,13 @@ public class ProgrammingControler {
 
 
     //Program endpoints
-    @PutMapping("/program")
-    public ResponseEntity<?> putProgram(@RequestBody Program program) {
+    @PostMapping("/program")
+    public ResponseEntity<?> postProgram(@RequestBody Program program) {
         return programService.createNewProgram(program);
     }
 
-    @PostMapping("/program")
-    public ResponseEntity<?> postProgram(@RequestBody Program program) {
+    @PutMapping("/program")
+    public ResponseEntity<?> putProgram(@RequestBody Program program) {
         return programService.updateProgram(program);
     }
 
@@ -70,13 +70,13 @@ public class ProgrammingControler {
 
 
     //Block endpoints
-    @PutMapping("/block")
-    public ResponseEntity<?> putBlock(@RequestBody Block block) {
+    @PostMapping("/block")
+    public ResponseEntity<?> postBlock(@RequestBody Block block) {
         return blockService.createNewBlock(block);
     }
 
-    @PostMapping("/block")
-    public ResponseEntity<?> postBlock(@RequestBody Block block) {
+    @PutMapping("/block")
+    public ResponseEntity<?> putBlock(@RequestBody Block block) {
         return blockService.updateBlock(block);
     }
 
@@ -97,13 +97,13 @@ public class ProgrammingControler {
 
 
     //Week endpoints
-    @PutMapping("/week")
-    public ResponseEntity<?> putWeek(@RequestBody Week week) {
+    @PostMapping("/week")
+    public ResponseEntity<?> postWeek(@RequestBody Week week) {
         return weekService.createNewWeek(week);
     }
 
-    @PostMapping("/week")
-    public ResponseEntity<?> postWeek(@RequestBody Week week) {
+    @PutMapping("/week")
+    public ResponseEntity<?> putWeek(@RequestBody Week week) {
         return weekService.updateWeek(week);
     }
 
@@ -124,13 +124,13 @@ public class ProgrammingControler {
 
 
     //Day endpoints
-    @PutMapping("/day")
-    public ResponseEntity<?> putDay(@RequestBody Day day) {
+    @PostMapping("/day")
+    public ResponseEntity<?> postDay(@RequestBody Day day) {
         return dayService.createNewDay(day);
     }
 
-    @PostMapping("/day")
-    public ResponseEntity<?> postDay(@RequestBody Day day) {
+    @PutMapping("/day")
+    public ResponseEntity<?> putDay(@RequestBody Day day) {
         return dayService.updateDay(day);
     }
 
@@ -151,13 +151,13 @@ public class ProgrammingControler {
 
 
     //RepCycle endpoints
-    @PutMapping("/rep_cycle")
-    public ResponseEntity<?> putRepCycle(@RequestBody RepCycle repCycle) {
+    @PostMapping("/rep_cycle")
+    public ResponseEntity<?> postRepCycle(@RequestBody RepCycle repCycle) {
         return repCycleService.createNewRepCycle(repCycle);
     }
 
-    @PostMapping("/rep_cycle")
-    public ResponseEntity<?> postRepCycle(@RequestBody RepCycle repCycle) {
+    @PutMapping("/rep_cycle")
+    public ResponseEntity<?> putRepCycle(@RequestBody RepCycle repCycle) {
         return repCycleService.updateRepCycle(repCycle);
     }
 

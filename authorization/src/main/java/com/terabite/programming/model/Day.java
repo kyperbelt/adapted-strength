@@ -1,6 +1,6 @@
 package com.terabite.programming.model;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,9 +30,9 @@ public class Day
     private Week week;
 
     @OneToMany(mappedBy = "day")
-    private List<RepCycle> repCycles;
+    private Set<RepCycle> repCycles;
 
-    public Day(String name, Week week, List<RepCycle> repCycles){
+    public Day(String name, Week week, Set<RepCycle> repCycles){
         this.name=name;
         this.week=week;
         this.repCycles=repCycles;
@@ -66,11 +66,11 @@ public class Day
         this.week = week;
     }
 
-    public List<RepCycle> getRepCycles(){
+    public Set<RepCycle> getRepCycles(){
         return this.repCycles;
     }
 
-    public void setRepCycles(List<RepCycle> repCycles){
+    public void setRepCycles(Set<RepCycle> repCycles){
         this.repCycles=repCycles;
     }
 }
