@@ -4,15 +4,15 @@ import EmailField from '../components/forms/EmailField';
 import SubmitButton from '../components/forms/SubmitButton';
 
 function resetPassword(email) {
-    console.log("Resetting password for email: " + email);
+    console.log(`Resetting password for email: ${email}`);
 }
 
 export default function ForgotPassword() {
     const nav = useNavigate();
     const emailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}";
-    let onSubmit = (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
-        let email = e.target.email.value;
+        const email = e.target.email.value;
         resetPassword(email);
         nav("/reset-link-sent");
     };

@@ -4,6 +4,7 @@ Team: TeraBITE
 */
 import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
 // They are still only react components
@@ -17,7 +18,7 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
-import Profile from './pages/Profile.jsx';
+
 import UploadProgram from './pages/ProgramUpload.jsx';
 
 /*
@@ -29,12 +30,18 @@ IMPORTS FOR PROGRAM PAGES
   import Power from './pages/program_pages/Power.jsx';
   import General from './pages/program_pages/General.jsx';
 //--------------------------------------------------
+
+import RouteGuard from "./util/RouteGuard";
+import Profile from './pages/Profile';
+import { AuthApi } from './api/AuthApi';
+
 import TermsOfService from './pages/TermsOfService.jsx';
 import HealthQuestionnaire from './pages/HealthQuestionnaire';
+
+// TODO: Check this out guys, this is a lazy loaded component
+const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 // import footer from '../footer'
 
-
-// import './App.css';
 
 function App() {
   return (
@@ -51,9 +58,19 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="login" element={<Login />} />
+
+           
+  
+           
+
+            <Route path="edit-profile" element={<Suspense fallback="...">
+              <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                <EditProfile />
+              </RouteGuard>
+            </Suspense>} />
+            <Route path="profile" element={<RouteGuard state={()=> AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
+            <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />
-            <Route path="profile" element={<Profile />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
             <Route path="prog-up" element={<UploadProgram />} />
