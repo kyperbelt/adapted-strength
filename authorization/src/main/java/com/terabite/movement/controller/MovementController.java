@@ -11,7 +11,7 @@ import java.util.List;
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/v1/mov")
+@RequestMapping("/v1/movement")
 public class MovementController {
     private final MovementRepository movementRepository;
 
@@ -85,9 +85,13 @@ public class MovementController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // TODO: Do we need to delete all movements?
     @DeleteMapping("/movements")
     public ResponseEntity<Movement> deleteAllMovements()
     {
+        // TODO
+        // check authorization token
+        // make sure that the person removing is an admin
         movementRepository.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
