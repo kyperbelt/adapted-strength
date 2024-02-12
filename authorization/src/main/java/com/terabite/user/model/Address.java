@@ -1,4 +1,6 @@
-package com.terabite.authorization.model;
+package com.terabite.user.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "address")
     private UserInformation userInformation;
 
