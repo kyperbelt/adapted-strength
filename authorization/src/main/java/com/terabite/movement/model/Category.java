@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,7 +21,9 @@ public class Category
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "categories")
     @JsonIgnore
 
-    private Set<Movement> movements;
+
+    private Set<Movement> movements = new HashSet<>();
+
 
     public long getId() {
         return id;

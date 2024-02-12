@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -28,7 +29,7 @@ public class Movement
     @JoinTable(name = "movement_category_table",
             joinColumns = @JoinColumn(name = "movement_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     public long getId() {
         return id;
@@ -68,5 +69,11 @@ public class Movement
 
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
+    }
+
+    public void addCategory(Category category)
+    {
+        this.categories.add(category);
+        category.getMovements().add(this);
     }
 }
