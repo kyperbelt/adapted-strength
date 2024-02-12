@@ -1,37 +1,62 @@
 package com.terabite.authorization.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.Payload;
-import com.terabite.authorization.repository.UserRepository;
-import com.terabite.authorization.service.UserInformation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.SubscribeRequest;
+import com.terabite.authorization.model.UserInformation;
+import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.service.ForgotPasswordHelper;
+import com.terabite.authorization.service.LoginService;
+import com.terabite.authorization.service.SignupService;
+import com.terabite.authorization.service.SubscriptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.HttpExchange;
 
 @RestController
 @RequestMapping("/v1/user")
 public class AuthorizationController {
-    @Autowired
-    private UserRepository memberRepository;
+
+    private final LoginService loginService;
+    private final SignupService signupService;
+    private final ForgotPasswordHelper forgotPasswordHelper;
+
+    private final SubscriptionService subscriptionService;
+
+    public AuthorizationController(ForgotPasswordHelper forgotPasswordHelper, LoginService loginService, SignupService signupService, SubscriptionService subscriptionService) {
+        this.forgotPasswordHelper = forgotPasswordHelper;
+        this.loginService = loginService;
+        this.signupService = signupService;
+        this.subscriptionService = subscriptionService;
+    }
+
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserInformation userSignupPost(@RequestBody UserInformation userInformation) throws JsonProcessingException
-    {
-        memberRepository.save(userInformation);
-        return userInformation;
+    public ResponseEntity<?> userSignupPost(@RequestBody UserInformation userInformation) {
+        return signupService.signup(userInformation);
     }
 
     @PostMapping("/login")
-    public Payload userLoginPost() {
-        return new Payload("Reached login POST");
+    public ResponseEntity<?> userLoginPost(@RequestBody Login login) {
+        return loginService.login(login);
     }
 
     @PostMapping("/logout")
     public Payload userLogoutPost() {
         return new Payload("Reached logout POST");
+    }
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<?> userSubscribePost(@RequestBody SubscribeRequest request) {
+        return subscriptionService.subscribe(request);
+    }
+
+    @PutMapping("/forgot_password")
+    public ResponseEntity<String> forgotPassword(@RequestBody String jsonEmail) {
+        return forgotPasswordHelper.processForgotPassword(jsonEmail);
+    }
+
+    @PutMapping("/reset_password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody String jsonPassword) throws LoginNotFoundException {
+        return forgotPasswordHelper.processResetPassword(token, jsonPassword);
     }
 }

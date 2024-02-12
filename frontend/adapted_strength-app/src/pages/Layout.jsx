@@ -8,8 +8,8 @@ import NavBar from "../components/navBar";
 export default function Layout() {
     return (
         <div className="w-full h-full flex flex-col my-0">
-            <Outlet className="" />
             <NavBar />
+            <Outlet className="" />
         </div>
     );
 }

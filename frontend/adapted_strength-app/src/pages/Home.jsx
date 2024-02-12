@@ -22,7 +22,7 @@ export default function Home() {
                 Link to beta app
             </a>
         </header>
-        <button class="w-3/4 App-login-button">
+        <button className="w-3/4 App-login-button">
             <Link className="App-Nav_link"
                 to="login">
                 LOGIN

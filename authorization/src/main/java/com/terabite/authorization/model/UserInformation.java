@@ -1,20 +1,18 @@
-package com.terabite.authorization.service;
+package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "user_information_table")
-public class UserInformation implements Serializable
-{
+public class UserInformation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -26,6 +24,10 @@ public class UserInformation implements Serializable
     @NotBlank
     @JsonAlias("last_name")
     private String lastName;
+
+    @JsonAlias("subscriptionTier")
+    //@Min(value = 1, message = "Subscription tier must be at least 1")
+    private int subscriptionTier;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -60,7 +62,7 @@ public class UserInformation implements Serializable
     private EmergencyContact emergencyContact;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "login_id", referencedColumnName = "id")
+    @JoinColumn(name = "login_name", referencedColumnName = "email")
     private Login login;
 
     @JsonAlias("how_did_you_hear")
@@ -89,6 +91,10 @@ public class UserInformation implements Serializable
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void setSubscriptionTier(int subscriptionTier) {this.subscriptionTier = subscriptionTier; }
+
+    public int getSubscriptionTier() {return subscriptionTier; }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
