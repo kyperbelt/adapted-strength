@@ -7,30 +7,25 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 function UserField() {
-    return (<input type="username" placeholder="Client ID" id="email" name="email" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="username" placeholder="Client ID" id="email" name="email" required className="w-4/5 text-center border-b-4 p-0" />);
 }
-
-function SpecialtyDropDown() {
-    return (<div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Powerlifting</button>
-            </li>
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Body Building</button>
-            </li>
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Olympic Weightlifting</button>
-            </li>
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">General Strength</button>
-            </li>
-        </ul>
-        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
-<input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file"></input>
-    </div>);
+function DropDownMenu() {
+    return (
+        <div className="text-center border-b-4 p-1">
+            <label for="pet-select">Client Specialty: </label>
+            <select name="pets" id="pet-select">
+            <option value="">--Select Specialty--</option>
+            <option value="general">General</option>
+            <option value="bba">Bodybuilding, Aesthetic</option>
+            <option value="oly">Olympic Weightlifting</option>
+            <option value="power">Powerlifting</option>
+            </select>
+        </div>
+    );
 }
-
+function FileUploadField() {
+    return (<input type="file" placeholder="Upload Program" id="email" name="email" required className="text-center w-4/5" />);
+}
 function NextButton() {
     return (<button href="./profile" type="submit" className="text-slate-200 rounded-full px-3 py-1 "  >
         <Link className="App-Nav_link"
@@ -39,6 +34,7 @@ function NextButton() {
         </Link>
     </button>);
 }
+
 function AdaptedStrengthLogo() {
     return (<div className="h-full flex flex-col items-center mt-12">
         <img src={logo} className="text-slate-200 px-3 py-1" />
@@ -51,16 +47,19 @@ const ProgUp = () => {
             <div className="h-60 bg-header-background1">
                 <AdaptedStrengthLogo />
             </div>
+            <h1 className="relative mx-0 text-center text-2xl bottom-20">Hello, Coach!</h1>
+            <h3 className="relative mx-0 text-center text-2xl bottom-20">Upload the programs below:</h3>
             <div className="bg-[#161A1D] h-full">
-                <div className="relative bottom-20">
-                    <h1 className="relative mx-0 text-center text-2xl bottom-4">Hello, Coach!</h1>
-                    <h3 className="relative mx-0 text-center text-2xl bottom-4">Upload the programs below:</h3>
-                    <div id="programUpload" className="flex flex-col items-center px-0 bg-slate-50 shadow-md rounded-3xl pt-8 pb-8 ">
-                        <div className="w-full flex flex-col items-center px-0 ">
+                <div className="relative bottom-10">
+                    <div id="programUpload" className="items-center px-20 py-20 bg-slate-50 rounded-3xl pt-8 pb-8 ">
+                        <div className="w-full items-center px-0 rounded-3xl">
                             <UserField />
                         </div>
-                        <div className="w-full flex flex-col items-center px-0 ">
-                            <SpecialtyDropDown />
+                        <div className="w-full items-center px-0 pt-4 rounded-3x">
+                            <DropDownMenu />
+                        </div>
+                        <div className="w-full items-center px-0 pt-4 rounded-3xl">
+                            <FileUploadField />
                         </div>
 
                     </div>
@@ -75,5 +74,37 @@ const ProgUp = () => {
             </div>
         </div>)
 };
+
+
+/*
+                            <div id="dropdown" className="hidden bg-white divide-y divide-gray-100 rounded-lg">
+                                <ul className="py-2" aria-labelledby="dropDownMenu">
+                                    <li>
+                                        <div className="items-center text-center">
+                                            <input id="checkbox-item-general" type="checkbox" value="" className="w-4 h-4 items-center" />
+                                            <label for="checkbox-item-general" className="ms-2 font-medium text-black">General</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="items-center text-center">
+                                            <input id="checkbox-item-BBA" type="checkbox" value="" className="w-4 h-4 items-center" />
+                                            <label for="checkbox-item-BBA" className="ms-2 font-medium text-black">Body Building, Aesthetics</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="items-center text-center">
+                                            <input id="checkbox-item-power" type="checkbox" value="" className="w-4 h-4 items-center" />
+                                            <label for="checkbox-item-power" className="ms-2 font-medium text-black">Powerlifting</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="items-center text-center">
+                                            <input id="checkbox-item-oly" type="checkbox" value="" className="w-4 h-4 items-center" />
+                                            <label for="checkbox-item-oly" className="ms-2 font-medium text-black">Olympic Weightlifting</label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            */
 
 export default ProgUp;

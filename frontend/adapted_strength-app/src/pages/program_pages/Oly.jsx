@@ -5,12 +5,14 @@ Team: TeraBITE
 import { Outlet, Link } from "react-router-dom";
 import programFiller from "../../assets/blank_filler.png"
 
-function UserField() {
-    return (<input type="fname" placeholder="First Name" id="fname" name="fname" required className="w-4/5 border-b-4 p-0" />);
+/*
+function ClientField() {
+    return (<input type="client" placeholder="Client" id="client" name="client" required className="w-4/5 border-b-4 p-0" />);
 }
 function SpecialtyField() {
-    return (<input type="lname" placeholder="Last Name" id="lname" name="lname" required className="w-4/5 border-b-4 p-0" />);
+    return (<input type="specialty" placeholder="Specialty" id="specialty" name="specialty" required className="w-4/5 border-b-4 p-0" />);
 }
+*/
 
 export default function Olympic() {
     return (
