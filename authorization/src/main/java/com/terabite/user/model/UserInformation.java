@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -27,8 +28,11 @@ public class UserInformation implements Serializable {
     private String lastName;
 
     @JsonAlias("subscriptionTier")
-    //@Min(value = 1, message = "Subscription tier must be at least 1")
     private int subscriptionTier;
+
+    @JsonAlias("expiration_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate expirationDate;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -65,6 +69,7 @@ public class UserInformation implements Serializable {
     // @OneToOne(cascade = CascadeType.ALL)
     // @JoinColumn(name = "login_name", referencedColumnName = "email")
     // private Login login;
+
     @JsonAlias("email")
     @Column(unique = true)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
@@ -100,6 +105,11 @@ public class UserInformation implements Serializable {
     public void setSubscriptionTier(int subscriptionTier) {this.subscriptionTier = subscriptionTier; }
 
     public int getSubscriptionTier() {return subscriptionTier; }
+
+    public LocalDate getExpirationDate() {return expirationDate; }
+
+    // Set subscription expiration date to be 30 days from the current date
+    public void setExpirationDate() {this.expirationDate = LocalDate.now().plusDays(30); }
 
     public Date getDateOfBirth() {
         return dateOfBirth;

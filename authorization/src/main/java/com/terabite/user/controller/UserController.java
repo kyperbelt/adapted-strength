@@ -57,7 +57,7 @@ public class UserController {
         // TODO| README: Accounts are created by the authorization service and not by
         // the user
         // service.
-        // This service will only be repsonsible for creating, updating, and deleting
+        // This service will only be responsible for creating, updating, and deleting
         // and retrieving user information.
         @PostMapping("/create")
         public ResponseEntity<String> createAccountInformation(
