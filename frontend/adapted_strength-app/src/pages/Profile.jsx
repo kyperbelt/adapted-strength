@@ -28,12 +28,12 @@ function ZipField() {
 }
 function PhoneField() {
     return (<input type="phoneNum" placeholder="Phone Number" id="phoneNum" name="phoneNum" required className="w-4/5 border-b-4 p-0" />);
+}
 
 function SxField() {
     return (<input type="sex" defaultValue="Sex" id="sex" name="sex" required className="w-4/5 border-b-4 p-0" />);
 
 }
-
 
 export default function Profile() {
 
@@ -53,9 +53,8 @@ export default function Profile() {
                 hugh.jay@gmail.com
             </p>
             <Link to="/edit-profile" className="bg-[#161A1D] text-white bottom-20  px-0 pb-8 mb-4">
-            Edit Profile
+                Edit Profile
             </Link>
-
             <Outlet className="" />
             <div className="w-full flex flex-col items-center px-0 ">
                 <FNameField />
