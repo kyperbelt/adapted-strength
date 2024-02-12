@@ -9,8 +9,10 @@ import java.util.List;
 public interface CategoryRepository extends CrudRepository<Category, Integer>
 {
     List<Category> findByCategoryContaining(String category);
+    List<Category> findCategoriesByMovementsId(long id);
 
     Category findByCategory(String category);
+    Category findById(long id);
 
-    List<Category> findCategoriesByMovementsId(long id);
+
 }

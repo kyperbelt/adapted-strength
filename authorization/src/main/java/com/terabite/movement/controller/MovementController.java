@@ -11,7 +11,7 @@ import java.util.List;
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/v1/movement")
+@RequestMapping("/v1/mov")
 public class MovementController {
     private final MovementRepository movementRepository;
 

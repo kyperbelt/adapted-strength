@@ -41,8 +41,21 @@ public class CategoryController
 
     }
 
+    @GetMapping("/categories/{id}")
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") long id)
+    {
+        Category category = categoryRepository.findById(id);
+        if(category == null)
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
     @GetMapping("/movements/{movement_id}/categories")
-    public ResponseEntity<List<Category>> getALlCategoriesByMovementId(@PathVariable("movement_id") long id) {
+    public ResponseEntity<List<Category>> getALlCategoriesByMovementId(@PathVariable("movement_id") long id)
+    {
         Movement foundMovement = movementRepository.findById(id);
         if (foundMovement == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -51,6 +64,19 @@ public class CategoryController
         List<Category> categories = categoryRepository.findCategoriesByMovementsId(id);
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
+
+    @GetMapping("/categories/{category_id}/movements")
+    public ResponseEntity<List<Movement>> getAllMovementsByCategoryId(@PathVariable("category_id") long id)
+    {
+        if(!categoryRepository.existsById((int) id))
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        List<Movement> movements = movementRepository.findMovementsByCategoriesId(id);
+        return new ResponseEntity<>(movements, HttpStatus.OK);
+    }
+
 
     @PostMapping("/movements/{movement_id}/categories")
     public ResponseEntity<Category> addCategory(@PathVariable("movement_id") long id, @RequestBody Category category)
