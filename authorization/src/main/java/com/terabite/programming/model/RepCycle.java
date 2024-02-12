@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
@@ -18,7 +16,7 @@ public class RepCycle
 {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name = "rep_cycle_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private long repCycleId;
 
     @NotBlank
@@ -40,11 +38,7 @@ public class RepCycle
     @JsonAlias("coach_notes")
     private String coachNotes;
 
-    @ManyToOne
-    @JoinColumn(name="id")
-    private Day day;
-
-    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, Day day){
+    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes){
         this.name=name;
         this.equipment=equipment;
         this.numSets=numSets;
@@ -52,7 +46,6 @@ public class RepCycle
         this.weight=weight;
         this.restTime=restTime;
         this.coachNotes=coachNotes;
-        this.day=day;
     }
 
     public RepCycle(){
@@ -122,13 +115,4 @@ public class RepCycle
     public void setCoachNotes(String coachNotes) {
         this.coachNotes = coachNotes;
     }
-    
-    public Day getDay(){
-        return this.day;
-    }
-
-    public void setDay(Day day){
-        this.day=day;
-    }
-
 }

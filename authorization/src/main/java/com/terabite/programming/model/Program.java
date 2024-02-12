@@ -9,13 +9,14 @@ public class Program
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "program_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private long programId;
     
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "program")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn
     private List<Block> blocks;
 
     public Program(String name, List<Block> blocks){

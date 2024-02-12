@@ -8,8 +8,6 @@ import com.terabite.programming.model.Program;
 
 public interface ProgramRepository extends JpaRepository<Program, Long>
 {
-    Optional<Program> findByName(String progamName);
-    Program findOneByName(String programName);
     Optional <Program> findByProgramId(Long id);
     Program findOneByProgramId(Long id);
 }

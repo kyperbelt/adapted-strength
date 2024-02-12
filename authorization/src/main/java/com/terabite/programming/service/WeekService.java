@@ -32,7 +32,6 @@ public class WeekService {
         }
     }
 
-    //maybe get rid of individual get in favor of getting all
     public ResponseEntity<?> getWeek(Week week){
         if(weekRepository.findById(week.getWeekId()).isEmpty()){
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);

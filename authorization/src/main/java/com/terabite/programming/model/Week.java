@@ -11,22 +11,18 @@ public class Week
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "week_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private long weekId;
 
     @NotBlank
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
-    private Block block;
-
-    @OneToMany(mappedBy = "week")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn
     private List<Day> days;
 
-    public Week(String name, Block block, List<Day> days){
+    public Week(String name, List<Day> days){
         this.name=name;
-        this.block=block;
         this.days=days;
     }
 
@@ -50,14 +46,6 @@ public class Week
         this.name=name;
     }
 
-    public Block getBlock() {
-        return block;
-    }
-
-    public void setBlock(Block block) {
-        this.block = block;
-    }
-    
     public List<Day> getDays() {
         return days;
     }

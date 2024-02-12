@@ -13,6 +13,10 @@ import jakarta.transaction.Transactional;
 public class DayService {
     DayRepository dayRepository;
 
+    public DayService(DayRepository dayRepository){
+        this.dayRepository=dayRepository;
+    }
+
     public ResponseEntity<?> createNewDay(Day day) {
         dayRepository.save(day);
         return new ResponseEntity<>(day, HttpStatus.CREATED);
