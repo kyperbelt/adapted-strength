@@ -21,12 +21,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 
-import com.terabite.gateway.handling.ControllerHandler;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthorizationController {
@@ -38,7 +36,12 @@ public class AuthorizationController {
     private final SignupService signupService;
     private final ForgotPasswordHelper forgotPasswordHelper;
 
-    public AuthorizationController(ForgotPasswordHelper forgotPasswordHelper, LoginService loginService, SignupService signupService) {
+    private Logger log = LoggerFactory.getLogger(AuthorizationController.class);
+
+    public AuthorizationController(ForgotPasswordHelper forgotPasswordHelper, LoginService loginService,
+            SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,@Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl){
+        this.authCookieName = authCookieName;
+        this.domainUrl = domainUrl;
         this.forgotPasswordHelper = forgotPasswordHelper;
         this.loginService = loginService;
         this.signupService = signupService;
