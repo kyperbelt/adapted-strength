@@ -25,19 +25,15 @@ function NextButton() {
     </button>);
 }
 
-function LoggingIn(email) {
-
-}
-
 function AdaptedStrengthLogo() {
     return (<div className="flex flex-col items-center mt-12">
-        <img src={logo} className="w-3/4" aria-label="an image of the Adapted Strength logo" />
+        <img src={logo} className="w-3/4" alt="Company Logo" aria-label="an image of the Adapted Strength logo" />
     </div>);
 }
 
 function GoogleLogo() {
     return (<p className="rounded-full">
-        <img src={google} className="w-5" aria-label="an image of the Google logo" />
+        <img src={google} className="w-5" alt= "Google Logo" aria-label="an image of the Google logo" />
     </p>);
 }
 

@@ -12,8 +12,8 @@ function UserField() {
 function DropDownMenu() {
     return (
         <div className="text-center border-b-4 p-1">
-            <label for="pet-select">Client Specialty: </label>
-            <select name="pets" id="pet-select">
+            <label for="specialty-select">Client Specialty: </label>
+            <select name="specialty" id="specialty-select">
             <option value="">--Select Specialty--</option>
             <option value="general">General</option>
             <option value="bba">Bodybuilding, Aesthetic</option>
@@ -37,7 +37,7 @@ function NextButton() {
 
 function AdaptedStrengthLogo() {
     return (<div className="h-full flex flex-col items-center mt-12">
-        <img src={logo} className="text-slate-200 px-3 py-1" />
+        <img src={logo} alt="Adapted Strength Logo" className="text-slate-200 px-3 py-1" />
     </div>);
 }
 
