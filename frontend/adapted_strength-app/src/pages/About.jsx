@@ -15,12 +15,6 @@ const About = () => {
                 <p className="text-center my-4">Hello and Welcome! I’m Alex-Andre B. Palting, a fitness coach with a decade worth of experience that is located out in Northern California.</p>
 
                 <section className="neumorphism mt-8 p-6 rounded-lg">
-                    <h2 className="text-2xl font-semibold text-custom-dark">Statement</h2>
-                    <p className="text-center my-4">My mission is to take current gym knowledge that is optimal and create a fitness lifestyle that is sustainable and practical for you. My approach to fitness focused on long-term improvement and organic learning.  Whether you are starting your fitness journey from scratch or an athlete looking to up your competition level, I want to make sure they are not wasting your time in the gym, but still enjoying your process of training.</p> 
-                    <p className="text-center my-4">Let me be your fitness secretary.</p>
-                </section>
-
-                <section className="neumorphism mt-8 p-6 rounded-lg">
                     <h2 className="text-2xl font-semibold text-custom-dark">Founder of Adapted Strength</h2>
                     <img src={teamMemberImage} alt="Coach Alex" className="w-32 h-32 rounded-full mx-auto mt-4" />
                     <p className="mt-2 text-custom-dark text-center">Coach Alex</p>
