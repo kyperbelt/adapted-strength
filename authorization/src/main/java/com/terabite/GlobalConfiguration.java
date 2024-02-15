@@ -20,9 +20,31 @@ public class GlobalConfiguration {
 	@Value("${ADAPTED_STRENGTH_WEB_URL:localhost}")
 	private String domainUrl;
 
+	@Value("${ADAPTED_STRENGTH_CALENDLY-Client_ID}")
+	private String cldnlyClientID;
+	
+	@Value("${ADAPTED_STRENGTH_CALENDLY-Client_Secret}")
+	private String cldnlyClientSecret;
+
+	@Value("${ADAPTED_STRENGTH_CALENDLY-Webhook}")
+	private String cldnlyWebHook;
+
+	@Bean
+	public CalendlyClientID clientID(){
+		return new clientID();
+	}
+	@Bean
+	public CalendlyClientSecret clientSecret(){
+		return new clientSecret();
+	}
+	@Bean
+	public CalendlyWebHook webHook(){
+		return new webHook();
+	}
+
 	@Bean
 	public AuthorizationApi authorizationApi() {
-		// FOr now we will just return a new instance of the AuthorizationApi class.
+		// For now we will just return a new instance of the AuthorizationApi class.
 		// later we might want to set this up some better way. I am still new to 
 		// spring boot and I am not sure if this is the best approach. 
 		return new AuthorizationApi();

@@ -1,3 +1,7 @@
+/*
+Module: About.jsx
+Team: TeraBITE
+*/
 import teamMemberImage from '../assets/team_member_image.jpg';
 //import image1 from '../assets/image1.jpg'; // UNUSED ASSET - Commenting out
 import image2 from '../assets/image2.jpg';
