@@ -77,13 +77,13 @@ function App() {
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
             <Route path="prog-up" element={<UploadProgram />} />
 
-            /* ROUTES FOR PROGRAM PAGES */
-            //--------------------------------------------------
+            {/* ROUTES FOR PROGRAM PAGES */}
+            {/*--------------------------------------------------*/}
             <Route path="bodybuild" element={<BodyBuild />} />
             <Route path="power-lifting" element={<Power />} />
             <Route path="oly-lifting" element={<Oly />} />
             <Route path="general-program" element={<General />} />
-            //--------------------------------------------------
+            {/*--------------------------------------------------*/}
 
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
