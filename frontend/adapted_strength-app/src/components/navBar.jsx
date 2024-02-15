@@ -34,7 +34,10 @@ export default function NavBar() {
         <Link to="/forgot-password">Forgot Password</Link>
         <span> | </span>
         <Link to="/prog-up">Coach Program Upload</Link>
-        <Link to="profile">Profile</Link>
+        <span> | </span>
+        <Link to="/consultations">Calendly Booking</Link>
+        <span> | </span>
+        <Link to="/profile">Profile</Link>
         <span> | </span>
         <Link to="sign-up">Sign Up</Link>
          <StateGuard state={() => AuthApi.isLoggedIn()}><span> | 

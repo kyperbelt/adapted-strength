@@ -31,6 +31,7 @@ IMPORTS FOR PROGRAM PAGES
   import General from './pages/program_pages/General.jsx';
 //--------------------------------------------------
 
+import Booking from './pages/Booking.jsx';
 import RouteGuard from "./util/RouteGuard";
 import Profile from './pages/Profile';
 import { AuthApi } from './api/AuthApi';
@@ -84,11 +85,11 @@ function App() {
             <Route path="oly-lifting" element={<Oly />} />
             <Route path="general-program" element={<General />} />
             {/*--------------------------------------------------*/}
-
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
             <Route path='video-library' element={<VideoLibrary />} />
+            <Route path="consultations" element={<Booking />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

@@ -12,6 +12,9 @@ public class GlobalConfiguration {
 
 	public static final String BEAN_NAME_AUTH_COOKIE_NAME = "authCookieName";
 	public static final String BEAN_NAME_DOMAIN_URL = "domainUrl";
+	public static final String CALENDLY_CLIENT_ID = "cldnlyClientID";
+	public static final String CALENDLY_CLIENT_SECRET = "cldnlyClientSecret";
+	public static final String CALENDLY_WEBHOOK = "cldnlyWebHook"
 
 	@Value("${AUTH_COOKIE_NAME:adapted-strength_auth-token}")
 	private String authCookieName;
@@ -20,26 +23,28 @@ public class GlobalConfiguration {
 	@Value("${ADAPTED_STRENGTH_WEB_URL:localhost}")
 	private String domainUrl;
 
-	@Value("${ADAPTED_STRENGTH_CALENDLY-Client_ID}")
+	@Value("${ADAPTED_STRENGTH_CALENDLY_CLIENT_ID}")
 	private String cldnlyClientID;
 	
-	@Value("${ADAPTED_STRENGTH_CALENDLY-Client_Secret}")
+	@Value("${ADAPTED_STRENGTH_CALENDLY_CLIENT_SECRET}")
 	private String cldnlyClientSecret;
 
-	@Value("${ADAPTED_STRENGTH_CALENDLY-Webhook}")
+	@Value("${ADAPTED_STRENGTH_CALENDLY_WEBHOOK}")
 	private String cldnlyWebHook;
 
-	@Bean
-	public CalendlyClientID clientID(){
-		return new clientID();
+	@Bean(name = CALENDLY_CLIENT_ID)
+	public String getCldnlyClientID() {
+		return cldnlyClientID;
 	}
-	@Bean
-	public CalendlyClientSecret clientSecret(){
-		return new clientSecret();
+
+	@Bean(name = CALENDLY_CLIENT_SECRET)
+	public String getCldnlyClientSECRET() {
+		return cldnlyClientSecret;
 	}
-	@Bean
-	public CalendlyWebHook webHook(){
-		return new webHook();
+
+	@Bean(name = CALENDLY_WEBHOOK)
+	public String getCldnlyWebHook() {
+		return cldnlyWebHook;
 	}
 
 	@Bean
