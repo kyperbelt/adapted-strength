@@ -7,7 +7,7 @@ import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.Payload;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginNotFoundException;
-import com.terabite.authorization.service.ForgotPasswordHelper;
+import com.terabite.authorization.service.ForgotPasswordService;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
 
@@ -42,15 +42,15 @@ public class AuthorizationController {
 
     private final LoginService loginService;
     private final SignupService signupService;
-    private final ForgotPasswordHelper forgotPasswordHelper;
+    private final ForgotPasswordService forgotPasswordService;
 
     private Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
-    public AuthorizationController(ForgotPasswordHelper forgotPasswordHelper, LoginService loginService,
+    public AuthorizationController(ForgotPasswordService forgotPasswordHelper, LoginService loginService,
             SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,@Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl){
         this.authCookieName = authCookieName;
         this.domainUrl = domainUrl;
-        this.forgotPasswordHelper = forgotPasswordHelper;
+        this.forgotPasswordService = forgotPasswordHelper;
         this.loginService = loginService;
         this.signupService = signupService;
     }
@@ -112,13 +112,13 @@ public class AuthorizationController {
 
     @PutMapping("/forgot_password")
     public ResponseEntity<String> forgotPassword(@RequestBody String jsonEmail) {
-        return forgotPasswordHelper.processForgotPassword(jsonEmail);
+        return forgotPasswordService.processForgotPassword(jsonEmail);
     }
 
     @PutMapping("/reset_password")
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody String jsonPassword)
             throws LoginNotFoundException {
-        return forgotPasswordHelper.processResetPassword(token, jsonPassword);
+        return forgotPasswordService.processResetPassword(token, jsonPassword);
     }
 
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
