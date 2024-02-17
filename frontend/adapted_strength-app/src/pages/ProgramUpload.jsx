@@ -12,7 +12,7 @@ function UserField() {
 function DropDownMenu() {
     return (
         <div className="text-center border-b-4 p-1">
-            <label for="specialty-select">Client Specialty: </label>
+            <label htmlFor="specialty-select">Client Specialty: </label>
             <select name="specialty" id="specialty-select">
             <option value="">--Select Specialty--</option>
             <option value="general">General</option>
