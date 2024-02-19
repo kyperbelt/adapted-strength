@@ -1,28 +1,77 @@
+import { useState } from "react";
 import PageCotnainer1 from "../components/PageContainer";
 import { CardBack } from "../components/Card";
 import LabeledInputField from "../components/forms/LabeledInputField";
 
 // list of programs 
-const programs = [
+const test_programs = [
   {
+    id: 1,
     name: "Program 1",
     description: "This is a program",
+    open: false, 
+    blocks: []
   },
   {
+    id: 2,
     name: "Program 2",
     description: "This is a program",
+    open: false, 
+    blocks: []
   },
   {
+    id: 3,
     name: "Program 3",
     description: "This is a program",
+    open: false,
+    blocks: [1]
   },
   {
+    id: 4,
     name: "Program 4",
     description: "This is a program",
+    open: true,
+    blocks: []
   },
 ];
 
+
+const test_blocks = [
+  {
+    id: 1,
+    name: "Block 1",
+    description: "This is a block"
+  },
+  {
+    id: 2,
+    name: "Block 2",
+    description: "This is a block"
+  },
+  {
+    id: 3,
+    name: "Block 3",
+    description: "This is a block"
+  },
+]
+
+
 export default function ProgramMamagement() {
+
+  const [programs, setPrograms] = useState(test_programs);
+
+
+  const onRowClick = (program) => {
+    for (let p of programs) {
+      if (p.name === program.name) {
+        p.open = !p.open;
+      } else {
+        p.open = false;
+      }
+    }
+    setPrograms([...programs]);
+    console.log(`clicked on ${program.name}`)
+  }
+
   return (
     <PageCotnainer1>
       <CardBack className="">
@@ -40,11 +89,29 @@ export default function ProgramMamagement() {
             </thead>
             <tbody>
               {programs.map((program) => (
-                <tr className="border-b text-left" key={program.name}>
-                  <td className="px-6 py-3">{program.name}</td>
-                  <td>{program.description}</td>
-                  <td><HamburgerButtom className="ml-auto" dropdownToggle={"dropdown"} /> </td>
-                </tr>
+                <>
+                  <tr className="border-b text-left " key={program.name}>
+                    <td onClick={() => { onRowClick(program) }} className="cursor-pointer px-6 py-3">{program.name}</td>
+                    <td>{program.description}</td>
+                    <td><HamburgerButtom className="ml-auto" dropdownToggle={"dropdown"} /> </td>
+                  </tr>
+                  {program.open && (
+                    <tr className="">
+                      <td className="px-6 py-3" colSpan="3">
+                        <div className="grid grid-cols-1">
+                          <div className="flex flex-row">
+                            <button className="p-2 text-left rounded-xl bg-gray-300 max-w-2">Add Block</button>
+                          </div>
+                          <div className="w-full flex flex-row">
+                            {(program.blocks.map((block)=>{
+                                return (<span>{test_blocks.filter((b)=> b.id === block)[0].name}</span>);
+                            }))}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
             </tbody>
           </table>
