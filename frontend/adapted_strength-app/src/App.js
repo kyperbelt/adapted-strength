@@ -19,7 +19,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 
-import UploadProgram from './pages/ProgramUpload.jsx';
+import ProgramManagement from './pages/ProgramManagement.jsx';
 
 /*
 IMPORTS FOR PROGRAM PAGES
@@ -75,14 +75,15 @@ function App() {
             <Route path="about" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
-            <Route path="prog-up" element={<UploadProgram />} />
+
+            <Route path="program-management" element={<ProgramManagement />} />
 
             /* ROUTES FOR PROGRAM PAGES */
             //--------------------------------------------------
-            <Route path="bodybuild" element={<BodyBuild />} />
-            <Route path="power-lifting" element={<Power />} />
-            <Route path="oly-lifting" element={<Oly />} />
-            <Route path="general-program" element={<General />} />
+            // <Route path="bodybuild" element={<BodyBuild />} />
+            // <Route path="power-lifting" element={<Power />} />
+            // <Route path="oly-lifting" element={<Oly />} />
+            // <Route path="general-program" element={<General />} />
             //--------------------------------------------------
 
             <Route path="terms-of-service" element={<TermsOfService />} />

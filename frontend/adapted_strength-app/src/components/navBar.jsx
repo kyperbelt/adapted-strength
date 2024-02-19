@@ -33,7 +33,8 @@ export default function NavBar() {
         <span> | </span>
         <Link to="/forgot-password">Forgot Password</Link>
         <span> | </span>
-        <Link to="/prog-up">Coach Program Upload</Link>
+        <Link to="/program-management">Manage Programs</Link>
+        <span> | </span>
         <Link to="profile">Profile</Link>
         <span> | </span>
         <Link to="sign-up">Sign Up</Link>
