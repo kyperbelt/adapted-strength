@@ -1,35 +1,27 @@
 package com.terabite.authorization.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.Payload;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.ForgotPasswordHelper;
+import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
 
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
@@ -44,15 +36,24 @@ public class AuthorizationController {
     private final SignupService signupService;
     private final ForgotPasswordHelper forgotPasswordHelper;
 
+    private final JwtService jwtService;
+
+    private final LoginRepository loginRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
     private Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
     public AuthorizationController(ForgotPasswordHelper forgotPasswordHelper, LoginService loginService,
-            SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,@Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl){
+                                   SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl, JwtService jwtService, LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
         this.authCookieName = authCookieName;
         this.domainUrl = domainUrl;
         this.forgotPasswordHelper = forgotPasswordHelper;
         this.loginService = loginService;
         this.signupService = signupService;
+        this.jwtService = jwtService;
+        this.loginRepository = loginRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/signup")
@@ -121,6 +122,21 @@ public class AuthorizationController {
         return forgotPasswordHelper.processResetPassword(token, jsonPassword);
     }
 
+    @PostMapping("get_token")
+    public String getToken(@RequestBody Login login) {
+
+        Login storedLogin = loginRepository.findByEmail(login.getEmail())
+                .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
+
+        if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword())) {
+            return jwtService.generateToken(login.getEmail());
+        } else {
+//            throw new LoginNotFoundException("Invalid login");
+            return "Invalid login";
+        }
+//        return "Reached getToken";
+    }
+
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
         Cookie newCookie = new Cookie(cookie, value);
         newCookie.setPath("/");
@@ -128,4 +144,6 @@ public class AuthorizationController {
         newCookie.setDomain(domainUrl);
         return newCookie;
     }
+
+
 }
