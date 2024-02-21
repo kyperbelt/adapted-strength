@@ -1,23 +1,26 @@
 package com.terabite.authorization.service;
 
-import com.terabite.authorization.repository.LoginRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.terabite.authorization.log.JwtValidationException;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.management.relation.Role;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 @Component
 public class JwtService {
+    private final Logger log = LoggerFactory.getLogger(JwtService.class);
     public static final Key SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String generateToken(String userName) {
@@ -26,12 +29,17 @@ public class JwtService {
     }
 
     private String createToken(Map<String, Object> claims, String userName) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userName)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // Expire in 1 minute for testing
-                .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
+
+        try {
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(userName)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // Expire in 1 minute for testing
+                    .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Key getSignKey() {
@@ -52,12 +60,19 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
+                 IllegalArgumentException e) {
+            log.info("Bad JWT: " + token);
+//            throw new JwtValidationException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
     }
 
     private Boolean isTokenExpired(String token) {

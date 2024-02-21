@@ -1,9 +1,11 @@
 package com.terabite.authorization.controller;
 
 import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.model.Payload;
+import com.terabite.authorization.dto.ApiResponse;
+import com.terabite.authorization.dto.AuthRequest;
+import com.terabite.authorization.dto.Payload;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.ForgotPasswordHelper;
 import com.terabite.authorization.service.JwtService;
@@ -134,24 +136,42 @@ public class AuthorizationController {
 
 
     @PostMapping("get_token")
-    public String getToken(@RequestBody Login login) {
+    public ResponseEntity<?> getToken(@RequestBody AuthRequest authRequest) {
 
-        Login storedLogin = loginRepository.findByEmail(login.getEmail())
-                .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
+//        Login storedLogin = loginRepository.findByEmail(login.getEmail())
+//                .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
+//
+//        if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword())) {
+//            return jwtService.generateToken(login.getEmail());
+//        } else {
+////            throw new LoginNotFoundException("Invalid login");
+//            return "Invalid login";
+//        }
 
-        if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword())) {
-            return jwtService.generateToken(login.getEmail());
-        } else {
-//            throw new LoginNotFoundException("Invalid login");
-            return "Invalid login";
+        Optional<Login> storedLogin = loginRepository.findByEmail(authRequest.getUsername());
+
+        if (storedLogin.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse("Email not found", authRequest));
         }
-//        return "Reached getToken";
+
+        Login login = storedLogin.get();
+        if (passwordEncoder.matches(authRequest.getPassword(), login.getPassword())) {
+            String token = jwtService.generateToken(authRequest.getUsername());
+            return ResponseEntity.ok(new ApiResponse("Success", token));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse("Invalid password", authRequest));
+        }
+
     }
 
     @GetMapping("restricted_page")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-    public String restrictedPage() {
-        return "Reached restricted page";
+    public ResponseEntity<?> restrictedPage() {
+        return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached restricted page"));
     }
 
     @Deprecated

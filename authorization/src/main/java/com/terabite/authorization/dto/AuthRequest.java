@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// Kind of like a dto for login
+/**
+ * DTO for Login. Removes all the fields but email and password.
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

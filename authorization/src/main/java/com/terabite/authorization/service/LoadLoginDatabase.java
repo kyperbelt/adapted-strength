@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // For debug only
 @Configuration
 public class LoadLoginDatabase {
-    private static final Logger log = LoggerFactory.getLogger(LoadLoginDatabase.class);
+    private final Logger log = LoggerFactory.getLogger(LoadLoginDatabase.class);
 
     final PasswordEncoder passwordEncoder;
 

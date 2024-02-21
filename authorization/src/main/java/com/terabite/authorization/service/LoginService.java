@@ -3,7 +3,7 @@ package com.terabite.authorization.service;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.model.LoginStatus;
-import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
