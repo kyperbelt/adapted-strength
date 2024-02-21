@@ -1,5 +1,8 @@
 package com.terabite.authorization.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terabite.authorization.dto.ApiResponse;
+import com.terabite.authorization.log.JwtValidationException;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
 import jakarta.servlet.FilterChain;
@@ -7,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,22 +28,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private LoginService loginService;
 
-//    @Autowired
-//    public JwtAuthFilter(JwtService jwtService, UserInfoService userInfoService) {
-//        this.jwtService = jwtService;
-//        this.userInfoService = userInfoService;
-//    }
-//
-//    @Autowired
-//    public void setJwtService(JwtService jwtService) {
-//        this.jwtService = jwtService;
-//    }
-//
-//    @Autowired
-//    public void setUserInfoService(UserInfoService userInfoService) {
-//        this.userInfoService = userInfoService;
-//    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
@@ -47,7 +35,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String email = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            email = jwtService.extractUsername(token);
+            try {
+                email = jwtService.extractUsername(token);
+            } catch (JwtValidationException e) {
+                raiseException(request, response, token);
+                return;
+            }
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -60,4 +53,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+    /**
+     * Filters operate at a different plane of existence from the rest of backend, so they need their own exception handling.
+     * Also does something with converting objects into json.
+     * <p>
+     * <a href="https://stackoverflow.com/questions/30335157/make-simple-servlet-filter-work-with-controlleradvice">Stackoverflow Post</a>
+     *
+     * @param request  Incoming request
+     * @param response Outgoing response
+     * @param token    JWT
+     * @throws IOException from raw byte writing into response body
+     */
+    private void raiseException(HttpServletRequest request, HttpServletResponse response, String token) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ApiResponse apiResponse = new ApiResponse("Invalid token provided", token);
+        byte[] body = new ObjectMapper().writeValueAsBytes(apiResponse);
+        response.getOutputStream().write(body);
+    }
+
+
 }

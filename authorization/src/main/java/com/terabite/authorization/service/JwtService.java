@@ -7,10 +7,8 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Key;
 import java.util.Date;
@@ -20,7 +18,6 @@ import java.util.function.Function;
 
 @Component
 public class JwtService {
-    private final Logger log = LoggerFactory.getLogger(JwtService.class);
     public static final Key SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String generateToken(String userName) {
@@ -69,9 +66,8 @@ public class JwtService {
                     .getBody();
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
                  IllegalArgumentException e) {
-            log.info("Bad JWT: " + token);
-//            throw new JwtValidationException(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+            // Don't think this ever gets thrown - see JwtAuthFilter
+            throw new JwtValidationException(e.getMessage());
         }
     }
 
