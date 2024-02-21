@@ -25,10 +25,10 @@ import ProgramManagement from './pages/ProgramManagement.jsx';
 IMPORTS FOR PROGRAM PAGES
 */
 //--------------------------------------------------
-  import BodyBuild from './pages/program_pages/BodyBuild.jsx';
-  import Oly from './pages/program_pages/Oly.jsx';
-  import Power from './pages/program_pages/Power.jsx';
-  import General from './pages/program_pages/General.jsx';
+import BodyBuild from './pages/program_pages/BodyBuild.jsx';
+import Oly from './pages/program_pages/Oly.jsx';
+import Power from './pages/program_pages/Power.jsx';
+import General from './pages/program_pages/General.jsx';
 //--------------------------------------------------
 
 import RouteGuard from "./util/RouteGuard";
@@ -60,17 +60,12 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
-
-           
-  
-           
-
             <Route path="edit-profile" element={<Suspense fallback="...">
               <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
                 <EditProfile />
               </RouteGuard>
             </Suspense>} />
-            <Route path="profile" element={<RouteGuard state={()=> AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
+            <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
             <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />

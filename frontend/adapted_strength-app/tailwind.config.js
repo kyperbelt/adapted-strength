@@ -13,6 +13,7 @@ module.exports = {
         'custom-red': '#FF4949',
         'custom-gray': '#EDF2F4',
         'custom-dark': '#161A1D',
+        'primary': '#dc2626',
       },
     },
   },
