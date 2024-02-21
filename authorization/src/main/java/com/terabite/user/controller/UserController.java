@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
-import com.terabite.authorization.Payload;
+import com.terabite.authorization.model.Payload;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;

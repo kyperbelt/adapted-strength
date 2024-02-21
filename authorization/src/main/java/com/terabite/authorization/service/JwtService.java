@@ -1,5 +1,6 @@
 package com.terabite.authorization.service;
 
+import com.terabite.authorization.repository.LoginRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,9 +8,11 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.management.relation.Role;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -63,8 +66,15 @@ public class JwtService {
 
 
     // TODO: Figure out if spring gets used here (UserDetails) or manual implementation
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails loginDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token)); // TODO: manual invalidation check here
+        return (username.equals(loginDetails.getUsername()) && !isTokenExpired(token)); // TODO: manual invalidation check here
+    }
+
+    // Temp "validation" of jwt
+    // * Users should never lose jwt, so jwt is always for their account
+    // * Jwt cannot simply invalidated, so only check for expiration
+    public Boolean isValid(String token) {
+        return isTokenExpired(token);
     }
 }

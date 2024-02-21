@@ -1,7 +1,7 @@
 package com.terabite.authorization.controller;
 
 import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.Payload;
+import com.terabite.authorization.model.Payload;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,6 +69,14 @@ public class AuthorizationController {
         return response;
     }
 
+    /**
+     * Deprecated. Not needed with JWT
+     *
+     * @param login
+     * @param response
+     * @return
+     */
+    @Deprecated
     @PostMapping("/login")
     public ResponseEntity<?> userLoginPost(@RequestBody Login login, HttpServletResponse response) {
 
@@ -94,6 +103,7 @@ public class AuthorizationController {
 
     }
 
+    @Deprecated
     @PostMapping("/logout")
     public Payload userLogoutPost(HttpServletResponse response, HttpServletRequest request) {
 
@@ -122,6 +132,7 @@ public class AuthorizationController {
         return forgotPasswordHelper.processResetPassword(token, jsonPassword);
     }
 
+
     @PostMapping("get_token")
     public String getToken(@RequestBody Login login) {
 
@@ -137,6 +148,13 @@ public class AuthorizationController {
 //        return "Reached getToken";
     }
 
+    @GetMapping("restricted_page")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    public String restrictedPage() {
+        return "Reached restricted page";
+    }
+
+    @Deprecated
     private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
         Cookie newCookie = new Cookie(cookie, value);
         newCookie.setPath("/");
