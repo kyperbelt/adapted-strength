@@ -142,7 +142,8 @@ export default function Login() {
                 dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             >
                 
-                Login with Google <GoogleLogo/>
+                Login with Google
+                <GoogleLogo/>
             </button>
             <p className="relative mx-0 text-white top-4 px-8 text-center bottom-4">
                 Dont have an account?
