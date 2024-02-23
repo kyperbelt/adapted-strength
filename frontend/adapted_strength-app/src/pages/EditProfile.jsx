@@ -66,7 +66,6 @@ function EditProfileContent({ info }) {
     const zip = info.address.zipcode ?? "";
     const phone = info.cellPhone ?? "";
 
-
     return (
 
         <PageContainer1>
