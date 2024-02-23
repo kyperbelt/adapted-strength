@@ -5,8 +5,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,11 @@ import java.util.function.Function;
 
 @Component
 public class JwtService {
-    public static final Key SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final Key SECRET;
+
+    public JwtService() {
+        this.SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    }
 
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
@@ -82,10 +84,10 @@ public class JwtService {
         return (username.equals(loginDetails.getUsername()) && !isTokenExpired(token)); // TODO: manual invalidation check here
     }
 
-    // Temp "validation" of jwt
-    // * Users should never lose jwt, so jwt is always for their account
-    // * Jwt cannot simply invalidated, so only check for expiration
-    public Boolean isValid(String token) {
-        return isTokenExpired(token);
-    }
+//    // Temp "validation" of jwt
+//    // * Users should never lose jwt, so jwt is always for their account
+//    // * Jwt cannot simply invalidated, so only check for expiration
+//    public Boolean isValid(String token) {
+//        return isTokenExpired(token);
+//    }
 }
