@@ -17,7 +17,7 @@ public class ChatRoomService {
 
 
     public Optional<String> getChatRoomId(String senderId, String recipientId, boolean createNewRoomIfNotExists){
-        //default behavior should be to find a chat room based on 
+        //find a chat room based on 
         //sender/recipient ids. If it does not find a chat room based 
         //on those ids it creates a new (pair of) chat rooms based on 
         //their ids.
