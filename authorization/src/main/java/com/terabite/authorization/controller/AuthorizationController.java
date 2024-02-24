@@ -4,8 +4,8 @@ import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.Payload;
-import com.terabite.authorization.model.Login;
 import com.terabite.authorization.log.LoginNotFoundException;
+import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.ForgotPasswordHelper;
 import com.terabite.authorization.service.JwtService;
@@ -135,7 +135,7 @@ public class AuthorizationController {
     }
 
 
-    @PostMapping("get_token")
+    @PostMapping("/get_token")
     public ResponseEntity<?> getToken(@RequestBody AuthRequest authRequest) {
 
 //        Login storedLogin = loginRepository.findByEmail(login.getEmail())
@@ -168,8 +168,14 @@ public class AuthorizationController {
 
     }
 
-    @GetMapping("restricted_page")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @GetMapping("/open_page")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<?> openPage() {
+        return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached open page"));
+    }
+
+    @GetMapping("/restricted_page")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> restrictedPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached restricted page"));
     }

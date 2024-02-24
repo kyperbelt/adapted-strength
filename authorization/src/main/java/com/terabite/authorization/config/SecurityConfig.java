@@ -1,6 +1,6 @@
 package com.terabite.authorization.config;
 
-import com.terabite.authorization.model.LoginDetails;
+import com.terabite.authorization.log.CustomAccessDeniedHandler;
 import com.terabite.authorization.service.LoginService;
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +9,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private JwtAuthFilter jwtAuthFilter;
@@ -53,18 +57,16 @@ public class SecurityConfig {
     // CSRF disabled because it breaks authorization since backend is stateless
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(
-                        (authorizeHttpRequests) -> authorizeHttpRequests
+        http.csrf((csrf) -> csrf.disable())
+                .exceptionHandling((exceptionHandler) -> exceptionHandler
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()))
+                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                                 .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD).permitAll()
                                 .requestMatchers("v1/auth/restricted_page").authenticated()
                                 .anyRequest().permitAll()
 //                        .requestMatchers("/v1/auth/**").permitAll()
-                )
-                .csrf(
-                        (csrf) -> csrf.disable()
-                )
-                .sessionManagement(
-                        (sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                ).sessionManagement((sessionManagement) -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
