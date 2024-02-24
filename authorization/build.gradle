@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// implementation 'jakarta.mail:jakarta.mail-api:2.1.2' might be needed for password reset
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 // when ./gradlew bootRun is executed first require that the application 
