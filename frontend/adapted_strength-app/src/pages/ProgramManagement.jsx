@@ -1,9 +1,10 @@
 import { BasicModalDialogue } from "../components/Dialog";
 import { PrimaryButton } from "../components/Button";
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import PageCotnainer1 from "../components/PageContainer";
 import { CardBack } from "../components/Card";
 import LabeledInputField from "../components/forms/LabeledInputField";
+import {useHistory} from "react-router-dom";
 
 // list of programs 
 const test_programs = [
@@ -145,9 +146,38 @@ const test_cycles = [
   },
 ]
 
+const VIEW_TYPE_PROGRAMS = "programs";
+const VIEW_TYPE_BLOCKS = "blocks";
+const VIEW_TYPE_WEEKS = "weeks";
+
 
 export default function ProgramMamagement() {
+  // stack of history
+  const [history, setHistory] = useState([]);
+  const historyManager = {
+    push: (page) => {
+      setHistory([...history, page]);
+    },
+    pop: () => {
+      const newHistory = history.slice(0, history.length - 1);
+      setHistory(newHistory);
+      return newHistory[newHistory.length - 1];
+    },
+    peek: () => {
+      return history[history.length - 1];
+    }
+  };
 
+  return (
+    <PageCotnainer1>
+      <CardBack className="">
+        <ProgrammingView />
+      </CardBack>
+    </PageCotnainer1>
+  );
+}
+
+function ProgrammingView({ }) {
   const [programs, setPrograms] = useState(test_programs);
 
 
@@ -181,39 +211,37 @@ export default function ProgramMamagement() {
     console.log(`${e.target.checked ? "checked" : "unchecked"} ${e.target.name}`)
   }
 
-  console.log(`rendering program management`)
 
   return (
-    <PageCotnainer1>
-      <CardBack className="">
-        <div className="relative p-4 flex flex-row rounded-xl xl col-span-2">
-          <div className="mt-3 text-black font-bold" >Programs</div>
-          <LabeledInputField className="ml-auto" placeholder="search" />
-          <PrimaryButton className="ml-2" >Add Program</PrimaryButton>
-        </div>
-        <div className="">
-          <table className="w-full mt-4">
-            <thead>
-              <tr className="border-b" key="headers">
-                <th className="w-1">
-                  <input type="checkbox" onChange={onAllCheckedOrUnchecked} />
-                </th>
-                <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {programs.map((program) => (
-                <Program key={program.name} program={program} programSelectedOrUnselected={programSelectedOrUnselected} onRowClick={onRowClick} />
-              ))}
-            </tbody>
-          </table>
-          <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" className="" type="button" >sup</button>
-        </div>
-      </CardBack>
-    </PageCotnainer1>
+    <>
+      <div className="relative p-4 flex flex-row rounded-xl xl col-span-2">
+        <div className="mt-3 text-black font-bold" >Programs</div>
+        <LabeledInputField className="ml-auto" placeholder="search" />
+        <PrimaryButton className="ml-2" >Add Program</PrimaryButton>
+      </div>
+      <div className="">
+        <table className="w-full mt-4">
+          <thead>
+            <tr className="border-b" key="headers">
+              <th className="w-1">
+                <input type="checkbox" onChange={onAllCheckedOrUnchecked} />
+              </th>
+              <th className="px-6 py-3 text-left">Name</th>
+              <th className="px-6 py-3 text-left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {programs.map((program) => (
+              <Program key={program.name} program={program} programSelectedOrUnselected={programSelectedOrUnselected} onRowClick={onRowClick} />
+            ))}
+          </tbody>
+        </table>
+        <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" className="" type="button" >sup</button>
+      </div>
+    </>
   );
 }
+
 
 function Program({ program, programSelectedOrUnselected, onRowClick }) {
   const [blocks, setBlocks] = useState(test_blocks);
