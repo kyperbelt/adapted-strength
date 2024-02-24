@@ -45,7 +45,7 @@ public class AuthorizationController {
 
     private final PasswordEncoder passwordEncoder;
 
-    private Logger log = LoggerFactory.getLogger(AuthorizationController.class);
+    private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
     public AuthorizationController(ForgotPasswordHelper forgotPasswordHelper, LoginService loginService,
                                    SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl, JwtService jwtService, LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
@@ -66,9 +66,8 @@ public class AuthorizationController {
         // temporarily authenticate the user
         // as if they had logged in. See signupService.signup for more details and check
         // the TODOs and FIXMEs to see what needs to be done
-        ResponseEntity<?> response = signupService.signup(authRequest);
 
-        return response;
+        return signupService.signup(authRequest);
     }
 
     /**
@@ -168,12 +167,36 @@ public class AuthorizationController {
 
     }
 
+    @PostMapping("/change_role")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> changeRole(@RequestBody Login login) {
+        Optional<Login> possibleLogin = loginRepository.findByEmail(login.getEmail());
+        if (possibleLogin.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse("Email not found", login));
+        }
+
+        Login storedLogin = possibleLogin.get();
+        storedLogin.setRoles(login.getRoles());
+        loginRepository.save(storedLogin);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse("Role for " + login.getEmail() + " changed", storedLogin));
+    }
+
+    /**
+     * TODO: Remove in prod. Fix by ADAPTEDS-114
+     */
     @GetMapping("/open_page")
-    @PreAuthorize("hasAuthority('ROLE_UNVERIFIED')")
+    @PreAuthorize("hasAnyAuthority('ROLE_UNVERIFIED', 'ROLE_ADMIN')")
     public ResponseEntity<?> openPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached open page"));
     }
 
+    /**
+     * TODO: Remove in prod. Fix by ADAPTEDS-114
+     */
     @GetMapping("/restricted_page")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> restrictedPage() {

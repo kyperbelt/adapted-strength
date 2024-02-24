@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                                 .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD).permitAll()
                                 .requestMatchers("v1/auth/restricted_page").authenticated()
+                                .requestMatchers("/v1/auth/change_role").authenticated()
                                 .anyRequest().permitAll()
 //                        .requestMatchers("/v1/auth/**").permitAll()
                 ).sessionManagement((sessionManagement) -> sessionManagement
