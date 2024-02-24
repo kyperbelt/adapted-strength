@@ -5,16 +5,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "login_table")
 public class Login {
     private LoginStatus loginStatus;
@@ -42,40 +36,57 @@ public class Login {
         this.loginStatus = LoginStatus.LOGGED_OUT;
     }
 
-//    public LoginStatus getLoginStatus() {
-//        return loginStatus;
-//    }
-//
-//    public void setLoginStatus(LoginStatus loginStatus) {
-//        this.loginStatus = loginStatus;
-//    }
+    public Login() {
+
+    }
 
     @Override
     public String toString() {
         return "{ " + " email:" + this.email + " password:" + this.password + " }";
     }
 
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public String getPasswordResetToken() {
-//        return this.passwordResetToken;
-//    }
 
     public void setResetPasswordToken(String passwordResetToken) {
         this.passwordResetToken = passwordResetToken;
+    }
+
+    public LoginStatus getLoginStatus() {
+        return loginStatus;
+    }
+
+    public void setLoginStatus(LoginStatus loginStatus) {
+        this.loginStatus = loginStatus;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }
