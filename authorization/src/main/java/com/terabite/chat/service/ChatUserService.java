@@ -18,12 +18,17 @@ public class ChatUserService {
         chatUserRepository.save(chatUser);
     }
 
-    public List<ChatUser> findClients(){
-        return chatUserRepository.findAllByUserType(UserType.CLIENT);
+
+    public List<ChatUser> findUsers(ChatUser chatUser){
+        if (chatUser.getUserType() == UserType.CLIENT){
+            return chatUserRepository.findAllByUserType(UserType.COACH  );
+        }
+        else{
+            return chatUserRepository.findAll();
+        }
+        
     }
 
-    public List<ChatUser> findCoach() {
-        return chatUserRepository.findByUserType(UserType.COACH);
-    }
+
 
 }
