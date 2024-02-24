@@ -60,13 +60,13 @@ public class AuthorizationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> userSignupPost(@RequestBody Login login) {
+    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest) {
         // TODO:
         // lets have this return a session token (JWT) and then use this token to
         // temporarily authenticate the user
         // as if they had logged in. See signupService.signup for more details and check
         // the TODOs and FIXMEs to see what needs to be done
-        ResponseEntity<?> response = signupService.signup(login);
+        ResponseEntity<?> response = signupService.signup(authRequest);
 
         return response;
     }
@@ -169,7 +169,7 @@ public class AuthorizationController {
     }
 
     @GetMapping("/open_page")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_UNVERIFIED')")
     public ResponseEntity<?> openPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached open page"));
     }

@@ -17,11 +17,11 @@ package com.terabite.authorization.dto;
  */
 public class ApiResponse {
     private String message;
-    private Object object;
+    private Object log;
 
-    public ApiResponse(String message, Object object) {
+    public ApiResponse(String message, Object log) {
         this.message = message;
-        this.object = object;
+        this.log = log;
     }
 
     public ApiResponse() {
@@ -35,11 +35,11 @@ public class ApiResponse {
         this.message = message;
     }
 
-    public Object getObject() {
-        return object;
+    public Object getLog() {
+        return log;
     }
 
-    public void setObject(Object object) {
-        this.object = object;
+    public void setLog(Object log) {
+        this.log = log;
     }
 }
