@@ -1,13 +1,12 @@
 package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 
 @Entity
 @Table(name = "login_table")
@@ -28,6 +27,9 @@ public class Login {
     @Column(name = "reset_password_token")
     private String passwordResetToken;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
+
     public Login(String email, String password) {
         this.email = email;
         this.password = password;
@@ -38,17 +40,22 @@ public class Login {
 
     }
 
+    @Override
+    public String toString() {
+        return "{ " + " email:" + this.email + " password:" + this.password + " }";
+    }
+
+
+    public void setResetPasswordToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
     public LoginStatus getLoginStatus() {
         return loginStatus;
     }
 
     public void setLoginStatus(LoginStatus loginStatus) {
         this.loginStatus = loginStatus;
-    }
-
-    @Override
-    public String toString() {
-        return "{ " + " email:" + this.email + " password:" + this.password + " }";
     }
 
     public String getEmail() {
@@ -68,10 +75,18 @@ public class Login {
     }
 
     public String getPasswordResetToken() {
-        return this.passwordResetToken;
+        return passwordResetToken;
     }
 
-    public void setResetPasswordToken(String passwordResetToken) {
+    public void setPasswordResetToken(String passwordResetToken) {
         this.passwordResetToken = passwordResetToken;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

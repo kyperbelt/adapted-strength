@@ -1,5 +1,12 @@
+
+/*
+Module: navBar.jsx
+Team: TeraBITE
+*/
+
 import { AuthApi } from "../api/AuthApi";
 import { useNavigate } from 'react-router-dom';
+
 import { Link } from "react-router-dom";
 import StateGuard from "../util/StateGuard";
 
@@ -24,6 +31,9 @@ export default function NavBar() {
         <span> | </span>
         <Link to="/about">About Us</Link>
         <span> | </span>
+        <Link to="/forgot-password">Forgot Password</Link>
+        <span> | </span>
+        <Link to="/prog-up">Coach Program Upload</Link>
         <Link to="profile">Profile</Link>
         <span> | </span>
         <Link to="sign-up">Sign Up</Link>
