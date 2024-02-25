@@ -8,8 +8,8 @@ Team: TeraBITE
 */
 import React from 'react';
 import logo from '../assets/logo.png';
-import { calendly } from 'calendly-js';
-
+//import { calendly } from 'calendly-js';
+/* TEMP IMPORT FILE: Keep handy if rework is done in future
 function bookAppointment() {
     const [calendlyScriptLoaded, setCalendlyScriptLoaded] = useState(false);
     const [calendlyEventTypes, setCalendlyEventTypes] = useState([]);
@@ -37,7 +37,7 @@ function bookAppointment() {
 
     }, [calendlyScriptLoaded]);
 }
-
+*/
 function AdaptedStrengthLogo() {
     return (<div className="h-full flex flex-col items-center mt-12">
         <img src={logo} alt="Adapted Strength Logo" className="text-slate-200 px-3 py-1" />
@@ -52,24 +52,16 @@ const CalendlyBooking = () => {
                 <AdaptedStrengthLogo />
             </div>
             <h3 className="relative text-center text-2xl bottom-10">Book your consultation below:</h3>
-            <div className="aspect-w-16 aspect-h-9">
-                    <iframe
-                        src="https://calendly.com/alexpalting"
-                        width="100%"
-                        height="100%"
-                        frameBorder="0"
-                        title="Calendly scheduling link"
-                    ></iframe>
-
-                </div>
             <div className="bg-[#161A1D] h-full">
-                <p className='text-white'>Calendly import here</p>
-                <div class="calendly-inline-widget" style="min-width:320px;height:580px;" data-auto-load="false"></div>
+                <div className="calendly-inline-widget" data-auto-load="false"></div>
                 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js">
                 </script>
-                <script>
-                </script>
-                
+                <iframe
+                    src="https://calendly.com/alexpalting"
+                    width="100%"
+                    height="100%"
+                    title="Calendly scheduling link"
+                ></iframe>
             </div>
         </div>)
 };
