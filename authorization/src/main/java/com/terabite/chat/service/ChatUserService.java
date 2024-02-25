@@ -20,13 +20,12 @@ public class ChatUserService {
 
     //This method returns a list of clients if a coach accesses or coaches if a client accesses
     public List<ChatUser> findUsers(ChatUser chatUser){
-        // if (chatUser.getUserType() == UserType.CLIENT){
-        //     return chatUserRepository.findAllByUserType(UserType.COACH);
-        // }
-        // else{
-        //     return chatUserRepository.findAll();
-        // }
-        return chatUserRepository.findAll();
+        if (chatUser.getUserType() == UserType.CLIENT){
+            return chatUserRepository.findAllByUserType(UserType.COACH);
+        }
+        else{
+            return chatUserRepository.findAllByUserType(UserType.CLIENT);
+        }
     }
 
 
