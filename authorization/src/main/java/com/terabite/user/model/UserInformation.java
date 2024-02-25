@@ -28,7 +28,7 @@ public class UserInformation implements Serializable {
     private String lastName;
 
     @JsonAlias("subscriptionTier")
-    private int subscriptionTier;
+    private SubscriptionStatus subscriptionTier;
 
     @JsonAlias("expiration_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -102,14 +102,15 @@ public class UserInformation implements Serializable {
         this.lastName = lastName;
     }
 
-    public void setSubscriptionTier(int subscriptionTier) {this.subscriptionTier = subscriptionTier; }
+    public void setSubscriptionTier(SubscriptionStatus subscriptionTier) { this.subscriptionTier = subscriptionTier; }
 
-    public int getSubscriptionTier() {return subscriptionTier; }
+    public SubscriptionStatus getSubscriptionTier() { return subscriptionTier; }
 
     public LocalDate getExpirationDate() {return expirationDate; }
 
     // Set subscription expiration date to be 30 days from the current date
     public void setExpirationDate() {this.expirationDate = LocalDate.now().plusDays(30); }
+    public void cancelExpirationDate() {this.expirationDate = null; }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
