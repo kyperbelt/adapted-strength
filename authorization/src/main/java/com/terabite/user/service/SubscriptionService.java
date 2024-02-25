@@ -26,17 +26,21 @@ public class SubscriptionService {
 
         if (existingUser != null) {
             if(existingUser.getSubscriptionTier() != request.status()) {
-                existingUser.setSubscriptionTier(request.status());
-                existingUser.setExpirationDate();
+                if(request.status() != SubscriptionStatus.NO_SUBSCRIPTION) {
+                    existingUser.setSubscriptionTier(request.status());
+                    existingUser.setExpirationDate();
 
-                // Save the updated user
-                userRepository.save(existingUser);
+                    // Save the updated user
+                    userRepository.save(existingUser);
 
-                log.info("Updated User Information: email={}, subscriptionTier={}", existingUser.getEmail(),
-                        existingUser.getSubscriptionTier());
-                return ResponseEntity.ok("Subscription tier updated successfully.");
-            }
-            else {
+                    log.info("Updated User Information: email={}, subscriptionTier={}", existingUser.getEmail(),
+                            existingUser.getSubscriptionTier());
+                    return ResponseEntity.ok("Subscription tier updated successfully.");
+
+                } else {
+                    return ResponseEntity.badRequest().body("Must use UnsubscribeService to cancel subscription.");
+                }
+            } else {
                 return ResponseEntity.badRequest().body("User is already subscribed as " + request.status());
             }
         } else {

@@ -32,7 +32,7 @@ public class UnsubscribeService {
 
             log.info("Updated User Information: email={}, subscriptionTier={}", existingUser.getEmail(),
                     existingUser.getSubscriptionTier());
-            return ResponseEntity.ok("Subscription tier updated successfully.");
+            return ResponseEntity.ok("Cancelled subscription successfully.");
 
         } else {
             return ResponseEntity.badRequest().body("Failed to retrieve updated user information.");

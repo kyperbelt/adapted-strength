@@ -66,10 +66,6 @@ public class UserInformation implements Serializable {
     @JsonAlias("emergency_contact")
     private EmergencyContact emergencyContact;
 
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "login_name", referencedColumnName = "email")
-    // private Login login;
-
     @JsonAlias("email")
     @Column(unique = true)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
@@ -167,14 +163,6 @@ public class UserInformation implements Serializable {
     public void setEmergencyContact(EmergencyContact emergencyContact) {
         this.emergencyContact = emergencyContact;
     }
-
-    // public Login getLogin() {
-    // return login;
-    // }
-    //
-    // public void setLogin(Login login) {
-    // this.login = login;
-    // }
 
     public String getHowDidYouHear() {
         return howDidYouHear;
