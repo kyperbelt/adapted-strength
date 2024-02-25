@@ -39,7 +39,7 @@ function bookAppointment() {
 }
 */
 function AdaptedStrengthLogo() {
-    return (<div className="h-full flex flex-col items-center mt-12">
+    return (<div className="h-full flex flex-col items-center mt-5">
         <img src={logo} alt="Adapted Strength Logo" className="text-slate-200 px-3 py-1" />
     </div>);
 }
@@ -51,8 +51,11 @@ const CalendlyBooking = () => {
             <div className="h-40 bg-header-background1">
                 <AdaptedStrengthLogo />
             </div>
-            <h3 className="relative text-center text-2xl bottom-10">Book your consultation below:</h3>
-            <div className="bg-[#161A1D] h-full">
+            <h3 className="relative text-center text-2xl bottom-12">Book your consultation below!</h3>
+            <div className="bg-[#161A1D] px-3 py-3 h-full">
+                <h3 className='text-2xl py-3 text-white'>
+                    Calendly Widget 
+                </h3>
                 <div className="calendly-inline-widget" data-auto-load="false"></div>
                 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js">
                 </script>
@@ -61,6 +64,7 @@ const CalendlyBooking = () => {
                     width="100%"
                     height="100%"
                     title="Calendly scheduling link"
+                    className='rounded-2xl h-full'
                 ></iframe>
             </div>
         </div>)
