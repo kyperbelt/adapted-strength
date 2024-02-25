@@ -1,4 +1,4 @@
-package com.terabite.authorization.repository;
+package com.terabite.authorization.log;
 
 public class LoginNotFoundException extends RuntimeException {
     public LoginNotFoundException(String email) {
