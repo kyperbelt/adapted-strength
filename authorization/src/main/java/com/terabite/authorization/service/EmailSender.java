@@ -1,6 +1,6 @@
 package com.terabite.authorization.service;
 
-import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.log.LoginNotFoundException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
