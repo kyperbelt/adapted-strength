@@ -2,6 +2,8 @@ package com.terabite.chat.controller;
 
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.Message;
+import com.terabite.chat.model.UserType;
+
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,11 +14,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.terabite.chat.service.ChatNotification;
 import com.terabite.chat.service.ChatUserService;
 import com.terabite.chat.service.MessageService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @Controller
@@ -54,7 +59,13 @@ public class ChatController {
     }
 
     @GetMapping("/chatUsers")
-    public ResponseEntity<List<ChatUser>> findChatUsers(ChatUser chatUser) {
+    public ResponseEntity<List<ChatUser>> findChatUsers(@RequestBody ChatUser chatUser) {
         return ResponseEntity.ok(chatUserService.findUsers(chatUser));
     }
+
+    @GetMapping("/messages")
+    public ResponseEntity<List<Message>> getMessages() {
+        return ResponseEntity.ok(messageService.getAllMessages());
+    }
+    
 }
