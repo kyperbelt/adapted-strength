@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.terabite.chat.model.Message;
 
-public interface MessageRepository extends JpaRepository<Message, String>{
+public interface MessageRepository extends JpaRepository<Message, Long>{
 
-    List<Message> findByChatId(String chatId);
+    List<Message> findByChatRoomId(String chatId);
     
 }

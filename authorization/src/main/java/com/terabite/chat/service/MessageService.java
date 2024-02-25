@@ -21,14 +21,14 @@ public class MessageService {
         String chatId = chatRoomService.getChatRoomId(message.getSenderId(), message.getRecipientId(), true)
         //implement a custom exception for if chat room id is not found
         .orElseThrow();
-        message.setChatId(chatId);
+        message.setChatRoomId(chatId);
         messageRepository.save(message);
         return message;
     }
 
     public List<Message> findChatMessages(String senderId, String recipientId){
         var chatId=chatRoomService.getChatRoomId(senderId, recipientId, false);
-        return chatId.map(messageRepository::findByChatId).orElse(new ArrayList<Message>());
+        return chatId.map(messageRepository::findByChatRoomId).orElse(new ArrayList<Message>());
     }   
 
 }

@@ -8,36 +8,30 @@ import jakarta.persistence.Table;
 @Table(name = "chat_room")
 public class ChatRoom {
     @Id
-    private String id;
-    private String chatId;
+    private String chatRoomId;
     private String senderId;
     private String recipientId;
+    //for front end to be able to tell if there is a new message
+    private Boolean hasNewMessage;
 
     //no id in this constructor because of how create chat is structured atm
-    public ChatRoom(String chatId, String senderId, String recipientId){
-        this.chatId=chatId;
+    public ChatRoom(String chatRoomId, String senderId, String recipientId, Boolean hasNewMessage){
+        this.chatRoomId=chatRoomId;
         this.senderId=senderId;
         this.recipientId=recipientId;
+        this.hasNewMessage=hasNewMessage;
     }
 
     public ChatRoom(){
 
     }
 
-    public String getId() {
-        return id;
+    public String getChatRoomId() {
+        return chatRoomId;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(String chatId) {
-        this.chatId = chatId;
+    public void setChatRoomId(String chatId) {
+        this.chatRoomId = chatId;
     }
 
     public String getSenderId() {
@@ -54,5 +48,13 @@ public class ChatRoom {
 
     public void setRecipientId(String recipientId) {
         this.recipientId = recipientId;
+    }
+
+    public Boolean getHasNewMessage() {
+        return hasNewMessage;
+    }
+
+    public void setHasNewMessage(Boolean hasNewMessage) {
+        this.hasNewMessage = hasNewMessage;
     }
 }

@@ -1,6 +1,7 @@
 package com.terabite.chat.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Date;
@@ -8,15 +9,16 @@ import java.util.Date;
 @Table(name = "message")
 public class Message {
     @Id
-    private String id;
-    private String chatId;
+    @GeneratedValue
+    private long id;
+    private String chatRoomId;
     private String senderId;
     private String recipientId;
     private String content;
     private Date timeStamp;
 
-    public Message(String chatId, String senderId, String recipientId, String content, Date timeStamp){
-        this.chatId=chatId;
+    public Message(String chatRoomId, String senderId, String recipientId, String content, Date timeStamp){
+        this.chatRoomId=chatRoomId;
         this.senderId=senderId;
         this.recipientId=recipientId;
         this.content=content;
@@ -27,12 +29,12 @@ public class Message {
 
     }
 
-    public String getChatId() {
-        return chatId;
+    public String getChatRoomId() {
+        return chatRoomId;
     }
 
-    public void setChatId(String chatId) {
-        this.chatId = chatId;
+    public void setChatRoomId(String chatId) {
+        this.chatRoomId = chatId;
     }
 
     public String getSenderId() {

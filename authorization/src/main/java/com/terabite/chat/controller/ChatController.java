@@ -32,12 +32,12 @@ public class ChatController {
         this.chatUserService=chatUserService;
     }
 
-    @MessageMapping("/chat")
+    @MessageMapping("/processMessage")
     public void processMessage(@Payload Message message){
         Message savedMessage=messageService.save(message);
         //front end will be subscribing to bob/queue/message where bob is the user
         messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages",
-        new ChatNotification(savedMessage.getChatId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent()));
+        new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent()));
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
@@ -48,7 +48,6 @@ public class ChatController {
     @MessageMapping("/chatUser.addUser")
     //this is a queue that the front end will need to subscribe to
     @SendTo("/chatUser/topic")
-    //this method will likely need to be called when a user is created in userInformation
     public ChatUser addChatUser(@Payload ChatUser chatUser){
         chatUserService.saveChatUser(chatUser);
         return chatUser;

@@ -7,27 +7,32 @@ export default function ChatTest() {
         console.log('message recieved', payload);
     };
 
-    const onConnected = (stompClient, nickname, fullname, onMessageReceived) => {
-        stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
-        stompClient.subscribe(`/user/public`, onMessageReceived);
-        console.log('connected');
-        // register the connected user
-        stompClient.send("/app/user.addUser",
-            {},
-            JSON.stringify({ nickName: nickname, fullName: fullname, status: 'ONLINE' })
-        );
-    };
-
     const connect = (event) => {
-        const nickname = "someName";
-        const fullname = "Some Full Name";
+        const nickname = "bob@gmail.com";
+        const fullname = "Bob Doe";
+        const usertype = "COACH"
+        const nickname2 = "john@aol.com"
+        const fullname2 = "John Bon"
+        const usertype2 = "CLIENT"
+
 
         const socket = new SockJS('http://localhost:8080/v1/chat/ws');
         const stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, () => { onConnected(stompClient, nickname, fullname, onMessage) }, () => { console.log('error!') });
-
+        stompClient.connect({}, () => { onConnected(stompClient, nickname, fullname, usertype, onMessage) }, () => { console.log('error!') });
+        stompClient.connect({}, () => { onConnected(stompClient, nickname2, fullname2, usertype2,onMessage) }, () => { console.log('error!') });
         event.preventDefault();
+    };
+
+    const onConnected = (stompClient, nickname, fullname, usertype, onMessageReceived) => {
+        stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+        stompClient.subscribe(`/user/public`, onMessageReceived);
+        console.log('connected');
+        // register the connected user
+        stompClient.send("/v1/chat/app/chatUser.addUser",
+            {},
+            JSON.stringify({ email: nickname, fullName: fullname, userType : usertype })
+        );
     };
 
     return (
