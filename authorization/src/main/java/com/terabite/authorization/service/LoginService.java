@@ -1,22 +1,26 @@
 package com.terabite.authorization.service;
 
 import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.model.LoginStatus;
-import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
 import jakarta.transaction.Transactional;
-
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Transactional
-public class LoginService {
+public class LoginService implements UserDetailsService {
 
 
     LoginRepository loginRepository;
@@ -25,8 +29,18 @@ public class LoginService {
 
     private static Logger log = LoggerFactory.getLogger(LoginService.class);
 
-    public LoginService(LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
+//    public LoginService(LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
+//        this.loginRepository = loginRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
+
+    @Autowired
+    public void setLoginRepository(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -36,6 +50,7 @@ public class LoginService {
      * @param login The login object that will be used to check if the user is able
      *              to login
      **/
+    @Deprecated
     public Optional<String> login(final Login login) {
         // Temp, will change to jwt in near future
         // Current implementation only checks for correct password and assigns state
@@ -110,5 +125,18 @@ public class LoginService {
         } else {
             throw new LoginNotFoundException("Could not find a user with the token: " + token);
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Login login = loginRepository.findByEmail(email)
+                .orElseThrow(() -> new LoginNotFoundException(email + " email not found"));
+
+        return new LoginDetails(login);
+
+//        Optional<Login> loginDetail = loginRepository.findByEmail(email);
+//
+//        return loginDetail.map(login -> new LoginDetails(login))
+//                .orElseThrow(() -> new LoginNotFoundException(email + " email not found"));
     }
 }

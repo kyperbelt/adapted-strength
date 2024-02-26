@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.repository.LoginNotFoundException;
+import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ForgotPasswordHelper {
+public class ForgotPasswordService {
     private final PasswordEncoder passwordEncoder;
     private final LoginRepository loginRepository;
     private final EmailSender emailSender;
 
-    public ForgotPasswordHelper(LoginRepository loginRepository, EmailSender emailSender, PasswordEncoder passwordEncoder) {
+    public ForgotPasswordService(LoginRepository loginRepository, EmailSender emailSender, PasswordEncoder passwordEncoder) {
         this.emailSender = emailSender;
         this.loginRepository = loginRepository;
         this.passwordEncoder = passwordEncoder;
@@ -36,7 +36,7 @@ public class ForgotPasswordHelper {
             login = loginRepository.findOneByEmail(email);
             if (login != null) {
                 emailSender.sendForgotPasswordEmail(email);
-                return ResponseEntity.status(HttpStatus.OK).body("User found");
+                return ResponseEntity.status(HttpStatus.FOUND).body("User found");
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -62,7 +62,7 @@ public class ForgotPasswordHelper {
                 login.setPassword(setHashedPassword(password));
                 login.setResetPasswordToken(null);
                 loginRepository.save(login);
-                return ResponseEntity.status(HttpStatus.OK).body("User found");
+                return ResponseEntity.status(HttpStatus.FOUND).body("User found");
             } else {
                 throw new LoginNotFoundException("Could not find user with token: " + token);
             }

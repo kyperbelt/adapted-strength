@@ -50,6 +50,7 @@ function SubmitButton() {
     return (<button type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >Next</button>);
 }
 
+
 export default function SignUp() {
     const [error, setError] = useState(ErrorType.NoError);
     const navigate = useNavigate();
