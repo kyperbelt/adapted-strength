@@ -11,10 +11,8 @@ public class ChatRoom {
     private String chatRoomId;
     private String senderId;
     private String recipientId;
-    //for front end to be able to tell if there is a new message
     private Boolean hasNewMessage;
 
-    //no id in this constructor because of how create chat is structured atm
     public ChatRoom(String chatRoomId, String senderId, String recipientId, Boolean hasNewMessage){
         this.chatRoomId=chatRoomId;
         this.senderId=senderId;

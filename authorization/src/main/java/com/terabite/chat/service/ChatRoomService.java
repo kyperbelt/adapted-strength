@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.terabite.chat.model.ChatRoom;
 import com.terabite.chat.repository.ChatRoomRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,4 +44,17 @@ public class ChatRoomService {
         
         return chatId;
     }
+
+
+    public List<ChatRoom> getAllChatRooms() {
+        return chatRoomRepository.findAll();
+    }
+
+
+    public void setUnreadFalse(ChatRoom chatRoom) {
+        chatRoom.setHasNewMessage(false);
+        chatRoomRepository.save(chatRoom);
+    }
+
+
 }

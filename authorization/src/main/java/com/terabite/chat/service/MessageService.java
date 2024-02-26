@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.terabite.chat.model.Message;
 import com.terabite.chat.repository.MessageRepository;
-
 @Service
 public class MessageService {
     private final MessageRepository messageRepository;
@@ -19,7 +18,6 @@ public class MessageService {
 
     public Message save(Message message){
         String chatId = chatRoomService.getChatRoomId(message.getSenderId(), message.getRecipientId(), true)
-        //implement a custom exception for if chat room id is not found
         .orElseThrow();
         message.setChatRoomId(chatId);
         messageRepository.save(message);
@@ -29,6 +27,7 @@ public class MessageService {
     public List<Message> findChatMessages(String senderId, String recipientId){
         var chatId=chatRoomService.getChatRoomId(senderId, recipientId, false);
         return chatId.map(messageRepository::findByChatRoomId).orElse(new ArrayList<Message>());
+        //return chatId.map(messageRepository::findByChatRoomId).orElse(new ArrayList<Message>());
     }  
     
     public List<Message> getAllMessages(){

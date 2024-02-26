@@ -8,7 +8,9 @@ let usertype = null;
 let message = null;
 
 
-//this function connects 
+// This series of "connect" functions each connect a user to websocket connection.
+// In the actual implementation of this we would grab the nickname (email), fullname and usertype from the logged in user
+// Note: usertype will eventually be scrapped. We need to use JWT tokens to check for permissions in the long run
 function connect1(event){
     nickname = "alex@adaptedstrength.com"
     fullname = "Alex Palting"
@@ -47,6 +49,11 @@ function connect3(event){
     return <div className="flex flex-col items-center"><MyButton text={"Connect3"} onClick={connect3}/></div>;    
 }
 
+
+// This series of "x to y" functions demonstrate how message sending will work
+// senderId will be grabbed from the current user
+// recipientId will likely be grabbed from a list of available users
+// content will be typed in by the user
 function alexToBob(event){
     const chatMessage={
         senderId: "alex@adaptedstrength.com",
@@ -91,10 +98,12 @@ function johnToAlex(event){
     event.preventDefault();
 }
 
+// This function demonstrates how subscribing to a topic works. 
+// Each user will have a queue of messages that they subscribe to
 function onConnected(){
     stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
-    stompClient.subscribe(`/user/public`, onMessageReceived);
     console.log('connected');
+
     // register the connected user
     stompClient.send("/v1/chat/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname, userType : usertype }));
 }
@@ -104,10 +113,11 @@ function onError(){
 }
 
 async function onMessageReceived(payload){
+    console.log('Message recieved', payload);
 
 }
 
-
+// This just displays different buttons for testing purposes
 export default function ChatTest() {
     return (
         <div className="flex flex-col items-center">
