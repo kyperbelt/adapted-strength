@@ -44,7 +44,6 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 
 // import footer from '../footer'
 
-
 function App() {
   return (
     <div className="App h-full my-0">
@@ -71,7 +70,7 @@ function App() {
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-            <Route path="/program-management/:programId?/:blockId?/:weekId?" element={<ProgramManagement />} />
+            <Route path="/program-management/:programId?/:blockId?/:weekId?/:dayId?" element={<ProgramManagement />} />
 
             /* ROUTES FOR PROGRAM PAGES */
             //--------------------------------------------------

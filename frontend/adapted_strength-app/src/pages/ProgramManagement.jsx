@@ -8,8 +8,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useCurrentPath } from "../util/ReactHooks";
 
-
-
 // list of programs 
 const test_programs = [
   {
@@ -154,9 +152,12 @@ const VIEW_TYPE_DASHBOARD = "dashboard";
 const VIEW_TYPE_PROGRAM = "program";
 const VIEW_TYPE_BLOCK = "block";
 const VIEW_TYPE_WEEK = "week";
+const VIEW_TYPE_DAY = "day";
 
-function getViewType({ programId, blockId, weekId}) {
-  if (programId && blockId && weekId) {
+function getViewType({ programId, blockId, weekId, dayId }) {
+  if (programId && blockId && weekId && dayId ) {
+    return VIEW_TYPE_DAY;
+  }else if (programId && blockId && weekId) {
     return VIEW_TYPE_WEEK;
   } else if (programId && blockId) {
     return VIEW_TYPE_BLOCK;
@@ -182,8 +183,8 @@ export default function ProgramMamagement() {
   const [programs, setPrograms] = useState(test_programs);
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { programId, blockId, weekId } = useParams();
-  const viewType = getViewType({ programId, blockId, weekId });
+  const { programId, blockId, weekId, dayId} = useParams();
+  const viewType = getViewType({ programId, blockId, weekId, dayId});
   const lastView = state?.lastView ?? VIEW_TYPE_DASHBOARD;
   const animLeft = animationLeft({ lastView: lastView, newView: viewType });
   console.log(`programId: ${programId}, blockId: ${blockId}`);
@@ -206,6 +207,7 @@ export default function ProgramMamagement() {
           {viewType === VIEW_TYPE_PROGRAM && <ProgramView program_id={programId} historyManager={historyManager} />}
           {viewType === VIEW_TYPE_BLOCK && <BlockView block_id={blockId} historyManager={historyManager} />}
           {viewType === VIEW_TYPE_WEEK && <WeekView week_id={weekId} historyManager={historyManager} />}
+          {viewType === VIEW_TYPE_DAY && <DayView day_id={dayId} historyManager={historyManager} />}
         </CardBack>
       </div>
     </PageCotnainer1>
@@ -340,13 +342,43 @@ function BlockView({ historyManager, block_id }) {
 }
 
 function WeekView({ historyManager, week_id }) {
+  const week = test_weeks.filter((w) => w.id == week_id)[0];
   return (
     <div>
       <SecondaryPageHeader title={`Week: ${week_id}`} historyManager={historyManager} buttonName="Add Day" />
-      <StyledCheckboxTable className="w-full" headers={["ID", "Name"]} onAllCheckedOrUnchecked={(e) => { console.log(`not working yet`) }}>
+      <StyledCheckboxTable className="w-full" headers={["Day"]} onAllCheckedOrUnchecked={(e) => { console.log(`not working yet`) }}>
+        {week.days.map((day_id) => {
+          const day = test_days.filter((d) => d.id === day_id)[0];
+          return (
+            <CustomTableRow key={day_id} selectedOrUnselected={(e) => { console.log(`not working yet`) }} onRowClick={(e) => { historyManager.push(`${day_id}`) }} onOptions={(e) => { console.log(`not working yet`) }} checked={false}>
+              <td className="px-6 py-3 border-l"> {day.name} </td>
+            </CustomTableRow> 
+           );
+        })}
       </StyledCheckboxTable>
     </div>
 
+  );
+}
+
+function DayView({ historyManager, day_id }) {
+  const day = test_days.filter((d) => d.id == day_id)[0];
+  return (
+    <div>
+      <SecondaryPageHeader title={day.name} historyManager={historyManager} buttonName="Add Cycle" />
+      <StyledCheckboxTable headers={["Cycle"]} onAllCheckedOrUnchecked={(e) => { console.log(`not working yet`) }}>
+        {day.cycles.map((cycle_id) => {
+          const cycle = test_cycles.filter((c) => c.id === cycle_id)[0];
+          return (
+            <CustomTableRow key={cycle_id} selectedOrUnselected={(e) => { console.log(`not working yet`) }} onRowClick={(e) => { historyManager.push(`${cycle_id}`) }} onOptions={(e) => { console.log(`not working yet`) }} checked={false}>
+              <td className="px-6 py-3 border-l">
+                <Cycle cycle_id={cycle_id} />
+              </td>
+            </CustomTableRow>
+          );
+        })}
+      </StyledCheckboxTable>
+    </div>
   );
 }
 
