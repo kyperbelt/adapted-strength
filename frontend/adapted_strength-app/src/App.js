@@ -3,7 +3,7 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import { lazy, Suspense } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
@@ -18,8 +18,11 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import ManageChats from "./pages/manageChats.jsx";
+import Chat from "./pages/Chat";
 
 import ProgramManagement from './pages/ProgramManagement.jsx';
+
 
 /*
 IMPORTS FOR PROGRAM PAGES
@@ -31,6 +34,7 @@ import Power from './pages/program_pages/Power.jsx';
 import General from './pages/program_pages/General.jsx';
 //--------------------------------------------------
 
+import Booking from './pages/Booking.jsx';
 import RouteGuard from "./util/RouteGuard";
 import Profile from './pages/Profile';
 import { AuthApi } from './api/AuthApi';
@@ -38,6 +42,7 @@ import { AuthApi } from './api/AuthApi';
 import TermsOfService from './pages/TermsOfService.jsx';
 import HealthQuestionnaire from './pages/HealthQuestionnaire';
 import VideoLibrary from './pages/VideoLibrary.jsx';
+import ChatTest from './pages/test_pages/ChatTest';
 
 // TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
@@ -45,6 +50,8 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 // import footer from '../footer'
 
 function App() {
+
+
   return (
     <div className="App h-full my-0">
       <BrowserRouter className="">
@@ -59,6 +66,8 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="chat-test" element={<ChatTest />} />
+
             <Route path="edit-profile" element={<Suspense fallback="...">
               <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
                 <EditProfile />
@@ -84,7 +93,14 @@ function App() {
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
             <Route path='video-library' element={<VideoLibrary />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="consultations" element={<Booking />} />
             <Route path="*" element={<NotFound />} />
+
+            /* ROUTES FOR CHAT PAGES */
+            //--------------------------------------------------
+            <Route path="manageChats" element={<ManageChats />} />
+            //--------------------------------------------------
           </Route>
         </Routes>
       </BrowserRouter>

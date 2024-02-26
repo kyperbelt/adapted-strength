@@ -4,9 +4,11 @@ import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.dto.Payload;
 import com.terabite.user.model.SubscribeRequest;
+import com.terabite.user.model.UnsubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.user.service.SubscriptionService;
+import com.terabite.user.service.UnsubscribeService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -26,6 +28,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
+    private final UnsubscribeService unsubscribeService;
     private final AuthorizationApi authorizationApi;
 
     private final String authCookieName;
@@ -34,10 +37,11 @@ public class UserController {
 
     public UserController(
             SubscriptionService subscriptionService,
-            UserRepository userRepository, AuthorizationApi authorizationApi,
+            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
 
         this.subscriptionService = subscriptionService;
+        this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
@@ -46,7 +50,7 @@ public class UserController {
     // TODO| README: Accounts are created by the authorization service and not by
     // the user
     // service.
-    // This service will only be repsonsible for creating, updating, and deleting
+    // This service will only be responsible for creating, updating, and deleting
     // and retrieving user information.
     @PostMapping("/create")
     public ResponseEntity<String> createAccountInformation(
@@ -170,4 +174,15 @@ public class UserController {
         return subscriptionService.subscribe(request);
     }
 
+    @PostMapping("/unsubscribe")
+    public ResponseEntity<?> userUnsubscribePost(@RequestBody UnsubscribeRequest request,
+                                               HttpServletRequest httpRequest) {
+        Optional<Cookie> token = getTokenCookie(httpRequest);
+        if (token.isEmpty()) {
+            log.error("No token found in request");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
+        }
+
+        return unsubscribeService.unsubscribe(request);
+    }
 }
