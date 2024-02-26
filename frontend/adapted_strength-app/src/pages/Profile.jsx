@@ -110,7 +110,7 @@ export default function Profile() {
                 <PhoneField />
             </div>
             <div className="w-full flex flex-col items-center px-0 pt-4">
-                
+            <SubscriptionField tier={profileInfo.subscriptionTier}/>
             </div>
 
         </div >
