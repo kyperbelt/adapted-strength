@@ -40,6 +40,8 @@ export default function NavBar() {
          <StateGuard state={() => AuthApi.isLoggedIn()}><span> | 
           <button className="ml-1" type="button" onClick={onLogOut}>Log Out</button></span>
         </StateGuard>
+        <span> | </span>
+        <Link to="chat">Chat</Link>
       </nav>
     </header>
   );

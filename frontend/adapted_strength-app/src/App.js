@@ -18,6 +18,7 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import Chat from "./pages/Chat";
 
 import UploadProgram from './pages/ProgramUpload.jsx';
 
@@ -89,6 +90,7 @@ function App() {
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
             <Route path='video-library' element={<VideoLibrary />} />
+            <Route path="chat" element={<Chat />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
