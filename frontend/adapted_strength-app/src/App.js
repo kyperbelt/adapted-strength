@@ -4,8 +4,11 @@ Team: TeraBITE
 */
 import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Toast } from 'react-bootstrap';
 import Layout from "./pages/Layout";
+import { fetchToken, onMessageListener } from './firebase';
 // routes imported from pages folder
 // They are still only react components
 import Home from "./pages/Home";
@@ -48,10 +51,42 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 
 
 function App() {
+  const [show, setShow] = useState(false);
+  const [notification, setNotification] = useState({ title: '', body: '' });
+  const [isTokenFound, setTokenFound] = useState(false);
+  { !isTokenFound && fetchToken(setTokenFound); }
 
+  onMessageListener().then(payload => {
+    setNotification({ title: payload.notification.title, body: payload.notification.body })
+    setShow(true);
+    console.log(payload);
+  }).catch(err => console.log('failed: ', err));
+
+  const onShowNotificationClicked = () => {
+    setNotification({ title: "Notification", body: "This is a test notification" })
+    setShow(true);
+  }
 
   return (
     <div className="App h-full my-0">
+      <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide animation style={{
+        position: 'absolute',
+        top: 20,
+        right: 20,
+        minWidth: 200
+      }}>
+        <Toast.Header>
+          <img
+            src="holder.js/20x20?text=%20"
+            className="rounded mr-2"
+            alt=""
+          />
+          <strong className="mr-auto">{notification.title}</strong>
+          <small>just now</small>
+        </Toast.Header>
+        <Toast.Body>{notification.body}</Toast.Body>
+      </Toast>
+      <Button onClick={() => onShowNotificationClicked()}>Show Toast</Button>
       <BrowserRouter className="">
         <Routes className="">
           <Route path="/" element={<Layout />}>
