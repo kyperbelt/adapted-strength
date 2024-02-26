@@ -46,6 +46,5 @@ public class SubscriptionService {
         } else {
             return ResponseEntity.badRequest().body("Failed to retrieve updated user information.");
         }
-
     }
 }
