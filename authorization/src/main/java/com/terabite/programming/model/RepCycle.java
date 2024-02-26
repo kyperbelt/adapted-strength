@@ -1,7 +1,6 @@
 package com.terabite.programming.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +37,9 @@ public class RepCycle
     @JsonAlias("coach_notes")
     private String coachNotes;
 
-    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes){
+    private long movementId;
+
+    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, long movementId){
         this.name=name;
         this.equipment=equipment;
         this.numSets=numSets;
@@ -46,6 +47,7 @@ public class RepCycle
         this.weight=weight;
         this.restTime=restTime;
         this.coachNotes=coachNotes;
+        this.movementId=movementId;
     }
 
     public RepCycle(){
@@ -114,5 +116,13 @@ public class RepCycle
 
     public void setCoachNotes(String coachNotes) {
         this.coachNotes = coachNotes;
+    }
+
+    public long getMovementId() {
+        return this.movementId;
+    }
+
+    public void setMovementId(long movementId) {
+        this.movementId = movementId;
     }
 }
