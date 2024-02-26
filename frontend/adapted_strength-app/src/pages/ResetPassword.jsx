@@ -67,7 +67,7 @@ export default function ResetPassword() {
                     <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
 
                         <div className="w-3/5 flex flex-col items-center px-0 ">
-                            <ErrorMessage msg={error} show={error != ErrorType.NoError} />
+                            <ErrorMessage msg={error} show={error !== ErrorType.NoError} />
                         </div>
                         <div className="w-full flex flex-col items-center px-0 mt-6">
                             <PasswordField id="pwd1" placeholder="Password" title="" pattern=".*" />
