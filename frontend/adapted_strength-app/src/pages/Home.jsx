@@ -20,7 +20,7 @@ export default function Home() {
                 Link to beta app
             </a>
         </header>
-        <Link className="w-3/4 bg-red-600 hover:bg-red-900 focus:bg-red-800 text-xl text-white p-4 rounded-2xl"
+        <Link className="w-3/4 bg-primary hover:bg-red-900 focus:bg-red-800 text-xl text-white p-4 rounded-2xl"
             to="login">
             LOGIN
         </Link>

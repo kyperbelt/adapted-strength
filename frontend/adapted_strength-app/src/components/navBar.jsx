@@ -33,14 +33,14 @@ export default function NavBar() {
         <span> | </span>
         <Link to="/forgot-password">Forgot Password</Link>
         <span> | </span>
-        <Link to="/prog-up">Coach Program Upload</Link>
+        <Link to="/program-management">Manage Programs</Link>
+        <span> | </span>
+        <Link to="profile">Profile</Link>
         <span> | </span>
         <Link to="/consultations">Calendly Booking</Link>
         <span> | </span>
-        <Link to="/profile">Profile</Link>
-        <span> | </span>
         <Link to="sign-up">Sign Up</Link>
-         <StateGuard state={() => AuthApi.isLoggedIn()}><span> | 
+        <StateGuard state={() => AuthApi.isLoggedIn()}><span> |
           <button className="ml-1" type="button" onClick={onLogOut}>Log Out</button></span>
         </StateGuard>
       </nav>
