@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -27,8 +28,11 @@ public class UserInformation implements Serializable {
     private String lastName;
 
     @JsonAlias("subscriptionTier")
-    //@Min(value = 1, message = "Subscription tier must be at least 1")
-    private int subscriptionTier;
+    private SubscriptionStatus subscriptionTier;
+
+    @JsonAlias("expiration_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate expirationDate;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -62,9 +66,6 @@ public class UserInformation implements Serializable {
     @JsonAlias("emergency_contact")
     private EmergencyContact emergencyContact;
 
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "login_name", referencedColumnName = "email")
-    // private Login login;
     @JsonAlias("email")
     @Column(unique = true)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
@@ -97,9 +98,15 @@ public class UserInformation implements Serializable {
         this.lastName = lastName;
     }
 
-    public void setSubscriptionTier(int subscriptionTier) {this.subscriptionTier = subscriptionTier; }
+    public void setSubscriptionTier(SubscriptionStatus subscriptionTier) { this.subscriptionTier = subscriptionTier; }
 
-    public int getSubscriptionTier() {return subscriptionTier; }
+    public SubscriptionStatus getSubscriptionTier() { return subscriptionTier; }
+
+    public LocalDate getExpirationDate() {return expirationDate; }
+
+    // Set subscription expiration date to be 30 days from the current date
+    public void setExpirationDate() {this.expirationDate = LocalDate.now().plusDays(30); }
+    public void cancelExpirationDate() {this.expirationDate = null; }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
@@ -156,14 +163,6 @@ public class UserInformation implements Serializable {
     public void setEmergencyContact(EmergencyContact emergencyContact) {
         this.emergencyContact = emergencyContact;
     }
-
-    // public Login getLogin() {
-    // return login;
-    // }
-    //
-    // public void setLogin(Login login) {
-    // this.login = login;
-    // }
 
     public String getHowDidYouHear() {
         return howDidYouHear;

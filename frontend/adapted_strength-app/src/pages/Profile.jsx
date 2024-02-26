@@ -3,6 +3,8 @@ Module: Profile.jsx
 Team: TeraBITE
 */
 import { Outlet, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { UserApi } from "../api/UserApi";
 
 
 import icon from '../assets/ladyIcon.png'
@@ -54,7 +56,38 @@ function PhoneField() {
     return (<input type="phoneNum" placeholder="Phone Number" id="phoneNum" name="phoneNum" required className="w-4/5 border-b-4 p-0" />);
 }
 
+function SubscriptionField({... props}) {
+    return (<div> Subscription Tier : {props.tier}</div>)
+
+}
+
 export default function Profile() {
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [profileInfo, setProfileInfo] = useState([]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        UserApi.getProfileInformation()
+            .then((response) => {
+                if (response.status === 200) {
+                    setProfileInfo(response.data);
+                    setIsLoading(false);
+                    console.log(response.data)
+                } else {
+                    // TODO: same as error, redirect to login page or display error message
+                }
+            }).catch((error) => {
+                console.error(`ERROR HAPPENED: ${error}`);
+                setIsLoading(false);
+                //TODO: User was unable to get profile information, 
+                //     redirect to login page or display error message
+            });
+    }, []);
+
+    if (isLoading) {
+        return <div>{"Loading..."}</div>
+    }
 
     return (
         <div className="w-full h-full flex flex-col bottom-20">
@@ -104,8 +137,12 @@ export default function Profile() {
             <div className="w-full flex flex-col items-center px-0 pt-4">
                 <PhoneField />
             </div>
+            <div className="w-full flex flex-col items-center px-0 pt-4">
+            <SubscriptionField tier={profileInfo.subscriptionTier}/>
+            </div>
 
         </div >
 
     );
+    // <SubscriptionField tier={profileInfo.subscriptionTier}/>
 }
