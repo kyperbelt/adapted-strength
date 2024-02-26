@@ -71,7 +71,7 @@ function App() {
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-            <Route path="program-management" element={<ProgramManagement />} />
+            <Route path="/program-management/:programId?/:blockId?/:weekId?" element={<ProgramManagement />} />
 
             /* ROUTES FOR PROGRAM PAGES */
             //--------------------------------------------------

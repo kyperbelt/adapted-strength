@@ -8,6 +8,10 @@ export function PrimaryButton({ className, children, ...props }) {
   return <BasicButton className={`bg-primary hover:bg-red-900 text-white focus:bg-red-800 ${className}`} {...props}>{children}</BasicButton>
 }
 
+export function SecondaryButton({ className, children, ...props }) {
+  return <BasicButton className={`bg-gray-300 hover:bg-gray-400 text-gray-800 focus:bg-gray-400 ${className}`} {...props}>{children}</BasicButton>
+}
+
 export function HamburgerSettingsButton({ className, children, ...props }) {
   return (
     <button className={`relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-blue-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 ${className}`} aria-expanded="false" aria-haspopup="menu" id=":r5:" type="button">

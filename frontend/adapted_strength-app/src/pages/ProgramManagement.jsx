@@ -1,10 +1,14 @@
 import { BasicModalDialogue } from "../components/Dialog";
-import { PrimaryButton } from "../components/Button";
-import { useState, useEffect} from "react";
+import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { useState, useEffect, useContext } from "react";
 import PageCotnainer1 from "../components/PageContainer";
 import { CardBack } from "../components/Card";
 import LabeledInputField from "../components/forms/LabeledInputField";
-import {useHistory} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useCurrentPath } from "../util/ReactHooks";
+
+
 
 // list of programs 
 const test_programs = [
@@ -146,40 +150,70 @@ const test_cycles = [
   },
 ]
 
-const VIEW_TYPE_PROGRAMS = "programs";
-const VIEW_TYPE_BLOCKS = "blocks";
-const VIEW_TYPE_WEEKS = "weeks";
+const VIEW_TYPE_DASHBOARD = "dashboard";
+const VIEW_TYPE_PROGRAM = "program";
+const VIEW_TYPE_BLOCK = "block";
+const VIEW_TYPE_WEEK = "week";
 
+function getViewType({ programId, blockId, weekId}) {
+  if (programId && blockId && weekId) {
+    return VIEW_TYPE_WEEK;
+  } else if (programId && blockId) {
+    return VIEW_TYPE_BLOCK;
+  } else if (programId) {
+    return VIEW_TYPE_PROGRAM;
+  } else {
+    return VIEW_TYPE_DASHBOARD;
+  }
+}
+
+function animationLeft({ lastView, newView }) {
+  console.log(`lastView: ${lastView}, newView: ${newView}`);
+  if (lastView === VIEW_TYPE_DASHBOARD && newView === VIEW_TYPE_PROGRAM) {
+    return true;
+  } else if (lastView === VIEW_TYPE_PROGRAM && newView === VIEW_TYPE_BLOCK) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export default function ProgramMamagement() {
-  // stack of history
-  const [history, setHistory] = useState([]);
+  const [programs, setPrograms] = useState(test_programs);
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const { programId, blockId, weekId } = useParams();
+  const viewType = getViewType({ programId, blockId, weekId });
+  const lastView = state?.lastView ?? VIEW_TYPE_DASHBOARD;
+  const animLeft = animationLeft({ lastView: lastView, newView: viewType });
+  console.log(`programId: ${programId}, blockId: ${blockId}`);
+
   const historyManager = {
-    push: (page) => {
-      setHistory([...history, page]);
+    push: (value) => {
+      navigate(`${value}`, { state: { lastView: viewType } });
     },
     pop: () => {
-      const newHistory = history.slice(0, history.length - 1);
-      setHistory(newHistory);
-      return newHistory[newHistory.length - 1];
+      navigate(-1, { state: { lastView: viewType } });
     },
-    peek: () => {
-      return history[history.length - 1];
-    }
   };
+
 
   return (
     <PageCotnainer1>
-      <CardBack className="">
-        <ProgrammingView />
-      </CardBack>
+      <div className="flex flex-row">
+        <CardBack className={`xl:w-11/12 xl:mx-auto w-full ${animLeft ? 'animate-slideLeft' : 'animate-slideRight'}`}>
+          {viewType === VIEW_TYPE_DASHBOARD && <ProgrammingDashboardView programState={[programs, setPrograms]} historyManager={historyManager} />}
+          {viewType === VIEW_TYPE_PROGRAM && <ProgramView program_id={programId} historyManager={historyManager} />}
+          {viewType === VIEW_TYPE_BLOCK && <BlockView block_id={blockId} historyManager={historyManager} />}
+          {viewType === VIEW_TYPE_WEEK && <WeekView week_id={weekId} historyManager={historyManager} />}
+        </CardBack>
+      </div>
     </PageCotnainer1>
   );
 }
 
-function ProgrammingView({ }) {
-  const [programs, setPrograms] = useState(test_programs);
-
+function ProgrammingDashboardView({ programState, historyManager, ...props }) {
+  const [programs, setPrograms] = programState;
 
   const onRowClick = (program) => {
     for (let p of programs) {
@@ -191,6 +225,7 @@ function ProgrammingView({ }) {
     }
     setPrograms([...programs]);
     console.log(`clicked on ${program.name}`)
+    historyManager.push(`${program.id}`, VIEW_TYPE_PROGRAM);
   }
 
   const onAllCheckedOrUnchecked = (e) => {
@@ -213,82 +248,118 @@ function ProgrammingView({ }) {
 
 
   return (
-    <>
+    <div {...props}>
       <div className="relative p-4 flex flex-row rounded-xl xl col-span-2">
         <div className="mt-3 text-black font-bold" >Programs</div>
         <LabeledInputField className="ml-auto" placeholder="search" />
         <PrimaryButton className="ml-2" >Add Program</PrimaryButton>
       </div>
-      <div className="">
-        <table className="w-full mt-4">
-          <thead>
-            <tr className="border-b" key="headers">
-              <th className="w-1">
-                <input type="checkbox" onChange={onAllCheckedOrUnchecked} />
-              </th>
-              <th className="px-6 py-3 text-left">Name</th>
-              <th className="px-6 py-3 text-left">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {programs.map((program) => (
-              <Program key={program.name} program={program} programSelectedOrUnselected={programSelectedOrUnselected} onRowClick={onRowClick} />
-            ))}
-          </tbody>
-        </table>
-        <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" className="" type="button" >sup</button>
-      </div>
-    </>
+      <StyledCheckboxTable headers={["Name", "Description"]} onAllCheckedOrUnchecked={onAllCheckedOrUnchecked}>
+        {programs.map((program) => (
+          <CustomTableRow key={program.name} selectedOrUnselected={(e) => programSelectedOrUnselected(program, e)} onRowClick={(e) => { onRowClick(program) }} onOptions={(e) => { console.log(`not working yet`) }} checked={program.selected}>
+            <td className="px-6 py-3"> {program.name} </td>
+            <td className="px-6 py-3"> {program.description} </td>
+          </CustomTableRow>
+        ))}
+      </StyledCheckboxTable>
+      <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" className="" type="button" >sup</button>
+    </div>
   );
 }
 
-
-function Program({ program, programSelectedOrUnselected, onRowClick }) {
-  const [blocks, setBlocks] = useState(test_blocks);
-
-  const blockSelectedOrUnselected = (block, e) => {
-    for (let b of blocks) {
-      if (b.name === block.name) {
-        b.selected = e.target.checked;
-      }
-    }
-    setBlocks([...blocks]);
-    console.log(`${e.target.checked ? "checked" : "unchecked"} ${e.target.name}`)
-  }
-
-  if (program.open) {
-    console.log(`program ${program.name} is open`)
-  }
+function StyledCheckboxTable({ ...props }) {
+  const headers = props.headers;
+  const children = props.children;
 
   return (
-    < >
-      <tr className="border-b text-left " >
-        <td className="px-6 py-3">
-          <input type="checkbox" onChange={(e) => programSelectedOrUnselected(program, e)} checked={program.selected} />
-        </td>
-        <td onClick={() => { onRowClick(program) }} className="cursor-pointer px-6 py-3">{program.name}</td>
-        <td>{program.description}</td>
-        <td><HamburgerButtom className="ml-auto" dropdownToggle={"dropdown"} /> </td>
-      </tr>
-      {(
-        <tr id={`program-block-${program.id}`} className={`${program.open ? 'scale-y-100 h-full opacity-100' : 'scale-y-0 h-0 opacity-0'}  transition-all duration-200 delay-0 ease-linear`}>
-          {program.open && (
-            <td className={`pl-12 pr-3 py-3`} colSpan="4">
-              <div className="grid grid-cols-1">
-                <div className="flex flex-row">
-                  <button type='button' className="p-2 text-left rounded-xl bg-gray-300 max-w-2">Add Block</button>
-                </div>
-                <div className="w-full flex flex-row col-span-1">
-                  {(program.blocks.map((block) => {
-                    return (<Block block={blocks.filter((b) => b.id === block)[0]} />);
-                  }))}
-                </div>
-              </div>
-            </td>
-          )}
+    <table className={`w-full mt-4 ${props.className}`}>
+      <thead>
+        <tr className="border-b" key="headers">
+          <th className="w-1 px-6">
+            <input type="checkbox" onChange={props.onAllCheckedOrUnchecked} />
+          </th>
+          {headers.map((header) => {
+            return (<th className="px-6 py-3 text-left font-bold">{header}</th>);
+          })}
         </tr>
-      )}
-    </>
+      </thead>
+      <tbody>
+        {children}
+      </tbody>
+    </table>
+  );
+}
+
+function ProgramView({ historyManager, program_id }) {
+  // const [blocks, setBlocks] = useState(test_blocks);
+  const blocks = test_blocks;
+  console.log(`program_id: ${program_id}`);
+
+  const program = test_programs.filter((p) => p.id == program_id)[0];
+
+  return (
+    <div>
+      <SecondaryPageHeader title={`Program: ${program.name}`} historyManager={historyManager} buttonName="Add Block" />
+      <StyledCheckboxTable headers={["ID", "Name", "Description"]} onAllCheckedOrUnchecked={(e) => { console.log(`not working yet`) }}>
+        {program.blocks.map((block_id) => {
+          const block = blocks.filter((b) => b.id === block_id)[0];
+          return (
+            <CustomTableRow key={block.name} selectedOrUnselected={(e) => { console.log(`not working yet`) }} onRowClick={(e) => { historyManager.push(`${block.id}`) }} onOptions={(e) => { console.log(`not working yet`) }} checked={block.selected}>
+              <td className="px-6 py-3 border-l"> {block.id} </td>
+              <td className="px-6 py-3 border-l"> {block.name} </td>
+              <td className="px-6 py-3 border-l"> {block.description}</td>
+            </CustomTableRow>
+          );
+        })}
+      </StyledCheckboxTable>
+    </div>
+  );
+}
+
+function BlockView({ historyManager, block_id }) {
+  const [block, setBlock] = useState(test_blocks.filter((b) => b.id == block_id)[0]);
+
+
+  return (
+    <div>
+      <SecondaryPageHeader title={block.name} historyManager={historyManager} buttonName="Add Week" />
+
+      <StyledCheckboxTable headers={["Week", "Day"]} onAllCheckedOrUnchecked={(e) => { console.log(`not working yet`) }}>
+        {block.weeks.map((week_id) => {
+          const week = test_weeks.filter((w) => w.id === week_id)[0];
+          return (
+            <CustomTableRow key={week_id} selectedOrUnselected={(e) => { console.log(`not working yet`) }} onRowClick={(e) => { historyManager.push(`${week_id}`) }} onOptions={(e) => { console.log(`not working yet`) }} checked={false}>
+              <td className="px-6 py-3 border-l"> {week.name} </td>
+              <td className="px-6 py-3 border-l"> {week.days.length} </td>
+            </CustomTableRow>
+          );
+        })}
+      </StyledCheckboxTable>
+    </div>
+  );
+}
+
+function WeekView({ historyManager, week_id }) {
+  return (
+    <div>
+      <SecondaryPageHeader title={`Week: ${week_id}`} historyManager={historyManager} buttonName="Add Day" />
+      <StyledCheckboxTable className="w-full" headers={["ID", "Name"]} onAllCheckedOrUnchecked={(e) => { console.log(`not working yet`) }}>
+      </StyledCheckboxTable>
+    </div>
+
+  );
+}
+
+function CustomTableRow({ selectedOrUnselected, onRowClick, onOptions, ...props }) {
+
+  return (
+    <tr className="border-b text-left hover:bg-gray-300 hover:cursor-pointer" onClick={onRowClick}>
+      <td className="px-6 py-3">
+        <input type="checkbox" onClick={(e) => { e.stopPropagation() }} onChange={selectedOrUnselected} checked={props.checked} />
+      </td>
+      {props.children}
+      <td><HamburgerButtom className="ml-auto" dropdownToggle={"dropdown"} onClick={(e) => { e.stopPropagation(); onOptions(e); }} /> </td>
+    </tr>
   );
 }
 
@@ -368,15 +439,37 @@ function CycleSection({ title, info }) {
   );
 }
 
-function HamburgerButtom({ className, dropdownToggle }) {
+function HamburgerButtom({ className, dropdownToggle, ...props }) {
   return (
-    <button data-dropdown-toggle={dropdownToggle} className={`relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-blue-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 ${className}`} aria-expanded="false" aria-haspopup="menu" id=":r5:" type="button">
+    <button onClick={props.onClick} data-dropdown-toggle={dropdownToggle} className={`relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-blue-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 ${className}`} aria-expanded="false" aria-haspopup="menu" id=":r5:" type="button">
       <span className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currenColor" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" aria-hidden="true" className="h-6 w-6">
-          <path strokeLinecap="round" strokeLineJoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>
         </svg>
       </span>
     </button>
+  );
+}
+
+function SecondaryPageHeader({ historyManager, title, ...props }) {
+  const buttonName = props.buttonName;
+  return (
+    <div className="flex flex-col">
+      <div className="flex flex-row">
+        <BackButton className={`my-2 ml-3`} historyManager={historyManager} />
+        <h1 className="m-auto text-black text-2xl font-bold">{title}</h1>
+        <PrimaryButton className="m-2">{buttonName}</PrimaryButton>
+        <HamburgerButtom className="mx-2 my-auto" />
+      </div>
+      <div className="w-full border-b border-black" />
+    </div>
+  );
+}
+
+function BackButton({ historyManager, ...props }) {
+  // svg of a back arrow 
+  return (
+    <SecondaryButton type='button' className={props.className} {...props} onClick={historyManager.pop}> Back </SecondaryButton>
   );
 }
 
