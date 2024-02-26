@@ -2,7 +2,7 @@
 Module: Layout.jsx
 Team: TeraBITE
 */
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import NavBar from "../components/navBar";
 
 export default function Layout() {
