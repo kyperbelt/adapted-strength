@@ -5,14 +5,19 @@ import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.dto.Payload;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
+import com.terabite.user.model.UserProgramming;
+import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.user.service.SubscriptionService;
+import com.terabite.user.service.UserProgrammingService;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +32,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
     private final AuthorizationApi authorizationApi;
+    private final UserProgrammingService userProgrammingService;
 
     private final String authCookieName;
 
@@ -35,12 +41,15 @@ public class UserController {
     public UserController(
             SubscriptionService subscriptionService,
             UserRepository userRepository, AuthorizationApi authorizationApi,
-            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
+            UserProgrammingService userProgrammingService,
+            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName
+            ) {
 
         this.subscriptionService = subscriptionService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
+        this.userProgrammingService = userProgrammingService;
     }
 
     // TODO| README: Accounts are created by the authorization service and not by
@@ -168,6 +177,22 @@ public class UserController {
         }
 
         return subscriptionService.subscribe(request);
+    }
+
+    @GetMapping("/programming")
+    public ResponseEntity<?> getUserProgramming(HttpServletRequest request) {
+        
+        // Auth check
+        final Optional<Cookie> token = getTokenCookie(request);
+        if(token.isEmpty())
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
+        if(token.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
+        return userProgrammingService.getUserPrograms(email.get() );
     }
 
 }
