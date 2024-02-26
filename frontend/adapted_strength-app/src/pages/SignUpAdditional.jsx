@@ -86,7 +86,7 @@ function SubmitButton() {
 function AdaptedStrengthLogo() {
     return (
         <div className="flex flex-col items-center mt-12">
-            <img src={logo} className="w-3/4" />
+            <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
         </div>
     );
 }

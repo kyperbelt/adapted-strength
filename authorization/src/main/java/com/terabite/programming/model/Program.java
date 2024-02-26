@@ -17,11 +17,11 @@ public class Program
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
-    private List<Block> blocks;
+    private List<Week> weeks;
 
-    public Program(String name, List<Block> blocks){
+    public Program(String name, List<Week> blocks){
         this.name=name;
-        this.blocks=blocks;
+        this.weeks=blocks;
     }
 
     public Program(){
@@ -44,12 +44,12 @@ public class Program
         this.name=name;
     }
 
-    public List<Block> getBlocks(){
-        return this.blocks;
+    public List<Week> getWeeks(){
+        return this.weeks;
     }
 
-    public void setBlocks(List<Block> blocks){
-        this.blocks=blocks;
+    public void setWeeks(List<Week> weeks){
+        this.weeks=weeks;
     }
 }
 

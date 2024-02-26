@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
 import com.terabite.programming.model.RepCycle;
-import com.terabite.programming.model.Block;
 import com.terabite.programming.model.Day;
 import com.terabite.programming.model.Week;
-import com.terabite.programming.service.BlockService;
 import com.terabite.programming.service.DayService;
 import com.terabite.programming.service.ProgramService;
 import com.terabite.programming.service.RepCycleService;
@@ -30,13 +28,11 @@ public class ProgrammingControler {
     private final RepCycleService repCycleService;
     private final DayService dayService;
     private final WeekService weekService;
-    private final BlockService blockService;
     private final ProgramService programService;
 
-    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, BlockService blockService, ProgramService programService){
+    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService){
         this.repCycleService=repCycleService;
         this.dayService=dayService;
-        this.blockService=blockService;
         this.weekService=weekService;
         this.programService=programService;
     }
@@ -67,34 +63,6 @@ public class ProgrammingControler {
     public ResponseEntity<?> deleteProgram(@RequestBody Program program){
         return programService.deleteProgram(program);
     }
-
-
-    //Block endpoints
-    @PostMapping("/block")
-    public ResponseEntity<?> postBlock(@RequestBody Block block) {
-        return blockService.createNewBlock(block);
-    }
-
-    @PutMapping("/block")
-    public ResponseEntity<?> putBlock(@RequestBody Block block) {
-        return blockService.updateBlock(block);
-    }
-
-    @GetMapping("/block")
-    public ResponseEntity<?> getBlock(@RequestBody Block block) {
-        return blockService.getBlock(block);
-    }
-
-    @GetMapping("/block/all_blocks")
-    public ResponseEntity<?> getAllBlocks() {
-        return blockService.getAllBlocks();
-    }
-
-    @DeleteMapping("/block")
-    public ResponseEntity<?> deleteBlock(@RequestBody Block block){
-        return blockService.deleteBlock(block);
-    }
-
 
     //Week endpoints
     @PostMapping("/week")
