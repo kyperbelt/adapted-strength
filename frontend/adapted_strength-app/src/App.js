@@ -3,7 +3,7 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import { lazy, Suspense } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
@@ -21,6 +21,7 @@ import About from "./pages/About.jsx";
 import Chat from "./pages/Chat";
 
 import UploadProgram from './pages/ProgramUpload.jsx';
+
 
 /*
 IMPORTS FOR PROGRAM PAGES
