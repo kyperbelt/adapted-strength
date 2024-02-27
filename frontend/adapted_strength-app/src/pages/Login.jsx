@@ -75,8 +75,8 @@ export default function Login() {
     };
 
 
-    return (<div className="h-full my-0 content-center w-full top-[100px]">
-
+    return (
+    <div className="h-full my-0 content-center w-full top-[100px]">
         <div className="h-56 bg-header-background1">
             <AdaptedStrengthLogo />
         </div>
