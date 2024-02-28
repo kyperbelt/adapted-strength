@@ -7,6 +7,7 @@ import com.terabite.authorization.dto.Payload;
 import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.authorization.service.CookieMonsterService;
 import com.terabite.authorization.service.ForgotPasswordService;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
@@ -26,17 +27,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Optional;
 
-
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthorizationController {
 
-    private final String authCookieName;
-    private final String domainUrl;
-
     private final LoginService loginService;
     private final SignupService signupService;
+    private final CookieMonsterService cookieMonsterService;
     private final ForgotPasswordService forgotPasswordService;
 
     private final JwtService jwtService;
@@ -48,9 +46,11 @@ public class AuthorizationController {
     private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
     public AuthorizationController(ForgotPasswordService forgotPasswordHelper, LoginService loginService,
-                                   SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl, JwtService jwtService, LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
-        this.authCookieName = authCookieName;
-        this.domainUrl = domainUrl;
+            CookieMonsterService cookieMonsterService,
+            SignupService signupService,
+            JwtService jwtService,
+            LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
+        this.cookieMonsterService = cookieMonsterService;
         this.forgotPasswordService = forgotPasswordHelper;
         this.loginService = loginService;
         this.signupService = signupService;
@@ -91,7 +91,8 @@ public class AuthorizationController {
             // log that token is present and cookie is being sent
             log.info("Token is present and cookie is being sent");
             // set a cookie
-            Cookie cookie = createAuthorizationCookie(authCookieName, token.get(), 60 * 60 * 24 * 7);
+            Cookie cookie = cookieMonsterService.createAuthorizationCookie(token.get(),
+                    60 * 60 * 24 * 7);
 
             response.addCookie(cookie);
             // we probably should only return ok without the token since it is sent back as
@@ -99,7 +100,8 @@ public class AuthorizationController {
             return ResponseEntity.ok(new Payload(token.get()));
         }
 
-        log.error("Was unable to login with the given credentials. Invalid login for email: {}, and password: {}", login.getEmail(), login.getPassword());
+        log.error("Was unable to login with the given credentials. Invalid login for email: {}, and password: {}",
+                login.getEmail(), login.getPassword());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Payload("Invalid login"));
 
     }
@@ -114,12 +116,13 @@ public class AuthorizationController {
         // users are able to
         // log in and get a new token
 
-        Optional<Cookie> tokenCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(authCookieName)).findFirst();
 
-        Cookie cookie = createAuthorizationCookie(authCookieName, "", 0);
+        Optional<Cookie> tokenCookie = cookieMonsterService.getAuthCookie(request);
+        Cookie cookie = cookieMonsterService.createAuthorizationCookie("", 0);
         response.addCookie(cookie);
 
-        return new Payload(String.format("logged out:%s", tokenCookie.orElseGet(() -> new Cookie(authCookieName, "none")).getValue()));
+        return new Payload(String.format("logged out:%s",
+                tokenCookie.orElseGet(() -> cookieMonsterService.emptyAuthorizationCookie()).getValue()));
     }
 
     @PutMapping("/forgot_password")
@@ -133,19 +136,19 @@ public class AuthorizationController {
         return forgotPasswordService.processResetPassword(token, jsonPassword);
     }
 
-
     @PostMapping("/get_token")
     public ResponseEntity<?> getToken(@RequestBody AuthRequest authRequest) {
 
-//        Login storedLogin = loginRepository.findByEmail(login.getEmail())
-//                .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
-//
-//        if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword())) {
-//            return jwtService.generateToken(login.getEmail());
-//        } else {
-////            throw new LoginNotFoundException("Invalid login");
-//            return "Invalid login";
-//        }
+        // Login storedLogin = loginRepository.findByEmail(login.getEmail())
+        // .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
+        //
+        // if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword()))
+        // {
+        // return jwtService.generateToken(login.getEmail());
+        // } else {
+        //// throw new LoginNotFoundException("Invalid login");
+        // return "Invalid login";
+        // }
 
         Optional<Login> storedLogin = loginRepository.findByEmail(authRequest.getUsername());
 
@@ -202,15 +205,5 @@ public class AuthorizationController {
     public ResponseEntity<?> restrictedPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached restricted page"));
     }
-
-    @Deprecated
-    private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
-        Cookie newCookie = new Cookie(cookie, value);
-        newCookie.setPath("/");
-        newCookie.setMaxAge(maxAge);
-        newCookie.setDomain(domainUrl);
-        return newCookie;
-    }
-
 
 }

@@ -1,8 +1,9 @@
 package com.terabite.authorization.service;
 
+import com.terabite.authorization.AuthorizationApi;
+import com.terabite.authorization.AuthorizationApi.Roles;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.LoginStatus;
 import com.terabite.authorization.repository.LoginRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +11,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SignupService {
-    LoginRepository loginRepository;
+    private final LoginRepository loginRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    PasswordEncoder passwordEncoder;
 
-    public SignupService(LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
+    public SignupService(LoginRepository loginRepository, PasswordEncoder passwordEncoder, final JwtService jwtService) {
         this.loginRepository = loginRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public ResponseEntity<?> signup(AuthRequest authRequest) {
@@ -31,15 +35,12 @@ public class SignupService {
             login.setEmail(authRequest.getUsername());
             login.setPassword(authRequest.getPassword());
 
-            // FIXME: this is a temporary solution, we should be using JWTs
-            login.setLoginStatus(LoginStatus.LOGGED_IN);
-
-            login.setRoles(new ArrayList<>());
-            login.getRoles().add("ROLE_UNVERIFIED");
+            login.setRoles(List.of(Roles.UNVERIFIED, Roles.USER, Roles.TERMS_NOT_ACCEPTED, Roles.ACCOUNT_NOT_SETUP));
+            
 
             loginRepository.save(login);
 
-            return new ResponseEntity<>(String.format("authorized:%s-%s", login.getEmail(), login.getLoginStatus()),
+            return new ResponseEntity<>(String.format("authorized:%s", login.getEmail()),
                     HttpStatus.CREATED);
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to create user.");

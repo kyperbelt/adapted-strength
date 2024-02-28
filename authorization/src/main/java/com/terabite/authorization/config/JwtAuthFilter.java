@@ -1,15 +1,20 @@
 package com.terabite.authorization.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.log.JwtValidationException;
+import com.terabite.authorization.service.CookieMonsterService;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,33 +24,53 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+    
+    @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME)
+    @Autowired
+    private String authCookieName;
+
     @Autowired
     private JwtService jwtService;
 
+    @Lazy
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private CookieMonsterService cookieMonsterService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String email = null;
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
+        // String authHeader = request.getHeader("Authorization");
+        Optional<String> token = Optional.empty();
+        Optional<String> email = Optional.empty();
+
+        // if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        //     token = authHeader.substring(7);
+        //     try {
+        //         email = jwtService.extractUsername(token);
+        //     } catch (JwtValidationException e) {
+        //         raiseException(request, response, token);
+        //         return;
+        //     }
+        // }
+        token = cookieMonsterService.getAuthCookie(request).map(Cookie::getValue); 
+        if (token.isPresent()) {
             try {
-                email = jwtService.extractUsername(token);
+                email = jwtService.extractUsername(token.get());
             } catch (JwtValidationException e) {
-                raiseException(request, response, token);
+                raiseException(request, response, token.get());
                 return;
             }
         }
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = loginService.loadUserByUsername(email);
-            if (jwtService.validateToken(token, userDetails)) {
+        if (email.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = loginService.loadUserByUsername(email.get());
+            if (jwtService.validateToken(token.get(), userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

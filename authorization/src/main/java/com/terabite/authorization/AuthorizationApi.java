@@ -1,10 +1,10 @@
 package com.terabite.authorization;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
-import com.terabite.authorization.model.LoginStatus;
+import com.terabite.authorization.config.RoleCongifuration;
+import com.terabite.authorization.service.JwtService;
 
 /**
  * <h1>AuthorizationApi</h1>
@@ -23,9 +23,23 @@ import com.terabite.authorization.model.LoginStatus;
  * authorization related utilities.
  */
 public class AuthorizationApi {
-    // README | FIX: This is probably best left as part of a commons library that will parse JWT tokens, 
-    // since the main reason to use JWT is that we can verify the token without having to make a request to the authorization service.
 
+    public static final class Roles {
+        public static final String UNVERIFIED = "ROLE_UNVERIFIED"; 
+        public static final String TERMS_NOT_ACCEPTED = "ROLE_TERMS_NOT_ACCEPTED";
+        public static final String ACCOUNT_NOT_SETUP = "ROLE_ACCOUNT_NOT_SETUP";
+        public static final String COACH = "ROLE_COACH";
+        public static final String USER = "ROLE_USER";
+        public static final String SUBSCRIBED = "ROLE_SUBSCRIBED";
+        public static final String ADMIN = "ROLE_ADMIN";
+        public static final String BANNED = "ROLE_BANNED";
+    }
+
+    private final JwtService jwtService;
+
+    public AuthorizationApi(final JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
 
     /**
      * This method will check if the user is logged in.
@@ -34,9 +48,10 @@ public class AuthorizationApi {
      * @return True if the user is logged in, false otherwise.
      */
     public boolean isUserLoggedIn(String token) {
-        Optional<ParsedToken> parsedToken = parseToken(token);
-        if (parsedToken.isPresent()) {
-            return parsedToken.get().getStatus().equals(LoginStatus.LOGGED_IN);
+        Optional<String> email = getEmailFromToken(token);
+        // TODO: verify with LoginService to get user details
+        if (email.isPresent() && jwtService.isTokenExpired(token)) {
+            return true;
         }
         return false;
     }
@@ -44,20 +59,16 @@ public class AuthorizationApi {
     /**
      * This method will check if the user is authorized.
      * <p>
-     * TODO: This might be better implemented some other way like with levels of
-     * access
-     * or roles, but for now we will just check if the user is authorized as a
-     * blanked check.
      *
      * @param token The token that will be used to check if the user is authorized.
      * @return True if the user is authorized, false otherwise.
      */
-    public boolean isUserAuthorized(String token) {
-        Optional<ParsedToken> parsedToken = parseToken(token);
-        if (parsedToken.isPresent()) {
-            return parsedToken.get().isAuthorized();
+    public boolean isUserAuthorized(String token, final RoleCongifuration roleCongifuration) {
+        if (!isUserLoggedIn(token)) {
+            return false;
         }
-        return false;
+        List<String> roles = getRolesFromToken(token);
+        return roleCongifuration.validate(roles);
     }
 
     /**
@@ -70,53 +81,19 @@ public class AuthorizationApi {
      * @return True if the user is logged out, false otherwise.
      */
     public Optional<String> getEmailFromToken(String token) {
-        Optional<ParsedToken> parsedToken = parseToken(token);
-        if (parsedToken.isPresent()) {
-            return Optional.of(parsedToken.get().getEmail());
-        }
-        return Optional.empty();
+        return jwtService.extractUsername(token);
     }
 
-    private Optional<ParsedToken> parseToken(String token) {
 
-        String tokenPrefix = "authorized:";
-        if (token.startsWith(tokenPrefix)) {
-            String tokenBody = token.substring(tokenPrefix.length());
-            String[] tokenParts = tokenBody.split("-");
-            if (tokenParts.length == 2) {
-                String email = tokenParts[0];
-                String status = tokenParts[1];
-                if (status.equals(LoginStatus.LOGGED_IN.toString())
-                        || status.equals(LoginStatus.LOGGED_OUT.toString())) {
-                    return Optional.of(new ParsedToken(true, email, LoginStatus.valueOf(status)));
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-    private class ParsedToken {
-        private boolean isAuthorized;
-        String email;
-        LoginStatus status;
-
-        public ParsedToken(boolean isAuthorized, String email, LoginStatus status) {
-            this.isAuthorized = isAuthorized;
-            this.email = email;
-            this.status = status;
-        }
-
-        public boolean isAuthorized() {
-            return isAuthorized;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public LoginStatus getStatus() {
-            return status;
-        }
+    /**
+     * This method will get all the roles from the token.
+     * <p>
+     *
+     * @param token The token that will be used to check if the user is logged out.
+     * @return True if the user is logged out, false otherwise.
+     */
+    public List<String> getRolesFromToken(String token) {
+        return jwtService.extractRoles(token);
     }
 
 }

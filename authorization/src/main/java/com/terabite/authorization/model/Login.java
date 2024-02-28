@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "login_table")
 public class Login {
-    private LoginStatus loginStatus;
 
     // TODO: might have to change this email/user name schema to include an actual 
     // unique username, otherwise we cannot allow multiple users with the same email
@@ -33,12 +32,10 @@ public class Login {
     public Login(String email, String password) {
         this.email = email;
         this.password = password;
-        this.loginStatus = LoginStatus.LOGGED_OUT;
     }
 
-    public Login() {
-
-    }
+    // FOR Serialization and Deserialization purposes
+    public Login() {}
 
     @Override
     public String toString() {
@@ -48,14 +45,6 @@ public class Login {
 
     public void setResetPasswordToken(String passwordResetToken) {
         this.passwordResetToken = passwordResetToken;
-    }
-
-    public LoginStatus getLoginStatus() {
-        return loginStatus;
-    }
-
-    public void setLoginStatus(LoginStatus loginStatus) {
-        this.loginStatus = loginStatus;
     }
 
     public String getEmail() {

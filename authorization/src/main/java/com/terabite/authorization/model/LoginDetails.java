@@ -26,6 +26,12 @@ public class LoginDetails implements UserDetails {
         return authorities;
     }
 
+    public Collection<String> getRoles() {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public String getPassword() {
         return this.password;
