@@ -3,6 +3,7 @@ package com.terabite.user.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.terabite.programming.model.Program;
 
 @Entity
@@ -16,18 +17,22 @@ public class UserProgramming implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userMappingId;
+    @JsonAlias("user_programming_id")
+    private Long userProgrammingId;
 
     @JoinColumn(table = "program", name = "id", nullable = false)
     @ManyToOne
+    @JsonAlias("user_info")
     private UserInformation userInfo;
 
     @JoinColumn(table = "user_information_table", nullable = false)
     @ManyToOne
     private Program program;
 
+    private String comments;
+
     public Long getId() {
-        return userMappingId;
+        return userProgrammingId;
     }
 
     public UserInformation getUserInfo() {
@@ -38,8 +43,24 @@ public class UserProgramming implements Serializable {
         return program;
     }
 
+    public Long getUserProgrammingId() {
+        return userProgrammingId;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setUserProgrammingId(Long userMappingId) {
+        this.userProgrammingId = userMappingId;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     public void setId(Long userMappingId) {
-        this.userMappingId = userMappingId;
+        this.userProgrammingId = userMappingId;
     }
 
     public void setUserInfo(UserInformation userInfo) {
@@ -48,7 +69,5 @@ public class UserProgramming implements Serializable {
 
     public void setProgram(Program program) {
         this.program = program;
-    }
-
-    
+    }   
 }

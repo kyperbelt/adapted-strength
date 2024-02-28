@@ -13,6 +13,8 @@ import com.terabite.user.service.UserProgrammingService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -195,4 +197,13 @@ public class UserController {
         return userProgrammingService.getUserPrograms(email.get() );
     }
 
+    @PostMapping("/programming/{id}/comment")
+    public ResponseEntity<?> addComment(@RequestParam("id") long userProgrammingId, HttpServletRequest request){
+        return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
+    } 
+
+    @PutMapping("/programming/{pid}/comment/{cid}")
+    public ResponseEntity<?> updateComment(@RequestParam("pid") long userProgrammingId, @RequestParam("cid") long commentId, HttpServletRequest request){
+        return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
+    }
 }

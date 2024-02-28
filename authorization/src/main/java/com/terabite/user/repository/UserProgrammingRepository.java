@@ -14,4 +14,6 @@ public interface UserProgrammingRepository extends JpaRepository<UserProgramming
     // @Query("SELECT p FROM Program p WHERE p.id IN (SELECT upm.programmingId from UserProgrammingMapping upm WHERE upm.userId = ?1)")
     // List<Program> findByUserId(Long userId);
     List<UserProgramming> findByUserInfoEmail(String email);
+    String findCommentsById(Long id);
+    Program findProgramById(Long id);
 }

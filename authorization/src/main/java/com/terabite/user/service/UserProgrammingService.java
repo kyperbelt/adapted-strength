@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.terabite.programming.model.Program;
-import com.terabite.user.model.UserInformation;
 import com.terabite.user.model.UserProgramming;
 import com.terabite.user.repository.UserProgrammingRepository;
 
@@ -22,13 +20,13 @@ public class UserProgrammingService {
     }
     
     public ResponseEntity<?> getUserPrograms(String userEmail) {
-        List<UserProgramming> programs = userProgrammingRepository.findByUserInfoEmail(userEmail);
+        List<UserProgramming> userProgramming = userProgrammingRepository.findByUserInfoEmail(userEmail);
         Map<String, Object> payload = new HashMap<>();
 
-        payload.put("userEmail", userEmail);
-        payload.put("subscribedPrograms", programs);
+        payload.put("user_email", userEmail);
+        payload.put("subscribed_programs", userProgramming);
 
-        if(programs.isEmpty() ){
+        if(userProgramming.isEmpty() ){
             return new ResponseEntity<>(payload, HttpStatus.NOT_FOUND);
         }
         else {
