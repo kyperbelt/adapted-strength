@@ -3,7 +3,7 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import { lazy, Suspense } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
@@ -18,8 +18,11 @@ import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
+import ManageChats from "./pages/manageChats.jsx";
+import Chat from "./pages/Chat";
 
-import UploadProgram from './pages/ProgramUpload.jsx';
+import ProgramManagement from './pages/ProgramManagement.jsx';
+
 
 /*
 IMPORTS FOR PROGRAM PAGES
@@ -45,7 +48,6 @@ import ChatTest from './pages/test_pages/ChatTest';
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 
 // import footer from '../footer'
-
 
 function App() {
 
@@ -76,21 +78,29 @@ function App() {
             <Route path="about" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="sign-up-additional" element={<SignUpAdditional />} />
-            <Route path="prog-up" element={<UploadProgram />} />
 
-            {/* ROUTES FOR PROGRAM PAGES */}
-            {/*--------------------------------------------------*/}
-            <Route path="bodybuild" element={<BodyBuild />} />
-            <Route path="power-lifting" element={<Power />} />
-            <Route path="oly-lifting" element={<Oly />} />
-            <Route path="general-program" element={<General />} />
-            {/*--------------------------------------------------*/}
+            <Route path="/program-management/:programId?/:blockId?/:weekId?/:dayId?" element={<ProgramManagement />} />
+
+            /* ROUTES FOR PROGRAM PAGES */
+            //--------------------------------------------------
+            // <Route path="bodybuild" element={<BodyBuild />} />
+            // <Route path="power-lifting" element={<Power />} />
+            // <Route path="oly-lifting" element={<Oly />} />
+            // <Route path="general-program" element={<General />} />
+            //--------------------------------------------------
+
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
             <Route path='video-library' element={<VideoLibrary />} />
+            <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
             <Route path="*" element={<NotFound />} />
+
+            /* ROUTES FOR CHAT PAGES */
+            //--------------------------------------------------
+            <Route path="manageChats" element={<ManageChats />} />
+            //--------------------------------------------------
           </Route>
         </Routes>
       </BrowserRouter>
