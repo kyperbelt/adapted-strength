@@ -29,9 +29,13 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private final Key SECRET;
+    // In milliseconds | probably should be in config FIXME
+    private static final int JWT_EXPIRATION = 1000 * 60 * 60 * 24; 
 
     private static Logger log = LoggerFactory.getLogger(JwtService.class);
+    private final Key SECRET;
+
+
 
     public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
         this.SECRET = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -55,7 +59,7 @@ public class JwtService {
                     .setClaims(claims)
                     .setSubject(userName)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // Expire in 1 minute for
+                    .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION)) // Expire in 1 minute for
                                                                                          // testing
                     .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
         } catch (InvalidKeyException e) {
@@ -131,7 +135,8 @@ public class JwtService {
                     .getBody();
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException
                 | IllegalArgumentException e) {
-            log.error(String.format("Error parsing token: %s", e.getMessage()));
+            log.error(String.format("Error parsing token: %s",e.getMessage()));
+            e.printStackTrace();
             // Don't think this ever gets thrown - see JwtAuthFilter
             throw new JwtValidationException(e.getMessage());
         }

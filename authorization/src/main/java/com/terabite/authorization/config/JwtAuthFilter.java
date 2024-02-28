@@ -12,6 +12,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -28,6 +31,8 @@ import java.util.Optional;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private static Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
     
     @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME)
     @Autowired
@@ -60,12 +65,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // }
         token = cookieMonsterService.getAuthCookie(request).map(Cookie::getValue); 
         if (token.isPresent()) {
-            try {
                 email = jwtService.extractUsername(token.get());
-            } catch (JwtValidationException e) {
-                raiseException(request, response, token.get());
-                return;
-            }
+                if (email.isEmpty()) {
+                    raiseException(request, response, token.get());
+                    log.error("Invalid token provided");
+                    return;
+                }
         }
 
         if (email.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -91,6 +96,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * @throws IOException from raw byte writing into response body
      */
     private void raiseException(HttpServletRequest request, HttpServletResponse response, String token) throws IOException {
+        
+        // delte the cookie on any exception 
+        Cookie cookie = cookieMonsterService.createAuthorizationCookie("", 0);
+        response.addCookie(cookie);
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ApiResponse apiResponse = new ApiResponse("Invalid token provided", token);

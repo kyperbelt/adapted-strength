@@ -106,7 +106,6 @@ public class AuthorizationController {
 
     }
 
-    @Deprecated
     @PostMapping("/logout")
     public Payload userLogoutPost(HttpServletResponse response, HttpServletRequest request) {
 
