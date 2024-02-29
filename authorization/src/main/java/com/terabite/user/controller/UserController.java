@@ -62,7 +62,7 @@ public class UserController {
     // This service will only be responsible for creating, updating, and deleting
     // and retrieving user information.
     @PostMapping("/create")
-    public ResponseEntity<String> createAccountInformation(
+    public ResponseEntity<?> createAccountInformation(
             @RequestBody final UserInformation userInformation,
             HttpServletRequest request) {
 
@@ -70,27 +70,27 @@ public class UserController {
 
         if (token.isEmpty()) {
             log.error("No token found in request");
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(401).body(Payload.of("Unauthorized"));
         }
 
         final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
         if (email.isEmpty()) {
             log.error("No email found in token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
         }
 
         final Optional<UserInformation> userInformationOption = userRepository.findByEmail(email.get());
 
         if (userInformationOption.isPresent()) {
             log.error("User information already exists for email: " + email.get());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to create acctount");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Payload.of("User information already exists"));
         }
 
         userInformation.setEmail(email.get());
 
         userRepository.save(userInformation);
 
-        return ResponseEntity.ok("Account information created successfully");
+        return ResponseEntity.ok(Payload.of("User information created successfully"));
     }
 
     @PutMapping("/profile")
@@ -140,30 +140,33 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(HttpServletRequest request, HttpServletResponse response) {
-        // redirectHandler(response, "http://localhost:3000");
-        return RedirectResponse.of("http://localhost:3000");
-        // return ResponseEntity.status(HttpStatus.FOUND).body(Payload.EMPTY_PAYLOAD);
 
-        // final Optional<Cookie> token = getTokenCookie(request);
-        //
-        // if (token.isEmpty()) {
-        //     log.error("No token found in request");
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
-        // }
-        //
-        // final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
-        // if (email.isEmpty()) {
-        //     log.error("No email found in token");
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
-        // }
-        //
-        // final Optional<UserInformation> userInformation = userRepository.findByEmail(email.get());
-        // if (userInformation.isEmpty()) {
-        //     log.error("No user information found for email: " + email.get());
-        //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.EMPTY_PAYLOAD);
-        // }
-        //
-        // return ResponseEntity.ok(userInformation.get());
+        final Optional<Cookie> token = getTokenCookie(request);
+
+        if (token.isEmpty()) {
+            log.error("No token found in request");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
+        }
+
+        final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
+        if (email.isEmpty()) {
+            log.error("No email found in token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
+        }
+
+        final List<String> roles = authorizationApi.getRolesFromToken(token.get().getValue());
+        if (!AUTHORIZED_USER_CONFIG.validate(roles)) {
+            log.error("User is not authorized to access this resource");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(AUTHORIZED_USER_CONFIG.getMissingRoles(roles));
+        }
+
+        final Optional<UserInformation> userInformation = userRepository.findByEmail(email.get());
+        if (userInformation.isEmpty()) {
+            log.error("No user information found for email: " + email.get());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.EMPTY_PAYLOAD);
+        }
+
+        return ResponseEntity.ok(userInformation.get());
     }
 
     private Optional<Cookie> getTokenCookie(HttpServletRequest request) {

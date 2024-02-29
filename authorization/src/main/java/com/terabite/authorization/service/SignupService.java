@@ -9,8 +9,6 @@ import com.terabite.authorization.repository.LoginRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,11 +54,11 @@ public class SignupService {
             loginRepository.save(login);
 
             final String token = jwtService.generateToken(new LoginDetails(login));
-            log.info("User %s has signed up", login.getEmail());
+            log.info("User {} has signed up", login.getEmail());
             return Optional.of(token);
 
         } else {
-            log.info("User %s already exists", authRequest.getUsername());
+            log.info("User {} already exists", authRequest.getUsername());
             return Optional.empty();
         }
     }

@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,11 +70,27 @@ public class AuthorizationController {
             Cookie cookie = cookieMonsterService.createAuthorizationCookie(token.get(),
                     60 * 60 * 24 * 7);
             response.addCookie(cookie);
-            return ResponseEntity.ok(new Payload(token.get()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new Payload(token.get()));
         }
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new Payload("User already exists"));
     }
+
+    @PostMapping("/validate_credentials")
+    public ResponseEntity<?> validateCredentials(@RequestBody AuthRequest authRequest) {
+        Optional<Login> login = loginRepository.findByEmail(authRequest.getUsername());
+        if (login.isPresent()) {
+            log.info("User {} already exists", authRequest.getUsername());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new Payload("User already exists"));
+        }
+        if (!signupService.verifyPasswordIsStrong(authRequest.getPassword())) {
+            log.info("Password {} is not strong enough", authRequest.getPassword());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Payload("Password is not strong enough"));
+        }
+        log.info("Credentials username: {} and password: {} are valid", authRequest.getUsername(), authRequest.getPassword());
+        return ResponseEntity.ok(new Payload("Valid"));
+    }
+
 
     /**
      *
@@ -141,6 +156,7 @@ public class AuthorizationController {
         return forgotPasswordService.processResetPassword(token, jsonPassword);
     }
 
+    @Deprecated
     @PostMapping("/get_token")
     public ResponseEntity<?> getToken(@RequestBody AuthRequest authRequest) {
 

@@ -45,8 +45,18 @@ bootRun {
     dependsOn 'test'
 }
 
+tasks.register('nukeDatabase', Exec) {
+	commandLine 'docker', 'rm', 'authorization-mysql-1'
+}
+
 tasks.register('checkEnvVars', Exec) {
     commandLine 'bash', '../scripts/check_env_vars.sh'
+}
+
+tasks.register('bootRunFresh', Exec) {
+	dependsOn 'clean'
+	dependsOn 'nukeDatabase'
+	dependsOn 'bootRun'
 }
 
 

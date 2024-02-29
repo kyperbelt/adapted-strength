@@ -1,7 +1,9 @@
 package com.terabite.authorization.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RoleConfiguration {
 
@@ -92,6 +94,44 @@ public class RoleConfiguration {
         }
 
         return any.isEmpty();
+    }
+
+    public List<String> getAllMissing(final List<String> roles) {
+        List<String> missing = new ArrayList<String>();
+        for (String role : all) {
+            if (!roles.contains(role)) {
+                missing.add(role);
+            }
+        }
+        return missing;
+    }
+
+    public List<String> getExceptPresent(final List<String> roles) {
+        List<String> present = new ArrayList<String>();
+        for (String role : except) {
+            if (roles.contains(role)) {
+                present.add(role);
+            }
+        }
+        return present;
+    }
+
+    public List<String> getAnyMissing(final List<String> roles) {
+        List<String> missing = new ArrayList<String>();
+        for (String role : any) {
+            if (!roles.contains(role)) {
+                missing.add(role);
+            }
+        }
+        return missing;
+    }
+
+    public Map<String, List<String>> getMissingRoles(final List<String> roles) {
+        Map<String, List<String>> missing = new HashMap<String, List<String>>();
+        missing.put("all", getAllMissing(roles));
+        missing.put("except", getExceptPresent(roles));
+        missing.put("any", getAnyMissing(roles));
+        return missing;
     }
 
     public static RoleConfigurationBuilder builder() {

@@ -50,4 +50,36 @@ export class UserApi {
     const promise = ApiUtils.apiPut('user/profile', profile);
     return promise;
   }
+
+  /**
+  * @param {Object} information
+  * @returns {Promise<Response>} Promise<Response>
+  * @memberof UserApi
+  * @description This method will create a new user profile with the specified data
+  * @example
+  * UserApi.createProfileInformation({ 
+  *                                   first_name: 'John',
+  *                                    last_name: 'Doe',
+  *                                    email: 'some@email.com',
+  *                                    cell_phone: '1234567890',
+  *                                    home_phone: '1234567890',
+  *                                    address: {
+  *                                      address: '1234 Example St',
+  *                                      city: 'Example',
+  *                                      state: 'EX',
+  *                                      zipcode: '12345',
+  *                                    },
+  *                                    emergency_contact: {
+  *                                      name: 'Jane',
+  *                                      last_name: 'Doe',
+  *                                      phone: '1234567890',
+  *                                    },
+  *                                    how_did_you_hear: 'Friend'
+  *                                   });
+  *
+  */
+  static createProfileInformation(information) {
+    const promise = ApiUtils.apiPost('user/create', information);
+    return promise;
+  }
 }

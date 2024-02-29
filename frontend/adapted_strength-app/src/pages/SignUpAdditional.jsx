@@ -1,5 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useState, useEffect} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { UserApi } from "../api/UserApi";
+import { AuthApi } from "../api/AuthApi";
 import logo from '../assets/logo.png';
 
 function FnameField() {
@@ -92,17 +94,81 @@ function AdaptedStrengthLogo() {
 }
 
 export default function SignUp() {
+    const [signingUp, setSigningUp] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state;
+    
+    useEffect(() => {
+        if (!state || !state.email || !state.password || !state.tosAccepted || !state.healthQuestionnaire) {
+            // TODO: for now we just redirect to signup page, but later  we want to check if the state is in storage or not and redirect to the appropriate page
+            navigate('/sign-up', {});
+        }
+    }, []);
 
     function HandleSubmit(event) {
         event.preventDefault();
-        console.log("Navigating to health questionnaire");
+        const formData = new FormData(event.target);
+        const data = {
+            first_name: formData.get('fname'),
+            last_name: formData.get('lname'),
+            date_of_birth: formData.get('dob'),
+            email: state.email,
+            sex: formData.get('sex'),
+            shirt_size: formData.get('shirt_size'),
+            cell_phone: formData.get('cell_phone'),
+            home_phone: formData.get('home_phone'),
+            address: {
+                address: formData.get('address'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                zipcode: formData.get('zipcode')
+            },
+            emergency_contact: {
+                first_name: formData.get('emergency_contact_fname'),
+                last_name: formData.get('emergency_contact_lname'),
+                phone_number: formData.get('emergency_contact_phone')
+            },
+            how_did_you_hear: formData.get('heard'),
+        }
 
-        navigate('/health-questionnaire');
+        console.log(data);
+        setSigningUp(true);
 
-        console.log("Navigation function called");
+        // first thing is first we must create the user account
+        AuthApi.signup(state.email, state.password)
+            .then((response) => {
+                if (response.status == 201) {
+                    // user is valid 
+                    console.log("User is valid and account is created");
+                    return UserApi.createProfileInformation(data);
+                } else if (response.status == 409) { // conflict means email is already in use 
+                    console.log("Unable to create user account, email is already in use");
+                } else {
+                    console.log(response);
+                    console.log("Unable to create user account, unknown error");
+                }
+            }).then((response) => {
+                if (response.status == 201) {
+                    console.log("User profile created");
+                } else {
+                    console.log(response);
+                    console.log("Unable to create user profile, unknown error");
+                }
+            }).finally(() => {
+                setSigningUp(false);
+            }).catch((error) => {
+                console.error(`ERROR HAPPENED: ${error}`);
+            });
     }
 
+    if (signingUp) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                Signing up...
+            </div>
+        );
+    }
 
 
     return (

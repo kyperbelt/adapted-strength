@@ -1,13 +1,11 @@
 package com.terabite.authorization.config;
 
 import com.terabite.authorization.log.CustomAccessDeniedHandler;
-import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
 import jakarta.servlet.DispatcherType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -19,7 +17,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,19 +28,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
         private static final String VERSION_PREFIX = "v1";
         private static final String[] AUTHENTICATED_ROUTES = {
-                        // "/auth/**",
-                        "/auth/logout",
-                        "/user/**",
-                        "/chat/**",
-                        "/programming/**",
+                // "/auth/**",
+                "/auth/logout",
+                "/user/**",
+                "/chat/**",
+                "/programming/**",
         };
         private static final String[] PERMIT_ALL_ROUTES = {
-                        "/auth/signup",
-                        "/auth/login",
-                        "/auth/verify", // TODO: verify email, we might want to add this at some point
-                        "/auth/refresh", // to reset jwt token
-                        "/auth/forgot_password",
-                        "/auth/reset_password",
+                "/auth/signup",
+                "/auth/login",
+                "/auth/validate_credentials",
+                "/auth/verify", // TODO: verify email, we might want to add this at some point
+                "/auth/refresh", // to reset jwt token
+                "/auth/forgot_password",
+                "/auth/reset_password",
         };
 
         private final JwtAuthFilter jwtAuthFilter;
@@ -86,8 +84,6 @@ public class SecurityConfig {
                                                         .dispatcherTypeMatchers(DispatcherType.ERROR,
                                                                         DispatcherType.FORWARD)
                                                         .permitAll();
-                                        // .requestMatchers("v1/auth/restricted_page").authenticated()
-                                        // .requestMatchers("/v1/auth/change_role").authenticated()
                                         for (String route : AUTHENTICATED_ROUTES) {
                                                 authorizeHttpRequests
                                                                 .requestMatchers(String.format("/%s%s", VERSION_PREFIX,
@@ -103,10 +99,7 @@ public class SecurityConfig {
                                                                 .permitAll();
                                         }
 
-                                        // authorizeHttpRequests.anyRequest().permitAll();
-                                }
-                                // .requestMatchers("/v1/auth/**").permitAll()
-                                ).sessionManagement((sessionManagement) -> sessionManagement
+                                }).sessionManagement((sessionManagement) -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authenticationProvider(authProvider)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

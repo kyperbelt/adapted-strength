@@ -1,4 +1,5 @@
 import { ApiUtils } from './ApiUtils';
+
 // create an object of the AuthApi class
 // it will make calls using fetch 
 
@@ -26,6 +27,21 @@ export class AuthApi {
       password,
     };
     const promise = ApiUtils.apiPost('auth/signup', credentials);
+    return promise;
+  }
+
+  /**
+   *
+  * @param {string} email
+  * @returns {Promise} promise
+  * @description This function is used to validate if the email is already in use or does not meet the required criteria. It does not create a user.
+  */
+  static validateCredentials(email, password) {
+    const credentials = {
+      username: email,
+      password,
+    };
+    const promise = ApiUtils.apiPost(`auth/validate_credentials`, credentials);
     return promise;
   }
 
