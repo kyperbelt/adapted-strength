@@ -76,6 +76,7 @@ export default function Profile() {
                     console.log(response.data)
                 } else {
                     // TODO: same as error, redirect to login page or display error message
+                    console.error(`ERROR HAPPENED: ${response.data.payload}`);
                 }
             }).catch((error) => {
                 console.error(`ERROR HAPPENED: ${error}`);

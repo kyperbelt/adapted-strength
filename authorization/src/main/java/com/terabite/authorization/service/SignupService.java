@@ -4,20 +4,26 @@ import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.AuthorizationApi.Roles;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.repository.LoginRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SignupService {
     private final LoginRepository loginRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+
+    private static final Logger log = LoggerFactory.getLogger(SignupService.class);
 
 
     public SignupService(LoginRepository loginRepository, PasswordEncoder passwordEncoder, final JwtService jwtService) {
@@ -26,7 +32,17 @@ public class SignupService {
         this.jwtService = jwtService;
     }
 
-    public ResponseEntity<?> signup(AuthRequest authRequest) {
+    public boolean verifyPasswordIsStrong(String password) {
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        boolean hasLowercase = !password.equals(password.toUpperCase());
+        boolean hasDigit = password.matches(".*\\d.*");
+        boolean hasSpecial = password.matches(".*[!@#$%^&*].*");
+        boolean isLongEnough = password.length() >= 8;
+        return hasUppercase && hasLowercase && hasDigit && isLongEnough && hasSpecial;
+    }
+
+    public Optional<String> signup(AuthRequest authRequest) {
+
         if (loginRepository.findByEmail(authRequest.getUsername()).isEmpty()) {
             String plaintextPassword = authRequest.getPassword();
             authRequest.setPassword(passwordEncoder.encode(plaintextPassword));
@@ -35,15 +51,17 @@ public class SignupService {
             login.setEmail(authRequest.getUsername());
             login.setPassword(authRequest.getPassword());
 
-            login.setRoles(List.of(Roles.UNVERIFIED, Roles.USER, Roles.TERMS_NOT_ACCEPTED, Roles.ACCOUNT_NOT_SETUP));
-            
+            login.setRoles(List.of(Roles.USER));
 
             loginRepository.save(login);
 
-            return new ResponseEntity<>(String.format("authorized:%s", login.getEmail()),
-                    HttpStatus.CREATED);
+            final String token = jwtService.generateToken(new LoginDetails(login));
+            log.info("User %s has signed up", login.getEmail());
+            return Optional.of(token);
+
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to create user.");
+            log.info("User %s already exists", authRequest.getUsername());
+            return Optional.empty();
         }
     }
 }

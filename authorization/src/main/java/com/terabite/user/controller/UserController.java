@@ -2,7 +2,10 @@ package com.terabite.user.controller;
 
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
+import com.terabite.authorization.AuthorizationApi.Roles;
+import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.dto.Payload;
+import com.terabite.authorization.dto.RedirectResponse;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UnsubscribeRequest;
 import com.terabite.user.model.UserInformation;
@@ -11,20 +14,26 @@ import com.terabite.user.service.SubscriptionService;
 import com.terabite.user.service.UnsubscribeService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/user")
 public class UserController {
+    private static final RoleConfiguration AUTHORIZED_USER_CONFIG = RoleConfiguration.builder() 
+        .all(Roles.ACCOUNT_SETUP, Roles.TERMS_ACCEPTED).any(Roles.USER, Roles.ADMIN).except(Roles.BANNED).build();
 
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
@@ -130,28 +139,31 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserInformation> getProfile(HttpServletRequest request) {
+    public ResponseEntity<?> getProfile(HttpServletRequest request, HttpServletResponse response) {
+        // redirectHandler(response, "http://localhost:3000");
+        return RedirectResponse.of("http://localhost:3000");
+        // return ResponseEntity.status(HttpStatus.FOUND).body(Payload.EMPTY_PAYLOAD);
 
-        final Optional<Cookie> token = getTokenCookie(request);
-
-        if (token.isEmpty()) {
-            log.error("No token found in request");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
-        if (email.isEmpty()) {
-            log.error("No email found in token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        final Optional<UserInformation> userInformation = userRepository.findByEmail(email.get());
-        if (userInformation.isEmpty()) {
-            log.error("No user information found for email: " + email.get());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        return ResponseEntity.ok(userInformation.get());
+        // final Optional<Cookie> token = getTokenCookie(request);
+        //
+        // if (token.isEmpty()) {
+        //     log.error("No token found in request");
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
+        // }
+        //
+        // final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
+        // if (email.isEmpty()) {
+        //     log.error("No email found in token");
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
+        // }
+        //
+        // final Optional<UserInformation> userInformation = userRepository.findByEmail(email.get());
+        // if (userInformation.isEmpty()) {
+        //     log.error("No user information found for email: " + email.get());
+        //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.EMPTY_PAYLOAD);
+        // }
+        //
+        // return ResponseEntity.ok(userInformation.get());
     }
 
     private Optional<Cookie> getTokenCookie(HttpServletRequest request) {
@@ -184,5 +196,11 @@ public class UserController {
         }
 
         return unsubscribeService.unsubscribe(request);
+    }
+
+    private static void redirectHandler(HttpServletResponse response, String redirectUrl) {
+        response.setHeader("Location", redirectUrl);
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+        response.setStatus(302);
     }
 }

@@ -42,6 +42,7 @@ dependencies {
 // runs a shell script located ../../scripts/check_env_vars.sh
 bootRun {
     dependsOn 'checkEnvVars'
+    dependsOn 'test'
 }
 
 tasks.register('checkEnvVars', Exec) {
@@ -51,4 +52,9 @@ tasks.register('checkEnvVars', Exec) {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+	events "passed", "skipped", "failed"
+    }
 }
+
+

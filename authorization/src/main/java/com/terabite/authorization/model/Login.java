@@ -1,6 +1,8 @@
 package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,9 +17,15 @@ public class Login {
     // TODO: might have to change this email/user name schema to include an actual 
     // unique username, otherwise we cannot allow multiple users with the same email
     // we have to check that the email is also case-sensitive when we do this. 
+    @NotNull 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
+    private int id;
+
+
     @NotNull
     @Email
-    @Id
     @JsonAlias("username")
     private String email;
     @NotBlank
@@ -42,6 +50,13 @@ public class Login {
         return "{ " + " email:" + this.email + " password:" + this.password + " }";
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setResetPasswordToken(String passwordResetToken) {
         this.passwordResetToken = passwordResetToken;

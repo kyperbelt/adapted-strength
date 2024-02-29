@@ -3,7 +3,7 @@ package com.terabite.authorization.config;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleCongifuration {
+public class RoleConfiguration {
 
     /**
      * Must contain all these roles to access the resource
@@ -18,25 +18,25 @@ public class RoleCongifuration {
      */
     private final List<String> any;
 
-    public RoleCongifuration(List<String> all, List<String> except, List<String> any) {
+    public RoleConfiguration(List<String> all, List<String> except, List<String> any) {
         this.all = all;
         this.except = except;
         this.any = any;
     }
 
-    public RoleCongifuration(List<String> all, List<String> except) {
+    public RoleConfiguration(List<String> all, List<String> except) {
         this.all = all;
         this.except = except;
-        this.any = new ArrayList<String>(); 
+        this.any = new ArrayList<String>();
     }
 
-    public RoleCongifuration(List<String> all) {
+    public RoleConfiguration(List<String> all) {
         this.all = all;
         this.except = new ArrayList<String>();
         this.any = new ArrayList<String>();
     }
 
-    public RoleCongifuration() {
+    public RoleConfiguration() {
         this.all = new ArrayList<String>();
         this.except = new ArrayList<String>();
         this.any = new ArrayList<String>();
@@ -53,7 +53,16 @@ public class RoleCongifuration {
     public List<String> getAny() {
         return any;
     }
-    
+
+    @Override
+    public String toString() {
+        return "\nRoleConfiguration{\n" +
+                "\tall=" + all + "\n" +
+                "\texcept=" + except + "\n" +
+                "\tany=" + any + "\n" +
+                "}";
+    }
+
     /**
      * Validates that the roles in the list are valid for this configuration
      *
@@ -89,9 +98,7 @@ public class RoleCongifuration {
         return new RoleConfigurationBuilder();
     }
 
-    
-
-    public static class RoleConfigurationBuilder{
+    public static class RoleConfigurationBuilder {
         private List<String> all;
         private List<String> except;
         private List<String> any;
@@ -107,7 +114,7 @@ public class RoleCongifuration {
         }
 
         public RoleConfigurationBuilder all(String... roles) {
-            // check that roles in the list are unique and they are not 
+            // check that roles in the list are unique and they are not
             if (allSet) {
                 throw new IllegalStateException("All roles already set for this confuguration. May only set Once!");
             }
@@ -142,14 +149,15 @@ public class RoleCongifuration {
             return this;
         }
 
-        public RoleCongifuration build() {
+        public RoleConfiguration build() {
             // check that roles in except are not in all or any
             for (String role : except) {
                 if (all.contains(role) || any.contains(role)) {
-                    throw new IllegalStateException("Role: " + role + " is in the except list and also in the all or any list");
+                    throw new IllegalStateException(
+                            "Role: " + role + " is in the except list and also in the all or any list");
                 }
             }
-            return new RoleCongifuration(all, except, any);
+            return new RoleConfiguration(all, except, any);
         }
     }
 

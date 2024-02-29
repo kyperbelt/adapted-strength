@@ -1,5 +1,6 @@
 package com.terabite;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,6 +83,12 @@ public class GlobalConfiguration {
 	public String getDomainUrl() {
 		return domainUrl;
 	}
+
+        @Bean
+        public JwtService jwtService(@Qualifier(BEAN_JWT_SECRET) final String jwtSecret) {
+                return new JwtService(jwtSecret);
+        }
+
 
 
 }

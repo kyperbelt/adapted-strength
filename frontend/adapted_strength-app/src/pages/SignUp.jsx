@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
 import PageContainer1 from '../components/PageContainer';
+import { AuthApi } from '../api/AuthApi';
 
 const ErrorType = {
     PasswordsMustMatch: "Passwords must match.",
@@ -69,10 +70,25 @@ export default function SignUp() {
             setError(ErrorType.PasswordsMustMatch);
             return;
         }
+
+
+        const email = e.target.email.value;
+        AuthApi.signup(email, password)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log("Signed up!");
+                    console.log(response.data);
+                } else {
+                    console.error("Error logging in", response);
+                }
+            }).catch((error) => {
+                console.error("Error logging in", error);
+            });
+
         setError(ErrorType.NoError);
 
         // After successful registration, redirect to the Terms of Service page
-        navigate("/terms-of-service");
+        // navigate("/health-questionnaire");
 
         //if (validatePasswordMatch()){ // TODO: ADAPTEDS-89 
         // window.location.href = "/sign-up-additional";

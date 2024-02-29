@@ -3,7 +3,7 @@ package com.terabite.authorization;
 import java.util.List;
 import java.util.Optional;
 
-import com.terabite.authorization.config.RoleCongifuration;
+import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.service.JwtService;
 
 /**
@@ -25,9 +25,9 @@ import com.terabite.authorization.service.JwtService;
 public class AuthorizationApi {
 
     public static final class Roles {
-        public static final String UNVERIFIED = "ROLE_UNVERIFIED"; 
-        public static final String TERMS_NOT_ACCEPTED = "ROLE_TERMS_NOT_ACCEPTED";
-        public static final String ACCOUNT_NOT_SETUP = "ROLE_ACCOUNT_NOT_SETUP";
+        public static final String EMAIL_VERIFIED= "ROLE_EMAIL_VERIFIED"; 
+        public static final String TERMS_ACCEPTED = "ROLE_TERMS_ACCEPTED";
+        public static final String ACCOUNT_SETUP = "ROLE_ACCOUNT_SETUP";
         public static final String COACH = "ROLE_COACH";
         public static final String USER = "ROLE_USER";
         public static final String SUBSCRIBED = "ROLE_SUBSCRIBED";
@@ -63,7 +63,7 @@ public class AuthorizationApi {
      * @param token The token that will be used to check if the user is authorized.
      * @return True if the user is authorized, false otherwise.
      */
-    public boolean isUserAuthorized(String token, final RoleCongifuration roleCongifuration) {
+    public boolean isUserAuthorized(String token, final RoleConfiguration roleCongifuration) {
         if (!isUserLoggedIn(token)) {
             return false;
         }

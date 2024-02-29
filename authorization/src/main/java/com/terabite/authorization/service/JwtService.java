@@ -11,9 +11,7 @@ import io.jsonwebtoken.security.SignatureException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +28,20 @@ import java.util.function.Function;
 public class JwtService {
 
     // In milliseconds | probably should be in config FIXME
-    private static final int JWT_EXPIRATION = 1000 * 60 * 60 * 24; 
+    private static final long DEFAULT_JWT_EXPIRATION = 1000 * 60 * 60 * 24;
 
     private static Logger log = LoggerFactory.getLogger(JwtService.class);
     private final Key SECRET;
-
-
+    private final long expiration;
 
     public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
+        this(jwtSecret, DEFAULT_JWT_EXPIRATION);
+    }
+
+    public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret,
+            final long expiration) {
         this.SECRET = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        this.expiration = expiration;
     }
 
     public String generateToken(LoginDetails loginDetails) {
@@ -59,8 +62,9 @@ public class JwtService {
                     .setClaims(claims)
                     .setSubject(userName)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION)) // Expire in 1 minute for
-                                                                                         // testing
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Expire in 1 minute
+                                                                                                  // for
+                    // testing
                     .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
         } catch (InvalidKeyException e) {
             throw new RuntimeException(e);
@@ -135,7 +139,7 @@ public class JwtService {
                     .getBody();
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException
                 | IllegalArgumentException e) {
-            log.error(String.format("Error parsing token: %s",e.getMessage()));
+            log.error(String.format("Error parsing token: %s", e.getMessage()));
             e.printStackTrace();
             // Don't think this ever gets thrown - see JwtAuthFilter
             throw new JwtValidationException(e.getMessage());

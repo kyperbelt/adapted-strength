@@ -1,6 +1,8 @@
 package com.terabite.authorization.controller;
 
 import com.terabite.GlobalConfiguration;
+import com.terabite.authorization.AuthorizationApi.Roles;
+import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.Payload;
@@ -60,24 +62,27 @@ public class AuthorizationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest) {
-        // TODO:
-        // lets have this return a session token (JWT) and then use this token to
-        // temporarily authenticate the user
-        // as if they had logged in. See signupService.signup for more details and check
-        // the TODOs and FIXMEs to see what needs to be done
+    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
 
-        return signupService.signup(authRequest);
+        final Optional<String> token = signupService.signup(authRequest);
+
+        if (token.isPresent()) {
+            log.info("Token is present and cookie is being sent");
+            Cookie cookie = cookieMonsterService.createAuthorizationCookie(token.get(),
+                    60 * 60 * 24 * 7);
+            response.addCookie(cookie);
+            return ResponseEntity.ok(new Payload(token.get()));
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new Payload("User already exists"));
     }
 
     /**
-     * Deprecated. Not needed with JWT
      *
      * @param login
      * @param response
      * @return
      */
-    @Deprecated
     @PostMapping("/login")
     public ResponseEntity<?> userLoginPost(@RequestBody Login login, HttpServletResponse response) {
 
@@ -106,6 +111,8 @@ public class AuthorizationController {
 
     }
 
+
+
     @PostMapping("/logout")
     public Payload userLogoutPost(HttpServletResponse response, HttpServletRequest request) {
 
@@ -114,7 +121,6 @@ public class AuthorizationController {
         // the tokens on logout. This is so that once logged out on that decide the
         // users are able to
         // log in and get a new token
-
 
         Optional<Cookie> tokenCookie = cookieMonsterService.getAuthCookie(request);
         Cookie cookie = cookieMonsterService.createAuthorizationCookie("", 0);
