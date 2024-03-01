@@ -21,6 +21,10 @@ public class LoginDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    public static LoginDetails of(Login login){
+        return new LoginDetails(login);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

@@ -2,19 +2,27 @@ import { useNavigate } from 'react-router-dom';
 import PageContainer1 from '../components/PageContainer';
 import EmailField from '../components/forms/EmailField';
 import SubmitButton from '../components/forms/SubmitButton';
+import {AuthApi} from '../api/AuthApi';
+import {HttpStatus} from '../api/ApiUtils';
 
-function resetPassword(email) {
-    console.log(`Resetting password for email: ${email}`);
-}
 
 export default function ForgotPassword() {
     const nav = useNavigate();
     const emailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}";
     const onSubmit = (e) => {
         e.preventDefault();
+
         const email = e.target.email.value;
-        resetPassword(email);
-        nav("/reset-link-sent");
+        console.log(`Resetting password for email: ${email}`);
+        AuthApi.resetPassword(email)
+            .then((response) => {
+                if (response.status === HttpStatus.OK) {
+                    console.log("Password reset email sent");
+                    nav('/login', { state: { email: email } });
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
     };
 
     return (

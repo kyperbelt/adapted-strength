@@ -1,9 +1,15 @@
 package com.terabite.authorization;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.context.annotation.Lazy;
+
 import com.terabite.authorization.config.RoleConfiguration;
+import com.terabite.authorization.model.Login;
+import com.terabite.authorization.model.LoginDetails;
+import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.JwtService;
 
 /**
@@ -24,21 +30,35 @@ import com.terabite.authorization.service.JwtService;
  */
 public class AuthorizationApi {
 
-    public static final class Roles {
-        public static final String EMAIL_VERIFIED= "ROLE_EMAIL_VERIFIED"; 
-        public static final String TERMS_ACCEPTED = "ROLE_TERMS_ACCEPTED";
-        public static final String ACCOUNT_SETUP = "ROLE_ACCOUNT_SETUP";
-        public static final String COACH = "ROLE_COACH";
-        public static final String USER = "ROLE_USER";
-        public static final String SUBSCRIBED = "ROLE_SUBSCRIBED";
-        public static final String ADMIN = "ROLE_ADMIN";
-        public static final String BANNED = "ROLE_BANNED";
+    // ADD MORE ROLES HERE
+    public static enum Roles {
+        ROLE_EMAIL_VERIFIED,
+        ROLE_TERMS_ACCEPTED,
+        ROLE_ACCOUNT_SETUP,
+        ROLE_COACH,
+        ROLE_USER ,
+        ROLE_SUBSCRIBED ,
+        ROLE_ADMIN,
+        ROLE_BANNED;
+
+        private static HashMap<String, Roles> roles = new HashMap<String, Roles>();
+        static{
+            for(Roles role : Roles.values()){
+                roles.put(role.name(), role);
+            }
+        }
+
+        public static Optional<Roles> getRoleByName(String role) {
+            return Optional.ofNullable(roles.get(role));
+        }
     }
 
     private final JwtService jwtService;
+    private final LoginRepository loginRepository;
 
-    public AuthorizationApi(final JwtService jwtService) {
+    public AuthorizationApi(final JwtService jwtService, @Lazy final LoginRepository loginRepository) {
         this.jwtService = jwtService;
+        this.loginRepository = loginRepository;
     }
 
     /**
@@ -67,8 +87,9 @@ public class AuthorizationApi {
         if (!isUserLoggedIn(token)) {
             return false;
         }
-        List<String> roles = getRolesFromToken(token);
-        return roleCongifuration.validate(roles);
+        List<Roles> roles = getRolesFromToken(token).stream().map(role -> Roles.getRoleByName(role))
+            .filter(role -> role.isPresent()).map(role -> role.get()).toList();
+        return roleCongifuration.validateRolesList(roles);
     }
 
     /**
@@ -94,6 +115,39 @@ public class AuthorizationApi {
      */
     public List<String> getRolesFromToken(String token) {
         return jwtService.extractRoles(token);
+    }
+
+    public boolean addRoleToUserFromToken(String token, final Roles role) {
+        Optional<String> email = getEmailFromToken(token);
+        if (email.isEmpty()) {
+            return false;
+        }
+
+        final Optional<Login> login = loginRepository.findByEmail(email.get());
+        if (login.isEmpty()) {
+            return false;
+        }
+
+        final boolean successfull = login.get().addRole(role.name());
+        if (successfull) {
+            loginRepository.save(login.get());
+        }
+
+        return successfull;
+    }
+
+    public Optional<String> refreshToken(String token) {
+        Optional<String> email = jwtService.extractUsername(token);
+        if (email.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        Optional<Login> login = loginRepository.findByEmail(email.get());
+        if (login.isEmpty()){
+            return Optional.empty();
+        }
+
+        return Optional.of(jwtService.generateToken(LoginDetails.of(login.get())));
     }
 
 }

@@ -151,6 +151,7 @@ export default function SignUp() {
             }).then((response) => {
                 if (response.status == 201) {
                     console.log("User profile created");
+                    navigate("/", {}); // redirect to home page
                 } else {
                     console.log(response);
                     console.log("Unable to create user profile, unknown error");

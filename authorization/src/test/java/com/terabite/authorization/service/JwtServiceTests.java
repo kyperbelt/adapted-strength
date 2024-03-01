@@ -1,4 +1,4 @@
-package com.terabite.authorization.auth;
+package com.terabite.authorization.service;
 
 import com.terabite.authorization.log.JwtValidationException;
 import com.terabite.authorization.service.JwtService;

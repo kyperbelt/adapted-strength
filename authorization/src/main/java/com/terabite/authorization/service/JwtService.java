@@ -44,12 +44,19 @@ public class JwtService {
         this.expiration = expiration;
     }
 
+    /**
+     * Generate a jwt token based on user login details 
+     */
     public String generateToken(LoginDetails loginDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", loginDetails.getRoles());
         return createToken(claims, loginDetails.getUsername());
     }
 
+    @Deprecated 
+    /**
+     * Generates a jwt token with only the username and no valid claims.
+     */
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userName);

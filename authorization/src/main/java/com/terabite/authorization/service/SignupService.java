@@ -49,7 +49,7 @@ public class SignupService {
             login.setEmail(authRequest.getUsername());
             login.setPassword(authRequest.getPassword());
 
-            login.setRoles(List.of(Roles.USER));
+            login.setRoles(List.of(Roles.ROLE_USER.name(), Roles.ROLE_TERMS_ACCEPTED.name()));
 
             loginRepository.save(login);
 

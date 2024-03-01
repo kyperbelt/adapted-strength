@@ -5,6 +5,7 @@ import com.terabite.authorization.AuthorizationApi.Roles;
 import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
+import com.terabite.authorization.dto.ForgotPasswordRequest;
 import com.terabite.authorization.dto.Payload;
 import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.model.Login;
@@ -145,9 +146,9 @@ public class AuthorizationController {
                 tokenCookie.orElseGet(() -> cookieMonsterService.emptyAuthorizationCookie()).getValue()));
     }
 
-    @PutMapping("/forgot_password")
-    public ResponseEntity<String> forgotPassword(@RequestBody String jsonEmail) {
-        return forgotPasswordService.processForgotPassword(jsonEmail);
+    @PostMapping("/forgot_password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        return forgotPasswordService.processForgotPassword(forgotPasswordRequest.getEmail());
     }
 
     @PutMapping("/reset_password")

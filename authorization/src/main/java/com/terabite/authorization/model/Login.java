@@ -78,4 +78,16 @@ public class Login {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+
+    public boolean addRole(String role) {
+        if (this.roles.contains(role)) {
+            return false;
+        }
+        this.roles.add(role);
+        return true;
+    }
+
+    public boolean removeRole(String role) {
+        return this.roles.remove(role);
+    }
 }

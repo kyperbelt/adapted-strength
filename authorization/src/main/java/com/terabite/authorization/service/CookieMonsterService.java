@@ -10,6 +10,7 @@ import com.terabite.GlobalConfiguration;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
+// TODO: Take this out of Authorization package. This is useful to all services.
 @Service
 public class CookieMonsterService {
 

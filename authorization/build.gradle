@@ -46,6 +46,7 @@ bootRun {
 }
 
 tasks.register('nukeDatabase', Exec) {
+	commandLine 'docker', 'stop', 'authorization-mysql-1'
 	commandLine 'docker', 'rm', 'authorization-mysql-1'
 }
 
@@ -54,9 +55,12 @@ tasks.register('checkEnvVars', Exec) {
 }
 
 tasks.register('bootRunFresh', Exec) {
-	dependsOn 'clean'
-	dependsOn 'nukeDatabase'
 	dependsOn 'bootRun'
+	dependsOn 'nukeDatabase'
+	dependsOn 'clean'
+	
+	tasks.findByName('bootRun').mustRunAfter 'nukeDatabase'
+	tasks.findByName('nukeDatabase').mustRunAfter 'clean'
 }
 
 

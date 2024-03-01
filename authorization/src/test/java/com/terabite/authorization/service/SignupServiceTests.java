@@ -1,4 +1,4 @@
-package com.terabite.authorization.auth;
+package com.terabite.authorization.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,13 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.terabite.authorization.AuthorizationApi.Roles;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.repository.LoginRepository;
-import com.terabite.authorization.service.JwtService;
-import com.terabite.authorization.service.SignupService;
 
 @ExtendWith(MockitoExtension.class)
 public class SignupServiceTests{

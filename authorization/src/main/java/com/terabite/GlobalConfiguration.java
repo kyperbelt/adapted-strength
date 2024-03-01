@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.terabite.authorization.AuthorizationApi;
+import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.user.UserApi;
 
@@ -59,11 +60,11 @@ public class GlobalConfiguration {
 	}
 
 	@Bean
-	public AuthorizationApi authorizationApi(final JwtService jwtService) {
+	public AuthorizationApi authorizationApi(final JwtService jwtService, final LoginRepository loginRepository) {
 		// For now we will just return a new instance of the AuthorizationApi class.
 		// later we might want to set this up some better way. I am still new to 
 		// spring boot and I am not sure if this is the best approach. 
-		return new AuthorizationApi(jwtService);
+		return new AuthorizationApi(jwtService, loginRepository);
 	}
 
 	@Bean 

@@ -30,6 +30,11 @@ export class AuthApi {
     return promise;
   }
 
+  static forgotPassword(email) {
+    const promise = ApiUtils.apiPost('auth/forgot_password', { email });
+    return promise;
+  }
+
   /**
    *
   * @param {string} email

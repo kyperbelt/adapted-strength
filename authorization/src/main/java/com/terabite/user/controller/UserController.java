@@ -32,8 +32,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/v1/user")
 public class UserController {
-    private static final RoleConfiguration AUTHORIZED_USER_CONFIG = RoleConfiguration.builder() 
-        .all(Roles.ACCOUNT_SETUP, Roles.TERMS_ACCEPTED).any(Roles.USER, Roles.ADMIN).except(Roles.BANNED).build();
+    private static final RoleConfiguration AUTHORIZED_USER_CONFIG = RoleConfiguration.builder()
+            .all(Roles.ROLE_ACCOUNT_SETUP, Roles.ROLE_TERMS_ACCEPTED).any(Roles.ROLE_USER, Roles.ROLE_ADMIN)
+            .except(Roles.ROLE_BANNED).build();
 
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
@@ -62,15 +63,17 @@ public class UserController {
     // This service will only be responsible for creating, updating, and deleting
     // and retrieving user information.
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> createAccountInformation(
             @RequestBody final UserInformation userInformation,
-            HttpServletRequest request) {
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         final Optional<Cookie> token = getTokenCookie(request);
 
         if (token.isEmpty()) {
             log.error("No token found in request");
-            return ResponseEntity.status(401).body(Payload.of("Unauthorized"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
         }
 
         final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
@@ -89,8 +92,21 @@ public class UserController {
         userInformation.setEmail(email.get());
 
         userRepository.save(userInformation);
+        authorizationApi.addRoleToUserFromToken(token.get().getValue(), Roles.ROLE_ACCOUNT_SETUP);
 
-        return ResponseEntity.ok(Payload.of("User information created successfully"));
+        final Optional<String> refreshedToken = authorizationApi.refreshToken(token.get().getValue());
+        if (refreshedToken.isEmpty()) {
+            // something seriously wrong happend lol
+            log.error("For some resason the token was unable to be refreshed");
+        }
+
+        // FIXME: This is a temporary fix and we should use the cookieMonster Service to
+        // create these cookie// and only once it is moved out of the authorization
+        // service
+        Cookie cookie = createAuthorizationCookie(refreshedToken.get(), 60 * 60 * 24 * 7, authCookieName, "localhost");
+        response.addCookie(cookie);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Payload.of("User information created successfully"));
     }
 
     @PutMapping("/profile")
@@ -155,7 +171,7 @@ public class UserController {
         }
 
         final List<String> roles = authorizationApi.getRolesFromToken(token.get().getValue());
-        if (!AUTHORIZED_USER_CONFIG.validate(roles)) {
+        if (!AUTHORIZED_USER_CONFIG.validateStringListOfRoles(roles)) {
             log.error("User is not authorized to access this resource");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(AUTHORIZED_USER_CONFIG.getMissingRoles(roles));
         }
@@ -179,7 +195,7 @@ public class UserController {
 
     @PostMapping("/subscribe")
     public ResponseEntity<?> userSubscribePost(@RequestBody SubscribeRequest request,
-                                               HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
         Optional<Cookie> token = getTokenCookie(httpRequest);
         if (token.isEmpty()) {
             log.error("No token found in request");
@@ -191,7 +207,7 @@ public class UserController {
 
     @PostMapping("/unsubscribe")
     public ResponseEntity<?> userUnsubscribePost(@RequestBody UnsubscribeRequest request,
-                                               HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
         Optional<Cookie> token = getTokenCookie(httpRequest);
         if (token.isEmpty()) {
             log.error("No token found in request");
@@ -205,5 +221,13 @@ public class UserController {
         response.setHeader("Location", redirectUrl);
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
         response.setStatus(302);
+    }
+
+    private static Cookie createAuthorizationCookie(String value, int life, String name, String url) {
+        Cookie newCookie = new Cookie(name, value);
+        newCookie.setPath("/");
+        newCookie.setMaxAge(life);
+        newCookie.setDomain(url);
+        return newCookie;
     }
 }
