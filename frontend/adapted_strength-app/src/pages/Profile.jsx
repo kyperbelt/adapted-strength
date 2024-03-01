@@ -9,6 +9,7 @@ import { AuthApi} from "../api/AuthApi";
 
 
 import icon from '../assets/ladyIcon.png'
+import { HttpStatus } from "../api/ApiUtils";
 
 function FNameField() {
     return (<input type="fname" defaultValue="First Name" id="fname" name="fname" required className="w-4/5 border-b-4 p-0" />);
@@ -71,11 +72,11 @@ export default function Profile() {
         setIsLoading(true);
         UserApi.getProfileInformation()
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === HttpStatus.OK) {
                     setProfileInfo(response.data);
                     setIsLoading(false);
                     console.log(response.data)
-                } else if (response.status === 401) { // unauthorized
+                } else if (response.status === HttpStatus.UNAUTHORIZED) { // unauthorized
                     // TODO: same as error, redirect to login page or display error message
                     console.error(`ERROR HAPPENED: ${JSON.stringify(response.data)}`);
                     if (response.data.all.includes("ROLE_TERMS_ACCEPTED")) {

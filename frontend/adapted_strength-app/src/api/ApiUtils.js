@@ -132,6 +132,9 @@ export function suspensePromise(promise) {
 }
 
 
+/**
+ *  Http status codes 
+ */
 export const HttpStatus = {
   /**
    * 100 - Continue
@@ -190,9 +193,9 @@ export const HttpStatus = {
   */
   MOVED_PERMANENTLY: 301,
 /**
-  * 302 - Moved Temporarily
+  * 302 - Found (Previously "Moved temporarily")
   */
-  MOVED_TEMPORARILY: 302,
+  FOUND: 302,
 /**
   * 303 - See Other
   */

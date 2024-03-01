@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
 import PageContainer1 from '../components/PageContainer';
 import { AuthApi } from '../api/AuthApi';
+import { HttpStatus } from '../api/ApiUtils';
 
 const ErrorType = {
     PasswordsMustMatch: "Passwords must match.",
@@ -79,14 +80,14 @@ export default function SignUp() {
         AuthApi.validateCredentials(email, password)
             .then((response) => {
                 console.log(response);
-                if (response.status === 200) {
+                if (response.status === HttpStatus.OK) {
                     console.log("User is valid and can proceed to the next page.");
                     // user is valid 
                     navigate("/terms-of-service", { state: { email: email, password: password } });
                     // TODO: save state to local storage so that in the event that the user 
                     //      navigates away from the page, the state is not lost and the user 
                     //      can continue where they left off
-                } else if (response.status === 409) { // conflict means email is already in use
+                } else if (response.status === HttpStatus.CONFLICT) { // conflict means email is already in use
                     // TODO: display error message
                     setError("Email is already in use.");
                 }

@@ -14,11 +14,13 @@ export default function ForgotPassword() {
 
         const email = e.target.email.value;
         console.log(`Resetting password for email: ${email}`);
-        AuthApi.resetPassword(email)
+        AuthApi.forgotPassword(email)
             .then((response) => {
-                if (response.status === HttpStatus.OK) {
+                if (response.status === HttpStatus.FOUND) {
                     console.log("Password reset email sent");
-                    nav('/login', { state: { email: email } });
+                    nav('/reset-link-sent', {});
+                }else{
+                    console.error("Error sending password reset email");
                 }
             }).catch((error) => {
                 console.error(error);

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { UserApi } from "../api/UserApi";
 import { AuthApi } from "../api/AuthApi";
 import logo from '../assets/logo.png';
+import { HttpStatus } from '../api/ApiUtils';
 
 function FnameField() {
     return (<input type="text" placeholder="First Name" id="fname" name="fname" required />);
@@ -138,18 +139,18 @@ export default function SignUp() {
         // first thing is first we must create the user account
         AuthApi.signup(state.email, state.password)
             .then((response) => {
-                if (response.status == 201) {
+                if (response.status == HttpStatus.CREATED) {
                     // user is valid 
                     console.log("User is valid and account is created");
                     return UserApi.createProfileInformation(data);
-                } else if (response.status == 409) { // conflict means email is already in use 
+                } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
                     console.log("Unable to create user account, email is already in use");
                 } else {
                     console.log(response);
                     console.log("Unable to create user account, unknown error");
                 }
             }).then((response) => {
-                if (response.status == 201) {
+                if (response.status == HttpStatus.CREATED) {
                     console.log("User profile created");
                     navigate("/", {}); // redirect to home page
                 } else {

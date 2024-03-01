@@ -35,6 +35,15 @@ export class AuthApi {
     return promise;
   }
 
+  static resetPassword(password, token) {
+    const request = {
+      newPassword: password,
+      resetToken: token,
+    };
+    const promise = ApiUtils.apiPut('auth/reset_password', request);
+    return promise;
+  }
+
   /**
    *
   * @param {string} email

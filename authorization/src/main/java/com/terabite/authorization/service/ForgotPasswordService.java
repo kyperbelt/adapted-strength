@@ -10,6 +10,8 @@ import com.terabite.authorization.repository.LoginRepository;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +22,8 @@ public class ForgotPasswordService {
     private final PasswordEncoder passwordEncoder;
     private final LoginRepository loginRepository;
     private final EmailSender emailSender;
+
+    private static Logger log = LoggerFactory.getLogger(ForgotPasswordService.class);
 
     public ForgotPasswordService(LoginRepository loginRepository, EmailSender emailSender,
             PasswordEncoder passwordEncoder) {
@@ -37,32 +41,21 @@ public class ForgotPasswordService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("No user found with provided email"));
     }
 
-    public ResponseEntity<String> processResetPassword(String token, String jsonPassword) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode;
-        // Optional<Login> login;
-        Login login;
-        String password;
-        try {
-            jsonNode = objectMapper.readTree(jsonPassword);
-            password = jsonNode.get("password").asText();
-            login = loginRepository.findOneByPasswordResetToken(token);
-
-            if (login != null) {
-                // login.orElseThrow().setPassword(password);
-                // login.orElseThrow().setResetPasswordToken(null);
-                login.setPassword(setHashedPassword(password));
-                login.setResetPasswordToken(null);
-                loginRepository.save(login);
-                return ResponseEntity.status(HttpStatus.FOUND).body("User found");
-            } else {
-                throw new LoginNotFoundException("Could not find user with token: " + token);
-            }
-
-        } catch (JsonProcessingException | LoginNotFoundException e) {
-            e.printStackTrace();
+    /**
+     * FIXME ADAPTEDS-126: We need to invalidate the reset tokens after some time.
+     */
+    public ResponseEntity<?> processResetPassword(String token, String newPassword) {
+        String password = newPassword;
+        Optional<Login> login = loginRepository.findByResetPasswordToken(token);
+        if (login.isPresent()) {
+            login.get().setPassword(setHashedPassword(password));
+            login.get().setResetPasswordToken(null);
+            loginRepository.save(login.get());
+            return ResponseEntity.status(HttpStatus.OK).body(Payload.of("Password reset successfully"));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Could not find user with token: " + token);
+
+        log.error("No user found with token {}", token);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("No user found with provided token"));
     }
 
     public String setHashedPassword(String plaintext) {

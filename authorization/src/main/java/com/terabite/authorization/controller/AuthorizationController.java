@@ -7,6 +7,7 @@ import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.ForgotPasswordRequest;
 import com.terabite.authorization.dto.Payload;
+import com.terabite.authorization.dto.ResetPasswordRequest;
 import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
@@ -147,14 +148,13 @@ public class AuthorizationController {
     }
 
     @PostMapping("/forgot_password")
-    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         return forgotPasswordService.processForgotPassword(forgotPasswordRequest.getEmail());
     }
 
     @PutMapping("/reset_password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody String jsonPassword)
-            throws LoginNotFoundException {
-        return forgotPasswordService.processResetPassword(token, jsonPassword);
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        return forgotPasswordService.processResetPassword(resetPasswordRequest.getResetToken(), resetPasswordRequest.getNewPassword());
     }
 
     @Deprecated

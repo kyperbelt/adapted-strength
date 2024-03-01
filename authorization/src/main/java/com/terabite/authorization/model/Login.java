@@ -24,7 +24,7 @@ public class Login {
     private String password;
 
     @Column(name = "reset_password_token")
-    private String passwordResetToken;
+    private String resetPasswordToken;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
@@ -43,10 +43,6 @@ public class Login {
     }
 
 
-    public void setResetPasswordToken(String passwordResetToken) {
-        this.passwordResetToken = passwordResetToken;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -63,12 +59,12 @@ public class Login {
         this.password = password;
     }
 
-    public String getPasswordResetToken() {
-        return passwordResetToken;
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
     }
 
-    public void setPasswordResetToken(String passwordResetToken) {
-        this.passwordResetToken = passwordResetToken;
+    public void setResetPasswordToken(String passwordResetToken) {
+        this.resetPasswordToken = passwordResetToken;
     }
 
     public List<String> getRoles() {

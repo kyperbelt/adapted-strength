@@ -22,11 +22,15 @@ public class EmailSender {
     private final LoginService loginService;
 
     private final String webUrl;
+    private final String domainPort;
+    private final String webProtocol;
 
-    public EmailSender(JavaMailSender javaMailSender, LoginService loginService, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String webUrl) {
+    public EmailSender(JavaMailSender javaMailSender, LoginService loginService, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String webUrl, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_PORT) String domainPort, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_PROTOCOL) String webProtocol){
         this.webUrl = webUrl;
+        this.webProtocol = webProtocol;
         this.loginService = loginService;
         this.javaMailSender = javaMailSender;
+        this.domainPort = domainPort;
     }
 
     public void sendEmail(String recipientEmail, String subject, String body) {
@@ -53,8 +57,9 @@ public class EmailSender {
         } catch (LoginNotFoundException e) {
             e.printStackTrace();
         }
-        String siteURL = webUrl;
-        String resetPasswordLink = siteURL + "/reset_password?token=" + token;
+
+        String siteURL = webProtocol + "://" + webUrl + ":" + domainPort;
+        String resetPasswordLink = siteURL + "/reset-password?token=" + token;
 
         String subject = "Here's the link to reset your password";
 

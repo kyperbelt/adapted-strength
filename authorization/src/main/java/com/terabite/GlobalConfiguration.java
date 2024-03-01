@@ -15,10 +15,12 @@ public class GlobalConfiguration {
 
 	public static final String BEAN_NAME_AUTH_COOKIE_NAME = "authCookieName";
 	public static final String BEAN_NAME_DOMAIN_URL = "domainUrl";
+	public static final String BEAN_NAME_DOMAIN_PORT = "domainPort";
 	public static final String BEAN_CALENDLY_CLIENT_ID = "cldnlyClientID";
 	public static final String BEAN_CALENDLY_CLIENT_SECRET = "cldnlyClientSecret";
 	public static final String BEAN_CALENDLY_WEBHOOK = "cldnlyWebHook";
 	public static final String BEAN_JWT_SECRET = "jwtSecret";
+	public static final String BEAN_NAME_DOMAIN_PROTOCOL = "domainProtocol";
 
 	@Value("${AUTH_COOKIE_NAME:adapted-strength_auth-token}")
 	private String authCookieName;
@@ -37,6 +39,23 @@ public class GlobalConfiguration {
 
 	@Value("${ADAPTEDS_JWT_SECRET:superSecretSaucePleaseDoNotTellAnyoneOrWeWillBeInBigTroubleButSeriouslyDoNotTellAnyone}")
 	private String jwtSecret;
+
+	@Value("${ADAPTED_STRENGTH_WEB_PORT:}")
+	private String domainPort;
+
+	@Value("${ADAPTED_STRENGTH_WEB_PROTOCOL:}")
+	private String domainProtocol;
+
+	@Bean(name = BEAN_NAME_DOMAIN_PROTOCOL)
+	public String getDomainProtocol() {
+		return domainProtocol;
+	}
+
+
+	@Bean(name = BEAN_NAME_DOMAIN_PORT)
+	public String getDomainPort() {
+		return domainPort;
+	}
 
 	@Bean(name = BEAN_JWT_SECRET)
 	public String getJwtSecret() {
