@@ -1,14 +1,10 @@
 package com.terabite.authorization.controller;
 
-import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.AuthorizationApi.Roles;
-import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.ForgotPasswordRequest;
 import com.terabite.authorization.dto.Payload;
 import com.terabite.authorization.dto.ResetPasswordRequest;
-import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.CookieMonsterService;
@@ -89,10 +85,10 @@ public class AuthorizationController {
             log.info("Password {} is not strong enough", authRequest.getPassword());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Payload("Password is not strong enough"));
         }
-        log.info("Credentials username: {} and password: {} are valid", authRequest.getUsername(), authRequest.getPassword());
+        log.info("Credentials username: {} and password: {} are valid", authRequest.getUsername(),
+                authRequest.getPassword());
         return ResponseEntity.ok(new Payload("Valid"));
     }
-
 
     /**
      *
@@ -128,8 +124,6 @@ public class AuthorizationController {
 
     }
 
-
-
     @PostMapping("/logout")
     public Payload userLogoutPost(HttpServletResponse response, HttpServletRequest request) {
 
@@ -154,7 +148,8 @@ public class AuthorizationController {
 
     @PutMapping("/reset_password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
-        return forgotPasswordService.processResetPassword(resetPasswordRequest.getResetToken(), resetPasswordRequest.getNewPassword());
+        return forgotPasswordService.processResetPassword(resetPasswordRequest.getResetToken(),
+                resetPasswordRequest.getNewPassword());
     }
 
     @Deprecated

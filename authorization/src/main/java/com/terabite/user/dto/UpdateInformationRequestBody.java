@@ -1,4 +1,4 @@
-package com.terabite.user.controller;
+package com.terabite.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 

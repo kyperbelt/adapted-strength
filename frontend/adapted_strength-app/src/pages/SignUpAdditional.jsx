@@ -1,9 +1,10 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserApi } from "../api/UserApi";
 import { AuthApi } from "../api/AuthApi";
 import logo from '../assets/logo.png';
 import { HttpStatus } from '../api/ApiUtils';
+import LabeledInputField from '../components/forms/LabeledInputField';
 
 function FnameField() {
     return (<input type="text" placeholder="First Name" id="fname" name="fname" required />);
@@ -99,7 +100,7 @@ export default function SignUp() {
     const navigate = useNavigate();
     const location = useLocation();
     const state = location.state;
-    
+
     useEffect(() => {
         if (!state || !state.email || !state.password || !state.tosAccepted || !state.healthQuestionnaire) {
             // TODO: for now we just redirect to signup page, but later  we want to check if the state is in storage or not and redirect to the appropriate page
@@ -136,18 +137,24 @@ export default function SignUp() {
         console.log(data);
         setSigningUp(true);
 
-        // first thing is first we must create the user account
-        AuthApi.signup(state.email, state.password)
+        UserApi.validateProfileInformation(data)
             .then((response) => {
+                if (response.status == HttpStatus.OK) {
+                    console.log("User information is valid");
+                    return AuthApi.signup(state.email, state.password);
+                } else {
+                    throw new Error("User information is invalid");
+                }
+            }).then((response) => {
                 if (response.status == HttpStatus.CREATED) {
                     // user is valid 
                     console.log("User is valid and account is created");
                     return UserApi.createProfileInformation(data);
                 } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
-                    console.log("Unable to create user account, email is already in use");
+                    throw new Error("Unable to create user account, email is already in use");
                 } else {
                     console.log(response);
-                    console.log("Unable to create user account, unknown error");
+                    throw new Error("Unable to create user account, unknown error");
                 }
             }).then((response) => {
                 if (response.status == HttpStatus.CREATED) {
@@ -155,7 +162,7 @@ export default function SignUp() {
                     navigate("/", {}); // redirect to home page
                 } else {
                     console.log(response);
-                    console.log("Unable to create user profile, unknown error");
+                    throw new Error("Unable to create user profile, unknown error");
                 }
             }).finally(() => {
                 setSigningUp(false);

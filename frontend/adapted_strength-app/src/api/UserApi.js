@@ -82,4 +82,15 @@ export class UserApi {
     const promise = ApiUtils.apiPost('user/create', information);
     return promise;
   }
+
+  /**
+  * @param {Object} information
+  * @returns {Promise<Response>} Promise<Response>
+  * @memberof UserApi
+  * @description This method will validate the user's profile information with the specified data before creating a new user and their profile. This is to prevent users fron creating a user profile and then not entering the required information.
+  */
+  static validateProfileInformation(information) {
+    const promise = ApiUtils.apiPost('user/validate_user_data', information);
+    return promise;
+  }
 }

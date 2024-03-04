@@ -1,11 +1,14 @@
 package com.terabite.user.controller;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.AuthorizationApi.Roles;
 import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.dto.Payload;
-import com.terabite.authorization.dto.RedirectResponse;
+import com.terabite.user.dto.UpdateInformationRequestBody;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UnsubscribeRequest;
 import com.terabite.user.model.UserInformation;
@@ -15,6 +18,8 @@ import com.terabite.user.service.UnsubscribeService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +29,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
@@ -159,18 +166,23 @@ public class UserController {
 
         final Optional<Cookie> token = getTokenCookie(request);
 
+        // FIXME: This can be removed once we add a PreAUthorize check
+        // actually, probably we can remove this now, because in order to authenticate
+        // we require a token to be present.
         if (token.isEmpty()) {
             log.error("No token found in request");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Payload("Unauthorized"));
         }
 
         final Optional<String> email = authorizationApi.getEmailFromToken(token.get().getValue());
+        // FIXME: this can be remoevd once we add a PreAUthorize check
         if (email.isEmpty()) {
             log.error("No email found in token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
         }
 
         final List<String> roles = authorizationApi.getRolesFromToken(token.get().getValue());
+        // FIXME: change this to @PreAuthorize check
         if (!AUTHORIZED_USER_CONFIG.validateStringListOfRoles(roles)) {
             log.error("User is not authorized to access this resource");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(AUTHORIZED_USER_CONFIG.getMissingRoles(roles));
@@ -217,6 +229,30 @@ public class UserController {
         return unsubscribeService.unsubscribe(request);
     }
 
+    @PostMapping("/validate_user_data")
+    public ResponseEntity<?> validateUserData(HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper mapper = new ObjectMapper();
+        ResponseEntity<?> badRequest = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new Payload("Invalid user information"));
+
+        try {
+            final UserInformation userInformation = mapper.readValue(request.getInputStream(), UserInformation.class);
+
+            if (!validateUserInfo(userInformation)) {
+                log.error("User information is invalid");
+                return badRequest;
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            log.error("Unable to parse user information", e.getMessage());
+            return badRequest;
+        }
+
+        return ResponseEntity.ok(new Payload("User information is valid"));
+
+    }
+
     private static void redirectHandler(HttpServletResponse response, String redirectUrl) {
         response.setHeader("Location", redirectUrl);
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
@@ -229,5 +265,14 @@ public class UserController {
         newCookie.setMaxAge(life);
         newCookie.setDomain(url);
         return newCookie;
+    }
+
+    private static boolean validateUserInfo(UserInformation userInfo) {
+        Set<ConstraintViolation<UserInformation>> violations = Validation.buildDefaultValidatorFactory().getValidator()
+                .validate(userInfo);
+        if (violations.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 }

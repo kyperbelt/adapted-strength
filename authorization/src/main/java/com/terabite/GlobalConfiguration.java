@@ -9,6 +9,7 @@ import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.user.UserApi;
+import com.terabite.user.repository.UserRepository;
 
 @Configuration
 public class GlobalConfiguration {
@@ -86,12 +87,13 @@ public class GlobalConfiguration {
 		return new AuthorizationApi(jwtService, loginRepository);
 	}
 
+
 	@Bean 
-	public UserApi userApi() {
+	public UserApi userApi(final UserRepository userRepository) {
 		// FOr now we will just return a new instance of the UserApi class.
 		// later we might want to set this up some better way. I am still new to 
 		// spring boot and I am not sure if this is the best approach. 
-		return new UserApi();
+		return new UserApi(userRepository);
 	}
 
 	@Bean(name = BEAN_NAME_AUTH_COOKIE_NAME)
