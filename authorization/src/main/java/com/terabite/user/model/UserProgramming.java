@@ -2,6 +2,7 @@ package com.terabite.user.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.terabite.programming.model.Program;
@@ -29,7 +30,10 @@ public class UserProgramming implements Serializable {
     @ManyToOne
     private Program program;
 
-    private String comments;
+    @JoinTable(
+        name = "user_workout_comments_table")
+    @ManyToMany
+    private List<ProgrammingComment> comments;
 
     public Long getId() {
         return userProgrammingId;
@@ -47,7 +51,7 @@ public class UserProgramming implements Serializable {
         return userProgrammingId;
     }
 
-    public String getComments() {
+    public List<ProgrammingComment> getComments() {
         return comments;
     }
 
@@ -55,7 +59,7 @@ public class UserProgramming implements Serializable {
         this.userProgrammingId = userMappingId;
     }
 
-    public void setComments(String comments) {
+    public void setComments(List<ProgrammingComment> comments) {
         this.comments = comments;
     }
 

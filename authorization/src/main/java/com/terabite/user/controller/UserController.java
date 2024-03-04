@@ -45,7 +45,7 @@ public class UserController {
 
     public UserController(
             SubscriptionService subscriptionService,
-            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
+            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi, UserProgrammingService userProgrammingService,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
 
         this.subscriptionService = subscriptionService;
