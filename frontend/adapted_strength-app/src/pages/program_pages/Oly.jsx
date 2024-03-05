@@ -18,7 +18,7 @@ export default function Olympic() {
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-            YOUR PROGRAM: Olympic Weightlifting
+            YOUR PROGRAM: Olympic Weightlifting!
             </p>
             <img src={programFiller} className="h-20 w-20 grid place-content-center flex flex-col boarder-2" alt="workout program" />
         </div>
