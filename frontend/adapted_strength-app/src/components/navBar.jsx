@@ -17,6 +17,7 @@ export default function NavBar() {
   const toggleHammy = () => {
     setHamOpen(!hamburgerOpen);
   }
+
   const onLogOut = async () => {
     // TODO: handle logout errors
     //      right now we just await and dont do nothing about it
@@ -24,8 +25,6 @@ export default function NavBar() {
     nav("/");
 
   }
-
-
   // TODO: We need to use conditional rendering for nav so that we do not show 
   //      certain options when the user is not logged in for example, or if they 
   //      dont have the right permissions or are in a wrong state/certain page/step.
@@ -48,8 +47,6 @@ export default function NavBar() {
         <div className={`w-6 h-0.5 bg-white mb-1 rounded ${hamburgerOpen ? 'opacity-0' : ''}`}></div>
         <div className={`w-6 h-0.5 bg-white mb-1 rounded ${hamburgerOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></div>
       </div>
-      
     </div>
   );
-
 }
