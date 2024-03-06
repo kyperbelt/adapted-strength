@@ -1,9 +1,12 @@
 package com.terabite.user.service;
 
+import com.terabite.authorization.model.Login;
+import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -17,21 +20,32 @@ public class SubscriptionService {
 
     private final UserRepository userRepository;
 
-    public SubscriptionService(UserRepository userRepository) {
+    private final LoginRepository loginRepository;
+
+    public SubscriptionService(UserRepository userRepository, LoginRepository loginRepository) {
         this.userRepository = userRepository;
+        this.loginRepository = loginRepository;
     }
 
     public ResponseEntity<?> subscribe(SubscribeRequest request) {
         UserInformation existingUser = userRepository.findByEmail(request.username()).orElse(null);
+        Login existingLogin = loginRepository.findByEmail(request.username()).orElse(null);
 
         if (existingUser != null) {
             if(existingUser.getSubscriptionTier() != request.status()) {
-                if(hasPaidSubscription(request)) {
+                if(hasPaidSubscriptionRole(request)) {
                     existingUser.setSubscriptionTier(request.status());
                     existingUser.setExpirationDate();
 
+                    try {
+                        existingLogin.getRoles().add("ROLE_" + request.status().toString());
+                    } catch (Exception e) {
+                        log.info("Login " + existingLogin + " has a null role list");
+                    }
+
                     // Save the updated user
                     userRepository.save(existingUser);
+                    loginRepository.save(existingLogin);
 
                     log.info("Updated User Information: email={}, subscriptionTier={}", existingUser.getEmail(),
                             existingUser.getSubscriptionTier());
@@ -48,8 +62,9 @@ public class SubscriptionService {
         }
     }
 
+
     // Beginning move away from enum logic
-    private boolean hasPaidSubscription(SubscribeRequest request) {
+    private boolean hasPaidSubscriptionRole(SubscribeRequest request) {
         // Placeholder logic to simulate a payment status check
         // For example, return true if subscription tier is not NO_SUBSCRIPTION
         // This is purely for demonstration; replace it with real Stripe API call logic later
