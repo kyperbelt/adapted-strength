@@ -26,7 +26,7 @@ public class SubscriptionService {
 
         if (existingUser != null) {
             if(existingUser.getSubscriptionTier() != request.status()) {
-                if(request.status() != SubscriptionStatus.NO_SUBSCRIPTION) {
+                if(hasPaidSubscription(request)) {
                     existingUser.setSubscriptionTier(request.status());
                     existingUser.setExpirationDate();
 
@@ -46,5 +46,14 @@ public class SubscriptionService {
         } else {
             return ResponseEntity.badRequest().body("Failed to retrieve updated user information.");
         }
+    }
+
+    // Beginning move away from enum logic
+    private boolean hasPaidSubscription(SubscribeRequest request) {
+        // Placeholder logic to simulate a payment status check
+        // For example, return true if subscription tier is not NO_SUBSCRIPTION
+        // This is purely for demonstration; replace it with real Stripe API call logic later
+
+        return request.status() != SubscriptionStatus.NO_SUBSCRIPTION;
     }
 }
