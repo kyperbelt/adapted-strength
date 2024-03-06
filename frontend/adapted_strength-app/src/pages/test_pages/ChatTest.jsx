@@ -121,14 +121,14 @@ async function onMessageReceived(payload){
 export default function ChatTest() {
     return (
         <div className="flex flex-col items-center">
-            <MyButton text={"Connect1"} onClick={connect1}/>
-            <MyButton text={"Connect2"} onClick={connect2}/>
-            <MyButton text={"Connect3"} onClick={connect3}/>
+            <MyButton text={"Connect Coach Alex"} onClick={connect1}/>
+            <MyButton text={"Connect Bob"} onClick={connect2}/>
+            <MyButton text={"Connect John"} onClick={connect3}/>
 
-            <MyButton text={"SendMessage1"} onClick={alexToBob}/>
-            <MyButton text={"SendMessage2"} onClick={alexToJohn}/>
-            <MyButton text={"SendMessage3"} onClick={bobToAlex}/>
-            <MyButton text={"SendMessage4"} onClick={johnToAlex}/>
+            <MyButton text={"Send from Alex to Bob"} onClick={alexToBob}/>
+            <MyButton text={"Send from Alex to John"} onClick={alexToJohn}/>
+            <MyButton text={"Send from Bob to Alex"} onClick={bobToAlex}/>
+            <MyButton text={"Send from John to Alex"} onClick={johnToAlex}/>
         </div>);     
 }
 
