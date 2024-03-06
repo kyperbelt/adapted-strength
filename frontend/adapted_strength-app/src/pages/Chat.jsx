@@ -24,6 +24,9 @@ function Subscribed()
 {
     return (
         <>
+            {/* Need to make sure button is circular and allows file to be uploaded */}
+            <input type="file" id="file-input" class="hidden"/>
+            <label for="file-input" className="rounded-full bg-custom-red">+</label>
             <input type="text" placeholder="Type your message..." className="flex-1 border rounded-full px-4 py-2 focus:outline-none"/>
             <button className="rounded-full bg-custom-red block p-2 ml-2 hover:bg-custom-dark-red">Send</button>
         </>
@@ -86,7 +89,7 @@ export default function Chat() {
                 </div>
             </div>
             <div className="bg-custom-gray p-4 flex items-center">
-                <ChatBox isSubscribed={false}/>
+                <ChatBox isSubscribed={true}/>
             </div>
         </div>
     );
