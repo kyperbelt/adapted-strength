@@ -92,7 +92,7 @@ public class UserController {
 
         if (existingUser.isPresent()) {
             log.error("UserInformation for " + userInformation.getEmail() + " already exists");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(userInformation);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userInformation);
         }
 
         userRepository.save(userInformation);
@@ -235,7 +235,8 @@ public class UserController {
 
     // Rewriting /subscribe so it doesn't use cookies
     @PostMapping("/subscribe")
-    public ResponseEntity<?> userSubscribePost(@RequestBody SubscribeRequest request) {
+    public ResponseEntity<?> userSubscribePost(HttpServletRequest r, @RequestBody SubscribeRequest request) {
+        log.info(r.getHeader("Authorization"));
         return subscriptionService.subscribe(request);
     }
 
