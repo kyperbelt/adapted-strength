@@ -6,13 +6,11 @@ import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import java.sql.PreparedStatement;
 
 @Service
 public class SubscriptionService {
@@ -28,15 +26,17 @@ public class SubscriptionService {
     }
 
     public ResponseEntity<?> subscribe(SubscribeRequest request) {
-        UserInformation existingUser = userRepository.findByEmail(request.username()).orElse(null);
-        Login existingLogin = loginRepository.findByEmail(request.username()).orElse(null);
+        UserInformation existingUser = userRepository.findByEmail(request.email()).orElse(null);
+        Login existingLogin = loginRepository.findByEmail(request.email()).orElse(null);
 
         if (existingUser != null) {
-            if(existingUser.getSubscriptionTier() != request.status()) {
-                if(hasPaidSubscriptionRole(request)) {
+            if (existingUser.getSubscriptionTier() != request.status()) {
+                if (hasPaidSubscriptionRole(request)) {
                     existingUser.setSubscriptionTier(request.status());
                     existingUser.setExpirationDate();
 
+
+                    // Appends "ROLE_" to the subscription tiers listed in the enum. Makes it clearer for authorization purposes
                     try {
                         existingLogin.getRoles().add("ROLE_" + request.status().toString());
                     } catch (Exception e) {

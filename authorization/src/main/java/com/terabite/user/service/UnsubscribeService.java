@@ -21,7 +21,7 @@ public class UnsubscribeService {
     }
 
     public ResponseEntity<?> unsubscribe(UnsubscribeRequest request) {
-        UserInformation existingUser = userRepository.findByEmail(request.username()).orElse(null);
+        UserInformation existingUser = userRepository.findByEmail(request.email()).orElse(null);
 
         if (existingUser != null) {
             existingUser.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
