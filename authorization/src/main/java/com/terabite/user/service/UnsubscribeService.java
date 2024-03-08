@@ -2,6 +2,7 @@ package com.terabite.user.service;
 
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.user.UserApi;
 import com.terabite.user.model.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
@@ -33,7 +34,7 @@ public class UnsubscribeService {
 
             // Tricky solution for removing subscription roles in Login
             // Should eventually convert Login Roles to a Set
-            SubscriptionService.ResetSubscriptionRoles(existingLogin);
+            UserApi.ResetSubscriptionRoles(existingLogin);
 
             // Save the updated user
             userRepository.save(existingUser);

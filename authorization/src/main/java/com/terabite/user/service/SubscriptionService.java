@@ -2,6 +2,7 @@ package com.terabite.user.service;
 
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.user.UserApi;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
@@ -11,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class SubscriptionService {
@@ -43,26 +43,12 @@ public class SubscriptionService {
 //                        existingLogin.getRoles().add("ROLE_" + request.status().toString());
 
                         // Clearing existing roles, because they're additive
-                        ResetSubscriptionRoles(existingLogin);
+                        UserApi.ResetSubscriptionRoles(existingLogin);
 
                         // "Additive" subscription logic
                         // Higher subscription tiers give all lower tier benefits
                         // Implementing this behavior by adding lower level roles for higher level subscriptions
-                        List<String> roles = new ArrayList<>();
-                        switch (request.status().toString()) {
-                            case "BASE_CLIENT" -> {
-                                roles.add("ROLE_BASE_CLIENT");
-                            }
-                            case "GENERAL_CLIENT" -> {
-                                roles.add("ROLE_BASE_CLIENT");
-                                roles.add("ROLE_GENERAL_CLIENT");
-                            }
-                            case "SPECIFIC_CLIENT" -> {
-                                roles.add("ROLE_BASE_CLIENT");
-                                roles.add("ROLE_GENERAL_CLIENT");
-                                roles.add("ROLE_SPECIFIC_CLIENT");
-                            }
-                        }
+                        List<String> roles = UserApi.getAdditiveRolesFromSubscribeRequest(request);
 
                         existingLogin.setRoles(roles);
                     } catch (Exception e) {
@@ -86,18 +72,6 @@ public class SubscriptionService {
         } else {
             return ResponseEntity.badRequest().body("Failed to retrieve updated user information.");
         }
-    }
-
-    static void ResetSubscriptionRoles(Login existingLogin) {
-        List<String> roles = existingLogin.getRoles();
-        List<String> filteredRoles = roles.stream()
-                .filter(role -> {
-                    String strippedRole = role.substring(5); // Remove "ROLE_" prefix for comparison
-                    return Arrays.stream(SubscriptionStatus.values())
-                            .noneMatch(s -> s.name().equals(strippedRole));
-                })
-                .toList();
-        existingLogin.setRoles(filteredRoles);
     }
 
 
