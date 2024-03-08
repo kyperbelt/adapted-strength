@@ -50,7 +50,9 @@ public class SubscriptionService {
                         // Implementing this behavior by adding lower level roles for higher level subscriptions
                         List<String> roles = UserApi.getAdditiveRolesFromSubscribeRequest(request);
 
-                        existingLogin.setRoles(roles);
+                        // Combining non-subscription roles with new calculated subscription roles
+                        List<String> processedRoles = Stream.concat(existingLogin.getRoles().stream(), roles.stream()).toList();
+                        existingLogin.setRoles(processedRoles);
                     } catch (Exception e) {
                         log.error("Login " + existingLogin + " has a null role list");
                     }
