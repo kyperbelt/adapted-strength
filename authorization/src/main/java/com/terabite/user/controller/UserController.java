@@ -2,11 +2,8 @@ package com.terabite.user.controller;
 
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
-import com.terabite.authorization.dto.Payload;
 import com.terabite.authorization.service.JwtService;
-import com.terabite.user.model.ProfileRequest;
 import com.terabite.user.model.SubscribeRequest;
-import com.terabite.user.model.UnsubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.user.service.SubscriptionService;
@@ -20,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -259,8 +255,14 @@ public class UserController {
     // Rewriting /subscribe so it doesn't use cookies
     @PostMapping("/subscribe")
     public ResponseEntity<?> userSubscribePost(HttpServletRequest r, @RequestBody SubscribeRequest request) {
-        log.info(r.getHeader("Authorization"));
-        return subscriptionService.subscribe(request);
+        String email;
+        if (getTokenEmail(r).isPresent()) {
+            email = getTokenEmail(r).get();
+        } else {
+            email = "";
+        }
+//        log.info(r.getHeader("Authorization"));
+        return subscriptionService.subscribe(request, email);
     }
 
 //    @Deprecated
@@ -278,7 +280,13 @@ public class UserController {
 
     // Rewriting /unsubscribe so it doesn't use cookies
     @PostMapping("/unsubscribe")
-    public ResponseEntity<?> userUnsubscribePost(@RequestBody UnsubscribeRequest request) {
-        return unsubscribeService.unsubscribe(request);
+    public ResponseEntity<?> userUnsubscribePost(HttpServletRequest r) {
+        String email;
+        if (getTokenEmail(r).isPresent()) {
+            email = getTokenEmail(r).get();
+        } else {
+            email = "";
+        }
+        return unsubscribeService.unsubscribe(email);
     }
 }
