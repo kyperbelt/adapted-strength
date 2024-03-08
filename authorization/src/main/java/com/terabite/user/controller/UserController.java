@@ -3,6 +3,7 @@ package com.terabite.user.controller;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.dto.Payload;
+import com.terabite.authorization.service.JwtService;
 import com.terabite.user.model.ProfileRequest;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UnsubscribeRequest;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -34,18 +36,21 @@ public class UserController {
 
     private final String authCookieName;
 
+    private final JwtService jwtService;
+
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController(
             SubscriptionService subscriptionService,
             UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
-            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
+            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
         this.subscriptionService = subscriptionService;
         this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     // TODO| README: Accounts are created by the authorization service and not by
@@ -87,8 +92,9 @@ public class UserController {
 
     // Rewriting /create so it doesn't use cookies
     @PostMapping("/create")
-    public ResponseEntity<?> createAccountInformation(@RequestBody UserInformation userInformation) {
-        Optional<UserInformation> existingUser = userRepository.findByEmail(userInformation.getEmail());
+    public ResponseEntity<?> createAccountInformation(HttpServletRequest request, @RequestBody UserInformation userInformation) {
+//        Optional<UserInformation> existingUser = userRepository.findByEmail(userInformation.getEmail());
+        Optional<UserInformation> existingUser = userRepository.findByEmail(getTokenEmail(request).orElse(null));
 
         if (existingUser.isPresent()) {
             log.error("UserInformation for " + userInformation.getEmail() + " already exists");
@@ -146,8 +152,10 @@ public class UserController {
 
     // Rewriting put /profile so it doesn't use cookies
     @PutMapping("/profile")
-    public ResponseEntity<?> updateAccountInformation(@RequestBody UserInformation userInformation) {
-        Optional<UserInformation> existingUser = userRepository.findByEmail(userInformation.getEmail());
+    public ResponseEntity<?> updateAccountInformation(HttpServletRequest request, @RequestBody UserInformation userInformation) {
+//        Optional<UserInformation> existingUser = userRepository.findByEmail(userInformation.getEmail());
+        Optional<UserInformation> existingUser = userRepository.findByEmail(getTokenEmail(request).orElse(null));
+
 
         // User must already exist to update it
         if (existingUser.isEmpty()) {
@@ -200,11 +208,12 @@ public class UserController {
     // Rewriting /profile handler so it doesn't use cookies
     // Anyone can request any email for now, but this should be fine for the backend - users will never be able to make a custom json request
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(@RequestBody ProfileRequest request) {
-        Optional<UserInformation> existingUser = userRepository.findByEmail(request.email());
+    public ResponseEntity<?> getProfile(HttpServletRequest request) {
+//        Optional<UserInformation> existingUser = userRepository.findByEmail(request.email());
+        Optional<UserInformation> existingUser = userRepository.findByEmail(getTokenEmail(request).orElse(null));
 
         if (existingUser.isEmpty()) {
-            log.error("UserInformation for " + request.email() + " not found");
+            log.error("UserInformation for " + getTokenEmail(request) + " not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(request);
         }
 
@@ -218,6 +227,20 @@ public class UserController {
         }
         return Arrays.stream(request.getCookies()).filter(cookie -> authCookieName.equals(cookie.getName()))
                 .findFirst();
+    }
+
+    // Bearer token version
+    private Optional<String> getTokenEmail(HttpServletRequest request) {
+        Optional<String> authorizationHeader = Optional.ofNullable(request.getHeader("Authorization"));
+
+        Optional<String> bearerToken = authorizationHeader.filter(authHeader -> authHeader.startsWith("Bearer "));
+
+        Optional<String> token = bearerToken.map(authHeader -> authHeader.substring(7));
+
+        Optional<String> email = token.map(jwtService::extractUsername);
+
+        // Return the Optional containing the username, or an empty Optional if any step failed.
+        return email;
     }
 
 //    @Deprecated
