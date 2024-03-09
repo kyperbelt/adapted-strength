@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
+@CrossOrigin(allowCredentials = "true", originPatterns ="*")
 @Controller
 @RequestMapping("/v1/chat")
 public class ChatController {

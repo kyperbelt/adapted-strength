@@ -83,6 +83,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                }else{
+                    log.error("Unable to validate token for user: {} on endpoint {}", userDetails.getUsername(), request.getRequestURI());
                 }
             } catch (UsernameNotFoundException e) {
                 log.error("User not found");

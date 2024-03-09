@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
+@CrossOrigin(allowCredentials = "true", originPatterns = "*")
 @RestController
 @RequestMapping("/v1/user")
 public class UserController {
