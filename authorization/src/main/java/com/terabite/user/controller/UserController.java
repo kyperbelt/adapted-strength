@@ -226,12 +226,18 @@ public class UserController {
     }
 
     // Bearer token version
-    private Optional<String> getTokenEmail(HttpServletRequest request) {
+    /**
+     * This is a controller specific helper function that extracts the "username" (email in our case) of a JWT
+     *
+     * @param request an `HttpServletRequest` object that a controller handler is processing
+     * @return The email contained within the JWT
+     */
+    public Optional<String> getTokenEmail(HttpServletRequest request) {
         Optional<String> authorizationHeader = Optional.ofNullable(request.getHeader("Authorization"));
 
-        Optional<String> bearerToken = authorizationHeader.filter(authHeader -> authHeader.startsWith("Bearer "));
+        Optional<String> bearerToken = authorizationHeader.filter(authHeader -> authHeader.startsWith("Bearer ")); // Grab only the Bearer token
 
-        Optional<String> token = bearerToken.map(authHeader -> authHeader.substring(7));
+        Optional<String> token = bearerToken.map(authHeader -> authHeader.substring(7)); // Remove "Bearer " prefix
 
         Optional<String> email = token.map(jwtService::extractUsername);
 

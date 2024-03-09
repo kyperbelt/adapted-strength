@@ -33,7 +33,8 @@ public class UnsubscribeService {
             existingUser.cancelExpirationDate();
 
             // Tricky solution for removing subscription roles in Login
-            // Should eventually convert Login Roles to a Set
+            // Iterates through all roles of a given login, and removes all subscription related roles
+            // TODO: We should eventually convert Login Roles to a Set instead of it being a list to simplify logic
             UserApi.ResetSubscriptionRoles(existingLogin);
 
             // Save the updated user

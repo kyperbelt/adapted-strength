@@ -42,7 +42,8 @@ public class SubscriptionService {
                     try {
 //                        existingLogin.getRoles().add("ROLE_" + request.status().toString());
 
-                        // Clearing existing roles, because they're additive
+                        // Clearing existing roles to prevent duplicate roles in a login object
+                        // TODO: Login's roles list should be eventually converted into a Set
                         UserApi.ResetSubscriptionRoles(existingLogin);
 
                         // "Additive" subscription logic
