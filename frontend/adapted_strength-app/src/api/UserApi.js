@@ -49,5 +49,17 @@ export class UserApi {
 
     const promise = ApiUtils.apiPut('user/profile', profile);
     return promise;
+    
+  }
+
+  static updateSubscription({ tier }) {
+    const data = {
+      tier
+    };
+    console.log(JSON.stringify(data));
+
+    const promise = ApiUtils.apiPost('user/subscribe', data);
+    return promise;
+    
   }
 }

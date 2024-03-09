@@ -17,6 +17,7 @@ import SignUpAdditional from './pages/SignUpAdditional.jsx';
 import Memberships from './pages/Memberships.jsx'
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Subscription from './pages/SubscriptionManagement.jsx';
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
@@ -73,6 +74,13 @@ function App() {
                 <EditProfile />
               </RouteGuard>
             </Suspense>} />
+
+            <Route path="subscription-management" element={<Suspense fallback="...">
+              <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                <Subscription />
+              </RouteGuard>
+            </Suspense>} />
+            
             <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
             <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />
