@@ -149,6 +149,9 @@ export default function SignUp() {
                 if (response.status == HttpStatus.CREATED) {
                     // user is valid 
                     console.log("User is valid and account is created");
+                    // set the user token in local storage
+                    
+                    
                     return UserApi.createProfileInformation(data);
                 } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
                     throw new Error("Unable to create user account, email is already in use");

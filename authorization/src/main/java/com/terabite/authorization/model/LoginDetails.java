@@ -8,21 +8,34 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * FIXME: Move into common package since it is used by all packages.
+ */
 public class LoginDetails implements UserDetails {
     private String email;
     private String password;
     private List<GrantedAuthority> authorities;
+    private String jwtToken;
 
-    public LoginDetails(Login login) {
-        email = login.getEmail();
-        password = login.getPassword();
-        authorities = login.getRoles().stream()
+    public LoginDetails(Login login, String jwtToken) {
+        this.email = login.getEmail();
+        this.jwtToken = jwtToken;
+        this.password = login.getPassword();
+        this.authorities = login.getRoles().stream()
                 .map((role) -> new SimpleGrantedAuthority(role))
                 .collect(Collectors.toList());
     }
 
-    public static LoginDetails of(Login login){
-        return new LoginDetails(login);
+    public static LoginDetails of(Login login, String jwtToken) {
+        return new LoginDetails(login, jwtToken);
+    }
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
     @Override
