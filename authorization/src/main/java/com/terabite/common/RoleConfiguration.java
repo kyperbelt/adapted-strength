@@ -1,11 +1,9 @@
-package com.terabite.authorization.config;
+package com.terabite.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.terabite.authorization.AuthorizationApi.Roles;
 
 public class RoleConfiguration {
 
@@ -68,7 +66,8 @@ public class RoleConfiguration {
     }
 
     public boolean validateStringListOfRoles(final List<String> roles) {
-        List<Roles> rolesEnum = roles.stream().map(role -> Roles.getRoleByName(role)).filter(role -> role.isPresent()).map(role -> role.get()).toList();
+        List<Roles> rolesEnum = roles.stream().map(role -> Roles.getRoleByName(role)).filter(role -> role.isPresent())
+                .map(role -> role.get()).toList();
         return validateRolesList(rolesEnum);
     }
 
@@ -134,7 +133,8 @@ public class RoleConfiguration {
     }
 
     public Map<String, List<Roles>> getMissingRoles(final List<String> roles) {
-        List<Roles> rolesEnum = roles.stream().map(role -> Roles.getRoleByName(role)).filter(role -> role.isPresent()).map(role -> role.get()).toList();
+        List<Roles> rolesEnum = roles.stream().map(role -> Roles.getRoleByName(role)).filter(role -> role.isPresent())
+                .map(role -> role.get()).toList();
         Map<String, List<Roles>> missing = new HashMap<String, List<Roles>>();
         missing.put("all", getAllMissing(rolesEnum));
         missing.put("except", getExceptPresent(rolesEnum));
@@ -174,7 +174,7 @@ public class RoleConfiguration {
             return this;
         }
 
-        public RoleConfigurationBuilder except(Roles ... roles) {
+        public RoleConfigurationBuilder except(Roles... roles) {
             if (exceptSet) {
                 throw new IllegalStateException("Except roles already set for this confuguration. May only set Once!");
             }
@@ -186,7 +186,7 @@ public class RoleConfiguration {
             return this;
         }
 
-        public RoleConfigurationBuilder any(Roles ... roles) {
+        public RoleConfigurationBuilder any(Roles... roles) {
             if (anySet) {
                 throw new IllegalStateException("Any roles already set for this confuguration. May only set Once!");
             }

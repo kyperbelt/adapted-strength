@@ -3,16 +3,17 @@ package com.terabite.authorization.controller;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.ForgotPasswordRequest;
-import com.terabite.authorization.dto.Payload;
 import com.terabite.authorization.dto.ResetPasswordRequest;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
-import com.terabite.authorization.service.CookieMonsterService;
 import com.terabite.authorization.service.ForgotPasswordService;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
-import jakarta.servlet.http.Cookie;
+import com.terabite.common.dto.Payload;
+import com.terabite.common.dto.PayloadType;
+import com.terabite.common.model.LoginDetails;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -20,19 +21,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(allowCredentials = "true", originPatterns ="*")
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthorizationController {
 
     private final LoginService loginService;
     private final SignupService signupService;
-    private final CookieMonsterService cookieMonsterService;
     private final ForgotPasswordService forgotPasswordService;
 
     private final JwtService jwtService;
@@ -44,11 +45,9 @@ public class AuthorizationController {
     private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
     public AuthorizationController(ForgotPasswordService forgotPasswordHelper, LoginService loginService,
-            CookieMonsterService cookieMonsterService,
             SignupService signupService,
             JwtService jwtService,
             LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
-        this.cookieMonsterService = cookieMonsterService;
         this.forgotPasswordService = forgotPasswordHelper;
         this.loginService = loginService;
         this.signupService = signupService;
@@ -64,13 +63,10 @@ public class AuthorizationController {
 
         if (token.isPresent()) {
             log.info("Token is present and cookie is being sent");
-            Cookie cookie = cookieMonsterService.createAuthorizationCookie(token.get(),
-                    60 * 60 * 24 * 7);
-            response.addCookie(cookie);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new Payload(token.get()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Payload.of(PayloadType.JWT_TOKEN, token.get()));
         }
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new Payload("User already exists"));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Payload.of("User already exists"));
     }
 
     @PostMapping("/validate_credentials")
@@ -78,15 +74,15 @@ public class AuthorizationController {
         Optional<Login> login = loginRepository.findByEmail(authRequest.getUsername());
         if (login.isPresent()) {
             log.info("User {} already exists", authRequest.getUsername());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new Payload("User already exists"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Payload.of("User already exists"));
         }
         if (!signupService.verifyPasswordIsStrong(authRequest.getPassword())) {
             log.info("Password {} is not strong enough", authRequest.getPassword());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Payload("Password is not strong enough"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Payload.of("Password is not strong enough"));
         }
         log.info("Credentials username: {} and password: {} are valid", authRequest.getUsername(),
                 authRequest.getPassword());
-        return ResponseEntity.ok(new Payload("Valid"));
+        return ResponseEntity.ok(Payload.of("Valid"));
     }
 
     /**
@@ -101,43 +97,26 @@ public class AuthorizationController {
         Optional<String> token = loginService.login(login);
 
         if (token.isPresent()) {
-            // README: Decided to store tokens in a special cookie
-            // information from:
-            // https://blog.logrocket.com/jwt-authentication-best-practices/#:~:text=To%20keep%20them%20secure%2C%20you,JavaScript%20running%20in%20the%20browser.
-
-            // log that token is present and cookie is being sent
-            log.info("Token is present and cookie is being sent");
-            // set a cookie
-            Cookie cookie = cookieMonsterService.createAuthorizationCookie(token.get(),
-                    60 * 60 * 24 * 7);
-
-            response.addCookie(cookie);
-            // we probably should only return ok without the token since it is sent back as
-            // a cookie
-            return ResponseEntity.ok(new Payload(token.get()));
+            log.info("Token was successfully created and it is being sent for user {}", login.getEmail());
+            return ResponseEntity.ok(Payload.of(PayloadType.JWT_TOKEN, token.get()));
         }
 
         log.error("Was unable to login with the given credentials. Invalid login for email: {}, and password: {}",
                 login.getEmail(), login.getPassword());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Payload("Invalid login"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("Invalid login"));
 
     }
 
     @PostMapping("/logout")
-    public Payload userLogoutPost(HttpServletResponse response, HttpServletRequest request) {
+    public Payload userLogoutPost(@AuthenticationPrincipal UserDetails userDetials, HttpServletResponse response,
+            HttpServletRequest request) {
 
-        // README: Since wew ill eventually be using JWT, we wwill need a way to
-        // invalidate
-        // the tokens on logout. This is so that once logged out on that decide the
-        // users are able to
-        // log in and get a new token
+        LoginDetails loginDetails = (LoginDetails) userDetials;
+        // Token should be added to a blacklist until it expires
+        // This blacklist should be checked in the JwtAuthFilter
 
-        Optional<Cookie> tokenCookie = cookieMonsterService.getAuthCookie(request);
-        Cookie cookie = cookieMonsterService.createAuthorizationCookie("", 0);
-        response.addCookie(cookie);
+        return Payload.of(PayloadType.MESSAGE, "Logout successful");
 
-        return new Payload(String.format("logged out:%s",
-                tokenCookie.orElseGet(() -> cookieMonsterService.emptyAuthorizationCookie()).getValue()));
     }
 
     @PostMapping("/forgot_password")

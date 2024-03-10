@@ -1,17 +1,7 @@
 package com.terabite.authorization.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.dto.ApiResponse;
-import com.terabite.authorization.log.JwtValidationException;
-import com.terabite.authorization.service.CookieMonsterService;
-import com.terabite.authorization.service.JwtService;
-import com.terabite.authorization.service.LoginService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +17,17 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terabite.GlobalConfiguration;
+import com.terabite.authorization.dto.ApiResponse;
+import com.terabite.authorization.service.JwtService;
+import com.terabite.authorization.service.LoginService;
+import com.terabite.common.model.LoginDetails;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -46,27 +45,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private LoginService loginService;
 
-    @Autowired
-    private CookieMonsterService cookieMonsterService;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // String authHeader = request.getHeader("Authorization");
-        Optional<String> token = Optional.empty();
+        Optional<String> token = Optional.ofNullable(request.getHeader("Authorization"))
+                .filter(h -> h.startsWith("Bearer "))
+                .map(h -> h.substring(7));
+
         Optional<String> email = Optional.empty();
 
-        // if (authHeader != null && authHeader.startsWith("Bearer ")) {
-        // token = authHeader.substring(7);
-        // try {
-        // email = jwtService.extractUsername(token);
-        // } catch (JwtValidationException e) {
-        // raiseException(request, response, token);
-        // return;
-        // }
-        // }
-        token = cookieMonsterService.getAuthCookie(request).map(Cookie::getValue);
-        if (token.isPresent()) {
+        if (token.isPresent() && !token.get().isBlank() && !token.get().equals("null")){
             email = jwtService.extractUsername(token.get());
             if (email.isEmpty()) {
                 raiseException(request, response, token.get());
@@ -111,11 +99,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     private void raiseException(HttpServletRequest request, HttpServletResponse response, String token)
             throws IOException {
-
-        // delte the cookie on any exception
-        Cookie cookie = cookieMonsterService.createAuthorizationCookie("", 0);
-        response.addCookie(cookie);
-
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ApiResponse apiResponse = new ApiResponse("Invalid token provided", token);

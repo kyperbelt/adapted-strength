@@ -1,11 +1,11 @@
 package com.terabite.authorization.service;
 
 import com.terabite.authorization.AuthorizationApi;
-import com.terabite.authorization.AuthorizationApi.Roles;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.common.Roles;
+import com.terabite.common.model.LoginDetails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class SignupService {
 
             loginRepository.save(login);
 
-            final String token = jwtService.generateToken(new LoginDetails(login));
+            final String token = jwtService.generateToken(LoginDetails.of(login.getEmail(), login.getPassword(), login.getRoles()));
             log.info("User {} has signed up", login.getEmail());
             return Optional.of(token);
 

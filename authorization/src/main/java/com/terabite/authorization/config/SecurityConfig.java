@@ -1,3 +1,4 @@
+
 package com.terabite.authorization.config;
 
 import com.terabite.authorization.log.CustomAccessDeniedHandler;
@@ -26,70 +27,70 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private static final String VERSION_PREFIX = "v1";
-    private static final String[] AUTHENTICATED_ROUTES = {
-            // "/auth/**",
-            "/auth/logout",
-            "/user/create",
-            "/user/profile",
-            "/user/subscribe",
-            "/user/unsubscribe",
-            "/chat/**",
-            "/programming/**",
-    };
+        private static final String VERSION_PREFIX = "v1";
+        private static final String[] AUTHENTICATED_ROUTES = {
+                        // "/auth/**",
+                        "/auth/logout",
+                        "/user/create",
+                        "/user/profile",
+                        "/user/subscribe",
+                        "/user/unsubscribe",
+                        "/chat/**",
+                        "/programming/**",
+        };
 
-    private final JwtAuthFilter jwtAuthFilter;
+        private final JwtAuthFilter jwtAuthFilter;
 
-    private static Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+        private static Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
+        public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+                this.jwtAuthFilter = jwtAuthFilter;
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(@Lazy final LoginService loginService) {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(loginService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
+        @Bean
+        public AuthenticationProvider authenticationProvider(@Lazy final LoginService loginService) {
+                DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+                authenticationProvider.setUserDetailsService(loginService);
+                authenticationProvider.setPasswordEncoder(passwordEncoder());
+                return authenticationProvider;
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+                        throws Exception {
+                return authenticationConfiguration.getAuthenticationManager();
+        }
 
-    // Allows all users for all routes.
-    // CSRF disabled because it breaks authorization since backend is stateless
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, @Lazy final AuthenticationProvider authProvider)
-            throws Exception {
-        http.csrf((csrf) -> csrf.disable())
-                .exceptionHandling((exceptionHandler) -> exceptionHandler
-                        .accessDeniedHandler(new CustomAccessDeniedHandler()))
-                .authorizeHttpRequests((authorizeHttpRequests) -> {
-                    authorizeHttpRequests
-                            .dispatcherTypeMatchers(DispatcherType.ERROR,
-                                    DispatcherType.FORWARD)
-                            .permitAll();
-                    for (String route : AUTHENTICATED_ROUTES) {
-                        authorizeHttpRequests
-                                .requestMatchers(String.format("/%s%s", VERSION_PREFIX,
-                                        route))
-                                .authenticated();
-                    }
+        // Allows all users for all routes.
+        // CSRF disabled because it breaks authorization since backend is stateless
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http, @Lazy final AuthenticationProvider authProvider)
+                        throws Exception {
+                http.csrf((csrf) -> csrf.disable())
+                                .exceptionHandling((exceptionHandler) -> exceptionHandler
+                                                .accessDeniedHandler(new CustomAccessDeniedHandler()))
+                                .authorizeHttpRequests((authorizeHttpRequests) -> {
+                                        authorizeHttpRequests
+                                                        .dispatcherTypeMatchers(DispatcherType.ERROR,
+                                                                        DispatcherType.FORWARD)
+                                                        .permitAll();
+                                        for (String route : AUTHENTICATED_ROUTES) {
+                                                authorizeHttpRequests
+                                                                .requestMatchers(String.format("/%s%s", VERSION_PREFIX,
+                                                                                route))
+                                                                .authenticated();
+                                        }
 
-                    authorizeHttpRequests.anyRequest().permitAll();
-                }).sessionManagement((sessionManagement) -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+                                        authorizeHttpRequests.anyRequest().permitAll();
+                                }).sessionManagement((sessionManagement) -> sessionManagement
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authenticationProvider(authProvider)
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+        }
 }

@@ -1,9 +1,10 @@
 package com.terabite.authorization.service;
 
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.common.model.LoginDetails;
+
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +39,6 @@ public class LoginService implements UserDetailsService {
      *              to login
      **/
     public Optional<String> login(final Login login) {
-        // Temp, will change to jwt in near future
-        // Current implementation only checks for correct password and assigns state
-        // Has some edge case checking
-        // README: See signup service for more detaisl on where else we will need jwt
-        // tokens.
-
         Login storedLogin = loginRepository.findByEmail(login.getEmail()).orElse(null);
 
         if (storedLogin == null) {
@@ -55,7 +50,8 @@ public class LoginService implements UserDetailsService {
         String password = login.getPassword();
 
         if (passwordEncoder.matches(password, storedHash)) {
-            final String token = jwtService.generateToken(new LoginDetails(storedLogin));
+            final String token = jwtService.generateToken(
+                    new LoginDetails(storedLogin.getEmail(), storedLogin.getPassword(), storedLogin.getRoles()));
             return Optional.of(token);
         }
 
@@ -64,11 +60,9 @@ public class LoginService implements UserDetailsService {
 
     public void updatePasswordResetToken(String token, String email) throws LoginNotFoundException {
 
-        // Optional<Login> login=loginRepository.findOneByEmail(email);
         Login login = loginRepository.findOneByEmail(email);
 
         if (login != null) {
-            // login.orElseThrow().setResetPasswordToken(token);
             login.setResetPasswordToken(token);
             loginRepository.save(login);
         } else {
@@ -81,11 +75,6 @@ public class LoginService implements UserDetailsService {
         Login login = loginRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email + " email not found"));
 
-        return new LoginDetails(login);
-
-        // Optional<Login> loginDetail = loginRepository.findByEmail(email);
-        //
-        // return loginDetail.map(login -> new LoginDetails(login))
-        // .orElseThrow(() -> new LoginNotFoundException(email + " email not found"));
+        return LoginDetails.of(login.getEmail(), login.getPassword(), login.getRoles());
     }
 }

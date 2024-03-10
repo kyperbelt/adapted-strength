@@ -1,4 +1,4 @@
-package com.terabite.authorization.model;
+package com.terabite.common.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,17 +13,18 @@ public class LoginDetails implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
 
-    public LoginDetails(Login login) {
-        email = login.getEmail();
-        password = login.getPassword();
-        authorities = login.getRoles().stream()
+    public LoginDetails(final String email, final String password, final List<String> roles) {
+        this.email = email;
+        this.password = password;
+        this.authorities = roles.stream()
                 .map((role) -> new SimpleGrantedAuthority(role))
                 .collect(Collectors.toList());
     }
 
-    public static LoginDetails of(Login login){
-        return new LoginDetails(login);
+    public static LoginDetails of(String email, String password, List<String> roles) {
+        return new LoginDetails(email, password, roles);
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

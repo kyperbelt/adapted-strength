@@ -17,8 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.common.model.LoginDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class SignupServiceTests{

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 //import { useEffect, useState } from 'react'; // UNUSED ASSET - Commenting out
 import { useNavigate } from 'react-router-dom';
 import { AuthApi } from '../api/AuthApi';
+import { ApiUtils } from '../api/ApiUtils';
 
 import logo from '../assets/logo.png';
 import google from '../assets/google_icon.webp'; // UNUSED ASSET - Commenting out
@@ -38,23 +39,6 @@ function GoogleLogo({...props}) {
 
 export default function Login() {
     const nav = useNavigate();
-    // const [checkedLoggedIn, setCheckedLoggedIn] = useState(false);
-    //
-    // useEffect(() => {
-    //     console.log("Checking if user is logged in");
-    //     if (AuthApi.isLoggedIn()) {
-    //         console.log("User is already logged in");
-    //         nav("/profile");
-    //     } else { setCheckedLoggedIn(true) }
-    // }, [nav]);
-    //
-    // console.log("User is not logged in");
-    //
-    // // we dont display the login form until we know if the user is not logged in
-    // if (!checkedLoggedIn) {
-    //     <div>checking...</div>
-    // }
-    //
     const onSubmit = (e) => {
         e.preventDefault();
         console.log("Logging in");
@@ -64,6 +48,7 @@ export default function Login() {
             .then((response) => {
                 if (response.status === 200) {
                     console.log("Logged in");
+                    ApiUtils.setAuthToken(response.data.payload);
                     nav("/profile");
                 } else {
                     console.error("Error logging in", response);

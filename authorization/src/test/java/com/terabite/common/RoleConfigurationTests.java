@@ -1,4 +1,4 @@
-package com.terabite.authorization.config;
+package com.terabite.common;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.terabite.authorization.AuthorizationApi.Roles;
 
 @ExtendWith(MockitoExtension.class)
 public class RoleConfigurationTests {
