@@ -11,7 +11,7 @@ import com.stripe.model.Customer;
 import com.stripe.model.CustomerCollection;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerListParams;
-import com.terabite.payment.model.CustomerInfo;
+import com.stripe.param.CustomerUpdateParams;
 
 @Service
 public class CustomerService {
@@ -22,36 +22,23 @@ public class CustomerService {
         
     }
 
-    public ResponseEntity<?> createNewCustomer(CustomerInfo customerInfo) throws StripeException{
+    public Customer createNewCustomer(String name, String email) throws StripeException{
         Stripe.apiKey = stripeKey;
         CustomerCreateParams params = CustomerCreateParams.builder()
-        .setName(customerInfo.getName()).setEmail(customerInfo.getEmail())
+        .setName(name).setEmail(email)
         .build();
         Customer customer = Customer.create(params);
-        
-        return new ResponseEntity<>(customer.toJson(), HttpStatus.OK);
+        return customer;
     }
 
-    public ResponseEntity<?> getAllCustomers() throws StripeException{
+    public Customer updateExistingCustomer(String name, String email, String customerId) throws StripeException{
         Stripe.apiKey = stripeKey;
-        CustomerListParams params = CustomerListParams.builder().setLimit(null).build();
-        CustomerCollection customers = Customer.list(params);
-        return new ResponseEntity<>(customers.toJson(), HttpStatus.OK);
-    }
-
-    //TODO finish this
-    public ResponseEntity<?> updateExistingCustomer(){
-        return ResponseEntity.ok("whatever");
-    }
-
-    public ResponseEntity<?> deleteCustomer(String customerId) throws StripeException{
-        Stripe.apiKey=stripeKey;
-
         Customer resource = Customer.retrieve(customerId);
-
-        Customer customer=resource.delete();
-        return new ResponseEntity<>(customer.toJson(), HttpStatus.OK);
+        CustomerUpdateParams params = CustomerUpdateParams.builder()
+        .setName(name)
+        .setEmail(email)
+        .build();
+        Customer customer = resource.update(params);
+        return customer;
     }
-
-
 }

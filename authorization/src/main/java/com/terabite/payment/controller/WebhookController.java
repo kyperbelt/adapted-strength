@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.payment.service.WebhookService;
 
-import org.springframework.http.HttpEntity;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @RestController
@@ -22,9 +23,8 @@ public class WebhookController {
     }
 
     @PostMapping("/")
-    public HttpStatus handleWebhookEvent(@RequestBody String payload) {
-        
-        return webhookService.handleWebhookEvent(payload);
+    public HttpStatus handleWebhookEvent(@RequestBody String payload, @RequestHeader Map<String, String> header) {
+        return webhookService.handleWebhookEvent(payload, header);
     }
     
     
