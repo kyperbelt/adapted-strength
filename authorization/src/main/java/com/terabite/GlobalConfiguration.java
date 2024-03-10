@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.repository.LoginRepository;
@@ -31,7 +33,7 @@ public class GlobalConfiguration {
 
 	@Value("${ADAPTED_STRENGTH_CALENDLY_CLIENT_ID:test}")
 	private String cldnlyClientID;
-	
+
 	@Value("${ADAPTED_STRENGTH_CALENDLY_CLIENT_SECRET:test}")
 	private String cldnlyClientSecret;
 
@@ -52,7 +54,6 @@ public class GlobalConfiguration {
 		return domainProtocol;
 	}
 
-
 	@Bean(name = BEAN_NAME_DOMAIN_PORT)
 	public String getDomainPort() {
 		return domainPort;
@@ -62,7 +63,6 @@ public class GlobalConfiguration {
 	public String getJwtSecret() {
 		return jwtSecret;
 	}
-
 
 	@Bean(name = BEAN_CALENDLY_CLIENT_ID)
 	public String getCldnlyClientID() {
@@ -82,17 +82,16 @@ public class GlobalConfiguration {
 	@Bean
 	public AuthorizationApi authorizationApi(final JwtService jwtService, final LoginRepository loginRepository) {
 		// For now we will just return a new instance of the AuthorizationApi class.
-		// later we might want to set this up some better way. I am still new to 
-		// spring boot and I am not sure if this is the best approach. 
+		// later we might want to set this up some better way. I am still new to
+		// spring boot and I am not sure if this is the best approach.
 		return new AuthorizationApi(jwtService, loginRepository);
 	}
 
-
-	@Bean 
+	@Bean
 	public UserApi userApi(final UserRepository userRepository) {
 		// FOr now we will just return a new instance of the UserApi class.
-		// later we might want to set this up some better way. I am still new to 
-		// spring boot and I am not sure if this is the best approach. 
+		// later we might want to set this up some better way. I am still new to
+		// spring boot and I am not sure if this is the best approach.
 		return new UserApi(userRepository);
 	}
 
@@ -106,11 +105,25 @@ public class GlobalConfiguration {
 		return domainUrl;
 	}
 
-        @Bean
-        public JwtService jwtService(@Qualifier(BEAN_JWT_SECRET) final String jwtSecret) {
-                return new JwtService(jwtSecret);
-        }
+	@Bean
+	public JwtService jwtService(@Qualifier(BEAN_JWT_SECRET) final String jwtSecret) {
+		return new JwtService(jwtSecret);
+	}
 
-
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+						.allowedOrigins("http://localhost:3000",
+								String.format("%s://%s%s",
+										domainProtocol == null ? "http" : domainProtocol, 
+										domainUrl,
+										domainPort == null ? "" : ":"+domainPort))
+				.allowCredentials(true);
+			}
+		};
+	}
 
 }

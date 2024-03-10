@@ -5,7 +5,6 @@ import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.ForgotPasswordRequest;
 import com.terabite.authorization.dto.ResetPasswordRequest;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.ForgotPasswordService;
 import com.terabite.authorization.service.JwtService;
@@ -13,8 +12,8 @@ import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
 import com.terabite.common.dto.Payload;
 import com.terabite.common.dto.PayloadType;
+import com.terabite.common.model.LoginDetails;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -27,10 +26,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthorizationController {

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.dto.Payload;
+import com.terabite.common.dto.Payload;
 import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
 

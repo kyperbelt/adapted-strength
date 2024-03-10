@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserApi } from "../api/UserApi";
+import { ApiUtils } from "../api/ApiUtils";
 import { AuthApi } from "../api/AuthApi";
 import logo from '../assets/logo.png';
 import { HttpStatus } from '../api/ApiUtils';
@@ -149,22 +150,23 @@ export default function SignUp() {
                 if (response.status == HttpStatus.CREATED) {
                     // user is valid 
                     console.log("User is valid and account is created");
+                    console.log("Token: " + response.data.payload);
                     // set the user token in local storage
-                    
-                    
+                    ApiUtils.setAuthToken(response.data.payload);
                     return UserApi.createProfileInformation(data);
                 } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
                     throw new Error("Unable to create user account, email is already in use");
                 } else {
-                    console.log(response);
+                    console.error(response);
                     throw new Error("Unable to create user account, unknown error");
                 }
             }).then((response) => {
-                if (response.status == HttpStatus.CREATED) {
+                if (response.status == HttpStatus.OK) {
                     console.log("User profile created");
                     navigate("/", {}); // redirect to home page
                 } else {
-                    console.log(response);
+                    console.error(response);
+                    ApiUtils.removeAuthToken();
                     throw new Error("Unable to create user profile, unknown error");
                 }
             }).finally(() => {

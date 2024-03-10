@@ -1,16 +1,7 @@
 package com.terabite.authorization.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.dto.ApiResponse;
-import com.terabite.authorization.log.JwtValidationException;
-import com.terabite.authorization.service.JwtService;
-import com.terabite.authorization.service.LoginService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +17,17 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terabite.GlobalConfiguration;
+import com.terabite.authorization.dto.ApiResponse;
+import com.terabite.authorization.service.JwtService;
+import com.terabite.authorization.service.LoginService;
+import com.terabite.common.model.LoginDetails;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -54,7 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         Optional<String> email = Optional.empty();
 
-        if (token.isPresent()) {
+        if (token.isPresent() && !token.get().isBlank() && !token.get().equals("null")){
             email = jwtService.extractUsername(token.get());
             if (email.isEmpty()) {
                 raiseException(request, response, token.get());

@@ -2,7 +2,7 @@ package com.terabite.authorization.service;
 
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.log.JwtValidationException;
-import com.terabite.authorization.model.LoginDetails;
+import com.terabite.common.model.LoginDetails;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.InvalidKeyException;
@@ -69,9 +69,7 @@ public class JwtService {
                     .setClaims(claims)
                     .setSubject(userName)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Expire in 1 minute
-                                                                                                  // for
-                    // testing
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration)) 
                     .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
         } catch (InvalidKeyException e) {
             throw new RuntimeException(e);

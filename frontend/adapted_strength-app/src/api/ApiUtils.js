@@ -1,4 +1,6 @@
 const BASE_API_URL = 'http://localhost:8080';
+export const AUTH_TOKEN_NAME = "adapted-strength_auth-token";
+
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ApiUtils {
 
@@ -17,6 +19,10 @@ export class ApiUtils {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'GET',
       credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
+        ...options.headers,
+      },
       ...options,
     }));
   }
@@ -40,6 +46,8 @@ export class ApiUtils {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
+        ...options.headers,
       },
       body: JSON.stringify(body),
       ...options,
@@ -52,6 +60,8 @@ export class ApiUtils {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
+        ...options.headers,
       },
       body: JSON.stringify(body),
       ...options,
@@ -62,8 +72,25 @@ export class ApiUtils {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'DELETE',
       credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
+        ...options.headers,
+      },
       ...options,
     }));
+  }
+  
+
+  static setAuthToken(token) {
+    localStorage.setItem(AUTH_TOKEN_NAME, token);
+  }
+
+  static getAuthToken() {
+    return localStorage.getItem(AUTH_TOKEN_NAME);
+  }
+
+  static removeAuthToken() {
+    localStorage.removeItem(AUTH_TOKEN_NAME);
   }
 
 

@@ -6,11 +6,12 @@ import java.util.Optional;
 
 import org.springframework.context.annotation.Lazy;
 
-import com.terabite.authorization.config.RoleConfiguration;
 import com.terabite.authorization.model.Login;
-import com.terabite.authorization.model.LoginDetails;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.JwtService;
+import com.terabite.common.RoleConfiguration;
+import com.terabite.common.Roles;
+import com.terabite.common.model.LoginDetails;
 
 /**
  * <h1>AuthorizationApi</h1>
@@ -29,29 +30,6 @@ import com.terabite.authorization.service.JwtService;
  * authorization related utilities.
  */
 public class AuthorizationApi {
-
-    // ADD MORE ROLES HERE
-    public static enum Roles {
-        ROLE_EMAIL_VERIFIED,
-        ROLE_TERMS_ACCEPTED,
-        ROLE_ACCOUNT_SETUP,
-        ROLE_COACH,
-        ROLE_USER ,
-        ROLE_SUBSCRIBED ,
-        ROLE_ADMIN,
-        ROLE_BANNED;
-
-        private static HashMap<String, Roles> roles = new HashMap<String, Roles>();
-        static{
-            for(Roles role : Roles.values()){
-                roles.put(role.name(), role);
-            }
-        }
-
-        public static Optional<Roles> getRoleByName(String role) {
-            return Optional.ofNullable(roles.get(role));
-        }
-    }
 
     private final JwtService jwtService;
     private final LoginRepository loginRepository;
@@ -88,7 +66,7 @@ public class AuthorizationApi {
             return false;
         }
         List<Roles> roles = getRolesFromToken(token).stream().map(role -> Roles.getRoleByName(role))
-            .filter(role -> role.isPresent()).map(role -> role.get()).toList();
+                .filter(role -> role.isPresent()).map(role -> role.get()).toList();
         return roleCongifuration.validateRolesList(roles);
     }
 
@@ -104,7 +82,6 @@ public class AuthorizationApi {
     public Optional<String> getEmailFromToken(String token) {
         return jwtService.extractUsername(token);
     }
-
 
     /**
      * This method will get all the roles from the token.
@@ -141,13 +118,14 @@ public class AuthorizationApi {
         if (email.isEmpty()) {
             return Optional.empty();
         }
-        
+
         Optional<Login> login = loginRepository.findByEmail(email.get());
-        if (login.isEmpty()){
+        if (login.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(jwtService.generateToken(LoginDetails.of(login.get())));
+        return Optional.of(jwtService.generateToken(
+                LoginDetails.of(login.get().getEmail(), login.get().getPassword(), login.get().getRoles())));
     }
 
 }
