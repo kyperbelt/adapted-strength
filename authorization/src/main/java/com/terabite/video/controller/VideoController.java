@@ -25,22 +25,22 @@ public class VideoController {
         this.videoService = videoService;
     }
 
-    @PostMapping("/upload")
+    @PostMapping("")
     public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video, @RequestParam("video_name") String videoName, @RequestParam("client") String client, HttpServletRequest request){
         return videoService.uploadVideo(video, videoName, client);
     }
 
-    @GetMapping("/download")
+    @GetMapping("")
     public ResponseEntity<S3Resource> getVideo(@RequestParam("video_name") String videoName, @RequestParam("client") String client, HttpServletRequest request){
         return videoService.downloadVideo(videoName, client);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("")
     public ResponseEntity<?> deleteVideo(@RequestParam("video_name") String videoName, @RequestParam("client") String client, HttpServletRequest request){
         return videoService.deleteVideo(videoName, client);
     }
 
-    @DeleteMapping("/delete/all")
+    @DeleteMapping("/all")
     public ResponseEntity<?> deleteAllClientVideo(@RequestParam("client") String client, HttpServletRequest request){
         return videoService.deleteBucket(client);
     }
