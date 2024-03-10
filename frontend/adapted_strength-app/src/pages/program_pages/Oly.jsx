@@ -3,6 +3,7 @@ Module: Oly.jsx
 Team: TeraBITE
 */
 //import { Outlet, Link } from "react-router-dom";
+import { useState } from "react";
 import programFiller from "../../assets/blank_filler.png"
 import { CardBack } from "../../components/Card";
 /*
@@ -13,13 +14,20 @@ function SpecialtyField() {
     return (<input type="specialty" placeholder="Specialty" id="specialty" name="specialty" required className="w-4/5 border-b-4 p-0" />);
 }
 */
-
-export default function Olympic() {
+export default function BodyBuild() {
+    const [showProgram, setShowProgram]= useState(false);
+    const toggleCardBack = () => {
+        setShowProgram(!showProgram)
+    }
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-            YOUR PROGRAM: Olympic Weightlifting!
+                YOUR PROGRAM: Olympic Weightlifting!
             </p>
+            <button onClick={toggleCardBack} className="border-solid border-2 border-black uppercase rounded-full font-bold mt-2 px-0 pt-3 pb-3 bg-gray-200">
+                {showProgram ? 'Close Program':'Show Program'}
+            </button>
+            {showProgram && (
             <CardBack className={`xl:w-11/12 xl:mx-auto w-full`}>
                 <div className="overflow-x-auto">
                     <h1 className="font-bold uppercase bg-gray-100">
@@ -30,7 +38,7 @@ export default function Olympic() {
                             <tr>
                                 {/* LET "Order" AND "Exercise" CHANGE! 
                                 This is hard coded for UI purposes */}
-                                <th scope="col" className="px-1.5 py-1 bg-gray-300">
+                                <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                     Order
                                 </th>
                                 <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
@@ -76,7 +84,8 @@ export default function Olympic() {
                     </table>
                 </div>
             </CardBack>
-              
+            )}
         </div>
+
     );
 }
