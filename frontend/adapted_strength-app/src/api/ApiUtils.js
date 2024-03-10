@@ -1,4 +1,10 @@
+
+// When deploying use the following URL 
+// const BASE_API_URL = 'https://q9jkbki2nc.execute-api.us-east-1.amazonaws.com';
+
+// When developing use the following URL
 const BASE_API_URL = 'http://localhost:8080';
+
 export const AUTH_TOKEN_NAME = "adapted-strength_auth-token";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -18,7 +24,7 @@ export class ApiUtils {
   static apiGet(endpoint, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'GET',
-      credentials: 'include',
+      // credentials: 'include',
       headers: {
         'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
         ...options.headers,
@@ -43,7 +49,7 @@ export class ApiUtils {
   static apiPost(endpoint, body, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'POST',
-      credentials: 'include',
+      // credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
@@ -57,7 +63,7 @@ export class ApiUtils {
   static apiPut(endpoint, body, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'PUT',
-      credentials: 'include',
+      // credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
@@ -71,7 +77,7 @@ export class ApiUtils {
   static apiDelete(endpoint, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'DELETE',
-      credentials: 'include',
+      // credentials: 'include',
       headers: {
         'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
         ...options.headers,

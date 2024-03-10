@@ -49,6 +49,9 @@ public class GlobalConfiguration {
 	@Value("${ADAPTED_STRENGTH_WEB_PROTOCOL:}")
 	private String domainProtocol;
 
+	@Value("${API_GATEWAY_URL:localhost}")
+	private String apiGatewayUrl;
+
 	@Bean(name = BEAN_NAME_DOMAIN_PROTOCOL)
 	public String getDomainProtocol() {
 		return domainProtocol;
@@ -116,12 +119,8 @@ public class GlobalConfiguration {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("http://localhost:3000",
-								String.format("%s://%s%s",
-										domainProtocol == null ? "http" : domainProtocol, 
-										domainUrl,
-										domainPort == null ? "" : ":"+domainPort))
-				.allowCredentials(true);
+						.allowedOriginPatterns("*")
+						.allowedMethods("HEAD" ,"GET", "POST", "PUT", "DELETE");
 			}
 		};
 	}
