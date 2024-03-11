@@ -62,7 +62,9 @@ public class UserController {
 
     public UserController(
             SubscriptionService subscriptionService, UserRepository userRepository, UnsubscribeService unsubscribeService,
+
             AuthorizationApi authorizationApi,/*UserProgrammingService userProgrammingService,*/JwtService jwtService,
+
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
         this.subscriptionService = subscriptionService;
         this.unsubscribeService = unsubscribeService;
@@ -145,6 +147,7 @@ public class UserController {
     //     
     //     return userProgrammingService.getUserPrograms(email.get());
     // }
+
 
     @PostMapping("/programming/{id}/comment")
     public ResponseEntity<?> addComment(@RequestParam("id") long userProgrammingId, HttpServletRequest request){
