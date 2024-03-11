@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-//import React, { useState, useEffect } from "react"; //uncomment when connecting to  backend API
+import React, { useState, useEffect } from "react"; 
 
-// import { ChatApi } from "../api/ChatApi";
+import { ChatApi } from "../api/ChatApi";
 import PageContainer1 from "../components/PageContainer";
 
 // const coachId = 'alex@email.com';  //placeholder for now
@@ -28,6 +27,8 @@ const Popup = ({ user, messages, onClose }) => {
               </div>
             ))}
           </div>
+          
+          
           <button onClick={onClose} className="block mx-auto mt-4 bg-red-700 text-white py-2 px-4 rounded hover:bg-red-600 ">Close</button>
         </div>
       </div>
@@ -85,59 +86,23 @@ const Popup = ({ user, messages, onClose }) => {
 
 
 function CoachChat() {
-  const chatUsers = [
-    {"email": "user1@email.com", "fullname": "Jack Jones", "userType": "C"},
-    {"email": "user2@email.com", "fullname": "Bob Smith", "userType": "C"},
-    {"email": "user3@email.com", "fullname": "Amy Johnson", "userType": "C"},
-    {"email": "user4@email.com", "fullname": "Rose White", "userType": "C"},
-    {"email": "user5@email.com", "fullname": "Ray Madison", "userType": "C"}
-  ];
-  
-  const user_1_chat = {
-    "hasUnread": true,
-    "messages": [
-    {"chatId": "user1@email.com_alex@email.com", "senderId": "user1@email.com", "recipientId": "alex@email.com", "content": "1 first message", "timeStamp": "2024-02-24-17-15-27"},
-    {"chatId": "user1@email.com_alex@email.com", "senderId": "user1@email.com", "recipientId": "alex@email.com", "content": "1 second message", "timeStamp": "2024-02-24-17-17-27"},
-    {"chatId": "user1@email.com_alex@email.com", "senderId": "user1@email.com", "recipientId": "alex@email.com", "content": "1 third message", "timeStamp": "2024-02-24-18-11-47"},
-    {"chatId": "alex@email.com_user1@email.com", "senderId": "alex@email.com", "recipientId": "user1@email.com", "content": "1 coach message", "timeStamp": "2024-02-24-17-20-47"}
-    ],
-};
-
-  const user_2_chat = {
-    "hasUnread": true,
-    "messages": 
-  [
-  {"chatId": "user2@email.com_alex@email.com", "senderId": "user2@email.com", "recipientId": "alex@email.com", "content": "2 first message", "timeStamp": "2024-02-24-17-15-27"},
-  {"chatId": "user2@email.com_alex@email.com", "senderId": "user2@email.com", "recipientId": "alex@email.com", "content": "2 second message", "timeStamp": "2024-02-24-17-17-27"},			
-  {"chatId": "user2@email.com_alex@email.com", "senderId": "user2@email.com", "recipientId": "alex@email.com", "content": "2 third message", "timeStamp": "2024-02-24-18-11-47"}
-  ]}
-  ;
-const user_3_chat ={
-    "hasUnread": false,
-    "messages":    
-    [
-        {"chatId": "user1@email.com_alex@email.com", "senderId": "user3@email.com", "recipientId": "alex@email.com", "content": "3 first message", "timeStamp": "2024-02-24-17-15-27"},
-        {"chatId": "user1@email.com_alex@email.com", "senderId": "user3@email.com", "recipientId": "alex@email.com", "content": "3 second message", "timeStamp": "2024-02-24-17-17-27"},			
-        {"chatId": "user1@email.com_alex@email.com", "senderId": "user3@email.com", "recipientId": "alex@email.com", "content": "3 third message", "timeStamp": "2024-02-24-18-11-47"}
-        ]
-} ;
-const user_4_chat = {
-    "hasUnread": true,
-    "messages": [
-        {"chatId": "user4@email.com_alex@email.com", "senderId": "user4@email.com", "recipientId": "alex@email.com", "content": "4 first message", "timeStamp": "2024-02-24-17-15-27"},
-        {"chatId": "user4@email.com_alex@email.com", "senderId": "user4@email.com", "recipientId": "alex@email.com", "content": "4 second message", "timeStamp": "2024-02-24-17-17-27"},			
-        {"chatId": "user4@email.com_alex@email.com", "senderId": "user4@email.com", "recipientId": "alex@email.com", "content": "4 third message", "timeStamp": "2024-02-24-18-11-47"}
-        ]
-};
-const user_5_chat = {
-    "hasUnread": false,
-    "messages": 
-  [
-  {"chatId": "user5@email.com_alex@email.com", "senderId": "user5@email.com", "recipientId": "alex@email.com", "content": "5 first message", "timeStamp": "2024-02-24-17-15-27"},
-  {"chatId": "user5@email.com_alex@email.com", "senderId": "user5@email.com", "recipientId": "alex@email.com", "content": "5 second message", "timeStamp": "2024-02-24-17-17-27"},			
-  {"chatId": "user5@email.com_alex@email.com", "senderId": "user5@email.com", "recipientId": "alex@email.com", "content": "5 third message", "timeStamp": "2024-02-24-18-11-47"}
-  ]
-};
+  const [userChats, setUserChats] = useState([]);
+  const coach = {
+    email: "alex@adaptedstrength.com",
+    fullname: "Alex Palting",
+    userType: "COACH"
+  };
+  useEffect(() => {
+    console.log(coach);
+    ChatApi.getChatUsers(coach)
+      .then(chats => {
+        setUserChats(chats.data);
+        console.log('userChats:', chats.data);
+      })
+      .catch(error => {
+        console.error('Error fetching user chats:', error);
+      });
+ }, []); 
 
 
   const [popupUser, setPopupUser] = useState(null);
@@ -153,32 +118,33 @@ const user_5_chat = {
     setPopupUser(null);
   };
 
-  const getUserMessages = (userId) => {  //remove when connected to backend, temp helper function
-    switch (userId) {
-      case 'user1@email.com':
-        return user_1_chat;
-      case 'user2@email.com':
-        return user_2_chat;
-      case 'user3@email.com':
-        return user_3_chat;
-      case 'user4@email.com':
-        return user_4_chat;
-      case 'user5@email.com':
-        return user_5_chat;
-      default:
-        return [];
+
+const getUserMessages = async (userId) => {
+    try {
+      const chat1 = await ChatApi.getChat(userId, coach.email);
+      const chat2 = await ChatApi.getChat(coach.email, userId);
+      return {
+        messages: [...chat1.messages, ...chat2.messages],
+        hasUnread: chat1.hasUnread
+      };
+    } catch (error) {
+      console.error('Error fetching user messages:', error);
+      return {
+        messages: [],
+        hasUnread: false
+      };
     }
   };
-
+  //{getUserMessages(user.email)?.hasUnread && <span className="text-red-500">New</span>} checking for new messages
   return (
     <PageContainer1>
         <div className="relative bottom-200">
         <div className="flex w-full justify-center">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 max-w-lg w-full">
           <ul className="space-y-4">
-            {chatUsers.map((user, index) => (
+            {userChats.map((user, index) => (
               <li className="hover:bg-gray-200" key={index}>
-                <button className="text-black " onClick={() => openPopup(user)}>{user.fullname} {user.email !== 'alex@email.com' && getUserMessages(user.email)?.hasUnread && <span className="text-red-500">New</span>}</button>
+                <button className="text-black " onClick={() => openPopup(user)}>{user.fullname}</button>
               </li>
             ))}
           </ul>
