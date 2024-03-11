@@ -7,6 +7,8 @@ import com.terabite.chat.model.UserType;
 
 import java.util.List;
 
+import org.hibernate.validator.internal.util.logging.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 @RequestMapping("/v1/chat")
 public class ChatController {
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final ChatUserService chatUserService;
@@ -68,8 +71,9 @@ public class ChatController {
 
     // This endpoint returns a payload of clients if the requestbody is a coach or a coach if the requestbody is a client
     // We will have to change to checking via JWT tokens which should remove the need for a requestbody, but the functionality should remain
-    @GetMapping("/chatUsers")
+    @PostMapping("/chatUsers")
     public ResponseEntity<List<ChatUser>> findChatUsers(@RequestBody ChatUser chatUser) {
+        log.error("user: {}", chatUser);
         return ResponseEntity.ok(chatUserService.findUsers(chatUser));
     }
 
