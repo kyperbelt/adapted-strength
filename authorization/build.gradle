@@ -36,6 +36,16 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // AWS S3 integration
+    // implementation 'org.springframework.cloud:spring-cloud-starter-aws'
+    // implementation 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config'
+    // implementation(platform("software.amazon.awssdk:bom:2.21.1"))
+    // implementation("software.amazon.awssdk:s3")
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+    // implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 }
 
 // when ./gradlew bootRun is executed first require that the application 

@@ -28,7 +28,7 @@ public class UserInformation implements Serializable {
     private String lastName;
 
     @JsonAlias("subscriptionTier")
-    private SubscriptionStatus subscriptionTier;
+    private SubscriptionStatus subscriptionTier = SubscriptionStatus.NO_SUBSCRIPTION;
 
     @JsonAlias("expiration_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
