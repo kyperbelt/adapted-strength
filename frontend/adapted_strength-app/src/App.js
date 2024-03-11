@@ -73,6 +73,7 @@ function App() {
                 <EditProfile />
               </RouteGuard>
             </Suspense>} />
+            
             <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
             <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />

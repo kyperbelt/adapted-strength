@@ -1,10 +1,21 @@
 // TermsOfService.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function TermsOfService() {
     const [accepted, setAccepted] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state;
+    useEffect(() => {
+        if (!state || !state.email || !state.password) {
+            // TODO: for now we just redirect to signup page, but later 
+            //        we want to check if the state is in storage or not
+            navigate('/sign-up', {});
+        }
+    }, []);
+
+    console.log(location);
 
     const handleAcceptanceChange = (event) => {
         setAccepted(event.target.checked);
@@ -12,7 +23,7 @@ function TermsOfService() {
 
     const handleSubmit = () => {
         if (accepted) {
-            navigate('/sign-up-additional');
+            navigate('/health-questionnaire', { state: { email: state.email, password: state.password, tosAccepted: true } });
         } else {
             alert("Please accept the terms of service to proceed.");
         }
@@ -39,7 +50,7 @@ function TermsOfService() {
             </div>
             <button
                 onClick={handleSubmit}
-                className={`px-4 py-2 rounded text-white ${accepted ? 'bg-blue-500' : 'bg-gray-300'}`}
+                className={`px-4 py-2 rounded text-white ${accepted ? 'bg-primary' : 'bg-gray-300'}`}
                 disabled={!accepted}
             >
                 Proceed
