@@ -6,6 +6,8 @@ Team: TeraBITE
 import { useState } from "react";
 import programFiller from "../../assets/blank_filler.png"
 import { CardBack } from "../../components/Card";
+import { ProgramMamagement } from "../../pages/ProgramManagement" 
+
 /*
 function ClientField() {
     return (<input type="client" placeholder="Client" id="client" name="client" required className="w-4/5 border-b-4 p-0" />);
@@ -24,13 +26,14 @@ export default function BodyBuild() {
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
                 YOUR PROGRAM: General Strength!
             </p>
+            <CardBack>
             <button onClick={toggleCardBack} className="border-solid border-2 border-black uppercase rounded-full font-bold mt-2 px-0 pt-3 pb-3 bg-gray-200">
                 {showProgram ? 'Close Program':'Show Program'}
             </button>
             {showProgram && (
             <CardBack className={`xl:w-11/12 xl:mx-auto w-full`}>
                 <div className="overflow-x-auto">
-                    <h1 className="font-bold uppercase bg-gray-100">
+                    <h1 className="font-bold uppercase">
                         March 1 - April 5
                     </h1>
                     <table className="w-full text-sm text-center rtl:text-right ">
@@ -85,6 +88,7 @@ export default function BodyBuild() {
                 </div>
             </CardBack>
             )}
+            </CardBack>
         </div>
 
     );
