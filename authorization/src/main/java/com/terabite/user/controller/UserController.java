@@ -3,6 +3,18 @@ package com.terabite.user.controller;
 import java.util.Optional;
 import java.util.Set;
 
+import com.terabite.GlobalConfiguration;
+import com.terabite.authorization.AuthorizationApi;
+import com.terabite.authorization.service.JwtService;
+import com.terabite.user.model.SubscribeRequest;
+import com.terabite.user.model.UserInformation;
+import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.SubscriptionService;
+import com.terabite.user.service.UserProgrammingService;
+
+import com.terabite.user.service.UnsubscribeService;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,24 +27,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.AuthorizationApi;
-import com.terabite.authorization.service.JwtService;
 import com.terabite.common.RoleConfiguration;
 import com.terabite.common.Roles;
 import com.terabite.common.dto.Payload;
 import com.terabite.common.model.LoginDetails;
 import com.terabite.user.dto.UpdateInformationRequestBody;
-import com.terabite.user.model.SubscribeRequest;
-import com.terabite.user.model.UserInformation;
-import com.terabite.user.repository.UserRepository;
-import com.terabite.user.service.SubscriptionService;
-import com.terabite.user.service.UnsubscribeService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -49,21 +53,23 @@ public class UserController {
     private final UnsubscribeService unsubscribeService;
 
     private final AuthorizationApi authorizationApi;
+    private final UserProgrammingService userProgrammingService;
+
     private final String authCookieName;
     private final JwtService jwtService;
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController(
-            SubscriptionService subscriptionService,
-            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
-            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
-
+            SubscriptionService subscriptionService, UserRepository userRepository, UnsubscribeService unsubscribeService,
+            AuthorizationApi authorizationApi, UserProgrammingService userProgrammingService,JwtService jwtService,
+            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
         this.subscriptionService = subscriptionService;
         this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
+        this.userProgrammingService = userProgrammingService;
         this.jwtService = jwtService;
     }
 
@@ -126,6 +132,28 @@ public class UserController {
 
         log.info("User {} is subscribing with request {}", email, subscribeRequest);
         return subscriptionService.subscribe(subscribeRequest, email);
+    }
+
+    @GetMapping("/programming")
+    public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
+        
+        // Auth check
+        final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
+        if(email.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
+        return userProgrammingService.getUserPrograms(email.get());
+    }
+
+    @PostMapping("/programming/{id}/comment")
+    public ResponseEntity<?> addComment(@RequestParam("id") long userProgrammingId, HttpServletRequest request){
+        return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
+    } 
+
+    @PutMapping("/programming/{pid}/comment/{cid}")
+    public ResponseEntity<?> updateComment(@RequestParam("pid") long userProgrammingId, @RequestParam("cid") long commentId, HttpServletRequest request){
+        return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
     }
 
     @PostMapping("/unsubscribe")
