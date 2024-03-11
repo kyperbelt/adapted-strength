@@ -10,7 +10,7 @@ import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.user.service.SubscriptionService;
-import com.terabite.user.service.UserProgrammingService;
+// import com.terabite.user.service.UserProgrammingService;
 
 import com.terabite.user.service.UnsubscribeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +53,7 @@ public class UserController {
     private final UnsubscribeService unsubscribeService;
 
     private final AuthorizationApi authorizationApi;
-    private final UserProgrammingService userProgrammingService;
+    // private final UserProgrammingService userProgrammingService;
 
     private final String authCookieName;
     private final JwtService jwtService;
@@ -62,14 +62,16 @@ public class UserController {
 
     public UserController(
             SubscriptionService subscriptionService, UserRepository userRepository, UnsubscribeService unsubscribeService,
-            AuthorizationApi authorizationApi, UserProgrammingService userProgrammingService,JwtService jwtService,
+
+            AuthorizationApi authorizationApi,/*UserProgrammingService userProgrammingService,*/JwtService jwtService,
+
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
         this.subscriptionService = subscriptionService;
         this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
-        this.userProgrammingService = userProgrammingService;
+        // this.userProgrammingService = userProgrammingService;
         this.jwtService = jwtService;
     }
 
@@ -134,17 +136,18 @@ public class UserController {
         return subscriptionService.subscribe(subscribeRequest, email);
     }
 
-    @GetMapping("/programming")
-    public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
-        
-        // Auth check
-        final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
-        if(email.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        
-        return userProgrammingService.getUserPrograms(email.get());
-    }
+    // @GetMapping("/programming")
+    // public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
+    //     
+    //     // Auth check
+    //     final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
+    //     if(email.isEmpty()){
+    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    //     }
+    //     
+    //     return userProgrammingService.getUserPrograms(email.get());
+    // }
+
 
     @PostMapping("/programming/{id}/comment")
     public ResponseEntity<?> addComment(@RequestParam("id") long userProgrammingId, HttpServletRequest request){

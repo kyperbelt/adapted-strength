@@ -127,7 +127,8 @@ export default function Profile() {
             </div>
             <div className="w-full flex flex-col items-center px-0 pt-4">
                 <DropDownMenu />
-            </div><div className="w-full flex flex-col items-center px-0 pt-4">
+            </div>
+            <div className="w-full flex flex-col items-center px-0 pt-4">
                 <SxField />
             </div>
             <div className="w-full flex flex-col items-center px-0 pt-4">
