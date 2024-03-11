@@ -7,6 +7,7 @@ import { UserApi } from "../api/UserApi";
 import PageContainer1 from "../components/PageContainer";
 import LabeledInputField from "../components/forms/LabeledInputField";
 import SubmitButton from '../components/forms/SubmitButton';
+import { HttpStatus } from "../api/ApiUtils";
 
 
 export default function EditProfile() {
@@ -18,7 +19,7 @@ export default function EditProfile() {
         setIsLoading(true);
         UserApi.getProfileInformation()
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === HttpStatus.OK) {
                     setProfileInfo(response.data);
                     setIsLoading(false);
                 } else {
@@ -56,7 +57,7 @@ function EditProfileContent({ info }) {
         };
         await UserApi.updateProfileInformation(data)
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === HttpStatus.OK) {
                     console.log("Profile updated successfully");
                 }
             });

@@ -3,10 +3,11 @@ package com.terabite.chat.controller;
 import com.terabite.chat.model.ChatRoom;
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.Message;
-import com.terabite.chat.model.UserType;
 
 import java.util.List;
 
+import org.hibernate.validator.internal.util.logging.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,7 +15,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @Controller
 @RequestMapping("/v1/chat")
 public class ChatController {
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final ChatUserService chatUserService;
@@ -68,8 +68,9 @@ public class ChatController {
 
     // This endpoint returns a payload of clients if the requestbody is a coach or a coach if the requestbody is a client
     // We will have to change to checking via JWT tokens which should remove the need for a requestbody, but the functionality should remain
-    @GetMapping("/chatUsers")
+    @PostMapping("/chatUsers")
     public ResponseEntity<List<ChatUser>> findChatUsers(@RequestBody ChatUser chatUser) {
+        log.error("user: {}", chatUser);
         return ResponseEntity.ok(chatUserService.findUsers(chatUser));
     }
 
