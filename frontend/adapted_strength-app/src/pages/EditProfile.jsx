@@ -1,3 +1,7 @@
+/*
+Module: EditProfile.jsx
+Team: TeraBITE
+*/
 import { useEffect, useState } from "react";
 import { UserApi } from "../api/UserApi";
 import PageContainer1 from "../components/PageContainer";
@@ -65,7 +69,6 @@ function EditProfileContent({ info }) {
     const state = info.address.state ?? "";
     const zip = info.address.zipcode ?? "";
     const phone = info.cellPhone ?? "";
-
 
     return (
 
