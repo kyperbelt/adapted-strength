@@ -42,9 +42,9 @@ dependencies {
     // implementation 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config'
     // implementation(platform("software.amazon.awssdk:bom:2.21.1"))
     // implementation("software.amazon.awssdk:s3")
-    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter'
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+    // implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
+    // implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+    // implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     // implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 }
 
@@ -52,13 +52,33 @@ dependencies {
 // runs a shell script located ../../scripts/check_env_vars.sh
 bootRun {
     dependsOn 'checkEnvVars'
+    dependsOn 'test'
+}
+
+tasks.register('nukeDatabase', Exec) {
+	commandLine 'docker', 'stop', 'authorization-mysql-1'
+	commandLine 'docker', 'rm', 'authorization-mysql-1'
 }
 
 tasks.register('checkEnvVars', Exec) {
     commandLine 'bash', '../scripts/check_env_vars.sh'
 }
 
+tasks.register('bootRunFresh', Exec) {
+	dependsOn 'bootRun'
+	dependsOn 'nukeDatabase'
+	dependsOn 'clean'
+	
+	tasks.findByName('bootRun').mustRunAfter 'nukeDatabase'
+	tasks.findByName('nukeDatabase').mustRunAfter 'clean'
+}
+
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+	events "passed", "skipped", "failed"
+    }
 }
+
+

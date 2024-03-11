@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { AuthApi } from "../api/AuthApi";
 import PasswordField from "../components/forms/PasswordField";
 import SubmitButton from "../components/forms/SubmitButton";
 import PageContainer1 from "../components/PageContainer"
+import { useLocation, useNavigate } from "react-router-dom";
+import { HttpStatus } from "../api/ApiUtils";
 
 const ErrorType = {
     PasswordsMustMatch: "Passwords must match.",
@@ -37,6 +40,12 @@ function validatePassword(password) {
 
 export default function ResetPassword() {
     const [error, setError] = useState(ErrorType.NoError);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const search = location.search;
+    const params = new URLSearchParams(search);
+    const token = params.get('token');
+
 
     let onSubmit = (e) => {
         e.preventDefault();
@@ -53,8 +62,18 @@ export default function ResetPassword() {
         }
 
         setError(ErrorType.NoError);
-        window.alert("Password reset to: " + password);
 
+        console.log(`Resetting password for token: ${token}`);
+        AuthApi.resetPassword(password, token).then((response) => {
+            if (response.status === HttpStatus.OK) {
+                console.log("Password reset successful");
+                navigate("/login");
+            } else {
+                console.error("Error resetting password: ", response);
+            }
+        }).catch((error) => {
+            console.error("ERROR_HAPPENED:",error);
+        });
     };
 
 

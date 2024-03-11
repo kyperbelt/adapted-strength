@@ -1,6 +1,11 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { UserApi } from "../api/UserApi";
+import { ApiUtils } from "../api/ApiUtils";
+import { AuthApi } from "../api/AuthApi";
 import logo from '../assets/logo.png';
+import { HttpStatus } from '../api/ApiUtils';
+import LabeledInputField from '../components/forms/LabeledInputField';
 
 function FnameField() {
     return (<input type="text" placeholder="First Name" id="fname" name="fname" required />);
@@ -92,17 +97,92 @@ function AdaptedStrengthLogo() {
 }
 
 export default function SignUp() {
+    const [signingUp, setSigningUp] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state;
+
+    useEffect(() => {
+        if (!state || !state.email || !state.password || !state.tosAccepted || !state.healthQuestionnaire) {
+            // TODO: for now we just redirect to signup page, but later  we want to check if the state is in storage or not and redirect to the appropriate page
+            navigate('/sign-up', {});
+        }
+    }, []);
 
     function HandleSubmit(event) {
         event.preventDefault();
-        console.log("Navigating to health questionnaire");
+        const formData = new FormData(event.target);
+        const data = {
+            first_name: formData.get('fname'),
+            last_name: formData.get('lname'),
+            date_of_birth: formData.get('dob'),
+            email: state.email,
+            sex: formData.get('sex'),
+            shirt_size: formData.get('shirt_size'),
+            cell_phone: formData.get('cell_phone'),
+            home_phone: formData.get('home_phone'),
+            address: {
+                address: formData.get('address'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                zipcode: formData.get('zipcode')
+            },
+            emergency_contact: {
+                first_name: formData.get('emergency_contact_fname'),
+                last_name: formData.get('emergency_contact_lname'),
+                phone_number: formData.get('emergency_contact_phone')
+            },
+            how_did_you_hear: formData.get('heard'),
+        }
 
-        navigate('/health-questionnaire');
+        console.log(data);
+        setSigningUp(true);
 
-        console.log("Navigation function called");
+        UserApi.validateProfileInformation(data)
+            .then((response) => {
+                if (response.status == HttpStatus.OK) {
+                    console.log("User information is valid");
+                    return AuthApi.signup(state.email, state.password);
+                } else {
+                    throw new Error("User information is invalid");
+                }
+            }).then((response) => {
+                if (response.status == HttpStatus.CREATED) {
+                    // user is valid 
+                    console.log("User is valid and account is created");
+                    console.log("Token: " + response.data.payload);
+                    // set the user token in local storage
+                    ApiUtils.setAuthToken(response.data.payload);
+                    return UserApi.createProfileInformation(data);
+                } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
+                    throw new Error("Unable to create user account, email is already in use");
+                } else {
+                    console.error(response);
+                    throw new Error("Unable to create user account, unknown error");
+                }
+            }).then((response) => {
+                if (response.status == HttpStatus.OK) {
+                    console.log("User profile created");
+                    navigate("/", {}); // redirect to home page
+                } else {
+                    console.error(response);
+                    ApiUtils.removeAuthToken();
+                    throw new Error("Unable to create user profile, unknown error");
+                }
+            }).finally(() => {
+                setSigningUp(false);
+            }).catch((error) => {
+                console.error(`ERROR HAPPENED: ${error}`);
+            });
     }
 
+    if (signingUp) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                Signing up...
+            </div>
+        );
+    }
 
 
     return (
