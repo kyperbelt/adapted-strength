@@ -1,7 +1,7 @@
 # Frontend 
 
 ## Introduction
-Our frontend will be hosted on an **AWS** s3 bucket using the s3 static hosting option. This will allow us to easily deploy and update our application.  
+Our **development** frontend is hosted on an **AWS** s3 bucket using the s3 static hosting option. This will allow us to easily deploy and update our application.  
 
 ## S3 Static Hosting 
 Before we deploy out website we have to setup and configure an **AWS S3** bucket that will hold our website files.

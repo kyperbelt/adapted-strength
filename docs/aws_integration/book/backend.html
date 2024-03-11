@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="frontend.html"><strong aria-hidden="true">2.</strong> Frontend</a></li><li class="chapter-item expanded "><a href="backend.html" class="active"><strong aria-hidden="true">3.</strong> Backend</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="frontend.html"><strong aria-hidden="true">2.</strong> Frontend</a></li><li class="chapter-item expanded "><a href="backend.html" class="active"><strong aria-hidden="true">3.</strong> Backend</a></li><li class="chapter-item expanded "><a href="api_gateway.html"><strong aria-hidden="true">4.</strong> Api Gateway</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -173,7 +173,28 @@
 
                 <div id="content" class="content">
                     <main>
-                        
+                        <h1 id="backend"><a class="header" href="#backend">Backend</a></h1>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>The backend will be hosted on an EC2 instance.</p>
+<h2 id="setup-ssh-key"><a class="header" href="#setup-ssh-key">Setup SSH key</a></h2>
+<ol>
+<li>
+<p>From the ec2 dashboard side panel under the <strong>Network and Seciruty</strong> section select the Key Pairs.<br />
+<img src="asset/ec2_side_panel1.png" alt="" /></p>
+</li>
+<li>
+<p>Import your public key from you pc, using the <strong>Actions</strong> dropdown. 
+<img src="./asset/ec2_create_key_pair.png" alt="" /></p>
+</li>
+</ol>
+<h2 id="connect-to-your-server-using-ssh"><a class="header" href="#connect-to-your-server-using-ssh">Connect to your server using SSH</a></h2>
+<ol>
+<li>Get the ip of your ec2 instance and then do the following </li>
+</ol>
+<pre><code class="language-sh">ssh ec2-user@&lt;ip-here&gt;
+</code></pre>
+<p><strong>Thats it!</strong> </p>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -182,6 +203,9 @@
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next prefetch" href="api_gateway.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -193,26 +217,13 @@
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next prefetch" href="api_gateway.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script>
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 
