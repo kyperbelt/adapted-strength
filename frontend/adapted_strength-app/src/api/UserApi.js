@@ -52,10 +52,9 @@ export class UserApi {
     
   }
 
-static updateSubscription({ email, subscriptionTier }) {
+static updateSubscription({subscriptionTier }) {
     console.log("THIS IS THE API RECEIVED DATA: ", subscriptionTier);
     const data = {
-      username: email,
       status: subscriptionTier
     };
 
@@ -65,4 +64,46 @@ static updateSubscription({ email, subscriptionTier }) {
     return promise;
   }
 
+  /**
+  * @param {Object} information
+  * @returns {Promise<Response>} Promise<Response>
+  * @memberof UserApi
+  * @description This method will create a new user profile with the specified data
+  * @example
+  * UserApi.createProfileInformation({ 
+  *                                   first_name: 'John',
+  *                                    last_name: 'Doe',
+  *                                    email: 'some@email.com',
+  *                                    cell_phone: '1234567890',
+  *                                    home_phone: '1234567890',
+  *                                    address: {
+  *                                      address: '1234 Example St',
+  *                                      city: 'Example',
+  *                                      state: 'EX',
+  *                                      zipcode: '12345',
+  *                                    },
+  *                                    emergency_contact: {
+  *                                      name: 'Jane',
+  *                                      last_name: 'Doe',
+  *                                      phone: '1234567890',
+  *                                    },
+  *                                    how_did_you_hear: 'Friend'
+  *                                   });
+  *
+  */
+  static createProfileInformation(information) {
+    const promise = ApiUtils.apiPost('user/create', information);
+    return promise;
+  }
+
+  /**
+  * @param {Object} information
+  * @returns {Promise<Response>} Promise<Response>
+  * @memberof UserApi
+  * @description This method will validate the user's profile information with the specified data before creating a new user and their profile. This is to prevent users fron creating a user profile and then not entering the required information.
+  */
+  static validateProfileInformation(information) {
+    const promise = ApiUtils.apiPost('user/validate_user_data', information);
+    return promise;
+  }
 }

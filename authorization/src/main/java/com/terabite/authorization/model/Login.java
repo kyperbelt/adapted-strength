@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "login_table")
 public class Login {
-    private LoginStatus loginStatus;
 
     // TODO: might have to change this email/user name schema to include an actual 
     // unique username, otherwise we cannot allow multiple users with the same email
@@ -25,7 +24,7 @@ public class Login {
     private String password;
 
     @Column(name = "reset_password_token")
-    private String passwordResetToken;
+    private String resetPasswordToken;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
@@ -33,30 +32,16 @@ public class Login {
     public Login(String email, String password) {
         this.email = email;
         this.password = password;
-        this.loginStatus = LoginStatus.LOGGED_OUT;
     }
 
-    public Login() {
-
-    }
+    // FOR Serialization and Deserialization purposes
+    public Login() {}
 
     @Override
     public String toString() {
         return "{ " + " email:" + this.email + " password:" + this.password + " }";
     }
 
-
-    public void setResetPasswordToken(String passwordResetToken) {
-        this.passwordResetToken = passwordResetToken;
-    }
-
-    public LoginStatus getLoginStatus() {
-        return loginStatus;
-    }
-
-    public void setLoginStatus(LoginStatus loginStatus) {
-        this.loginStatus = loginStatus;
-    }
 
     public String getEmail() {
         return email;
@@ -74,12 +59,12 @@ public class Login {
         this.password = password;
     }
 
-    public String getPasswordResetToken() {
-        return passwordResetToken;
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
     }
 
-    public void setPasswordResetToken(String passwordResetToken) {
-        this.passwordResetToken = passwordResetToken;
+    public void setResetPasswordToken(String passwordResetToken) {
+        this.resetPasswordToken = passwordResetToken;
     }
 
     public List<String> getRoles() {
@@ -88,5 +73,17 @@ public class Login {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public boolean addRole(String role) {
+        if (this.roles.contains(role)) {
+            return false;
+        }
+        this.roles.add(role);
+        return true;
+    }
+
+    public boolean removeRole(String role) {
+        return this.roles.remove(role);
     }
 }

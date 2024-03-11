@@ -74,7 +74,6 @@ export default function Memberships() {
     const onSubmit = async (selectedValue) => {
         console.log("Selected Value:", selectedValue);
         const data = {
-          email: profileInfo.email,
           subscriptionTier: selectedValue,
         };
         console.log("Data:", data);
