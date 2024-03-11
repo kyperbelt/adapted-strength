@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/movement")
+@RequestMapping("/v1/mov")
 public class MovementController {
     private final MovementRepository movementRepository;
 
@@ -50,6 +50,46 @@ public class MovementController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(movement, HttpStatus.OK);
+    }
+
+    @GetMapping("/movements/isolated")
+    public ResponseEntity<List<Movement>> getIsolatedMovements()
+    {
+        List<Movement> movements = new ArrayList<Movement>();
+        for (Movement movement : movementRepository.findAll())
+        {
+            if(movement.getCategories().size() == 1)
+            {
+                movements.add(movement);
+            }
+        }
+
+        if (movements.isEmpty())
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(movements, HttpStatus.OK);
+    }
+
+    @GetMapping("/movements/compound")
+    public ResponseEntity<List<Movement>> getCompoundMovements()
+    {
+        List<Movement> movements = new ArrayList<Movement>();
+        for (Movement movement : movementRepository.findAll())
+        {
+            if(movement.getCategories().size() > 1)
+            {
+                movements.add(movement);
+            }
+        }
+
+        if (movements.isEmpty())
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(movements, HttpStatus.OK);
     }
 
     @PostMapping("/movements")

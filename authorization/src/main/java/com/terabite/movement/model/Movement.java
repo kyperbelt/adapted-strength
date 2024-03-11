@@ -1,6 +1,5 @@
 package com.terabite.movement.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -9,8 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "movement_table")
-public class Movement
-{
+public class Movement {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -71,9 +69,27 @@ public class Movement
         this.categories = categories;
     }
 
-    public void addCategory(Category category)
-    {
+    public void addCategory(Category category) {
         this.categories.add(category);
         category.getMovements().add(this);
+    }
+
+    public void removeCategory(long categoryId)
+    {
+        Category foundCategory = null;
+        for (Category category : categories)
+        {
+            if(category.getId() == categoryId)
+            {
+                foundCategory = category;
+                break;
+            }
+        }
+
+        if(foundCategory != null)
+        {
+            this.categories.remove(foundCategory);
+            foundCategory.getMovements().remove(this);
+        }
     }
 }
