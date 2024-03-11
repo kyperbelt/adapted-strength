@@ -1,19 +1,40 @@
 import logo from '../assets/logo.png';
 import Footer from '../components/footer';
-import SubmitButton from '../components/forms/SubmitButton';
-
 import { useEffect, useState } from "react";
 import { UserApi } from '../api/UserApi';
 
 function AdaptedStrengthLogo() {
-    return (
-        <div className="flex flex-col items-center mt-12">
-            <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
-        </div>
-    );
+  return (
+    <div className="flex flex-col items-center mt-12">
+      <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
+    </div>
+  );
 }
 
-function SubscriptionField({... props}) {
+function DropDownMenu({ onSubmit }) {
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+    onSubmit(selectedValue);
+  };
+
+  return (
+    <div className="text-center border-b-4 p-1">
+      <label htmlFor="subscriptionTier">Membership: </label>
+      <select
+        name="subscriptionTier"
+        id="subscriptionTier"
+        onChange={handleSelectChange}
+      >
+        <option value="">--Select Tier--</option>
+        <option value="BASE_CLIENT">Base Client - Program Only</option>
+        <option value="GENERAL_CLIENT">General Client</option>
+        <option value="SPECIFIC_CLIENT">Specific Client</option>
+      </select>
+    </div>
+  );
+}
+
+function SubscriptionField({...props}) {
     if (props.tier === 'BASE_CLIENT') {
         return (<div> <p>Base Client</p></div>);
     } else if (props.tier === 'GENERAL_CLIENT') {
@@ -23,229 +44,49 @@ function SubscriptionField({... props}) {
     }
 }
 
-function ExpirationField({... props}) {
+function ExpirationField({...props}) {
     return (<div> (Need to implement) {props.expiration_date}</div>);
 }
 
-function DropDownMenu({ onSelect }) {
-    const handleChange = (e) => {
-        onSelect(e.target.value);
-    };
-
-    return (
-        <div className="text-center border-b-4 p-1">
-            <label htmlFor="subscriptionTier">Membership: </label>
-            <select name="subscriptionTier" id="subscriptionTier" onChange={handleChange}>
-                <option value="">--Select Tier--</option>
-                <option value="BASE_CLIENT">Base Client - Program Only</option>
-                <option value="GENERAL_CLIENT">General Client</option>
-                <option value="SPECIFIC_CLIENT">Specific Client</option>
-            </select>
-        </div>
-    );
-}
-
 export default function Memberships() {
     const [isLoading, setIsLoading] = useState(true);
     const [profileInfo, setProfileInfo] = useState([]);
-
+  
     useEffect(() => {
-        setIsLoading(true);
-        UserApi.getProfileInformation()
-            .then((response) => {
-                if (response.status === 200) {
-                    setProfileInfo(response.data);
-                    setIsLoading(false);
-                    console.log(response.data);
-                } else {
-                    // TODO: Handle error - redirect to login page or display error message
-                }
-            }).catch((error) => {
-                console.error(`ERROR HAPPENED: ${error}`);
-                setIsLoading(false);
-                // TODO: Handle error - redirect to login page or display error message
-            });
+      setIsLoading(true);
+      UserApi.getProfileInformation()
+        .then((response) => {
+          if (response.status === 200) {
+            setProfileInfo(response.data);
+            setIsLoading(false);
+            console.log(response.data);
+          } else {
+            // TODO: Handle error - redirect to login page or display error message
+          }
+        })
+        .catch((error) => {
+          console.error(`ERROR HAPPENED: ${error}`);
+          setIsLoading(false);
+          // TODO: Handle error - redirect to login page or display error message
+        });
     }, []);
-
-    if (isLoading) {
-        return <div>{"Loading..."}</div>;
-    }
-
+  
     const onSubmit = async (selectedValue) => {
+        console.log("Selected Value:", selectedValue);
         const data = {
-            subscriptionTier: selectedValue,
+          email: profileInfo.email,
+          subscriptionTier: selectedValue,
         };
-        await UserApi.updateSubscription(data)
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log("Subscription updated successfully");
-                }
-            });
-    };
-
-    return (
-        <div className="h-full my-0 content-center w-full top-[100px]">
-            <div className="h-56 bg-header-background1">
-                <AdaptedStrengthLogo />
-            </div>
-
-            <br></br>
-
-            <div className="container mx-auto w-2/5 content-center ">
-                <div className='text-center px-2 bg-blue-200 text-black rounded-md'>
-                    <h2 className='font-bold'>YOUR SUBSCRIPTION TIER</h2>
-                    <p><SubscriptionField tier={profileInfo.subscriptionTier}/></p>
-
-                    <h2 className='font-bold'>PAYMENT DATE</h2>
-                    <p><ExpirationField exp={profileInfo.expiration_date}/></p>
-                    <br></br>
-
-                    <h2 className='font-bold'>UPGRADE OR SWITCH MEMBERSHIPS HERE</h2>
-
-                    <div className="w-full flex flex-col items-center px-0 pt-4">
-                        <DropDownMenu onSelect={onSubmit} />
-                    </div>
-                    <br></br>
-
-                    <div className="flex w-full justify-center" >
-                        <form onSubmit={(e) => { e.preventDefault(); }} className="p-0 w-full flex flex-col items-center rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
-                            <SubmitButton text="Submit" onClick={() => console.log("clicked")} />
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <br></br>
-
-            <div>
-                <p className='font-bold text-lg'> Adapted Strength (A.S.) Memberships <br></br> </p>
-                <h3>Book a Consultation for one-time FREE ACCESS!</h3>
-
-                <h3>Day-Passes are $29.99 afterwards!</h3>
-            </div>
-            <br></br>
-            <div className="container mx-auto w-5/6 content-center ">
-                <div className='text-left px-2 bg-gray-200 hover:bg-gray-700 hover:text-white'>
-                    <p className='font-bold'>Base Client - Program Only</p>
-                    <p>$99.99/month</p>
-                    <p className='font-light'>For those who do not need gym access, and only seek coaching</p>
-                    <p className='font-bold'>ACCESS TO:</p>
-                    <p> - VIDEO ANALYSIS + VIRTUAL COACHING <br></br>
-                        - 35% DISCOUNT ON DAY-PASSES TO ADAPTED STRENGTH FACILITY
-                    </p>
-                </div>
-                <br></br>
-                <div className='text-left px-2 bg-gray-300 hover:bg-gray-700 hover:text-white'>
-                    <p className='font-bold'>General Client</p>
-                    <p>$199.99/month</p>
-                    <p className='font-light'>For those experienced in Adapted Strength methodologies</p>
-                    <p className='font-bold'>ACCESS TO: BASE, PLUS...</p>
-                    <p>- FULL ACCESS TO ADAPTED STRENGTH FACILITY<br></br>
-                        - ACCESS TO DETAILED COACHING SESSIONS</p>
-                    <p className='font-light'>(INTENDED FOR CONTINUING ATHLETES/ EXPERIENCED MEMBERS WHO SEEK OCCASIONAL COACHING)</p>
-                </div>
-                <br></br>
-                <div className='text-left px-2 bg-gray-200 hover:bg-gray-700 hover:text-white'>
-                    <p className='font-bold'>Specific Client</p>
-                    <p>$299.99/month</p>
-                    <p className='font-light'>For all, even those new to the barbell and new to the gym</p>
-                    <p className='font-bold'>ACCESS TO: GENERAL, PLUS...</p>
-                    <p>- FULLY GUIDED 1:1 SESSIONS<br></br>
-                        - EXCLUSIVE MONITORED TRAINING<br></br>
-                        - NUTRITIONAL ADVICE</p>
-                    <p className='font-light'>(INTENDED FOR THOSE SEEKING IN-DEPTH COACHING)</p>
-                    <p>* ONCE EXPERIENCED IN ADAPTED STRENGTH METHODOLOGIES, ATHLETES WILL BE GIVEN "GENERAL CLIENT" RATE</p>
-                </div>
-            </div>
-            <br></br>
-            <Footer />
-        </div>
-    );
-}
-
-/*
-import logo from '../assets/logo.png';
-import Footer from '../components/footer';
-import SubmitButton from '../components/forms/SubmitButton';
-
-import { useEffect, useState } from "react";
-import { UserApi } from '../api/UserApi';
-
-function AdaptedStrengthLogo() {
-    return (<div className="flex flex-col items-center mt-12">
-        <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
-    </div>);
-}
-
-function SubscriptionField({... props}) {
-    if (props.tier === 'BASE_CLIENT') {
-        return (<div> <p>Base Client</p></div>)
-    }
-    else if (props.tier === 'GENERAL_CLIENT') {
-        return (<div> <p>General Client</p></div>)
-    }
-    else if (props.tier === 'SPECIFIC_CLIENT') {
-        return (<div> <p>Specific Client</p></div>)
-    }
-}
-
-function ExpirationField({... props}) {
-    return (<div> (Need to implement) {props.expiration_date}</div>)
-}
-
-function DropDownMenu() {
-    return (
-        <div className="text-center border-b-4 p-1">
-            <label for="subscriptionTier">Membership: </label>
-            <select name="tier" id="subscriptionTier">
-            <option value="">--Select Tier--</option>
-            <option value="BASE_CLIENT">Base Client - Program Only</option>
-            <option value="GENERAL_CLIENT">General Client</option>
-            <option value="SPECIFIC_CLIENT">Specific Client</option>
-            </select>
-        </div>
-    );
-}
-
-export default function Memberships() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [profileInfo, setProfileInfo] = useState([]);
-
-    useEffect(() => {
-        setIsLoading(true);
-        UserApi.getProfileInformation()
-            .then((response) => {
-                if (response.status === 200) {
-                    setProfileInfo(response.data);
-                    setIsLoading(false);
-                    console.log(response.data)
-                } else {
-                    // TODO: same as error, redirect to login page or display error message
-                }
-            }).catch((error) => {
-                console.error(`ERROR HAPPENED: ${error}`);
-                setIsLoading(false);
-                //TODO: User was unable to get profile information, 
-                //     redirect to login page or display error message
-            });
-    }, []);
-
+        console.log("Data:", data);
+        await UserApi.updateSubscription(data).then((response) => {
+          if (response.status === 200) {
+            console.log("Subscription updated successfully");
+          }
+        });
+      };
+  
     if (isLoading) {
-        return <div>{"Loading..."}</div>;
-    }
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const data = {
-            subscriptionTier: formData.get("subscriptionTier"),
-        };
-        await UserApi.updateSubscription(data)
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log("Subscription updated successfully");
-                }
-            });
+      return <div>{"Loading..."}</div>;
     }
 
     return (
@@ -254,10 +95,7 @@ export default function Memberships() {
                 <AdaptedStrengthLogo />
             </div>
 
-            <br></br>
-
-            <div className="container mx-auto w-2/5 content-center ">
-                <div className='text-center px-2 bg-blue-200 text-black rounded-md'>
+            <div className='text-center px-2 bg-blue-200 text-black rounded-md'>
                     <h2 className='font-bold'>YOUR SUBSCRIPTION TIER</h2>
                     <p><SubscriptionField tier={profileInfo.subscriptionTier}/></p>
 
@@ -266,26 +104,15 @@ export default function Memberships() {
                     <br></br>
 
                     <h2 className='font-bold'>UPGRADE OR SWITCH MEMBERSHIPS HERE</h2>
+                    <DropDownMenu onSubmit={onSubmit} />
 
-                    <div className="w-full flex flex-col items-center px-0 pt-4">
-                        <DropDownMenu />
-                    </div>
-                    <br></br>
-
-                    <div className="flex w-full justify-center" >
-                    <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
-                        <SubmitButton text="Submit" onClick={console.log("clicked")} />
-                    </form>
-                    </div>
                 </div>
-            </div>
-
-            <br></br>
 
             <div>
-                <p className='font-bold text-lg'> Adapted Strength (A.S.) Memberships <br></br> </p>
-                <h3>Book a Consultation for one-time FREE ACCESS!</h3>
-                
+                <p className='font-bold text-lg'>Adapted Strength (A.S.) <br></br>
+                Memberships</p>
+                <h3>Book a Consultation for</h3>
+                <h3>One-Time Free Access!</h3>   
                 <h3>Day-Passes are $29.99 afterwards!</h3>
             </div>
             <br></br>
@@ -327,4 +154,3 @@ export default function Memberships() {
         </div>
     );
 }
-*/

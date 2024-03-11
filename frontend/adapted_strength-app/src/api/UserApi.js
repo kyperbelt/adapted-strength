@@ -52,14 +52,17 @@ export class UserApi {
     
   }
 
-  static updateSubscription({ tier }) {
+static updateSubscription({ email, subscriptionTier }) {
+    console.log("THIS IS THE API RECEIVED DATA: ", subscriptionTier);
     const data = {
-      tier
+      username: email,
+      status: subscriptionTier
     };
+
     console.log(JSON.stringify(data));
 
     const promise = ApiUtils.apiPost('user/subscribe', data);
     return promise;
-    
   }
+
 }

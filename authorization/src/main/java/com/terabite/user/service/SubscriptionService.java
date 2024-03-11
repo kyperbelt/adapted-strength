@@ -39,6 +39,7 @@ public class SubscriptionService {
 
                 } else {
                     return ResponseEntity.badRequest().body("Must use UnsubscribeService to cancel subscription.");
+
                 }
             } else {
                 return ResponseEntity.badRequest().body("User is already subscribed as " + request.status());
