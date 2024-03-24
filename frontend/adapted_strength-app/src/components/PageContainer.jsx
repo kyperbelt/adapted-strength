@@ -17,3 +17,15 @@ export default function PageContainer1({ children }) {
             </div>
         </div>);
 }
+
+export function PageContainer2({ ...props}) {
+    return (
+        <div className="h-full my-0 content-center w-full top-[100px]">
+            <div className="mt-56 bg-[#161A1D] h-full">
+                <div className="relative -top-10">
+                    {props.children}
+                </div>
+            </div>
+        </div>);
+}
+

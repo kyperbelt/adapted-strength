@@ -21,7 +21,7 @@ import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
 
-import ProgramManagement from './pages/ProgramManagement.jsx';
+import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
 /*

@@ -6,7 +6,7 @@ Team: TeraBITE
 import { useState } from "react";
 import programFiller from "../../assets/blank_filler.png"
 import { CardBack } from "../../components/Card";
-import { ProgramMamagement } from "../../pages/ProgramManagement"
+import { ProgramMamagement } from "../../pages/program_management/ProgramManagement"
 
 /*
 function ClientField() {
