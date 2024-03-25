@@ -46,6 +46,10 @@ dependencies {
     // implementation 'io.awspring.cloud:spring-cloud-aws-starter'
     // implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     // implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+    
+    // For Notifications (Firebase)
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+    
 }
 
 // when ./gradlew bootRun is executed first require that the application 
