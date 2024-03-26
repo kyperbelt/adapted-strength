@@ -13,6 +13,8 @@ import com.terabite.user.service.SubscriptionService;
 // import com.terabite.user.service.UserProgrammingService;
 
 import com.terabite.user.service.UnsubscribeService;
+import com.terabite.user.service.UserProgrammingService;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +56,7 @@ public class UserController {
     private final UnsubscribeService unsubscribeService;
 
     private final AuthorizationApi authorizationApi;
-    // private final UserProgrammingService userProgrammingService;
+    private final UserProgrammingService userProgrammingService;
 
     private final String authCookieName;
     private final JwtService jwtService;
@@ -63,7 +66,7 @@ public class UserController {
     public UserController(
             SubscriptionService subscriptionService, UserRepository userRepository, UnsubscribeService unsubscribeService,
 
-            AuthorizationApi authorizationApi,/*UserProgrammingService userProgrammingService,*/JwtService jwtService,
+            AuthorizationApi authorizationApi, UserProgrammingService userProgrammingService, JwtService jwtService,
 
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
         this.subscriptionService = subscriptionService;
@@ -71,7 +74,7 @@ public class UserController {
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
-        // this.userProgrammingService = userProgrammingService;
+        this.userProgrammingService = userProgrammingService;
         this.jwtService = jwtService;
     }
 
@@ -136,27 +139,30 @@ public class UserController {
         return subscriptionService.subscribe(subscribeRequest, email);
     }
 
-    // @GetMapping("/programming")
-    // public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
-    //     
-    //     // Auth check
-    //     final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
-    //     if(email.isEmpty()){
-    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //     }
-    //     
-    //     return userProgrammingService.getUserPrograms(email.get());
-    // }
+    @GetMapping("/programming")
+    public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
+        
+        // TODO - is this needed - Josh?
+        // Auth check
+        // final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
+        // if(email.isEmpty()){
+        //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        // }
+        
+        return userProgrammingService.getUserPrograms(userdetails.getUsername());
+    }
 
 
-    @PostMapping("/programming/{id}/comment")
-    public ResponseEntity<?> addComment(@RequestParam("id") long userProgrammingId, HttpServletRequest request){
-        return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
+    @PostMapping("/programming/{upid}/comment")
+    public ResponseEntity<?> addComment(@RequestParam("upid") long userProgrammingId, HttpServletRequest request, @RequestParam("comment") String comment){
+        // return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
+        return userProgrammingService.addComment(userProgrammingId, comment);
     } 
 
-    @PutMapping("/programming/{pid}/comment/{cid}")
-    public ResponseEntity<?> updateComment(@RequestParam("pid") long userProgrammingId, @RequestParam("cid") long commentId, HttpServletRequest request){
-        return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
+    @PutMapping("/programming/comment/{cid}")
+    public ResponseEntity<?> updateComment(@RequestParam("cid") long commentId, @RequestParam("comment") String comment){
+        // return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
+        return userProgrammingService.updateComment(commentId, comment);
     }
 
     @PostMapping("/unsubscribe")
