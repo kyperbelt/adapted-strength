@@ -1,8 +1,11 @@
 package com.terabite.user.controller;
 
+import com.stripe.exception.StripeException;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
+import com.terabite.payment.model.Customer;
+import com.terabite.payment.service.CustomerService;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
@@ -29,6 +32,7 @@ public class UserController {
     private final SubscriptionService subscriptionService;
     private final UnsubscribeService unsubscribeService;
     private final AuthorizationApi authorizationApi;
+    private final CustomerService customerService;
 
     private final String authCookieName;
 
@@ -38,7 +42,7 @@ public class UserController {
 
     public UserController(
             SubscriptionService subscriptionService,
-            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
+            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi, CustomerService customerService,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
         this.subscriptionService = subscriptionService;
@@ -47,6 +51,7 @@ public class UserController {
         this.authCookieName = authCookieName;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.customerService = customerService;
     }
 
     // TODO| README: Accounts are created by the authorization service and not by
@@ -97,7 +102,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userInformation);
         }
 
+        //Create stripe customer with user email
+        Customer customer;
+        try{
+            customer = customerService.createNewCustomer(userInformation);
+            userInformation.setCustomer(customer);
+        }
+        catch(StripeException e){
+            e.printStackTrace();
+        }
+
         userRepository.save(userInformation);
+        
+
         return ResponseEntity.ok("Account information created successfully");
     }
 
