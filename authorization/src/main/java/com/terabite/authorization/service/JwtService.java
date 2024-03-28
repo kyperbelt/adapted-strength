@@ -5,12 +5,10 @@ import com.google.common.cache.CacheBuilder;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.log.JwtValidationException;
 import com.terabite.common.model.LoginDetails;
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,12 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -47,7 +40,7 @@ public class JwtService {
     }
 
     public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret,
-            final long expiration) {
+                      final long expiration) {
         this.SECRET = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         this.expiration = expiration;
     }
@@ -57,7 +50,7 @@ public class JwtService {
     }
 
     /**
-     * Generate a jwt token based on user login details 
+     * Generate a jwt token based on user login details
      */
     public String generateToken(LoginDetails loginDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -65,7 +58,7 @@ public class JwtService {
         return createToken(claims, loginDetails.getUsername());
     }
 
-    @Deprecated 
+    @Deprecated
     /**
      * Generates a jwt token with only the username and no valid claims.
      */
@@ -81,7 +74,7 @@ public class JwtService {
                     .setClaims(claims)
                     .setSubject(userName)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration)) 
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
                     .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
         } catch (InvalidKeyException e) {
             throw new RuntimeException(e);
@@ -133,8 +126,7 @@ public class JwtService {
             return false;
         }
 
-        @SuppressWarnings("unchecked")
-        final List<String> roles = new ArrayList<String>(claims.get("roles", ArrayList.class));
+        @SuppressWarnings("unchecked") final List<String> roles = new ArrayList<String>(claims.get("roles", ArrayList.class));
         for (String r : roles) {
             if (r.equals(role)) {
                 return true;
@@ -155,7 +147,7 @@ public class JwtService {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException
-                | IllegalArgumentException e) {
+                 | IllegalArgumentException e) {
             log.error(String.format("Error parsing token: %s", e.getMessage()));
             e.printStackTrace();
             // Don't think this ever gets thrown - see JwtAuthFilter
@@ -171,21 +163,9 @@ public class JwtService {
     // implementation
     public boolean validateToken(String token, UserDetails loginDetails) {
         final String username = extractUsername(token).orElse(null);
-        return (loginDetails.getUsername().equals(username) && !isTokenExpired(token)); // TODO: manual invalidation
-                                                                                        // check here
+        return (loginDetails.getUsername().equals(username) && !isTokenExpired(token));
     }
 
-    // // Temp "validation" of jwt
-    // // * Users should never lose jwt, so jwt is always for their account
-    // // * Jwt cannot simply invalidated, so only check for expiration
-    // public Boolean isValid(String token) {
-    // return isTokenExpired(token);
-    // }
-    
-    // TODO: Implement token revocation
-    // Using a token blacklist strategy
-    // Blacklist is stored in memory
-    // Blacklist is used by a Spring Security filter to check if a token is valid
     public void invalidateToken(String token) {
         tokenBlacklist.put(token, true);
     }
