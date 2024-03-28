@@ -1,6 +1,6 @@
 import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { CardBack } from "../../components/Card";
-import { StyledCheckboxTable, CustomTableRow } from "./Tables";
+import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 import { useState } from "react";
 
 // list of programs 
@@ -9,7 +9,6 @@ const test_programs = [
     id: 1,
     name: "Program 1",
     description: "This is a program",
-    open: false,
     selected: false,
     blocks: []
   },
@@ -17,7 +16,6 @@ const test_programs = [
     id: 2,
     name: "Program 2",
     description: "This is a program",
-    open: false,
     selected: false,
     blocks: []
   },
@@ -25,7 +23,6 @@ const test_programs = [
     id: 3,
     name: "Program 3",
     description: "This is a program",
-    open: false,
     selected: false,
     blocks: [1]
   },
@@ -33,7 +30,6 @@ const test_programs = [
     id: 4,
     name: "Program 4",
     description: "This is a program",
-    open: true,
     selected: false,
     blocks: []
   },
@@ -149,8 +145,29 @@ export default function ProgramMamagement() {
 
   return (
     <div>
-      <CardBack>
-      HEllo
+      <CardBack className="mt-20">
+        <SearchBar />
+        <StyledCheckboxTable headers={["Name", "Description"]}>
+          {programs.map((program) => (
+            <CustomTableRow
+              key={program.id}
+              data={[
+                program.name,
+                program.description,
+              ]}
+              selected={program.selected}
+              onClick={() => {
+                const newPrograms = programs.map((p) => {
+                  if (p.id === program.id) {
+                    return { ...p, selected: !p.selected };
+                  }
+                  return p;
+                });
+                setPrograms(newPrograms);
+              }}
+            />
+          ))}
+        </StyledCheckboxTable>
       </CardBack>
     </div>
   );
