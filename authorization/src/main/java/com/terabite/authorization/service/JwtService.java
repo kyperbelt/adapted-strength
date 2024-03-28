@@ -1,5 +1,7 @@
 package com.terabite.authorization.service;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.log.JwtValidationException;
 import com.terabite.common.model.LoginDetails;
@@ -22,10 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
+
 
     // In milliseconds | probably should be in config FIXME
     private static final long DEFAULT_JWT_EXPIRATION = 1000 * 60 * 60 * 24;
@@ -33,6 +37,10 @@ public class JwtService {
     private static Logger log = LoggerFactory.getLogger(JwtService.class);
     private final Key SECRET;
     private final long expiration;
+    // Cache type is always a key-value pair. Using placeholder boolean for now
+    private Cache<String, Boolean> tokenBlacklist = CacheBuilder.newBuilder()
+            .expireAfterWrite(DEFAULT_JWT_EXPIRATION, TimeUnit.MILLISECONDS)
+            .build();
 
     public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
         this(jwtSecret, DEFAULT_JWT_EXPIRATION);
@@ -42,6 +50,10 @@ public class JwtService {
             final long expiration) {
         this.SECRET = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         this.expiration = expiration;
+    }
+
+    public Cache<String, Boolean> getTokenBlacklist() {
+        return tokenBlacklist;
     }
 
     /**
@@ -169,4 +181,12 @@ public class JwtService {
     // public Boolean isValid(String token) {
     // return isTokenExpired(token);
     // }
+    
+    // TODO: Implement token revocation
+    // Using a token blacklist strategy
+    // Blacklist is stored in memory
+    // Blacklist is used by a Spring Security filter to check if a token is valid
+    public void invalidateToken(String token) {
+        tokenBlacklist.put(token, true);
+    }
 }
