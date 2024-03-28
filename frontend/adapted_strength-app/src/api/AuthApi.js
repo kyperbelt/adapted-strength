@@ -1,4 +1,4 @@
-import { ApiUtils, AUTH_TOKEN_NAME} from './ApiUtils';
+import {HttpStatus, ApiUtils, AUTH_TOKEN_NAME} from './ApiUtils';
 
 // create an object of the AuthApi class
 // it will make calls using fetch 
@@ -72,4 +72,25 @@ export class AuthApi {
     console.log("Checking if user is logged in: ", tokenExists ? "Yes" : "No");
     return tokenExists;
   }
+
+  /**
+   * @description This function is used to check if the user has a specific role.
+   * @param {string} role
+   * @returns {Boolean} true if the user has the role, false otherwise.
+   *
+   * @example
+   * AuthApi.hasRole('ROLE_ADMIN');
+   *
+   * @example
+   * AuthApi.hasRole('ROLE_USER');
+   *
+  */
+  static async hasRole(role) {
+    const promise = ApiUtils.apiGet(`auth/has_role/${role}`);
+
+    await promise.then((response) => {
+
+    });
+  }
+
 }
