@@ -29,20 +29,20 @@ public class JwtService {
 
     private static Logger log = LoggerFactory.getLogger(JwtService.class);
     private final Key SECRET;
-    private final long expiration;
+    private long expiration = DEFAULT_JWT_EXPIRATION;
     // Cache type is always a key-value pair. Using placeholder boolean for now
-    private Cache<String, Boolean> tokenBlacklist = CacheBuilder.newBuilder()
-            .expireAfterWrite(DEFAULT_JWT_EXPIRATION, TimeUnit.MILLISECONDS)
-            .build();
-
-    public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
-        this(jwtSecret, DEFAULT_JWT_EXPIRATION);
-    }
+    private Cache<String, Boolean> tokenBlacklist;
+//    public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
+//        this(jwtSecret, DEFAULT_JWT_EXPIRATION);
+//    }
 
     public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret,
                       final long expiration) {
         this.SECRET = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         this.expiration = expiration;
+        this.tokenBlacklist = CacheBuilder.newBuilder()
+                .expireAfterWrite(expiration, TimeUnit.MILLISECONDS)
+                .build();
     }
 
     public Cache<String, Boolean> getTokenBlacklist() {
