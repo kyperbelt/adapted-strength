@@ -32,8 +32,8 @@ public class JwtServiceTests {
     @BeforeEach
     void setup() {
         jwtService = new JwtService(SECRET1, EXPIRATION);
-        System.out.println("Secret1: " + SECRET1);
-        System.out.println("Secret2: " + SECRET2);
+//        System.out.println("Secret1: " + SECRET1);
+//        System.out.println("Secret2: " + SECRET2);
 
 
     }
@@ -125,14 +125,14 @@ public class JwtServiceTests {
 
             // TODO: have a control for preventing spam token invalidation
             for (int i = 0; i < 5; i++) {
-                System.out.println(jwtService.getTokenBlacklist().asMap());
+//                System.out.println(jwtService.getTokenBlacklist().asMap());
                 String token = jwtService.generateToken(loginDetails);
 
                 // Token is invalid, put in blacklist
                 jwtService.invalidateToken(token);
             }
 
-            // Value should be 1, despite 5 tokens being invalidated.
+            // Value should be 0, despite 5 tokens being invalidated.
             // This is because the blacklist internally "cleans up" after every modifying action
             // This means that the added tokens are immediately evicted after being added
             assertEquals(0, jwtService.getTokenBlacklist().size());
