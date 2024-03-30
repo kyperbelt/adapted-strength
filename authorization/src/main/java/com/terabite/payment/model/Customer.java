@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 public class Customer {
     @Id
     @NotNull
-    private String id; //user email
+    private String id; 
 
     @OneToOne(mappedBy = "customer")
     @NotNull

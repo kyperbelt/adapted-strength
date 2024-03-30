@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
+import com.stripe.model.Subscription;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.SubscriptionUpdateParams;
 
 @Service
 public class StripeCustomerService {
@@ -24,6 +26,12 @@ public class StripeCustomerService {
         .build();
         Customer customer = Customer.create(params);
         return customer.getId();
+    }
+
+    public Subscription getSubscription(String subscriptionId) throws StripeException{
+        Stripe.apiKey = stripeKey;
+        Subscription subscription = Subscription.retrieve(subscriptionId);
+        return subscription;
     }
 
 

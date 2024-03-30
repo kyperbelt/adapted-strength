@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonSyntaxException;
 import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Customer;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
-import com.stripe.model.PaymentIntent;
 import com.stripe.model.StripeObject;
 import com.stripe.model.Subscription;
 import com.stripe.net.ApiResource;
 import com.stripe.net.Webhook;
+import com.terabite.payment.repository.CustomerRepository;
 
 @Service
 public class WebhookService {
@@ -24,8 +25,13 @@ public class WebhookService {
     @Value("${ADAPTED_STRENGTH_STRIPE_ENDPOINT}")
     private String endpointSecret;
 
+    private CustomerRepository customerRepository;
+
+    public WebhookService(CustomerRepository customerRepository){
+        this.customerRepository = customerRepository;
+    }
+
     public HttpStatus handleWebhookEvent(String payload, Map<String, String> header){
-        System.out.println("\nendpoint hit");
         Event event = null;
 
         try{
@@ -56,12 +62,12 @@ public class WebhookService {
         }
 
         //handle event
-        if(event.getType() == "payment_intent.succeeded"){
-            PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
-            handlePaymentIntentSuccess(paymentIntent);
-        }
+        // if(event.getType() == "payment_intent.succeeded"){
+        //     PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+        //     handlePaymentIntentSuccess(paymentIntent);
+        // }
 
-        else if (event.getType() == "customer.subscription.created"){
+        if (event.getType() == "customer.subscription.created"){
             Subscription subscription = (Subscription) stripeObject;
             handleCustomerSubscriptionCreated(subscription);
         }
@@ -70,6 +76,7 @@ public class WebhookService {
             Subscription subscription = (Subscription) stripeObject;
             handleCustomerSubscriptionDeleted(subscription);
         }
+
         else if (event.getType() == "customer.subscription.updated"){
             Subscription subscription = (Subscription) stripeObject;
             handleCustomerSubscriptionUpdated(subscription);
@@ -78,11 +85,14 @@ public class WebhookService {
         return HttpStatus.OK;
     }
 
-    public void handlePaymentIntentSuccess(PaymentIntent paymentIntent){
-        
-    }
-
     public void handleCustomerSubscriptionCreated(Subscription subscription){
+        String customerId = subscription.getCustomer();
+        com.terabite.payment.model.Customer customer;
+        if(customerId!= null){
+            customer = customerRepository.findById(customerId).orElse(null);
+            customer.setSubscriptionId(subscription.getId());
+            customerRepository.save(customer);
+        }
 
     }
 
@@ -91,6 +101,10 @@ public class WebhookService {
     }
 
     public void handleCustomerSubscriptionUpdated(Subscription subscription){
+
+    }
+
+    public void handleCustomerSubscriptionResumed(Subscription subscription){
 
     }
 
