@@ -124,6 +124,7 @@ public class AuthorizationController {
 
         // Invalidate token
         jwtService.invalidateToken(token);
+        log.info("Token blacklist size: " + jwtService.getTokenBlacklist().size());
 
 //        LoginDetails loginDetails = (LoginDetails) userDetails;
         // Token should be added to a blacklist until it expires

@@ -69,7 +69,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Cache<String, Boolean> blacklist = jwtService.getTokenBlacklist();
             if (blacklist.getIfPresent(token.get()) != null) {
                 raiseException(request, response, token.get());
-                log.error("Expired token provided: " + token.get());
+                log.error("Blacklisted token provided: " + token.get());
                 return;
             }
         }
