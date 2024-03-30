@@ -8,7 +8,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.Subscription;
 import com.stripe.param.CustomerCreateParams;
-import com.stripe.param.SubscriptionUpdateParams;
 
 @Service
 public class StripeCustomerService {

@@ -38,7 +38,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     //Stripe specfic
-    implementation 'com.stripe:stripe-java:17.0.0'
+    implementation 'com.stripe:stripe-java:24.0.0'
     implementation 'com.google.code.gson:gson:2.7'
 }
 
