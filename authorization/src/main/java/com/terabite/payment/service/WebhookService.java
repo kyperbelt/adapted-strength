@@ -25,10 +25,10 @@ import com.terabite.user.repository.UserRepository;
 
 @Service
 public class WebhookService {
-    @Value("${ADAPTED_STRENGTH_STRIPE_KEY}")
+    @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
 
-    @Value("${ADAPTED_STRENGTH_STRIPE_ENDPOINT}")
+    @Value("${ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET}")
     private String endpointSecret;
 
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")

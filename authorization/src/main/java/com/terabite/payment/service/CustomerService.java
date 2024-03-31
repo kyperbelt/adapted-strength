@@ -17,7 +17,7 @@ public class CustomerService {
     UserRepository userRepository;
     StripeCustomerService stripeCustomerService;
 
-    @Value("${ADAPTED_STRENGTH_STRIPE_KEY}")
+    @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
 
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
@@ -45,7 +45,7 @@ public class CustomerService {
 
     // This function returns 1 if the subscriptionStatus == active and 0 if the subscriptionStatus is anything else.
     // A return value of -1 indicates a resouce was not found
-    public int getSubscriptionByUserId(long userId) {
+    public int getSubscriptionStatusByUserId(long userId) {
         Stripe.apiKey = stripeKey;
 
         UserInformation userInformation = userRepository.findById(userId).orElse(null);

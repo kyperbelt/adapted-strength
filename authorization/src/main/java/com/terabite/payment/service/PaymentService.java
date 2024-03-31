@@ -14,7 +14,7 @@ import com.stripe.param.checkout.SessionCreateParams;
 
 @Service
 public class PaymentService {
-    @Value("${ADAPTED_STRENGTH_STRIPE_KEY}")
+    @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
 
     public ResponseEntity<?> cancelSubscriptionById(String subscriptionId) throws StripeException{

@@ -11,7 +11,7 @@ import com.stripe.param.CustomerCreateParams;
 
 @Service
 public class StripeCustomerService {
-    @Value("${ADAPTED_STRENGTH_STRIPE_KEY}")
+    @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
 
     public StripeCustomerService(){
