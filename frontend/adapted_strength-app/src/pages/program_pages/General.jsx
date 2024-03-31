@@ -22,17 +22,80 @@ export default function General() {
     const toggleDay = (program, index) => {
         switch (program) {
             case "fiveDay":
-                setFiveDayProgram(prevState => prevState.map((day, i) => i === index ? !day : false));
+                setFiveDayProgram(prevState =>
+                    prevState.map((day, i) => (i === index ? !day : false))
+                );
                 break;
             case "fourDay":
-                setFourDayProgram(prevState => prevState.map((day, i) => i === index ? !day : false));
+                setFourDayProgram(prevState =>
+                    prevState.map((day, i) => (i === index ? !day : false))
+                );
                 break;
             case "threeDay":
-                setThreeDayProgram(prevState => prevState.map((day, i) => i === index ? !day : false));
+                setThreeDayProgram(prevState =>
+                    prevState.map((day, i) => (i === index ? !day : false))
+                );
                 break;
             default:
                 break;
         }
+    };
+
+    const getTable = (days) => {
+        if (!days.some(day => day)) return null;
+
+        return (
+            <table className="w-full text-left mt-4">
+                <tbody className="rounded-full text-[#161A1D]">
+                {days.map((day, index) => (
+                    <tr>
+                        {/* LET "Order" AND "Exercise" CHANGE! 
+                                This is hard coded for UI purposes */}
+                        <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
+                            Order
+                        </th>
+                        <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
+                            Movement
+                            <td scope="col" className="px-1.5 text-xs bg-gray-200">
+                                Equipment
+                            </td>
+                            <td scope="col" className="px-3 text-xs bg-gray-100">
+                                Sets
+                            </td>
+                            <td scope="col" className="px-3 text-xs bg-gray-200">
+                                Reps/Time
+                            </td>
+                            <td scope="col" className="px-1.5 text-xs bg-gray-100">
+                                % or RPE
+                            </td>
+                            <td scope="col" className="px-1.5 text-xs bg-gray-200">
+                                Rest
+                            </td>
+                            <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+                                    <tr key={index}>
+                                        <td className="border px-4 py-2">
+                                            {index + 1}
+                                        </td>
+                                        <td className="border px-4 py-2">
+                                            {day.sets}
+                                        </td>
+                                        <td className="border px-4 py-2">
+                                            {day.reps}
+                                        </td>
+                                        <td className="border px-4 py-2">
+                                            {day.weight}
+                                        </td>
+                                        <td className="border px-4 py-2">
+                                            {day.rest}
+                                        </td>
+                                    </tr>
+                            </tbody>
+                        </th>
+                    </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
     };
 
     return (
@@ -53,11 +116,12 @@ export default function General() {
                             <CardBack className="xl:w-11/12 xl:mx-auto w-full">
                                 <div className="overflow-x-auto">
                                     {eval(`${days.toLowerCase()}DayProgram`).map((day, dayIndex) => (
-                                        <button key={dayIndex} onClick={() => toggleDay(`${days.toLowerCase()}Day`, dayIndex)} className={`w-500 mr-1 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
+                                        <button onClick={() => toggleDay(`${days.toLowerCase()}Day`, dayIndex)} className={`w-500 mr-1 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
                                             {day ? 'Close' : `Day ${dayIndex + 1}`}
                                         </button>
                                     ))}
                                 </div>
+                                {getTable(eval(`${days.toLowerCase()}DayProgram`).filter(day => day))}
                             </CardBack>
                         )}
                     </div>
