@@ -43,9 +43,8 @@ export default function General() {
 
     const getTable = (days) => {
         if (!days.some(day => day)) return null;
-      
         const alphabet = 'ABCDEFGHIJ';
-      
+        
         return (
           <table className="w-full text-left mt-4">
             <tbody className="rounded-full text-[#161A1D]">
@@ -56,38 +55,38 @@ export default function General() {
                   <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                     {alphabet[index]}
                   </th>
-                  <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                    Movement {day.movement}
-                    <td scope="col" className="px-1.5 text-xs bg-gray-200">
+                  <th scope="col" className="px-1.5 py-1 border-solid border-2 border-[#161A1D] bg-gray-300">
+                    Movement: {day.movement}
+                    <td scope="col" className="px-1.5 text-xs bg-gray-200 border-solid border-2 border-[#161A1D]">
                       Equipment
                     </td>
-                    <td scope="col" className="px-3 text-xs bg-gray-100">
+                    <td scope="col" className="px-3 text-xs bg-gray-100 border-solid border-2 border-[#161A1D]">
                       Sets
                     </td>
-                    <td scope="col" className="px-3 text-xs bg-gray-200">
+                    <td scope="col" className="px-3 text-xs bg-gray-200 border-solid border-2 border-[#161A1D]">
                       Reps/Time
                     </td>
-                    <td scope="col" className="px-3 text-xs bg-gray-100">
+                    <td scope="col" className="px-3 text-xs bg-gray-100 border-solid border-2 border-[#161A1D]">
                       % or RPE
                     </td>
-                    <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
+                    <td scope="col" className="p-3 px-5 text-xs bg-gray-200 border-solid border-2 border-[#161A1D]">
                       Rest
                     </td>
-                    <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+                    <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100 border-solid border-2 border-[#161A1D]">
                       <tr key={index}>
-                        <td className="border px-4 py-2">
+                        <td className="px-4 py-2 bg-gray-200 border-solid border-2 border-[#161A1D]">
                           {day.equipment}
                         </td>
-                        <td className="border px-4 py-2">
+                        <td className="px-4 py-2 border-solid border-2 border-[#161A1D]">
                           {day.sets}
                         </td>
-                        <td className="border px-4 py-2">
+                        <td className="px-4 py-2 bg-gray-200 border-solid border-2 border-[#161A1D]">
                           {day.reps}
                         </td>
-                        <td className="border px-4 py-2">
+                        <td className="px-4 py-2 border-solid border-2 border-[#161A1D]">
                           {day.weight}
                         </td>
-                        <td className="border px-4 py-2">
+                        <td className="px-4 py-2 bg-gray-200 border-solid border-2 border-[#161A1D]">
                           {day.rest}
                         </td>
                       </tr>
