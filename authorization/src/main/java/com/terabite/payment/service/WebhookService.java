@@ -14,7 +14,11 @@ import com.stripe.model.StripeObject;
 import com.stripe.model.Subscription;
 import com.stripe.net.ApiResource;
 import com.stripe.net.Webhook;
+import com.terabite.authorization.model.Login;
+import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.payment.repository.CustomerRepository;
+import com.terabite.user.UserApi;
+import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
@@ -40,9 +44,12 @@ public class WebhookService {
 
     private UserRepository userRepository;
 
-    public WebhookService(CustomerRepository customerRepository, UserRepository userRepository){
+    private LoginRepository loginRepository;
+
+    public WebhookService(CustomerRepository customerRepository, UserRepository userRepository, LoginRepository loginRepository){
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
+        this.loginRepository = loginRepository;
     }
 
     public HttpStatus handleWebhookEvent(String payload, Map<String, String> header){
@@ -112,17 +119,29 @@ public class WebhookService {
     // Subscription deleted means the subscription has ended
     public void handleCustomerSubscriptionDeleted(Subscription subscription){
         UserInformation userInformation = getUserBySubscription(subscription);
+        
         if (userInformation != null){
             userInformation.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
             userRepository.save(userInformation);
+
+            Login login = getLoginByUserInformation(userInformation);
+            if(login != null){
+                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.NO_SUBSCRIPTION);
+                UserApi.ResetSubscriptionRoles(login);
+                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
+                loginRepository.save(login);
+            }
+            
         }
     }
 
     public void handleCustomerSubscriptionUpdated(Subscription subscription){
         UserInformation userInformation = getUserBySubscription(subscription);
+        Login login = getLoginByUserInformation(userInformation);
         
-        //Not sure about this. Should only happen if there is no user associated with the subscription
-        if(userInformation == null){
+        // Not sure about this. Should only happen if there is no user associated with the subscription
+        // or if there is somehow no login associated with a userinformation
+        if(userInformation == null || login == null){
             return;
         }
 
@@ -132,24 +151,45 @@ public class WebhookService {
         */
         if (subscription.getStatus() == "canceled" 
             || subscription.getStatus() == "paused"                   // paused can only happen when a free trial ends which is not currently a feature but may be later
-            || subscription.getStatus() == "incomplete"               // incomplete happens after a subscription object has been created but before it is paid
-            || subscription.getStatus() == "incomplete_expired"       // incomplete_expired means that the user never finished the payment
             || subscription.getStatus() == "unpaid"){                 
                 userInformation.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
+
+                UserApi.ResetSubscriptionRoles(login);
+                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.NO_SUBSCRIPTION);
+                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
+
+                userRepository.save(userInformation);
+                loginRepository.save(login);
+
         }
 
 
         // This block will assign the new subscriptionStatus of active subs based on their paymentId
+        // PaymentId
         else if (subscription.getStatus() == "active"){
+            UserApi.ResetSubscriptionRoles(login);
+
             if(subscription.getItems().getData().get(6).getPrice().getId() == baseClientPriceId){
                 userInformation.setSubscriptionTier(SubscriptionStatus.BASE_CLIENT);
+                
+                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.BASE_CLIENT);
+                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
             }
             else if(subscription.getItems().getData().get(6).getPrice().getId() == generalClientPriceId){
                 userInformation.setSubscriptionTier(SubscriptionStatus.GENERAL_CLIENT);
+
+                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.GENERAL_CLIENT);
+                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
             }
             else if(subscription.getItems().getData().get(6).getPrice().getId() == specificClientPriceId){
                 userInformation.setSubscriptionTier(SubscriptionStatus.SPECIFIC_CLIENT);
+
+                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.SPECIFIC_CLIENT);
+                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
             }
+
+            userRepository.save(userInformation);
+            loginRepository.save(login);
         }
     }
 
@@ -157,6 +197,7 @@ public class WebhookService {
     public UserInformation getUserBySubscription(Subscription subscription){
         String customerId = subscription.getCustomer();
         
+        // this should never happen, I don't think subscriptions can not have a customer
         if (customerId == null){
             return null;
         }
@@ -169,6 +210,14 @@ public class WebhookService {
         else{
             return null;
         }
+    }
+
+    public Login getLoginByUserInformation(UserInformation userInformation){
+        String email = userInformation.getEmail();
+        
+        Login login = loginRepository.findByEmail(email).orElse(null);
+        
+        return login; 
     }
 
     
