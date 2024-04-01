@@ -32,6 +32,7 @@ dependencies {
 
     // JWT specific
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation("com.google.guava:guava:33.1.0-jre") // For time-based expiration map
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -46,6 +47,11 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-aws-starter'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+
+    //Stripe specfic
+    implementation 'com.stripe:stripe-java:24.0.0'
+    // implementation 'com.google.code.gson:gson:2.7'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 // when ./gradlew bootRun is executed first require that the application 

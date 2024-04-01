@@ -3,7 +3,7 @@ Module: Login.jsx
 Team: TeraBITE
 */
 import { Link } from 'react-router-dom'; 
-//import { useEffect, useState } from 'react'; // UNUSED ASSET - Commenting out
+import { useEffect } from 'react'; // UNUSED ASSET - Commenting out
 import { useNavigate } from 'react-router-dom';
 import { AuthApi } from '../api/AuthApi';
 import { ApiUtils } from '../api/ApiUtils';
@@ -38,6 +38,12 @@ function GoogleLogo({...props}) {
 }
 
 export default function Login() {
+    useEffect (() => {
+        document.title = "Adapted Strength"; // Set the title when the component mounts
+        return () => {
+            document.title = "Adapted Strength"; // Optionally reset the title when the component unmounts
+        };
+    }, []);
     const nav = useNavigate();
     const onSubmit = (e) => {
         e.preventDefault();
@@ -65,6 +71,9 @@ export default function Login() {
         <div className="h-56 bg-header-background1">
             <AdaptedStrengthLogo />
         </div>
+        <title>
+        Adapted Strength
+      </title>
         <div className="bg-[#161A1D] h-full">
             <div className="relative bottom-20">
                 <h1 className="relative mx-0 text-center text-2xl bottom-4">Welcome!</h1>
