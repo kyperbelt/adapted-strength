@@ -1,5 +1,6 @@
 package com.terabite.video.controller;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import com.terabite.video.service.VideoService.S3Bucket;
 
 @RestController
 @RequestMapping("/v1/video")
+@Lazy
 public class VideoController {
     private final VideoService videoService;
 
