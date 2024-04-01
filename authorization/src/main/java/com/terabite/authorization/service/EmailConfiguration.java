@@ -10,11 +10,11 @@ import java.util.Properties;
 
 @Configuration
 public class EmailConfiguration {
-    @Value("${ADAPTED_STRENGTH_EMAIL}")
+    @Value("${ADAPTED_STRENGTH_EMAIL:abc@example.com}")
     private String adaptedStrengthEmail;
 
-    //this environment variable should be an application password
-    @Value("${ADAPTED_STRENGTH_PASSWORD}")
+    // this environment variable should be an application password
+    @Value("${ADAPTED_STRENGTH_PASSWORD:123456}")
     private String adaptedStrengthPassword;
 
     @Bean
