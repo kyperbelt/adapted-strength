@@ -85,6 +85,23 @@ public class AuthorizationController {
         return ResponseEntity.ok(Payload.of("Valid"));
     }
 
+    @GetMapping("/has_role/{role}")
+    public ResponseEntity<?> hasRole(@AuthenticationPrincipal UserDetails userDetials, @PathVariable String role) {
+        LoginDetails loginDetails = (LoginDetails) userDetials;
+        if (loginDetails != null && loginDetails.getRoles().contains(role)) {
+            return ResponseEntity.ok(new ApiResponse("User has role " + role, "Success"));
+        } else {
+            if (loginDetails != null) {
+                log.info(" User {} does not have role {}", loginDetails.getUsername(), role);
+                log.info(" User roles are {}", loginDetails.getRoles());
+            }else{
+                log.info("User details are null becasue user is not logged in, probably");
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse("User does not have role " + role,
+                    "Forbidden"));
+        }
+    }
+
     /**
      *
      * @param login
