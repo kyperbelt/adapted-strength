@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import java.util.List;
  * Ensure that the env vars AWS_SECRET_ACCESS_KEY && AWS_ACCESS_KEY_ID are set
  */
 @Configuration
+@Lazy
 public class VideoService {
     private S3Template s3Template;
     // private static final String CLIENT_BUCKET = "client-video";
