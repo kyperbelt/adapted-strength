@@ -110,7 +110,7 @@ public class GlobalConfiguration {
 
 	@Bean
 	public JwtService jwtService(@Qualifier(BEAN_JWT_SECRET) final String jwtSecret) {
-		return new JwtService(jwtSecret);
+		return new JwtService(jwtSecret, 1000 * 60 * 60 * 24);
 	}
 
 	@Bean

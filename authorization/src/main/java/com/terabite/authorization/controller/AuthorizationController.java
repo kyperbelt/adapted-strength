@@ -85,6 +85,23 @@ public class AuthorizationController {
         return ResponseEntity.ok(Payload.of("Valid"));
     }
 
+    @GetMapping("/has_role/{role}")
+    public ResponseEntity<?> hasRole(@AuthenticationPrincipal UserDetails userDetials, @PathVariable String role) {
+        LoginDetails loginDetails = (LoginDetails) userDetials;
+        if (loginDetails != null && loginDetails.getRoles().contains(role)) {
+            return ResponseEntity.ok(new ApiResponse("User has role " + role, "Success"));
+        } else {
+            if (loginDetails != null) {
+                log.info(" User {} does not have role {}", loginDetails.getUsername(), role);
+                log.info(" User roles are {}", loginDetails.getRoles());
+            }else{
+                log.info("User details are null becasue user is not logged in, probably");
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse("User does not have role " + role,
+                    "Forbidden"));
+        }
+    }
+
     /**
      *
      * @param login
@@ -108,15 +125,29 @@ public class AuthorizationController {
     }
 
     @PostMapping("/logout")
-    public Payload userLogoutPost(@AuthenticationPrincipal UserDetails userDetials, HttpServletResponse response,
+    public Payload userLogoutPost(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response,
             HttpServletRequest request) {
+        // Get Authorization Header
+        String authorizationHeader = null;
+        try {
+            authorizationHeader = request.getHeader("Authorization");
+        } catch (Exception e) {
+            log.info("/logout - No Authorization Header Found: " + e.getMessage());
+            return Payload.of(PayloadType.MESSAGE, "/logout - No Authorization Header Found: " + e.getMessage());
+        }
 
-        LoginDetails loginDetails = (LoginDetails) userDetials;
+        // Get token after "Bearer: "
+        String token = authorizationHeader.substring(7);
+
+        // Invalidate token
+        jwtService.invalidateToken(token);
+        log.info("Token blacklist size: " + jwtService.getTokenBlacklist().size());
+
+//        LoginDetails loginDetails = (LoginDetails) userDetails;
         // Token should be added to a blacklist until it expires
         // This blacklist should be checked in the JwtAuthFilter
 
         return Payload.of(PayloadType.MESSAGE, "Logout successful");
-
     }
 
     @PostMapping("/forgot_password")
@@ -187,7 +218,7 @@ public class AuthorizationController {
      * TODO: Remove in prod. Fix by ADAPTEDS-114
      */
     @GetMapping("/open_page")
-    @PreAuthorize("hasAnyAuthority('ROLE_UNVERIFIED', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_UNVERIFIED', 'ROLE_ADMIN')")
     public ResponseEntity<?> openPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached open page"));
     }

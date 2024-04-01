@@ -6,7 +6,7 @@ Team: TeraBITE
 Module: ProgramUpload.jsx
 Team: TeraBITE
 */
-import React from 'react';
+import {useEffect, React} from 'react';
 import logo from '../assets/logo.png';
 //import { calendly } from 'calendly-js';
 /* TEMP IMPORT FILE: Keep handy if rework is done in future
@@ -45,6 +45,12 @@ function AdaptedStrengthLogo() {
 }
 
 const CalendlyBooking = () => {
+    useEffect (() => {
+        document.title = "Adapted Strength"; // Set the title when the component mounts
+        return () => {
+            document.title = "Adapted Strength"; // Optionally reset the title when the component unmounts
+        };
+    }, []);
     return (
 
         <div className="h-full my-0 content-center w-full top-[100px]">
