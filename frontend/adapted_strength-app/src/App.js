@@ -94,6 +94,7 @@ function App() {
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
             <Route path='video-library' element={<VideoLibrary />} />
+            {/*Might need to add route guard to chat to enable this feature for subscribed user to prevent clutter*/}
             <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
             <Route path="*" element={<NotFound />} />

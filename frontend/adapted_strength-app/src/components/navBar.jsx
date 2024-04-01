@@ -41,6 +41,7 @@ export default function NavBar() {
           <Link to="/program-management" className="py-2  my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Manage Programs</Link>
           <Link to="/profile" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Profile</Link>
           <Link to="/sign-up" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Sign Up</Link>
+          <Link to="/chat" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Chat</Link>
         </div>
       </nav>
       <div className="h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
