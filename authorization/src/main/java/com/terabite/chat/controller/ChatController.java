@@ -7,6 +7,8 @@ import com.terabite.chat.model.UserType;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -36,6 +38,7 @@ public class ChatController {
     private final MessageService messageService;
     private final ChatUserService chatUserService;
     private final ChatRoomService chatRoomService;
+    private static Logger logger = LoggerFactory.getLogger(ChatController.class);
     
     public ChatController(MessageService messageService, SimpMessagingTemplate messagingTemplate, ChatUserService chatUserService, ChatRoomService chatRoomService){
         this.messageService=messageService;
@@ -47,9 +50,12 @@ public class ChatController {
     @MessageMapping("/processMessage")
     public void processMessage(@Payload Message message){
         Message savedMessage=messageService.save(message);
+        logger.info(message.toString());
+        
+        ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
+        logger.info("{}",chatNotification);
         //front end will be subscribing to bob/queue/message where bob is the user
-        messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages",
-        new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent()));
+        messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/user/bob@gmail.com/queue/messages", chatNotification);
         
     }
 

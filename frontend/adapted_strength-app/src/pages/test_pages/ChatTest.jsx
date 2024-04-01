@@ -101,7 +101,7 @@ function johnToAlex(event){
 // This function demonstrates how subscribing to a topic works. 
 // Each user will have a queue of messages that they subscribe to
 function onConnected(){
-    stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`/v1/chat/user/${nickname}/queue/messages`, onMessageReceived);
     console.log('connected');
 
     // register the connected user

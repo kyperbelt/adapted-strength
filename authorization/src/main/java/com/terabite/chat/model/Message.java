@@ -28,6 +28,10 @@ public class Message {
     public Message(){
 
     }
+    
+    public String toString(){
+        return (String.format("id: %s, chatRoomId: %s, senderId: %s, recipientId: %s, content: %s, timeStamp: %s", id, chatRoomId, senderId, recipientId, content, timeStamp));
+    }
 
     public String getChatRoomId() {
         return chatRoomId;
@@ -68,4 +72,6 @@ public class Message {
     public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+
 }
