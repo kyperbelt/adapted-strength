@@ -36,7 +36,8 @@ public class SubscriptionService {
             if (existingUser.getSubscriptionTier() != request.status()) {
                 if (hasPaidSubscriptionRole(request)) {
                     existingUser.setSubscriptionTier(request.status());
-                    existingUser.setExpirationDate();
+                    // Expiration dates will be set based on Stripe subscription objects expiration date
+                    // existingUser.setExpirationDate();
 
 
                     try {

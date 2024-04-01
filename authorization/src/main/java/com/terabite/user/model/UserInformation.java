@@ -34,7 +34,7 @@ public class UserInformation implements Serializable {
 
     @JsonAlias("expiration_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate expirationDate;
+    private Date expirationDate;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -108,10 +108,12 @@ public class UserInformation implements Serializable {
 
     public SubscriptionStatus getSubscriptionTier() { return subscriptionTier; }
 
-    public LocalDate getExpirationDate() {return expirationDate; }
+    public Date getExpirationDate() {return expirationDate; }
 
-    // Set subscription expiration date to be 30 days from the current date
-    public void setExpirationDate() {this.expirationDate = LocalDate.now().plusDays(30); }
+    // Subscription expiration date will come from Stripe api in WebhookService.java
+    public void setExpirationDate(Date date) {
+        this.expirationDate = date; 
+    }
     public void cancelExpirationDate() {this.expirationDate = null; }
 
     public Date getDateOfBirth() {

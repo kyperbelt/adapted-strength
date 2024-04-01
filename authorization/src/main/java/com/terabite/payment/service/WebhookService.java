@@ -153,6 +153,7 @@ public class WebhookService {
             || subscription.getStatus() == "paused"                   // paused can only happen when a free trial ends which is not currently a feature but may be later
             || subscription.getStatus() == "unpaid"){                 
                 userInformation.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
+                userInformation.cancelExpirationDate();
 
                 UserApi.ResetSubscriptionRoles(login);
                 SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.NO_SUBSCRIPTION);
@@ -168,6 +169,8 @@ public class WebhookService {
         // PaymentId
         else if (subscription.getStatus() == "active"){
             UserApi.ResetSubscriptionRoles(login);
+            java.util.Date time=new java.util.Date((long)subscription.getCurrentPeriodEnd()*1000);
+            userInformation.setExpirationDate(time);
 
             if(subscription.getItems().getData().get(6).getPrice().getId() == baseClientPriceId){
                 userInformation.setSubscriptionTier(SubscriptionStatus.BASE_CLIENT);

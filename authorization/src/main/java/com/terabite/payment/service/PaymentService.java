@@ -17,6 +17,10 @@ public class PaymentService {
     @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
 
+    public PaymentService(){
+
+    }
+
     public ResponseEntity<?> cancelSubscriptionById(String subscriptionId) throws StripeException{
         Stripe.apiKey = stripeKey;
 
