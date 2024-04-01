@@ -73,6 +73,7 @@ function App() {
                 <EditProfile />
               </RouteGuard>
             </Suspense>} />
+            
             <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
             <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />
@@ -83,7 +84,7 @@ function App() {
 
             /* ROUTES FOR PROGRAM PAGES */
             //--------------------------------------------------
-            // <Route path="bodybuild" element={<BodyBuild />} />
+            <Route path="bodybuild" element={<BodyBuild />} />
             // <Route path="power-lifting" element={<Power />} />
             // <Route path="oly-lifting" element={<Oly />} />
             // <Route path="general-program" element={<General />} />

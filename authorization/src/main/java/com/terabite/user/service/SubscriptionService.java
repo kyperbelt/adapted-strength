@@ -2,6 +2,7 @@ package com.terabite.user.service;
 
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
+import com.terabite.common.dto.Payload;
 import com.terabite.user.UserApi;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
@@ -11,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -65,16 +65,17 @@ public class SubscriptionService {
 
                     log.info("Updated User Information: email={}, subscriptionTier={}", existingUser.getEmail(),
                             existingUser.getSubscriptionTier());
-                    return ResponseEntity.ok("Subscription tier updated successfully.");
+                    return ResponseEntity.ok(Payload.of("Subscription tier updated successfully."));
 
                 } else {
-                    return ResponseEntity.badRequest().body("Must use UnsubscribeService to cancel subscription.");
+                    return ResponseEntity.badRequest().body(Payload.of("Must use UnsubscribeService to cancel subscription."));
+
                 }
             } else {
-                return ResponseEntity.badRequest().body("User is already subscribed as " + request.status());
+                return ResponseEntity.badRequest().body(Payload.of("User is already subscribed as " + request.status()));
             }
         } else {
-            return ResponseEntity.badRequest().body("Failed to retrieve updated user information.");
+            return ResponseEntity.badRequest().body(Payload.of("Failed to retrieve updated user information."));
         }
     }
 

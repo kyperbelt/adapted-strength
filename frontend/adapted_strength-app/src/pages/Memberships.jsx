@@ -1,18 +1,112 @@
 import logo from '../assets/logo.png';
 import Footer from '../components/footer';
+import { useEffect, useState } from "react";
+import { UserApi } from '../api/UserApi';
 
 function AdaptedStrengthLogo() {
-    return (<div className="flex flex-col items-center mt-12">
-        <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
-    </div>);
+  return (
+    <div className="flex flex-col items-center mt-12">
+      <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
+    </div>
+  );
+}
+
+function DropDownMenu({ onSubmit }) {
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+    onSubmit(selectedValue);
+  };
+
+  return (
+    <div className="text-center border-b-4 p-1">
+      <label htmlFor="subscriptionTier">Membership: </label>
+      <select
+        name="subscriptionTier"
+        id="subscriptionTier"
+        onChange={handleSelectChange}
+      >
+        <option value="">--Select Tier--</option>
+        <option value="BASE_CLIENT">Base Client - Program Only</option>
+        <option value="GENERAL_CLIENT">General Client</option>
+        <option value="SPECIFIC_CLIENT">Specific Client</option>
+      </select>
+    </div>
+  );
+}
+
+function SubscriptionField({...props}) {
+    if (props.tier === 'BASE_CLIENT') {
+        return (<div> <p>Base Client</p></div>);
+    } else if (props.tier === 'GENERAL_CLIENT') {
+        return (<div> <p>General Client</p></div>);
+    } else if (props.tier === 'SPECIFIC_CLIENT') {
+        return (<div> <p>Specific Client</p></div>);
+    }
+}
+
+function ExpirationField({...props}) {
+    return (<div> (Need to implement) {props.expiration_date}</div>);
 }
 
 export default function Memberships() {
+    const [isLoading, setIsLoading] = useState(true);
+    const [profileInfo, setProfileInfo] = useState([]);
+  
+    useEffect(() => {
+      setIsLoading(true);
+      UserApi.getProfileInformation()
+        .then((response) => {
+          if (response.status === 200) {
+            setProfileInfo(response.data);
+            setIsLoading(false);
+            console.log(response.data);
+          } else {
+            // TODO: Handle error - redirect to login page or display error message
+          }
+        })
+        .catch((error) => {
+          console.error(`ERROR HAPPENED: ${error}`);
+          setIsLoading(false);
+          // TODO: Handle error - redirect to login page or display error message
+        });
+    }, []);
+  
+    const onSubmit = async (selectedValue) => {
+        console.log("Selected Value:", selectedValue);
+        const data = {
+          subscriptionTier: selectedValue,
+        };
+        console.log("Data:", data);
+        await UserApi.updateSubscription(data).then((response) => {
+          if (response.status === 200) {
+            console.log("Subscription updated successfully");
+          }
+        });
+      };
+  
+    if (isLoading) {
+      return <div>{"Loading..."}</div>;
+    }
+
     return (
         <div className="h-full my-0 content-center w-full top-[100px]">
             <div className="h-56 bg-header-background1">
                 <AdaptedStrengthLogo />
             </div>
+
+            <div className='text-center px-2 bg-blue-200 text-black rounded-md'>
+                    <h2 className='font-bold'>YOUR SUBSCRIPTION TIER</h2>
+                    <p><SubscriptionField tier={profileInfo.subscriptionTier}/></p>
+
+                    <h2 className='font-bold'>PAYMENT DATE</h2>
+                    <p><ExpirationField exp={profileInfo.expiration_date}/></p>
+                    <br></br>
+
+                    <h2 className='font-bold'>UPGRADE OR SWITCH MEMBERSHIPS HERE</h2>
+                    <DropDownMenu onSubmit={onSubmit} />
+
+                </div>
+
             <div>
                 <p className='font-bold text-lg'>Adapted Strength (A.S.) <br></br>
                 Memberships</p>

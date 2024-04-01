@@ -1,39 +1,36 @@
 package com.terabite.authorization.controller;
 
-import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
-import com.terabite.authorization.dto.Payload;
-import com.terabite.authorization.log.LoginNotFoundException;
+import com.terabite.authorization.dto.ForgotPasswordRequest;
+import com.terabite.authorization.dto.ResetPasswordRequest;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.ForgotPasswordService;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
 import com.terabite.authorization.service.SignupService;
-import jakarta.servlet.http.Cookie;
+import com.terabite.common.dto.Payload;
+import com.terabite.common.dto.PayloadType;
+import com.terabite.common.model.LoginDetails;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthorizationController {
-
-    private final String authCookieName;
-    private final String domainUrl;
 
     private final LoginService loginService;
     private final SignupService signupService;
@@ -48,9 +45,9 @@ public class AuthorizationController {
     private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
     public AuthorizationController(ForgotPasswordService forgotPasswordHelper, LoginService loginService,
-                                   SignupService signupService, @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String domainUrl, JwtService jwtService, LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
-        this.authCookieName = authCookieName;
-        this.domainUrl = domainUrl;
+            SignupService signupService,
+            JwtService jwtService,
+            LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
         this.forgotPasswordService = forgotPasswordHelper;
         this.loginService = loginService;
         this.signupService = signupService;
@@ -60,92 +57,124 @@ public class AuthorizationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest) {
-        // TODO:
-        // lets have this return a session token (JWT) and then use this token to
-        // temporarily authenticate the user
-        // as if they had logged in. See signupService.signup for more details and check
-        // the TODOs and FIXMEs to see what needs to be done
+    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
 
-        return signupService.signup(authRequest);
+        final Optional<String> token = signupService.signup(authRequest);
+
+        if (token.isPresent()) {
+            log.info("Token is present and cookie is being sent");
+            return ResponseEntity.status(HttpStatus.CREATED).body(Payload.of(PayloadType.JWT_TOKEN, token.get()));
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Payload.of("User already exists"));
+    }
+
+    @PostMapping("/validate_credentials")
+    public ResponseEntity<?> validateCredentials(@RequestBody AuthRequest authRequest) {
+        Optional<Login> login = loginRepository.findByEmail(authRequest.getUsername());
+        if (login.isPresent()) {
+            log.info("User {} already exists", authRequest.getUsername());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Payload.of("User already exists"));
+        }
+        if (!signupService.verifyPasswordIsStrong(authRequest.getPassword())) {
+            log.info("Password {} is not strong enough", authRequest.getPassword());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Payload.of("Password is not strong enough"));
+        }
+        log.info("Credentials username: {} and password: {} are valid", authRequest.getUsername(),
+                authRequest.getPassword());
+        return ResponseEntity.ok(Payload.of("Valid"));
+    }
+
+    @GetMapping("/has_role/{role}")
+    public ResponseEntity<?> hasRole(@AuthenticationPrincipal UserDetails userDetials, @PathVariable String role) {
+        LoginDetails loginDetails = (LoginDetails) userDetials;
+        if (loginDetails != null && loginDetails.getRoles().contains(role)) {
+            return ResponseEntity.ok(new ApiResponse("User has role " + role, "Success"));
+        } else {
+            if (loginDetails != null) {
+                log.info(" User {} does not have role {}", loginDetails.getUsername(), role);
+                log.info(" User roles are {}", loginDetails.getRoles());
+            }else{
+                log.info("User details are null becasue user is not logged in, probably");
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse("User does not have role " + role,
+                    "Forbidden"));
+        }
     }
 
     /**
-     * Deprecated. Not needed with JWT
      *
      * @param login
      * @param response
      * @return
      */
-    @Deprecated
     @PostMapping("/login")
     public ResponseEntity<?> userLoginPost(@RequestBody Login login, HttpServletResponse response) {
 
         Optional<String> token = loginService.login(login);
 
         if (token.isPresent()) {
-            // README: Decided to store tokens in a special cookie
-            // information from:
-            // https://blog.logrocket.com/jwt-authentication-best-practices/#:~:text=To%20keep%20them%20secure%2C%20you,JavaScript%20running%20in%20the%20browser.
-
-            // log that token is present and cookie is being sent
-            log.info("Token is present and cookie is being sent");
-            // set a cookie
-            Cookie cookie = createAuthorizationCookie(authCookieName, token.get(), 60 * 60 * 24 * 7);
-
-            response.addCookie(cookie);
-            // we probably should only return ok without the token since it is sent back as
-            // a cookie
-            return ResponseEntity.ok(new Payload(token.get()));
+            log.info("Token was successfully created and it is being sent for user {}", login.getEmail());
+            return ResponseEntity.ok(Payload.of(PayloadType.JWT_TOKEN, token.get()));
         }
 
-        log.error("Was unable to login with the given credentials. Invalid login for email: {}, and password: {}", login.getEmail(), login.getPassword());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Payload("Invalid login"));
+        log.error("Was unable to login with the given credentials. Invalid login for email: {}, and password: {}",
+                login.getEmail(), login.getPassword());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("Invalid login"));
 
     }
 
-    @Deprecated
     @PostMapping("/logout")
-    public Payload userLogoutPost(HttpServletResponse response, HttpServletRequest request) {
+    public Payload userLogoutPost(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response,
+            HttpServletRequest request) {
+        // Get Authorization Header
+        String authorizationHeader = null;
+        try {
+            authorizationHeader = request.getHeader("Authorization");
+        } catch (Exception e) {
+            log.info("/logout - No Authorization Header Found: " + e.getMessage());
+            return Payload.of(PayloadType.MESSAGE, "/logout - No Authorization Header Found: " + e.getMessage());
+        }
 
-        // README: Since wew ill eventually be using JWT, we wwill need a way to
-        // invalidate
-        // the tokens on logout. This is so that once logged out on that decide the
-        // users are able to
-        // log in and get a new token
+        // Get token after "Bearer: "
+        String token = authorizationHeader.substring(7);
 
-        Optional<Cookie> tokenCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(authCookieName)).findFirst();
+        // Invalidate token
+        jwtService.invalidateToken(token);
+        log.info("Token blacklist size: " + jwtService.getTokenBlacklist().size());
 
-        Cookie cookie = createAuthorizationCookie(authCookieName, "", 0);
-        response.addCookie(cookie);
+//        LoginDetails loginDetails = (LoginDetails) userDetails;
+        // Token should be added to a blacklist until it expires
+        // This blacklist should be checked in the JwtAuthFilter
 
-        return new Payload(String.format("logged out:%s", tokenCookie.orElseGet(() -> new Cookie(authCookieName, "none")).getValue()));
+        return Payload.of(PayloadType.MESSAGE, "Logout successful");
     }
 
-    @PutMapping("/forgot_password")
-    public ResponseEntity<String> forgotPassword(@RequestBody String jsonEmail) {
-        return forgotPasswordService.processForgotPassword(jsonEmail);
+    @PostMapping("/forgot_password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        return forgotPasswordService.processForgotPassword(forgotPasswordRequest.getEmail());
     }
 
     @PutMapping("/reset_password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody String jsonPassword)
-            throws LoginNotFoundException {
-        return forgotPasswordService.processResetPassword(token, jsonPassword);
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        return forgotPasswordService.processResetPassword(resetPasswordRequest.getResetToken(),
+                resetPasswordRequest.getNewPassword());
     }
 
-
+    @Deprecated
     @PostMapping("/get_token")
     public ResponseEntity<?> getToken(@RequestBody AuthRequest authRequest) {
 
-//        Login storedLogin = loginRepository.findByEmail(login.getEmail())
-//                .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
-//
-//        if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword())) {
-//            return jwtService.generateToken(login.getEmail());
-//        } else {
-////            throw new LoginNotFoundException("Invalid login");
-//            return "Invalid login";
-//        }
+        // Login storedLogin = loginRepository.findByEmail(login.getEmail())
+        // .orElseThrow(() -> new LoginNotFoundException("Login email not found"));
+        //
+        // if (passwordEncoder.matches(login.getPassword(), storedLogin.getPassword()))
+        // {
+        // return jwtService.generateToken(login.getEmail());
+        // } else {
+        //// throw new LoginNotFoundException("Invalid login");
+        // return "Invalid login";
+        // }
 
         Optional<Login> storedLogin = loginRepository.findByEmail(authRequest.getUsername());
 
@@ -189,7 +218,7 @@ public class AuthorizationController {
      * TODO: Remove in prod. Fix by ADAPTEDS-114
      */
     @GetMapping("/open_page")
-    @PreAuthorize("hasAnyAuthority('ROLE_UNVERIFIED', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_UNVERIFIED', 'ROLE_ADMIN')")
     public ResponseEntity<?> openPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached open page"));
     }
@@ -202,15 +231,5 @@ public class AuthorizationController {
     public ResponseEntity<?> restrictedPage() {
         return ResponseEntity.ok(new ApiResponse(HttpStatus.OK.toString(), "Reached restricted page"));
     }
-
-    @Deprecated
-    private Cookie createAuthorizationCookie(String cookie, String value, int maxAge) {
-        Cookie newCookie = new Cookie(cookie, value);
-        newCookie.setPath("/");
-        newCookie.setMaxAge(maxAge);
-        newCookie.setDomain(domainUrl);
-        return newCookie;
-    }
-
 
 }

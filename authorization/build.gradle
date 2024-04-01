@@ -32,10 +32,21 @@ dependencies {
 
     // JWT specific
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation("com.google.guava:guava:33.1.0-jre") // For time-based expiration map
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // AWS S3 integration
+    // implementation 'org.springframework.cloud:spring-cloud-starter-aws'
+    // implementation 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config'
+    // implementation(platform("software.amazon.awssdk:bom:2.21.1"))
+    // implementation("software.amazon.awssdk:s3")
+    // implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
+    // implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+    // implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+    // implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 
     //Stripe specfic
     implementation 'com.stripe:stripe-java:24.0.0'
@@ -47,13 +58,33 @@ dependencies {
 // runs a shell script located ../../scripts/check_env_vars.sh
 bootRun {
     dependsOn 'checkEnvVars'
+    dependsOn 'test'
+}
+
+tasks.register('nukeDatabase', Exec) {
+	commandLine 'docker', 'stop', 'authorization-mysql-1'
+	commandLine 'docker', 'rm', 'authorization-mysql-1'
 }
 
 tasks.register('checkEnvVars', Exec) {
     commandLine 'bash', '../scripts/check_env_vars.sh'
 }
 
+tasks.register('bootRunFresh', Exec) {
+	dependsOn 'bootRun'
+	dependsOn 'nukeDatabase'
+	dependsOn 'clean'
+	
+	tasks.findByName('bootRun').mustRunAfter 'nukeDatabase'
+	tasks.findByName('nukeDatabase').mustRunAfter 'clean'
+}
+
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+	events "passed", "skipped", "failed"
+    }
 }
+
+

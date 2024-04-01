@@ -4,15 +4,17 @@ export class ChatApi {
 
 
     /**
+   * @param {JSON} coach
    * @returns {Promise} Promise<UserInformation>
    * @memberof ChatApi
    * @description This method will return the list of chat users.
    * @example
-   * UserApi.getChatUsers()
+   * UserApi.getChatUsers(coach)
    * .then(response => console.log(response));
    */
-    static getChatUsers() {
-      const promise = ApiUtils.apiGet('/chatusers');
+
+    static getChatUsers(coach) {
+      const promise = ApiUtils.apiPost('chat/chatUsers', coach);
       return promise;
   }
 
@@ -27,7 +29,7 @@ export class ChatApi {
    * .then(response => console.log(response));
    */
     static getChat({ senderId, receiverId }) {
-      const endpoint = `/messages/${senderId}/${receiverId}`;
+      const endpoint = `chat/messages/${senderId}/${receiverId}`;
       const promise = ApiUtils.apiGet(endpoint);
       return promise;
     }

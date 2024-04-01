@@ -2,12 +2,14 @@
 Module: Profile.jsx
 Team: TeraBITE
 */
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UserApi } from "../api/UserApi";
+import { AuthApi} from "../api/AuthApi";
 
 
 import icon from '../assets/ladyIcon.png'
+import { HttpStatus } from "../api/ApiUtils";
 
 function FNameField() {
     return (<input type="fname" defaultValue="First Name" id="fname" name="fname" required className="w-4/5 border-b-4 p-0" />);
@@ -62,7 +64,7 @@ function SubscriptionField({... props}) {
 }
 
 export default function Profile() {
-
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [profileInfo, setProfileInfo] = useState([]);
 
@@ -70,15 +72,25 @@ export default function Profile() {
         setIsLoading(true);
         UserApi.getProfileInformation()
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === HttpStatus.OK) {
                     setProfileInfo(response.data);
                     setIsLoading(false);
                     console.log(response.data)
-                } else {
+                } else if (response.status === HttpStatus.UNAUTHORIZED) { // unauthorized
                     // TODO: same as error, redirect to login page or display error message
+                    console.error(`ERROR HAPPENED: ${JSON.stringify(response.data)}`);
+                    if (response.data.all.includes("ROLE_TERMS_ACCEPTED")) {
+                        console.log("User has not accepted terms and conditions");
+                        AuthApi.logout();
+                        navigate("/login");
+
+                    }else if (response.data.all.includes("ROLE_ACCOUNT_SETUP")) {
+                        console.log("User has not setup account");
+                        navigate("/logout");
+                    }
                 }
             }).catch((error) => {
-                console.error(`ERROR HAPPENED: ${error}`);
+                console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
                 setIsLoading(false);
                 //TODO: User was unable to get profile information, 
                 //     redirect to login page or display error message
@@ -107,7 +119,6 @@ export default function Profile() {
             <Link to="/edit-profile" className="bg-[#161A1D] text-white bottom-20  px-0 pb-8 mb-4">
                 Edit Profile
             </Link>
-            <Outlet className="" />
             <div className="w-full flex flex-col items-center px-0 ">
                 <FNameField />
             </div>
@@ -116,7 +127,8 @@ export default function Profile() {
             </div>
             <div className="w-full flex flex-col items-center px-0 pt-4">
                 <DropDownMenu />
-            </div><div className="w-full flex flex-col items-center px-0 pt-4">
+            </div>
+            <div className="w-full flex flex-col items-center px-0 pt-4">
                 <SxField />
             </div>
             <div className="w-full flex flex-col items-center px-0 pt-4">
