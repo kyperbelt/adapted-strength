@@ -1,6 +1,7 @@
 package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.terabite.payment.model.Customer;
 
 import jakarta.persistence.*;
@@ -57,6 +58,7 @@ public class UserInformation implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JsonIgnore
     private Customer customer;
 
     @JsonAlias("cell_phone")

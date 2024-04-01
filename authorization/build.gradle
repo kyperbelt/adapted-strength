@@ -39,7 +39,8 @@ dependencies {
 
     //Stripe specfic
     implementation 'com.stripe:stripe-java:24.0.0'
-    implementation 'com.google.code.gson:gson:2.7'
+    // implementation 'com.google.code.gson:gson:2.7'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 // when ./gradlew bootRun is executed first require that the application 
