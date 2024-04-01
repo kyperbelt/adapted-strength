@@ -55,13 +55,13 @@ public class VideoController {
         return videoService.downloadVideo(name, S3Bucket.COACH, userDetails.getUsername() ); 
     }
 
-    @DeleteMapping("/download/client")
+    @DeleteMapping("/delete/client")
     @PreAuthorize("hasAuthority('ROLE_USER')" )
     public ResponseEntity<?> deleteClientVideo(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String name) {
         return videoService.deleteVideo(name, S3Bucket.CLIENT, userDetails.getUsername() );
     }
 
-    @DeleteMapping("/download/coach")
+    @DeleteMapping("/delete/coach")
     @PreAuthorize("hasAuthority('ROLE_COACH')")
     public ResponseEntity<?> deleteCoachVideo(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String name) {
         return videoService.deleteVideo(name, S3Bucket.COACH); 
