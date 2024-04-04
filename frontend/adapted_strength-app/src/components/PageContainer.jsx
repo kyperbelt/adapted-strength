@@ -1,15 +1,15 @@
 import logo from '../assets/logo.png';
 
 function AdaptedStrengthLogo() {
-    return (<div className="flex flex-col items-center mt-12">
-        <img src={logo} alt="Adapted Strength Logo" className="w-3/4" />
+    return (<div className="flex flex-col items-center mt-96  mb-32 md:my-64">
+        <img src={logo} alt="Adapted Strength Logo" className="w-3/4 md:w-96" />
     </div>);
 }
 
 export default function PageContainer1({ children }) {
     return (
-        <div className="h-full my-0 content-center w-full top-[100px]">
-            <div className="h-56 bg-header-background1">
+        <div className="h-full content-center w-full">
+            <div className="h-44 md:h-56 bg-header-background1">
                 <AdaptedStrengthLogo />
             </div>
             <div className="bg-[#161A1D] h-full">
