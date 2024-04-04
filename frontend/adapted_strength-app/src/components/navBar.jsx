@@ -30,9 +30,9 @@ export default function NavBar() {
   //      certain options when the user is not logged in for example, or if they 
   //      dont have the right permissions or are in a wrong state/certain page/step.
   return (
-    <div className={'bg-black'}>
+    <div className={'sticky top-0 bg-black'}>
       <div className={`right-0 bottom-0 left-0 bg-black opacity-50  ${hamburgerOpen ? 'flex' : 'hidden'}`} onClick={toggleHammy} />
-      <nav className="top-0 bg-white border-gray-200 ">
+      <nav className="top-0 bg-white border-0">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src={Logo} className="h-8" alt="Adapted Strength Logo" />
@@ -45,7 +45,7 @@ export default function NavBar() {
             </svg>
           </button>
           <div className={`${hamburgerOpen ? '':'hidden'} w-full md:block md:w-auto`} id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
+            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
               <NavItem to="/"  onClick={toggleHammy}>Home</NavItem>
               <NavItem to="/consultations"  onClick={toggleHammy}>Book Consultation</NavItem>
               <NavItem to="/login"  onClick={toggleHammy}>Login</NavItem>

@@ -21,7 +21,7 @@ function ChatButton({...props})
 
 export default function Layout() {
     return (
-        <div className="w-full h-full flex flex-col my-0">
+        <div className="w-full grow flex flex-col my-0">
             <NavBar />
             <Outlet className="" />
             <ChatButton messageNotification={false}/>
