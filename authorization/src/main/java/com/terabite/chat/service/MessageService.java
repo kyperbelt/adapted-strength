@@ -2,6 +2,9 @@ package com.terabite.chat.service;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.terabite.chat.model.Message;
@@ -32,6 +35,20 @@ public class MessageService {
     
     public List<Message> getAllMessages(){
         return messageRepository.findAll();
+    }
+
+    public ResponseEntity<?> setMessageReadById(long id){
+        Message message = messageRepository.findById(id).orElse(null);
+        
+        if (message!= null){
+            message.setHasBeenRead(true);
+            messageRepository.save(message);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
     }
 
 }

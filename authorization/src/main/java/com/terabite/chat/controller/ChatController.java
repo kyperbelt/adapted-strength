@@ -3,7 +3,6 @@ package com.terabite.chat.controller;
 import com.terabite.chat.model.ChatRoom;
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.Message;
-import com.terabite.chat.model.UserType;
 
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +27,14 @@ import com.terabite.chat.service.ChatRoomService;
 import com.terabite.chat.service.ChatUserService;
 import com.terabite.chat.service.MessageService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
 @CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @Controller
-@RequestMapping("/v1/chat")
+@RequestMapping("")
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
@@ -47,6 +49,18 @@ public class ChatController {
         this.chatRoomService=chatRoomService;
     }
 
+    // @MessageMapping("/processMessage")
+    // public void processMessage(@Payload Message message){
+    //     Message savedMessage=messageService.save(message);
+    //     logger.info(message.toString());
+        
+    //     ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
+    //     logger.info("{}",chatNotification);
+    //     //front end will be subscribing to bob/queue/message where bob is the user
+    //     messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), String.format("/user/%s/queue/messages", message.getRecipientId()), chatNotification);
+        
+    // }
+
     @MessageMapping("/processMessage")
     public void processMessage(@Payload Message message){
         Message savedMessage=messageService.save(message);
@@ -55,10 +69,10 @@ public class ChatController {
         ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
         logger.info("{}",chatNotification);
         //front end will be subscribing to bob/queue/message where bob is the user
-        messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/user/bob@gmail.com/queue/messages", chatNotification);
+        messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages", chatNotification);
         
     }
-
+ 
     @GetMapping("/messages/{senderId}/{recipientId}")
     public ResponseEntity<List<Message>> findChatMessages(@PathVariable("senderId") String senderId, @PathVariable("recipientId") String recipientId){
         return ResponseEntity.ok(messageService.findChatMessages(senderId, recipientId));
@@ -72,12 +86,18 @@ public class ChatController {
         return chatUser;
     }
 
-    // This endpoint returns a payload of clients if the requestbody is a coach or a coach if the requestbody is a client
-    // We will have to change to checking via JWT tokens which should remove the need for a requestbody, but the functionality should remain
-    @GetMapping("/chatUsers")
-    public ResponseEntity<List<ChatUser>> findChatUsers(@RequestBody ChatUser chatUser) {
-        return ResponseEntity.ok(chatUserService.findUsers(chatUser));
+
+    @GetMapping("/coach/chatUsers")
+    // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
+        return ResponseEntity.ok(chatUserService.findClientChatUsers(chatUser));
     }
+
+    @GetMapping("/client/chatUsers")
+    public ResponseEntity<List<ChatUser>> findCoachChatUsers(@RequestBody ChatUser chatUser) {
+        return ResponseEntity.ok(chatUserService.findCoachChatUsers(chatUser));
+    }
+    
 
     //TODO: for testing purposes only, we should not keep this
     @GetMapping("/messages")
@@ -91,9 +111,8 @@ public class ChatController {
         return ResponseEntity.ok(chatRoomService.getAllChatRooms());
     }
 
-    @PostMapping("/chatRoom/setUnreadFalse")
-    public ResponseEntity<HttpStatus> setUnreadFalse(@RequestBody ChatRoom chatRoom) {
-        chatRoomService.setUnreadFalse(chatRoom);
-        return ResponseEntity.ok(HttpStatus.OK);
+    @PostMapping("/message/setMessageRead/{messageId}")
+    public ResponseEntity<?> setMessageReadById(@PathVariable("messageId") long id){
+        return messageService.setMessageReadById(id);
     }
 }

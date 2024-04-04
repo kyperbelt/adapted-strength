@@ -4,7 +4,6 @@ import { Stomp } from '@stomp/stompjs';
 let stompClient=null;
 let nickname = null;
 let fullname = null;
-let usertype = null;
 let message = null;
 
 
@@ -14,9 +13,8 @@ let message = null;
 function connect1(event){
     nickname = "alex@adaptedstrength.com"
     fullname = "Alex Palting"
-    usertype = "COACH"
 
-    const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
@@ -26,9 +24,8 @@ function connect1(event){
 function connect2(event){
     nickname = "bob@gmail.com";
     fullname = "Bob Doe";
-    usertype = "CLIENT"
 
-    const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
@@ -39,9 +36,8 @@ function connect2(event){
 function connect3(event){
     nickname = "john@aol.com"
     fullname = "John Bon"
-    usertype = "CLIENT"
 
-    const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
@@ -61,7 +57,7 @@ function alexToBob(event){
         content: "Hello Bob, this is Alex",
         timeStamp: new Date()
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
@@ -72,7 +68,7 @@ function alexToJohn(event){
         content: "Hello John, this is Alex",
         timeStamp: new Date()
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
@@ -83,7 +79,7 @@ function bobToAlex(event){
         content: "Hello Alex, this is Bob",
         timeStamp: new Date()
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
@@ -94,19 +90,30 @@ function johnToAlex(event){
         content: "Hello Alex, this is John",
         timeStamp: new Date()
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
-// This function demonstrates how subscribing to a topic works. 
-// Each user will have a queue of messages that they subscribe to
+// // This function demonstrates how subscribing to a topic works. 
+// // Each user will have a queue of messages that they subscribe to
+// function onConnected(){
+//     stompClient.subscribe(`/v1/chat/user/${nickname}/queue/messages`, onMessageReceived);
+//     console.log('connected');
+
+//     // register the connected user
+//     stompClient.send("/v1/chat/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname, userType : usertype }));
+// }
+
+
 function onConnected(){
-    stompClient.subscribe(`/v1/chat/user/${nickname}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`user/public`, onMessageReceived);
     console.log('connected');
 
     // register the connected user
-    stompClient.send("/v1/chat/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname, userType : usertype }));
+    stompClient.send("/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname}));
 }
+
 
 function onError(){
     console.log("error");

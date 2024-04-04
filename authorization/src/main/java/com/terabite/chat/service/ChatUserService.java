@@ -1,5 +1,8 @@
 package com.terabite.chat.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import com.terabite.chat.model.ChatUser;
@@ -14,20 +17,22 @@ public class ChatUserService {
         this.chatUserRepository=chatUserRepository;
     }
 
-    public void saveChatUser(ChatUser chatUser){
-        chatUserRepository.save(chatUser);
-    }
-
-    //This method returns a list of clients if a coach accesses or coaches if a client accesses
-    public List<ChatUser> findUsers(ChatUser chatUser){
-        if (chatUser.getUserType() == UserType.CLIENT){
-            return chatUserRepository.findAllByUserType(UserType.COACH);
+    public ResponseEntity<?> saveChatUser(ChatUser chatUser){
+        if(chatUser!= null){
+            chatUserRepository.save(chatUser);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
         else{
-            return chatUserRepository.findAllByUserType(UserType.CLIENT);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+    public List<ChatUser> findClientChatUsers(ChatUser chatUser){
+        return chatUserRepository.findAllByUserType(UserType.CLIENT);
+    }
 
+    public List<ChatUser> findCoachChatUsers(ChatUser chatUser){
+        return chatUserRepository.findAllByUserType(UserType.CLIENT);
+    }
 
 }

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    public static final String MESSAGE_PREFIX = "/v1/chat";
+    public static final String MESSAGE_PREFIX = "";
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
