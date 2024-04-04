@@ -16,7 +16,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,10 +31,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 
-@CrossOrigin(allowCredentials = "true", origins = "http://localhost:3000")
 @Controller
 @RequestMapping("")
 public class ChatController {
+    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final ChatUserService chatUserService;

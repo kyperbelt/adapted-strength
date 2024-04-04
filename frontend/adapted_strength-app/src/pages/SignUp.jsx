@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
 import PageContainer1 from '../components/PageContainer';
+import { AuthApi } from '../api/AuthApi';
+import { HttpStatus } from '../api/ApiUtils';
 
 const ErrorType = {
     PasswordsMustMatch: "Passwords must match.",
@@ -39,7 +41,7 @@ function EmailField() {
     return (<input type="email" placeholder="Email Address" id="email" name="email" required />);
 }
 function PasswordField() {
-    return (<input type="text" placeholder="Password" id="password" name="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,255}$"
+    return (<input type="text" placeholder="Password" id="password" name="password" pattern={"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#!%*?&])[A-Za-z\\d@$!#%*?&]{8,255}$"}
         title="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character. It should be between 8 and 255 characters long."
     /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required />);
 }
@@ -59,6 +61,7 @@ export default function SignUp() {
         // user registration logic here
         // ...
         let password = e.target.password.value;
+        // validate credentials locally, but also validate on the server
         let error = validatePassword(password);
         if (error !== ErrorType.NoError) {
             setError(error);
@@ -69,16 +72,32 @@ export default function SignUp() {
             setError(ErrorType.PasswordsMustMatch);
             return;
         }
+
+
+        const email = e.target.email.value;
+
+        // TODO: Display a processing message while the request is being made
+        AuthApi.validateCredentials(email, password)
+            .then((response) => {
+                console.log(response);
+                if (response.status === HttpStatus.OK) {
+                    console.log("User is valid and can proceed to the next page.");
+                    // user is valid 
+                    navigate("/terms-of-service", { state: { email: email, password: password } });
+                    // TODO: save state to local storage so that in the event that the user 
+                    //      navigates away from the page, the state is not lost and the user 
+                    //      can continue where they left off
+                } else if (response.status === HttpStatus.CONFLICT) { // conflict means email is already in use
+                    // TODO: display error message
+                    setError("Email is already in use.");
+                }
+            }).catch((error) => {
+                console.error(`ERROR HAPPENED: ${error}`);
+                // TODO: same as error, redirect to login page or display error message
+
+            });
+
         setError(ErrorType.NoError);
-
-        // After successful registration, redirect to the Terms of Service page
-        navigate("/terms-of-service");
-
-        //if (validatePasswordMatch()){ // TODO: ADAPTEDS-89 
-        // window.location.href = "/sign-up-additional";
-        //store info // TODO: ADAPTEDS-89 
-        // this.reset();
-        //}
     };
     return (
         <PageContainer1>

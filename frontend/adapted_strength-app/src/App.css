@@ -3,15 +3,15 @@
   text-align: center;
 }
 
-.App-logo {
-  background-color: #EDF2F4;
-  margin-top: 3em;
-  pointer-events: none;
-}
-
-.App-icon {
-  margin-top: 5em;
-}
+/* .App-logo { */
+/*   background-color: #EDF2F4; */
+/*   margin-top: 3em; */
+/*   pointer-events: none; */
+/* } */
+/**/
+/* .App-icon { */
+/*   margin-top: 5em; */
+/* } */
 
 /*@media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -19,16 +19,16 @@
   }
 }*/
 
-.App-header {
-  margin: 1em;
-  background-color: #EDF2F4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: black;
-}
+/* .App-header { */
+/*   margin: 1em; */
+/*   background-color: #EDF2F4; */
+/*   display: flex; */
+/*   flex-direction: column; */
+/*   align-items: center; */
+/*   justify-content: center; */
+/*   font-size: calc(10px + 2vmin); */
+/*   color: black; */
+/* } */
 
 .App-link {
   background-color: #EDF2F4;
@@ -92,4 +92,151 @@
 /* You can also add media queries for responsive design */
 @media (max-width: 768px) {
   /* Responsive adjustments */
+}
+
+.icon {
+  display: inline-flex;
+  align-self: center;
+}
+
+.icon svg,
+.icon img {
+  height: 1em;
+  width: 1em;
+  fill: currentColor;
+}
+
+.icon.baseline svg,
+.icon img {
+  top: .125em;
+  position: relative;
+}
+
+/* Tab Container */
+.Tabs {
+  width: 80%;
+  height: 90%;
+  min-height: 400px;
+  min-width: 400px;
+  overflow: auto;
+  background: #053742;
+  margin: 3.5rem auto 1.5rem;
+  padding: 2rem 1rem;
+  color: #E8F0F2;
+  border-radius: 2rem;
+  font-family: Arial, Helvetica, sans-serif;
+
+  @media (max-width: 769px) {
+    padding: 2rem 0;
+  }
+}
+
+/* Tab Navigation */
+ul.nav {
+  width: 60%;
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #39A2DB;
+  border-radius: 2rem;
+  padding-left: 0px;
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
+}
+
+ul.nav li {
+  width: 50%;
+  padding: 1rem;
+  list-style: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.7s;
+  border-bottom-left-radius: 2rem;
+  border-top-left-radius: 2rem;
+  overflow: auto;
+}
+
+ul.nav li:nth-child(2) {
+  border-radius: 0;
+  border-bottom-right-radius: 2rem;
+  border-top-right-radius: 2rem;
+}
+
+ul.nav li:hover {
+  background: rgba(50, 224, 196, 0.15);
+}
+
+ul.nav li.active {
+  background: #39A2DB;
+}
+
+.Announcements p,
+.Notifications p {
+  font-size: 2rem;
+  text-align: center;
+}
+
+/* Content Styling */
+.notification {
+  /* position: "relative"; */
+  overflow: scroll;
+  width: 80%;
+  height: 80%;
+  max-height: inherit;
+  /* display: inline-flex; */
+  /* margin-left: 50%; */
+  margin-top: 10px;
+}
+
+.iconSection {
+  position: relative;
+  width: fit-content;
+  display: inline-flex;
+}
+
+.notificationBar {
+  display: block;
+  box-shadow: 2px 3px 17px -3px #8888888c;
+  padding: 15px;
+  right: 0;
+  z-index: 1;
+  background: #f4f4f4;
+  color: initial;
+}
+
+.notification:hover .notificationBar {
+  display: block;
+}
+
+.lineItmes {
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.iconBadge {
+  background: red;
+  width: 15px;
+  display: block;
+  text-align: center;
+  height: 15px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 9px;
+  line-height: 15px;
+  position: absolute;
+  right: 0;
+  bottom: 13px;
+  left: 12px;
+}
+
+div.notification {
+  margin: 5px;
+  padding: 5px;
+  width: 100%;
+  height: 50%;
+  overflow: auto;
+  text-align: justify;
 }
