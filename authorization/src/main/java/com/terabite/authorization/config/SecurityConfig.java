@@ -85,7 +85,6 @@ public class SecurityConfig {
                                                                                 route))
                                                                 .authenticated();
                                         }
-
                                         authorizeHttpRequests.anyRequest().permitAll();
                                 }).sessionManagement((sessionManagement) -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
