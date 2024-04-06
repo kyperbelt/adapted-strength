@@ -73,7 +73,7 @@ public class ChatController {
 
 
     @GetMapping("/v1/chat/clientChatUsers")
-    // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findClientChatUsers(chatUser);
     }
