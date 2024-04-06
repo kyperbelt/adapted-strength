@@ -35,28 +35,28 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setUserDestinationPrefix(MESSAGE_PREFIX + "/user");
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration){
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+    // @Override
+    // public void configureClientInboundChannel(ChannelRegistration registration){
+    //     registration.interceptors(new ChannelInterceptor() {
+    //         @Override
+    //         public Message<?> preSend(Message<?> message, MessageChannel channel) {
+    //             StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                if(StompCommand.CONNECT.equals(accessor.getCommand())){
-                    System.out.println("Connect ");
-                } else if(StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
-                    System.out.println("Subscribe ");
-                    System.out.println(String.format("\nMessage: %s\n Channel: %s\n", message, channel));
-                } else if(StompCommand.SEND.equals(accessor.getCommand())){
-                    System.out.println("Send message " );
-                } else if(StompCommand.DISCONNECT.equals(accessor.getCommand())){
-                    System.out.println("Exit ");
-                } else {
-                }
-                return message;
-            }
-        });
-    }
+    //             if(StompCommand.CONNECT.equals(accessor.getCommand())){
+    //                 System.out.println("Connect ");
+    //             } else if(StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
+    //                 System.out.println("Subscribe ");
+    //                 System.out.println(String.format("\nMessage: %s\n Channel: %s\n", message, channel));
+    //             } else if(StompCommand.SEND.equals(accessor.getCommand())){
+    //                 System.out.println("Send message " );
+    //             } else if(StompCommand.DISCONNECT.equals(accessor.getCommand())){
+    //                 System.out.println("Exit ");
+    //             } else {
+    //             }
+    //             return message;
+    //         }
+    //     });
+    // }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

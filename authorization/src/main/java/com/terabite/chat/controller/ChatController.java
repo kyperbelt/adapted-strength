@@ -34,12 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("")
 public class ChatController {
-    private final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final ChatUserService chatUserService;
     private final ChatRoomService chatRoomService;
-    private static Logger logger = LoggerFactory.getLogger(ChatController.class);
     
     public ChatController(MessageService messageService, SimpMessagingTemplate messagingTemplate, ChatUserService chatUserService, ChatRoomService chatRoomService){
         this.messageService=messageService;
@@ -48,31 +46,19 @@ public class ChatController {
         this.chatRoomService=chatRoomService;
     }
 
-    // @MessageMapping("/processMessage")
-    // public void processMessage(@Payload Message message){
-    //     Message savedMessage=messageService.save(message);
-    //     logger.info(message.toString());
-        
-    //     ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
-    //     logger.info("{}",chatNotification);
-    //     //front end will be subscribing to bob/queue/message where bob is the user
-    //     messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), String.format("/user/%s/queue/messages", message.getRecipientId()), chatNotification);
-        
-    // }
-
     @MessageMapping("/processMessage")
     public void processMessage(@Payload Message message){
+        message.setHasBeenRead(false);
         Message savedMessage=messageService.save(message);
-        logger.info(message.toString());
         
         ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
-        logger.info("{}",chatNotification);
         //front end will be subscribing to bob/queue/message where bob is the user
-        messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages", chatNotification);
-        
+        if(savedMessage.getRecipientId()!= null){
+            messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages", chatNotification);
+        }
     }
  
-    @GetMapping("/messages/{senderId}/{recipientId}")
+    @GetMapping("/v1/chat/messages/{senderId}/{recipientId}")
     public ResponseEntity<List<Message>> findChatMessages(@PathVariable("senderId") String senderId, @PathVariable("recipientId") String recipientId){
         return ResponseEntity.ok(messageService.findChatMessages(senderId, recipientId));
     }
@@ -81,36 +67,36 @@ public class ChatController {
     //this is a queue that the front end will need to subscribe to
     @SendTo("/chatUser/topic")
     public ChatUser addChatUser(@Payload ChatUser chatUser){
-        chatUserService.saveChatUser(chatUser);
+        chatUserService.saveChatUser(chatUser);       // this is where chat user role is assigned
         return chatUser;
     }
 
 
-    @GetMapping("/coach/chatUsers")
+    @GetMapping("/v1/chat/clientChatUsers")
     // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
-        return ResponseEntity.ok(chatUserService.findClientChatUsers(chatUser));
+        return chatUserService.findClientChatUsers(chatUser);
     }
 
-    @GetMapping("/client/chatUsers")
+    @GetMapping("/v1/chat/coachChatUsers")
     public ResponseEntity<List<ChatUser>> findCoachChatUsers(@RequestBody ChatUser chatUser) {
-        return ResponseEntity.ok(chatUserService.findCoachChatUsers(chatUser));
+        return chatUserService.findCoachChatUsers(chatUser);
     }
     
 
     //TODO: for testing purposes only, we should not keep this
-    @GetMapping("/messages")
+    @GetMapping("/v1/chat/messages")
     public ResponseEntity<List<Message>> getMessages() {
         return ResponseEntity.ok(messageService.getAllMessages());
     }
 
     //TODO: for testing purposes only, we should not keep this
-    @GetMapping("/chatRooms")
+    @GetMapping("/v1/chat/chatRooms")
     public ResponseEntity<List<ChatRoom>> getChatRooms() {
         return ResponseEntity.ok(chatRoomService.getAllChatRooms());
     }
 
-    @PostMapping("/message/setMessageRead/{messageId}")
+    @PostMapping("/v1/chat/message/setMessageRead/")
     public ResponseEntity<?> setMessageReadById(@PathVariable("messageId") long id){
         return messageService.setMessageReadById(id);
     }
