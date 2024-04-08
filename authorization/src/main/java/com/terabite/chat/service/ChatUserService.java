@@ -29,22 +29,16 @@ public class ChatUserService {
             if(chatUser.getEmail()!= null){
                 Login login = loginRepository.findById(chatUser.getEmail()).orElse(null);
 
-                System.out.println(chatUser.getEmail());
-
                 if(login != null){
                     List <String> roles = login.getRoles();
-                    System.out.println(roles.toString());
                     for (int i = 0; i< roles.size(); i++){
-                        System.out.println(roles.get(i));
                         if(roles.get(i).contains("ROLE_ADMIN")  || roles.get(i).contains("ROLE_COACH") ){
                             chatUser.setUserType(UserType.COACH);
                         }
                     }
-                    chatUserRepository.save(chatUser);
-                    System.out.println(chatUser.getUserType());
-                    
                 }
             }
+            chatUserRepository.save(chatUser);
         }
     }
 
