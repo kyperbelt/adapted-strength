@@ -1,29 +1,60 @@
 import logo from '../assets/logo.png';
 
 function AdaptedStrengthLogo() {
-    return (<div className="flex flex-col items-center mt-96  mb-32 md:my-64">
-        <img src={logo} alt="Adapted Strength Logo" className="w-3/4 md:w-96" />
-    </div>);
+    return (
+        <div className="flex flex-col items-center mt-3">
+            <img src={logo} alt="Adapted Strength Logo" className="w-3/4 md:w-96" />
+        </div>);
 }
 
 export default function PageContainer1({ children }) {
     return (
-        <div className="h-full content-center w-full">
-            <div className="h-44 md:h-56 bg-header-background1">
+        <div className="grow content-center flex flex-col w-full">
+            <div className="h-44 md:h-56 bg-header-background1 flex-none">
                 <AdaptedStrengthLogo />
             </div>
-            <div className="bg-[#161A1D] h-full">
-                {children}
+            <div className="bg-secondary flex grow flex-row content-center justify-center">
+                <div className="flex-1 flex flex-col max-w-screen-xl">
+                    {children}
+                </div>
             </div>
         </div>);
 }
 
-export function PageContainer2({ ...props}) {
+/**
+ * Page container 1 but with no background color added
+*/
+export function BlankPageContainer1({ children }) {
+    return (
+        <div className="relative grow content-center flex flex-col w-full">
+            <div className="h-44 relative -top-5 md:h-56 bg-header-background1 flex-none pt-5">
+                <AdaptedStrengthLogo />
+            </div>
+            <div className="flex grow flex-row content-center justify-center">
+                <div className="flex-1 flex flex-col max-w-screen-xl">
+                    {children}
+                </div>
+            </div>
+        </div>);
+}
+
+export function PageContainer2({ ...props }) {
     return (
         <div className="h-full my-0 content-center w-full top-[100px]">
             <div className="mt-56 bg-[#161A1D] h-full">
                 <div className="relative -top-10">
                     {props.children}
+                </div>
+            </div>
+        </div>);
+}
+
+export function BlankPageContainer({ children, ...props }) {
+    return (
+        <div className="grow content-center flex flex-col w-full" {...props}>
+            <div className="flex grow flex-row content-center justify-center">
+                <div className="flex-1 flex flex-col max-w-screen-xl">
+                    {children}
                 </div>
             </div>
         </div>);

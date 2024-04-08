@@ -40,7 +40,7 @@ public class ProgramService {
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(programRepository.findOneByProgramId(program.getProgramId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(programRepository.findOneByProgramId(program.getProgramId()), HttpStatus.OK);
         }
     }
 

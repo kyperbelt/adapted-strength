@@ -4,10 +4,29 @@ import { HamburgerButton } from '../../components/Button';
  * @description Contains the styled table components
  */
 
-export function StyledCheckboxTable({ ...props }) {
+export function StyledCheckboxTable({ onOptionsClick, ...props }) {
   const headers = props.headers;
   const children = props.children;
 
+  const whenOptionsClicked = (e) => {
+    e.stopPropagation();
+    e.target.closest('th').querySelector('#all-dropdown').classList.toggle('hidden');
+
+  }
+
+  const onFocusLost = (e) => {
+    // add hidden class to the dropdown
+    setTimeout(() => {
+      e.target.closest('th').querySelector('#all-dropdown').classList.add('hidden');
+    }, 300);
+  }
+
+  const OnOptionSelected = (option) => {
+    console.log(`${option} selected`);
+    if (onOptionsClick) {
+      onOptionsClick(option);
+    }
+  }
 
   const selectAll = (e, onAllSelected) => {
 
@@ -16,13 +35,15 @@ export function StyledCheckboxTable({ ...props }) {
     checkboxes.forEach((checkbox) => {
       checkbox.checked = e.target.checked;
     });
+
     if (onAllSelected) {
       onAllSelected(e.target.checked);
     }
   }
 
+
   return (
-    <table className={`w-full text-sm text-left rtl:text-right text-gray-500 ${props.className}`}>
+    <table className={`text-sm text-left rtl:text-right text-gray-500 ${props.className}`}>
       <thead>
         <tr className="border-b" key="headers">
           <th className="w-1 px-6">
@@ -31,6 +52,10 @@ export function StyledCheckboxTable({ ...props }) {
           {headers.map((header) => {
             return (<th key={header} className="px-6 py-3 text-left font-bold">{header}</th>);
           })}
+          <th className="relative">
+            <HamburgerButton onBlur={onFocusLost} onClick={whenOptionsClicked} />
+            <DropDownMenu id="all-dropdown" options={['Delete Selected']} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal" />
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -45,21 +70,23 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
   const data = props.data;
   const whenOptionsClicked = (e) => {
     e.stopPropagation();
-    if (onOptionClick) {
-      onOptionClick(e);
-    }
     e.target.closest('td').querySelector('#dropdown').classList.toggle('hidden');
 
   }
 
   const onFocusLost = (e) => {
     // add hidden class to the dropdown
-    e.target.closest('td').querySelector('#dropdown').classList.add('hidden');
+    setTimeout(() => {
+      e.target.closest('td').querySelector('#dropdown').classList.add('hidden');
+    }, 300);
   }
 
   const oneSelected = (e, onSelected) => {
     const selected_all = e.target.closest('table').querySelector('input[type="checkbox"][id="select_all"]');
     selected_all.checked = false;
+    if (props.onClick) {
+      props.onClick(e.target.checked);
+    }
 
   }
 
@@ -74,7 +101,7 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
       {props.children}
       <td className="relative">
         <HamburgerButton onBlur={onFocusLost} className="ml-auto" onClick={(e) => { whenOptionsClicked(e) }} />
-        <DropDownMenu id="dropdown" options={['Edit', 'Delete']} className="absolute hidden right-0" />
+        <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={['Edit', 'Delete']} className="absolute hidden right-0" />
       </td>
     </tr>
   );
@@ -83,7 +110,7 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
 export function DropDownMenu({ options, onOptionClick, className, ...props }) {
 
   const onClick = (e, option) => {
-    e.stopPropagation();
+    console.log(`${option} clicked`);
     if (onOptionClick) {
       onOptionClick(option);
     }
@@ -96,7 +123,9 @@ export function DropDownMenu({ options, onOptionClick, className, ...props }) {
         {options.map((option) => {
           return (
             <li key={option}>
-              <a className="block px-4 py-2 hover:bg-gray-200" onClick={(e) => onClick(e, option)}>
+              <a className="block px-4 py-2 hover:bg-gray-200" onClick={(e) => {
+                onClick(e, option);
+              }}>
                 {option}
               </a>
             </li>
@@ -109,15 +138,15 @@ export function DropDownMenu({ options, onOptionClick, className, ...props }) {
 
 export function SearchBar({ onSearch, ...props }) {
   return (
-    <div class="pb-4 bg-white dark:bg-gray-900">
-      <label for="table-search" class="sr-only">Search</label>
-      <div class="relative mt-1">
-        <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+    <div className="pb-4 bg-white me-2">
+      <label htmlFor="table-search" className="sr-only">Search</label>
+      <div className="relative mt-1">
+        <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+          <svg className="w-4 h-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
           </svg>
         </div>
-        <input type="text" id="table-search" class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
+        <input type="text" id="table-search" className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg max-w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="" />
       </div>
     </div>
   );

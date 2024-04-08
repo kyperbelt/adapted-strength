@@ -2,6 +2,10 @@ import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { CardBack } from "../../components/Card";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 import { useState } from "react";
+import { BlankPageContainer } from "../../components/PageContainer";
+import ProgramDashboard from "./ProgramDashboard";
+import CreateProgramDialog from "./CreateProgramDialog";
+import EditProgramsDialog from "./EditProgramDialog";
 
 // list of programs 
 const test_programs = [
@@ -140,35 +144,42 @@ const test_cycles = [
 ]
 
 
+let program_id = 5;
+
+
 export default function ProgramMamagement() {
+
   const [programs, setPrograms] = useState(test_programs);
 
+  const onAddProgram = () => {
+    console.log("Add program");
+    const element = document.getElementById("create-program");
+    element.classList.remove("hidden");
+  }
+
+  const onCreateProgramClose = () => {
+    console.log("Close program");
+    const element = document.getElementById("create-program");
+    element.classList.add("hidden");
+  }
+
+  const onCreate = (name, description) => {
+    // TODO: request to create a program
+    const newProgram = {
+      id: program_id++,
+      name: name,
+      description: description,
+      selected: false,
+      blocks: []
+    };
+    setPrograms([...programs, newProgram]);
+  };
+
   return (
-    <div>
-      <CardBack className="mt-20">
-        <SearchBar />
-        <StyledCheckboxTable headers={["Name", "Description"]}>
-          {programs.map((program) => (
-            <CustomTableRow
-              key={program.id}
-              data={[
-                program.name,
-                program.description,
-              ]}
-              selected={program.selected}
-              onClick={() => {
-                const newPrograms = programs.map((p) => {
-                  if (p.id === program.id) {
-                    return { ...p, selected: !p.selected };
-                  }
-                  return p;
-                });
-                setPrograms(newPrograms);
-              }}
-            />
-          ))}
-        </StyledCheckboxTable>
-      </CardBack>
-    </div>
+    <BlankPageContainer id="program-management">
+      {/*Dialogs*/}
+      <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
+      <ProgramDashboard trainingPrograms={[programs, setPrograms]} onAddProgram={onAddProgram} />
+    </BlankPageContainer>
   );
 }
