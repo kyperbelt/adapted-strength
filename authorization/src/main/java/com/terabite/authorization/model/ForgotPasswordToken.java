@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 @Table(name = "forgot_password_table")
 public class ForgotPasswordToken {
     private String token;
+    
     private LocalDateTime createdAt;
 
     public String getToken() {

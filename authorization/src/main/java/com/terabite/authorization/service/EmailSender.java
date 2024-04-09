@@ -48,7 +48,6 @@ public class EmailSender {
     }
 
     public void sendForgotPasswordEmail(String email) {
-        //This will change with jwt tokens
         //random 32 character string
         String token = UUID.randomUUID().toString();
         log.info("Password reset token: " + token);
