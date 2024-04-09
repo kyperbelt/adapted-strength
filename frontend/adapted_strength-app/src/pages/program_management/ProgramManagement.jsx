@@ -6,6 +6,7 @@ import { BlankPageContainer } from "../../components/PageContainer";
 import ProgramDashboard from "./ProgramDashboard";
 import CreateProgramDialog from "./CreateProgramDialog";
 import EditProgramsDialog from "./EditProgramDialog";
+import BlockDashboard from "./BlockDashboard";
 
 // list of programs 
 const test_programs = [
@@ -143,6 +144,40 @@ const test_cycles = [
   },
 ]
 
+function getCyclesForDay(day_id) {
+  //TODO: request to get cycles for a day from the server
+
+  const day = test_days.find((day) => day.id === day_id);
+  return test_cycles.filter((cycle) => day.cycles.includes(cycle.id));
+}
+
+function getDaysForWeek(week_id) {
+  //TODO: request to get days for a week from the server
+  
+  const week = test_weeks.find((week) => week.id === week_id);
+  return test_days.filter((day) => week.days.includes(day.id));
+}
+
+function getWeeksForBlock(block_id) {
+  //TODO: request to get weeks for a block from the server 
+
+  const block = test_blocks.find((block) => block.id === block_id);
+  return test_weeks.filter((week) => block.weeks.includes(week.id));
+
+}
+
+function getBlocksForProgram(program_id) {
+  // TODO: request to get blocks for a program from the server 
+
+  const program = test_programs.find((program) => program.id === program_id);
+  return test_blocks.filter((block) => program.blocks.includes(block.id));
+}
+
+function getAllPrograms() {
+  // TODO: request to get all programs from the server
+  return test_programs;
+}
+
 
 let program_id = 5;
 
@@ -150,6 +185,9 @@ let program_id = 5;
 export default function ProgramMamagement() {
 
   const [programs, setPrograms] = useState(test_programs);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [selectedProgramBlocks, setSelectedProgramBlocks] = useState([]);
+
 
   const onAddProgram = () => {
     console.log("Add program");
@@ -175,11 +213,19 @@ export default function ProgramMamagement() {
     setPrograms([...programs, newProgram]);
   };
 
+  const onClickProgram = (program) => {
+    console.log("Program clicked: ", program);
+    const selectedProgramBlocks = test_blocks.filter((block) => program.blocks.includes(block.id));
+    setSelectedProgramBlocks(selectedProgramBlocks);
+    setSelectedProgram(program);
+  }
+
   return (
     <BlankPageContainer id="program-management">
       {/*Dialogs*/}
       <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
-      <ProgramDashboard trainingPrograms={[programs, setPrograms]} onAddProgram={onAddProgram} />
+      { !selectedProgram && <ProgramDashboard onClickProgram={onClickProgram} trainingPrograms={[programs, setPrograms]} onAddProgram={onAddProgram} /> }
+      { selectedProgram && <BlockDashboard programBlocks={[selectedProgramBlocks, setSelectedProgramBlocks]}/>}
     </BlankPageContainer>
   );
 }

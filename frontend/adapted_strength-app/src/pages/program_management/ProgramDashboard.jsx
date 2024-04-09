@@ -5,7 +5,7 @@ import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 
 import { useState } from "react";
 
-export default function ProgramDashboard({ trainingPrograms, onAddProgram, ...props }) {
+export default function ProgramDashboard({ trainingPrograms, onAddProgram, onClickProgram, ...props }) {
   const [programs, setPrograms] = trainingPrograms;
   const [programEditId, setEditProgramId] = useState(null);
 
@@ -32,9 +32,14 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, ...pr
     setPrograms(newPrograms);
   }
 
+  const OnProgramClicked = (program) => {
+    console.log(`Program ${program.id} selected: ${program.selected}`);
+    onClickProgram(program);
+  }
+
   return (
 
-    <div className="flex flex-col px-6">
+    <div className="flex flex-col px-6" {...props}>
       <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
       <CardBack className="">
         <div className="flex flex-col sm:flex-row mt-2">
@@ -71,8 +76,9 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, ...pr
                   return p;
                 });
                 setPrograms(newPrograms);
-                console.log(`Program ${program.id} selected: ${program.selected}`);
+                console.log(`Program ${program.id} clicked`);
               }}
+              onRowClick={() => OnProgramClicked(program)}
             />
           ))}
         </StyledCheckboxTable>

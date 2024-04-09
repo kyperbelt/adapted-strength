@@ -1,6 +1,7 @@
 import { PrimaryButton, SecondaryButton } from '../../components/Button';
 import { BasicModalDialogue } from '../../components/Dialog';
 import LabeledInputField from '../../components/forms/LabeledInputField';
+import { BasicTextArea } from '../../components/TextArea';
 
 export default function EditProgramsDialog({ programId, programState, className, ...props }) {
         const [programs, setPrograms] = programState;
@@ -23,7 +24,7 @@ export default function EditProgramsDialog({ programId, programState, className,
                                 return { ...program, name: name, description: description };
                         }
                         return program;
-                });
+               });
 
                 setPrograms(newPrograms);
 
@@ -37,10 +38,7 @@ export default function EditProgramsDialog({ programId, programState, className,
                 <BasicModalDialogue id="edit-program" title={"Edit Program"} className={className} onCloseDialog={props.onClose} {...props}>
                         <form onSubmit={onEdit}>
                                 <LabeledInputField id="edit_program_name_field" placeholder="Program Name" required={true} />
-                                <div className="py-5">
-                                        <label htmlFor="edit_program_description" className="block mb-2 text-sm font-medium text-gray-900 ">Program Description</label>
-                                        <textarea id="edit_program_description" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Describe this program here..."></textarea>
-                                </div>
+                                <BasicTextArea id="edit_program_description" label="Program Description" placeholder="Describe this program here..." />
                                 <div className="flex justify-end">
                                         <SecondaryButton onClick={props.onClose} className="mr-2">Cancel</SecondaryButton>
                                         <PrimaryButton type="submit" className="mr-2">Save</PrimaryButton>

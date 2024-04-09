@@ -20,9 +20,10 @@ function ChatButton({...props})
 }
 
 export default function Layout() { 
+
     return (
         <div id="layout" className="grow flex flex-col">
-            <NavBar />
+            <NavBar currentPage="" />
             <Outlet className="" />
             <ChatButton messageNotification={false}/>
             {/*add footer here*/}

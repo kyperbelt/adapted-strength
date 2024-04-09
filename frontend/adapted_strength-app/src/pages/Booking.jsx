@@ -56,7 +56,7 @@ const CalendlyBooking = () => {
 
         <BlankPageContainer1>
             <h3 className="relative text-center text-2xl bottom-12">Book your consultation below!</h3>
-            <div className="bg-[#161A1D] px-3 py-3 grow flex flex-col">
+            <div className="bg-[#161A1D] px-3 py-3 grow flex flex-col text-center">
                 <h3 className='text-2xl py-3 text-white'>
                     Calendly Widget
                 </h3>
@@ -68,7 +68,7 @@ const CalendlyBooking = () => {
                     width="100%"
                     height="100%"
                     title="Calendly scheduling link"
-                    className='rounded-2xl grow min-h-svh md:min-h-fit'
+                    className='rounded-2xl grow'
                 ></iframe>
             </div>
         </BlankPageContainer1>)
