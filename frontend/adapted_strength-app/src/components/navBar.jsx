@@ -41,6 +41,13 @@ export default function NavBar() {
           <Link to="/program-management" className="py-2  my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Manage Programs</Link>
           <Link to="/profile" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Profile</Link>
           <Link to="/sign-up" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Sign Up</Link>
+          <Link to="/notifications" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>
+            <div className="icon baseline"> Notifications &nbsp;
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                <path id="icon-info" d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
+              </svg>
+            </div>
+          </Link>
         </div>
       </nav>
       <div className="h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>

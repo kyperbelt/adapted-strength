@@ -1,12 +1,10 @@
 package com.terabite.authorization.service;
 
-import com.terabite.authorization.log.JwtValidationException;
-import com.terabite.authorization.service.JwtService;
-
+import com.terabite.common.model.LoginDetails;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,11 +28,14 @@ public class JwtServiceTests {
     private static final long EXPIRATION = 1000 * 60 * 60 * 24;
     private JwtService jwtService;
 
+
     @BeforeEach
     void setup() {
         jwtService = new JwtService(SECRET1, EXPIRATION);
-        System.out.println("Secret1: " + SECRET1);
-        System.out.println("Secret2: " + SECRET2);
+//        System.out.println("Secret1: " + SECRET1);
+//        System.out.println("Secret2: " + SECRET2);
+
+
     }
 
     @Test
@@ -85,8 +86,56 @@ public class JwtServiceTests {
         // New jwtService means a new secret. Tokens generated with old secret are
         // always invalid
         jwtService = null;
-        jwtService = new JwtService(SECRET2);
+        jwtService = new JwtService(SECRET2, EXPIRATION);
         assertFalse(jwtService.validateToken(token, userDetails));
     }
 
+    @Nested
+    class testTokenInvalidation {
+        LoginDetails loginDetails;
+
+        @BeforeEach
+        void setup() {
+            loginDetails = mock(LoginDetails.class);
+            when(loginDetails.getUsername()).thenReturn("testUser");
+            when(loginDetails.getRoles()).thenReturn(null);
+        }
+
+        @Test
+        void testInvalidateToken() {
+            jwtService = new JwtService(SECRET1, EXPIRATION);
+            String token = jwtService.generateToken(loginDetails);
+            boolean valid = jwtService.validateToken(token, loginDetails);
+
+            // Token is valid, and nothing is in the blacklist
+            assertTrue(valid);
+            assertEquals(0, jwtService.getTokenBlacklist().size());
+
+            jwtService.invalidateToken(token);
+//            jwtService.getTokenBlacklist().put(token, true);
+//            System.out.println(jwtService.getTokenBlacklist().asMap());
+
+            // Token is now invalid, and is in the blacklist
+            assertEquals(1, jwtService.getTokenBlacklist().size());
+        }
+
+        @Test
+        void testTokenBlacklistEviction() {
+            jwtService = new JwtService(SECRET1, 0);
+
+            // TODO: have a control for preventing spam token invalidation
+            for (int i = 0; i < 5; i++) {
+//                System.out.println(jwtService.getTokenBlacklist().asMap());
+                String token = jwtService.generateToken(loginDetails);
+
+                // Token is invalid, put in blacklist
+                jwtService.invalidateToken(token);
+            }
+
+            // Value should be 0, despite 5 tokens being invalidated.
+            // This is because the blacklist internally "cleans up" after every modifying action
+            // This means that the added tokens are immediately evicted after being added
+            assertEquals(0, jwtService.getTokenBlacklist().size());
+        }
+    }
 }

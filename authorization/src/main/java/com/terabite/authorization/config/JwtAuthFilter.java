@@ -3,6 +3,7 @@ package com.terabite.authorization.config;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.authorization.service.LoginService;
-import com.terabite.common.model.LoginDetails;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,11 +54,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         Optional<String> email = Optional.empty();
 
+        // Token validity checks
         if (token.isPresent() && !token.get().isBlank() && !token.get().equals("null")){
+
+            // Email existence checks
             email = jwtService.extractUsername(token.get());
             if (email.isEmpty()) {
                 raiseException(request, response, token.get());
-                log.error("Invalid token provided");
+                log.error("Invalid token provided: ");
+                return;
+            }
+
+            // Token blacklist checks
+            Cache<String, Boolean> blacklist = jwtService.getTokenBlacklist();
+            if (blacklist.getIfPresent(token.get()) != null) {
+                raiseException(request, response, token.get());
+                log.error("Blacklisted token provided: " + token.get());
                 return;
             }
         }

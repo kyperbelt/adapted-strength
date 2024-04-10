@@ -34,9 +34,9 @@ public class ChatRoomService {
     private String createChatId(String senderId, String recipientId) {
         String chatId=String.format("%s_%s", senderId, recipientId);
         
-        ChatRoom senderRecipient=new ChatRoom(chatId, senderId, recipientId, true);
+        ChatRoom senderRecipient=new ChatRoom(chatId, senderId, recipientId);
 
-        ChatRoom recipientSender=new ChatRoom(chatId, recipientId, senderId, false);
+        ChatRoom recipientSender=new ChatRoom(chatId, recipientId, senderId);
 
         chatRoomRepository.save(senderRecipient);
 
@@ -48,12 +48,6 @@ public class ChatRoomService {
 
     public List<ChatRoom> getAllChatRooms() {
         return chatRoomRepository.findAll();
-    }
-
-
-    public void setUnreadFalse(ChatRoom chatRoom) {
-        chatRoom.setHasNewMessage(false);
-        chatRoomRepository.save(chatRoom);
     }
 
 
