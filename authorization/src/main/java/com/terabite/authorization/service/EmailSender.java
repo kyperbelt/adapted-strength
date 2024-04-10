@@ -69,10 +69,6 @@ public class EmailSender {
             e.printStackTrace();
         }
 
-        // webprotocol and domainPort are both registering as blank
-        System.out.println("webprotocol: " + webProtocol);
-        System.out.println("weburl: " + webUrl);
-        System.out.println("domainport: " + domainPort);
         String siteURL = webProtocol + "://" + webUrl + ":" + domainPort;
         String resetPasswordLink = siteURL + "/reset-password?token=" + token.getToken();
 

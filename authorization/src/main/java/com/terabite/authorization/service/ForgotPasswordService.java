@@ -43,9 +43,6 @@ public class ForgotPasswordService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("No user found with provided email"));
     }
 
-    /**
-     * FIXME ADAPTEDS-126: We need to invalidate the reset tokens after some time.
-     */
     public ResponseEntity<?> processResetPassword(String tokenString, String newPassword) {
         ForgotPasswordToken token = forgotPasswordTokenRepository.findByToken(tokenString).orElse(null);
         if(token != null){
