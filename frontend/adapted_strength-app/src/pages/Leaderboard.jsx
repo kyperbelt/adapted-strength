@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import logo from '../assets/logo.png';
-import Footer from '../components/footer';
-import { UserApi } from '../api/UserApi';
+//import { useEffect, useState } from 'react';
+//import logo from '../assets/logo.png';
+//import Footer from '../components/footer';
+//import { UserApi } from '../api/UserApi';
 
 // Olympic Male:
 // 55 61 67 73 81 89 96 102 109 109+
@@ -15,6 +15,17 @@ import { UserApi } from '../api/UserApi';
 // Powerlifting Female:
 // 44 48 52 56 60 67.5 75 82.5 90 100 100+
 
+/*
+<p className='font-bold text-lg'>Adapted Strength (A.S.) All Time Records</p>
+<h3>Search records here:</h3>   
+</div>
+*/
+
+import { useState } from 'react';
+import logo from '../assets/logo.png';
+import Footer from '../components/footer';
+import { UserApi } from '../api/UserApi';
+
 function AdaptedStrengthLogo() {
   return (
     <div className="flex flex-col items-center mt-12">
@@ -23,31 +34,31 @@ function AdaptedStrengthLogo() {
   );
 }
 
+const weightClasses = {
+  Olympic: {
+    Men: [55, 61, 67, 73, 81, 89, 96, 102, 109, '109+'],
+    Women: [45, 49, 55, 59, 64, 71, 76, 81, 87, '87+'],
+  },
+  Powerlifting: {
+    Men: [52, 56, 60, 67.5, 75, 82.5, 90, 100, 110, 125, 140, '140+'],
+    Women: [44, 48, 52, 56, 60, 67.5, 75, 82.5, 90, 100, '100+'],
+  },
+};
+
 export default function Leaderboard() {
-  const [olympicMaleData, setOlympicMaleData] = useState([]);
-  const [olympicFemaleData, setOlympicFemaleData] = useState([]);
-  const [powerliftingMaleData, setPowerliftingMaleData] = useState([]);
-  const [powerliftingFemaleData, setPowerliftingFemaleData] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedWeightClass, setSelectedWeightClass] = useState(null);
 
-  useEffect(() => {
-    // Fetch data for each weight class from the backend API
-    fetchLeaderboardData();
-  }, []);
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSelectedGender(null); // Reset gender when category changes
+    setSelectedWeightClass(null); // Reset weight class when category changes
+  };
 
-  const fetchLeaderboardData = async () => {
-    try {
-      const olympicMaleResponse = await UserApi.getTop10MaleAthletesByWeightClass('80');
-      const olympicFemaleResponse = await UserApi.getTop10FemaleAthletesByWeightClass('45');
-      const powerliftingMaleResponse = await UserApi.getTop10MalePowerliftersByWeightClass('60');
-      const powerliftingFemaleResponse = await UserApi.getTop10FemalePowerliftersByWeightClass('90');
-
-      setOlympicMaleData(olympicMaleResponse.data);
-      setOlympicFemaleData(olympicFemaleResponse.data);
-      setPowerliftingMaleData(powerliftingMaleResponse.data);
-      setPowerliftingFemaleData(powerliftingFemaleResponse.data);
-    } catch (error) {
-      console.error('Error fetching leaderboard data:', error);
-    }
+  const handleGenderChange = (gender) => {
+    setSelectedGender(gender);
+    setSelectedWeightClass(null); // Reset weight class when gender changes
   };
 
   return (
@@ -57,34 +68,59 @@ export default function Leaderboard() {
         <AdaptedStrengthLogo />
       </div>
       <br />
-      {/* Display tables for each discipline and gender */}
-      <div className="flex flex-col items-center">
-        <h2 className="text-xl font-bold">Olympic Weightlifting</h2>
-        <h3 className="text-lg font-semibold">Male</h3>
-        <table>
-          {/* Table for top 10 male Olympic lifters */}
-          {/* Iterate over olympicMaleData to display the rows */}
-        </table>
-        <h3 className="text-lg font-semibold">Female</h3>
-        <table>
-          {/* Table for top 10 female Olympic lifters */}
-          {/* Iterate over olympicFemaleData to display the rows */}
-        </table>
+      <div>
+        <p className='font-bold text-lg'>Adapted Strength (A.S.) All Time Records</p> 
+        <br></br>
       </div>
-      <div className="flex flex-col items-center">
-        <h2 className="text-xl font-bold">Powerlifting</h2>
-        <h3 className="text-lg font-semibold">Male</h3>
-        <table>
-          {/* Table for top 10 male powerlifters */}
-          {/* Iterate over powerliftingMaleData to display the rows */}
-        </table>
-        <h3 className="text-lg font-semibold">Female</h3>
-        <table>
-          {/* Table for top 10 female powerlifters */}
-          {/* Iterate over powerliftingFemaleData to display the rows */}
-        </table>
+      {/* Dropdown menus */}
+      <div>
+        <label htmlFor="category">Category:</label>
+        <select
+          id="category"
+          onChange={(e) => handleCategoryChange(e.target.value)}
+          value={selectedCategory}
+        >
+          <option value="">Select category</option>
+          <option value="Olympic">Olympic</option>
+          <option value="Powerlifting">Powerlifting</option>
+        </select>
       </div>
+      {selectedCategory && (
+        <div>
+          <label htmlFor="gender">Gender:</label>
+          <select
+            id="gender"
+            onChange={(e) => handleGenderChange(e.target.value)}
+            value={selectedGender}
+          >
+            <option value="">Select gender</option>
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+          </select>
+        </div>
+      )}
+      {selectedCategory && selectedGender && (
+        <div>
+          <label htmlFor="weightClass">Weight Class:</label>
+          <select
+            id="weightClass"
+            onChange={(e) => setSelectedWeightClass(e.target.value)}
+            value={selectedWeightClass}
+          >
+            <option value="">Select weight class</option>
+            {weightClasses[selectedCategory][selectedGender].map((weight, index) => (
+              <option key={index} value={weight}>
+                {weight}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+      {/* Display leaderboard based on selectedCategory, selectedGender, and selectedWeightClass */}
+      {/* Further implementation can go here */}
       <Footer />
     </div>
   );
 }
+
+

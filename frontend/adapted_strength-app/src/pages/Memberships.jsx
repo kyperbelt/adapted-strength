@@ -49,48 +49,6 @@ function ExpirationField({...props}) {
 }
 
 export default function Memberships() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [profileInfo, setProfileInfo] = useState([]);
-    const [selectedTier, setSelectedTier] = useState(profileInfo.subscriptionTier || '');
-
-  
-    useEffect(() => {
-      setIsLoading(true);
-      UserApi.getProfileInformation()
-        .then((response) => {
-          if (response.status === 200) {
-            setProfileInfo(response.data);
-            setIsLoading(false);
-            console.log(response.data);
-          } else {
-            // TODO: Handle error - redirect to login page or display error message
-          }
-        })
-        .catch((error) => {
-          console.error(`ERROR HAPPENED: ${error}`);
-          setIsLoading(false);
-          // TODO: Handle error - redirect to login page or display error message
-        });
-    }, []);
-  
-    const onSubmit = async (selectedValue) => {
-        console.log("Selected Value:", selectedValue);
-        const data = {
-          subscriptionTier: selectedValue,
-        };
-        console.log("Data:", data);
-        await UserApi.updateSubscription(data).then((response) => {
-          if (response.status === 200) {
-            console.log("Subscription updated successfully");
-            // Update the selected tier in the state
-            setSelectedTier(selectedValue);
-          }
-        });
-      };
-  
-    if (isLoading) {
-      return <div>{"Loading..."}</div>;
-    }
 
     return (
         <div className="h-full my-0 content-center w-full top-[100px]">
@@ -100,21 +58,6 @@ export default function Memberships() {
 
             <br></br>
             
-
-            <div className='container mx-auto w-2/6 content-center text-center px-2 bg-blue-200 text-black rounded-md'>
-                    <h2 className='font-bold'>YOUR SUBSCRIPTION TIER</h2>
-                    <p><SubscriptionField tier={selectedTier} /></p>
-
-                    <h2 className='font-bold'>PAYMENT DATE</h2>
-                    <p><ExpirationField exp={profileInfo.expiration_date}/></p>
-                    <br></br>
-
-                    <h2 className='font-bold'>UPGRADE OR SWITCH MEMBERSHIPS HERE</h2>
-                    <DropDownMenu onSubmit={onSubmit} />
-
-                </div>
-
-            <br></br>
 
             <div>
                 <p className='font-bold text-lg'>Adapted Strength (A.S.) Memberships</p>
