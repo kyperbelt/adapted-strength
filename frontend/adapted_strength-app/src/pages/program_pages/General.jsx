@@ -11,17 +11,15 @@ export default function General() {
         threeDay: false
     });
     const [workouts, setWorkout] = useState([]);
-    const adptdsURL = 'https://localhost:8080/v1/programming/week/all_weeks';
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(adptdsURL);
-            const jsonData = await response.json();
-            setWorkout(jsonData);
-        };
-        fetchData();
-
-    }, []);
+    const adptdsURL = 'http://10.0.0.63:8080/v1/programming/day/all_days';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJpYXQiOjE3MTMwNDQ0MjgsImV4cCI6MTcxMzEzMDgyOH0.aEIDcBXEFFSwy_aGzatcrZNvRTz6RxR5MAN1r6B5kUwetqjNHhYKpbHH7Vn3Ez6TyG5qlAmjssSBy4cJKJ3YmA';
+    // const fetchData = async () => {
+    //     const response = await fetch(adptdsURL);
+    //     const jsonData = await response.json();
+    //     setWorkout(jsonData);
+    // };
+    // fetchData();
+    // }, []);
 
     const [fiveDayProgram, setFiveDayProgram] = useState(Array(5).fill(false));
     const [fourDayProgram, setFourDayProgram] = useState(Array(4).fill(false));
@@ -33,7 +31,23 @@ export default function General() {
             [program]: !prevState[program]
         }));
     };
-
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await fetch(adptdsURL, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const jsonData = await response.json();
+            setShowPrograms(jsonData);
+          } catch (error) {
+            console.error("Error fetching data: ", error);
+          }
+        };
+    
+        fetchData();
+      }, []);
     const toggleDay = (program, index) => {
         switch (program) {
             case "fiveDay":
@@ -55,12 +69,11 @@ export default function General() {
                 break;
         }
     };
-
+    
     const getTable = (days) => {
         if (!days.some(day => day)) return null;
 
         const alphabet = 'ABCDEFGHIJ';
-
 
         return (
             <table className="w-full text-left mt-4">
@@ -94,7 +107,16 @@ export default function General() {
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                 Movement {day.movement}
                                 <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                    Equipment
+                                {workouts && workouts.length > 0 && (
+                                    <div>
+                                    {
+                                        workouts.map((workout) => (
+                                            <div key={workout.repCycles}>
+                                                {workout.repCycles.equipment}
+                                            </div>
+                                    ))}
+                                    </div>
+                                )}
                                 </td>
                                 <td scope="col" className="px-3 text-xs bg-gray-100">
                                     Sets
@@ -134,8 +156,7 @@ export default function General() {
             </table>
         );
     };
-
-
+    
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
