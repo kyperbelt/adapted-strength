@@ -11,58 +11,70 @@ import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.SubscriptionUpdateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.terabite.common.dto.Payload;
+import com.terabite.user.model.UserInformation;
+import com.terabite.user.repository.UserRepository;
 
 @Service
 public class PaymentService {
     @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
+    private UserRepository userRepository;
 
-    public PaymentService(){
-
+    public PaymentService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public ResponseEntity<?> cancelSubscriptionById(String subscriptionId) throws StripeException{
+    public ResponseEntity<?> cancelSubscriptionById(String subscriptionId) throws StripeException {
         Stripe.apiKey = stripeKey;
 
-        //get the subscription
+        // get the subscription
         Subscription resource = Subscription.retrieve(subscriptionId);
 
-
-        //set cancel at period end to true
+        // set cancel at period end to true
         SubscriptionUpdateParams params = SubscriptionUpdateParams
-        .builder()
-        .setCancelAtPeriodEnd(true)
-        .build();
+                .builder()
+                .setCancelAtPeriodEnd(true)
+                .build();
 
-        //call stripe to update subscription
+        // call stripe to update subscription
         Subscription updatedSubscription = resource.update(params);
 
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> createCheckoutSession(String priceId) throws StripeException{
+    public ResponseEntity<?> createCheckoutSession(String priceId, String email) throws StripeException {
         Stripe.apiKey = stripeKey;
-        String returnUrl = "";
+
+        // find the user based on email so that we can assign customer
+        UserInformation userInformation = userRepository.findByEmail(email).orElse(null);
+        // add null protection
+        if (userInformation == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        String stripeCustomer = userInformation.getCustomer().getId();
+
+        // need to fill in this return url
+        String returnUrl = "http://localhost:3000";
 
         SessionCreateParams params = SessionCreateParams.builder()
-            .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-            .addLineItem(
-                SessionCreateParams.LineItem.builder()
-                .setPrice(priceId)
-                .setQuantity(1L)
-                .build()
-            )
-            .setUiMode(SessionCreateParams.UiMode.EMBEDDED)
-            .setReturnUrl(returnUrl + "?session_id={CHECKOUT_SESSION_ID}")
-            .build();
+                .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setPrice(priceId)
+                                .setQuantity(1L)
+                                .build())
+                .setCustomer(stripeCustomer)
+                .setUiMode(SessionCreateParams.UiMode.EMBEDDED)
+                .setReturnUrl(returnUrl + "?session_id={CHECKOUT_SESSION_ID}")
+                .build();
 
         Session session = Session.create(params);
-        String clientSecret = session.getPaymentIntentObject().getClientSecret();
-        return new ResponseEntity<>(clientSecret, HttpStatus.OK);
-        
+        String clientSecret = session.getClientSecret();
+        return new ResponseEntity<>(Payload.of(clientSecret), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> retrieveCheckoutSessionStatus(String checkoutSessionId) throws StripeException{
+    public ResponseEntity<?> retrieveCheckoutSessionStatus(String checkoutSessionId) throws StripeException {
         Stripe.apiKey = stripeKey;
         Session session = Session.retrieve(checkoutSessionId);
         return new ResponseEntity<>(session, HttpStatus.OK);

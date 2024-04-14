@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.stripe.exception.StripeException;
 import com.terabite.payment.service.PaymentService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +33,14 @@ public class PaymentController {
     }
     
     @PostMapping("/create_checkout_session")
-    public ResponseEntity<?> createCheckoutSession(String priceId) throws StripeException{
-        return paymentService.createCheckoutSession(priceId);
+    public ResponseEntity<?> createCheckoutSession(@AuthenticationPrincipal UserDetails userDetails) throws StripeException{
+        if(userDetails!=null){
+            return paymentService.createCheckoutSession("price_1Osq2IFNE1ftX3iy9K9vCz6u",userDetails.getUsername() );
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
     }
 
     @GetMapping("/session_status?session_id={checkoutSessionId}")
