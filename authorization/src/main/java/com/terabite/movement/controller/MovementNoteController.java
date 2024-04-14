@@ -1,10 +1,9 @@
 package com.terabite.movement.controller;
 
+import com.terabite.movement.model.MovementNote;
 import com.terabite.movement.repository.MovementNoteRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/movement/note/")
@@ -22,8 +21,21 @@ public class MovementNoteController {
     }
 
     // Post
+    @PostMapping("/notes")
+    public ResponseEntity<?> createNote(@RequestBody MovementNote note) {
+        return ResponseEntity.ok(noteRepository.save(note));
+    }
 
     // Put
+    @PutMapping("/notes")
+    public ResponseEntity<?> updateNote(@RequestBody MovementNote note) {
+        return ResponseEntity.ok(noteRepository.save(note));
+    }
 
     // Delete
+    @DeleteMapping("/notes/{id}")
+    public ResponseEntity<?> deleteNote(@PathVariable int id) {
+        noteRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }
