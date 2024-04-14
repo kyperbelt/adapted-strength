@@ -51,6 +51,8 @@ function ExpirationField({...props}) {
 export default function Memberships() {
     const [isLoading, setIsLoading] = useState(true);
     const [profileInfo, setProfileInfo] = useState([]);
+    const [selectedTier, setSelectedTier] = useState(profileInfo.subscriptionTier || '');
+
   
     useEffect(() => {
       setIsLoading(true);
@@ -80,6 +82,8 @@ export default function Memberships() {
         await UserApi.updateSubscription(data).then((response) => {
           if (response.status === 200) {
             console.log("Subscription updated successfully");
+            // Update the selected tier in the state
+            setSelectedTier(selectedValue);
           }
         });
       };
@@ -94,9 +98,12 @@ export default function Memberships() {
                 <AdaptedStrengthLogo />
             </div>
 
-            <div className='text-center px-2 bg-blue-200 text-black rounded-md'>
+            <br></br>
+            
+
+            <div className='container mx-auto w-2/6 content-center text-center px-2 bg-blue-200 text-black rounded-md'>
                     <h2 className='font-bold'>YOUR SUBSCRIPTION TIER</h2>
-                    <p><SubscriptionField tier={profileInfo.subscriptionTier}/></p>
+                    <p><SubscriptionField tier={selectedTier} /></p>
 
                     <h2 className='font-bold'>PAYMENT DATE</h2>
                     <p><ExpirationField exp={profileInfo.expiration_date}/></p>
@@ -107,16 +114,18 @@ export default function Memberships() {
 
                 </div>
 
+            <br></br>
+
             <div>
-                <p className='font-bold text-lg'>Adapted Strength (A.S.) <br></br>
-                Memberships</p>
-                <h3>Book a Consultation for</h3>
-                <h3>One-Time Free Access!</h3>   
+                <p className='font-bold text-lg'>Adapted Strength (A.S.) Memberships</p>
+                <h3>Book a Consultation for one-time FREE Access!</h3>   
                 <h3>Day-Passes are $29.99 afterwards!</h3>
             </div>
+
             <br></br>
-            <div className="container mx-auto w-5/6 content-center ">
-                <div className='text-left px-2 bg-gray-200 hover:bg-gray-700 hover:text-white'>
+
+            <div className="container mx-auto w-5/6 content-center rounded-md">
+                <div className='text-left px-2 bg-gray-200 hover:bg-gray-700 hover:text-white rounded-md'>
                     <p className='font-bold'>Base Client - Program Only</p>
                     <p>$99.99/month</p>    
                     <p className='font-light'>For those who do not need gym access, and only seek coaching</p>
@@ -126,7 +135,7 @@ export default function Memberships() {
                         </p>
                 </div>
                 <br></br>
-                <div className='text-left px-2 bg-gray-300 hover:bg-gray-700 hover:text-white'>
+                <div className='text-left px-2 bg-gray-300 hover:bg-gray-700 hover:text-white rounded-md'>
                     <p className='font-bold'>General Client</p>
                     <p>$199.99/month</p>
                     <p className='font-light'>For those experienced in Adapted Strength methodolgies</p>
@@ -136,7 +145,7 @@ export default function Memberships() {
                     <p className='font-light'>(INTENDED FOR CONTINUING ATHLETES/ EXPERIENCED MEMBERS WHO SEEK OCCASIONAL COACHING)</p>
                 </div>
                 <br></br>
-                <div className='text-left px-2 bg-gray-200 hover:bg-gray-700 hover:text-white'>
+                <div className='text-left px-2 bg-gray-200 hover:bg-gray-700 hover:text-white rounded-md'>
                     <p className='font-bold'>Specific Client</p>
                     <p>$299.99/month</p>
                     <p className='font-light'>For all, even those new to the barbell and new to the gym</p>

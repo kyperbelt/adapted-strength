@@ -28,7 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     // implementation 'jakarta.mail:jakarta.mail-api:2.1.2' might be needed for password reset
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	  implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     // JWT specific
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -41,12 +41,19 @@ dependencies {
     // AWS S3 integration
     // implementation 'org.springframework.cloud:spring-cloud-starter-aws'
     // implementation 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config'
-    // implementation(platform("software.amazon.awssdk:bom:2.21.1"))
-    // implementation("software.amazon.awssdk:s3")
-    // implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
-    // implementation 'io.awspring.cloud:spring-cloud-aws-starter'
-    // implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
-    // implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+
+    implementation(platform("software.amazon.awssdk:bom:2.21.1"))
+    implementation("software.amazon.awssdk:s3")
+    
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+    
+    // For Notifications (Firebase)
+	  implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+
 
     //Stripe specfic
     implementation 'com.stripe:stripe-java:24.0.0'

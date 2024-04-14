@@ -37,9 +37,12 @@ public class RepCycle
     @JsonAlias("coach_notes")
     private String coachNotes;
 
+    @JsonAlias("workout_order")
+    private String workoutOrder;
+
     private long movementId;
 
-    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, long movementId){
+    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, String workoutOrder, long movementId){
         this.name=name;
         this.equipment=equipment;
         this.numSets=numSets;
@@ -47,6 +50,7 @@ public class RepCycle
         this.weight=weight;
         this.restTime=restTime;
         this.coachNotes=coachNotes;
+        this.workoutOrder = workoutOrder;
         this.movementId=movementId;
     }
 
@@ -125,4 +129,14 @@ public class RepCycle
     public void setMovementId(long movementId) {
         this.movementId = movementId;
     }
+    
+    public String getWorkoutOrder() {
+        return workoutOrder;
+    }
+
+    public void setWorkoutOrder(String workoutOrder) {
+        this.workoutOrder = workoutOrder;
+    }
+
+
 }
