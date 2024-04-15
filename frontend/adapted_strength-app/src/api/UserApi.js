@@ -149,4 +149,44 @@ static updateSubscription({subscriptionTier }) {
     const promise = ApiUtils.apiPost('user/validate_user_data', information);
     return promise;
   }
+
+  static addOlympicEntry(olympic) {
+    const promise = ApiUtils.apiPost('leaderboard/olympic', olympic);
+    return promise;
+  }
+
+  static addPowerliftingEntry(powerlifting) {
+    const promise = ApiUtils.apiPost('leaderboard/powerlifting', powerlifting);
+    return promise;
+  }
+
+  static deleteOlympicEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/olympic/${id}`);
+    return promise;
+  }
+
+  static deletePowerliftingEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/powerlifting/${id}`);
+    return promise;
+  }
+
+  static getTop10OlympicMalesByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/olympic/top10male?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10OlympicFemalesByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/olympic/top10female?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10MalePowerliftersByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/powerlifting/top10male?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10FemalePowerliftersByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/powerlifting/top10female?weightClass=${weightClass}`);
+    return promise;
+  }
 }
