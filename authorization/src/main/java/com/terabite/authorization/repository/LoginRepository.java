@@ -1,5 +1,6 @@
 package com.terabite.authorization.repository;
 
+import com.terabite.authorization.model.ForgotPasswordToken;
 import com.terabite.authorization.model.Login;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +12,6 @@ public interface LoginRepository extends JpaRepository<Login, String> {
 
     //Optional <Login> findOneByEmail(String email);
     //Optional <Login> findOneByPasswordResetToken(String passwordResetToken);
-    Optional<Login> findByResetPasswordToken(String resetPasswordToken);
+    Optional<Login> findByForgotPasswordToken(ForgotPasswordToken forgotPasswordToken);
     Login findOneByEmail(String email);
 }

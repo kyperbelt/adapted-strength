@@ -44,11 +44,11 @@ public class AuthorizationController {
 
     private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
-    public AuthorizationController(ForgotPasswordService forgotPasswordHelper, LoginService loginService,
+    public AuthorizationController(ForgotPasswordService forgotPasswordService, LoginService loginService,
             SignupService signupService,
             JwtService jwtService,
             LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
-        this.forgotPasswordService = forgotPasswordHelper;
+        this.forgotPasswordService = forgotPasswordService;
         this.loginService = loginService;
         this.signupService = signupService;
         this.jwtService = jwtService;

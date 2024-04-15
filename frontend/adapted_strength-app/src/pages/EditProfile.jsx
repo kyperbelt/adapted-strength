@@ -76,16 +76,16 @@ function EditProfileContent({ info }) {
         <PageContainer1>
 
             <div className="relative bottom-20">
-                <h1 className="relative mx-0 text-center text-2xl bottom-4">Edit Profile</h1>
+                <h1 className="relative mx-0 text-center text-2xl bottom-4 font-outline-2 sm:mt-5">Edit Profile</h1>
                 <div className="flex w-full justify-center" >
-                    <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
+                    <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs space-y-4">
                         <LabeledInputField type="text" id="fname" name="fname" required={true} placeholder="First Name" defaultValue={fname} />
-                        <LabeledInputField className="mt-5" type="text" id="lname" name="lname" required={true} placeholder="Last Name" defaultValue={lname} />
-                        <LabeledInputField className="mt-5" type="text" id="address1" name="address1" required={true} placeholder="Address" defaultValue={address1} />
-                        <LabeledInputField className="mt-5" type="text" id="city" name="city" required={true} placeholder="City" defaultValue={city} />
-                        <LabeledInputField className="mt-5" type="text" id="state" name="state" required={true} placeholder="State" defaultValue={state} />
-                        <LabeledInputField className="mt-5" type="number" id="zip" name="zip" required={true} placeholder="Zip" defaultValue={zip} />
-                        <LabeledInputField className="mt-5" type="tel" id="cell_phone" name="phone" required={true} placeholder="Phone Number" pattern="([0-9]{3}-[0-9]{2}-[0-9]{3}|[0-9]{10})" defaultValue={phone} />
+                        <LabeledInputField className="" type="text" id="lname" name="lname" required={true} placeholder="Last Name" defaultValue={lname} />
+                        <LabeledInputField className="" type="text" id="address1" name="address1" required={true} placeholder="Address" defaultValue={address1} />
+                        <LabeledInputField className="" type="text" id="city" name="city" required={true} placeholder="City" defaultValue={city} />
+                        <LabeledInputField className="" type="text" id="state" name="state" required={true} placeholder="State" defaultValue={state} />
+                        <LabeledInputField className="" type="number" id="zip" name="zip" required={true} placeholder="Zip" defaultValue={zip} />
+                        <LabeledInputField className="" type="tel" id="cell_phone" name="phone" required={true} placeholder="Phone Number" pattern="([0-9]{3}-[0-9]{2}-[0-9]{3}|[0-9]{10})" defaultValue={phone} />
                         <div className="flex justify-center w-full relative top-14">
                             <SubmitButton text="Save" onClick={console.log("clicked")} />
                         </div>

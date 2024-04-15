@@ -21,6 +21,14 @@ function connect1(event){
 
 }
 
+function connect1Mod(nickname, fullname, event){
+    const socket = new SockJS('http://localhost:8080/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, onConnected, onError)
+    event.preventDefault();
+
+}
+
 function connect2(event){
     nickname = "bob@gmail.com";
     fullname = "Bob Doe";
@@ -129,6 +137,7 @@ export default function ChatTest() {
     return (
         <div className="flex flex-col items-center">
             <MyButton text={"Connect1"} onClick={connect1}/>
+            <MyButton text={"Connect1Mod"} onClick={(event) => connect1Mod("admin@email.com", "Alex Palting", event)} />
             <MyButton text={"Connect2"} onClick={connect2}/>
             <MyButton text={"Connect3"} onClick={connect3}/>
 

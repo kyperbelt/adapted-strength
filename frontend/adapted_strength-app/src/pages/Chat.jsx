@@ -45,7 +45,8 @@ async function onMessageReceived(payload){
 export default function Chat()
 {
     const [message, setMessage] = useState("");
-    // const [videoFilePath, setVideoFilePath] = useState("");
+    const [videoFilePath, setVideoFilePath] = useState("");
+    const [videoName, setVideoName] = useState("");
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [messageList, setMessageList] = useState([]);
@@ -91,9 +92,10 @@ export default function Chat()
     //     // setVideoFilePath("");
     // }
 
-    // const handleVideoUpload = event => {
-    //     setVideoFilePath(URL.createObjectURL(event.target.files[0]))
-    // }
+    const handleVideoUpload = event => {
+        setVideoFilePath(URL.createObjectURL(event.target.files[0]))
+        setVideoName(event.target.files[0].name)
+    }
 
     const registerUser = () => {
         let Sock = new SockJS('http://localhost:8080/ws');
@@ -121,7 +123,7 @@ export default function Chat()
 
                 const chatMessage = {
                     senderId: email,
-                    recipientId: "one@email.com",
+                    recipientId: "two@email.com",
                     content: message,
                     timeStamp: new Date(),
                 };
@@ -148,11 +150,13 @@ export default function Chat()
                     </ul>
                 </div>
             </div>
+            <div>{videoName}</div>
             <div className="bg-custom-gray p-4 flex items-center">
                 {
                     (subscription)
-                        ? <><input type="file" id="file-input" className="hidden"/>
-                            {/*onChange={handleVideoUpload}*/}
+                        ? <>
+
+                            <input type="file" id="file-input" className="hidden" onChange={handleVideoUpload}/>
                             <label htmlFor="file-input" className="w-7 h-7 rounded-full bg-custom-red flex justify-center mr-2">+</label>
                             <input type="text" placeholder="Type your message..." className="flex-1 border rounded-full px-4 py-2 focus:outline-none" onChange={change} value={message}/>
                             <button className="rounded-full bg-custom-red block p-2 ml-2 hover:bg-custom-dark-red" onClick={sendMessage}>Send</button></>

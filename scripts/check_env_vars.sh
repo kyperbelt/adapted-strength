@@ -6,9 +6,9 @@
 ## This way we can check if they are set, and if they are not, we can exit the script with an error message 
 ## instead of the vague error message we get from SpringBoot. 
 env_vars=(
-    # "ADAPTED_STRENGTH_EMAIL"
-    # "ADAPTED_STRENGTH_PASSWORD"
-    # "ADAPTED_STRENGTH_WEB_URL"
+    "ADAPTED_STRENGTH_EMAIL"
+    "ADAPTED_STRENGTH_PASSWORD"
+    "ADAPTED_STRENGTH_WEB_URL"
 )
 
 error_count=0
@@ -22,6 +22,7 @@ done
 
 if [ $error_count -gt 0 ]; then
     echo "Error: $error_count Environment Variables are not set. Exiting."
+    echo "If you are just doing testing, then you can run './gradlew bootRun -x checkEnvVars' to bypass this check."
     exit 1
 fi
 

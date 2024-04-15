@@ -1,13 +1,15 @@
-import { BasicModalDialogue } from "../components/Dialog";
-import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { BasicModalDialogue } from "../../components/Dialog";
+import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { useState, useEffect, useContext } from "react";
-import PageCotnainer1 from "../components/PageContainer";
-import { CardBack } from "../components/Card";
-import LabeledInputField from "../components/forms/LabeledInputField";
+import {PageContainer2} from "../../components/PageContainer";
+import { CardBack } from "../../components/Card";
+import LabeledInputField from "../../components/forms/LabeledInputField";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useCurrentPath } from "../util/ReactHooks";
-import { useHistory } from "react-router-dom";
+import { useCurrentPath } from "../../util/ReactHooks";
+import ManagementMenu from "./ManagementMenu";
+import HamburgerButton from "./HamburgerButton";
+
 // list of programs 
 const test_programs = [
   {
@@ -198,9 +200,13 @@ export default function ProgramMamagement() {
     },
   };
 
+  const menuSelected = (menuItem) => {
+    console.log(`menu selected: ${menuItem}`);
+  }
 
   return (
-    <PageCotnainer1>
+    <PageContainer2>
+      <ManagementMenu selectedDefault={"Programs"} onSelect={menuSelected} />
       <div className="flex flex-row">
         <CardBack className={`xl:w-11/12 xl:mx-auto w-full ${animLeft ? 'animate-slideLeft' : 'animate-slideRight'}`}>
           {viewType === VIEW_TYPE_DASHBOARD && <ProgrammingDashboardView programState={[programs, setPrograms]} historyManager={historyManager} />}
@@ -210,7 +216,7 @@ export default function ProgramMamagement() {
           {viewType === VIEW_TYPE_DAY && <DayView day_id={dayId} historyManager={historyManager} />}
         </CardBack>
       </div>
-    </PageCotnainer1>
+    </PageContainer2>
   );
 }
 
@@ -390,7 +396,7 @@ function CustomTableRow({ selectedOrUnselected, onRowClick, onOptions, ...props 
         <input type="checkbox" onClick={(e) => { e.stopPropagation() }} onChange={selectedOrUnselected} checked={props.checked} />
       </td>
       {props.children}
-      <td><HamburgerButtom className="ml-auto" dropdownToggle={"dropdown"} onClick={(e) => { e.stopPropagation(); onOptions(e); }} /> </td>
+      <td><HamburgerButton className="ml-auto" dropdownToggle={"dropdown"} onClick={(e) => { e.stopPropagation(); onOptions(e); }} /> </td>
     </tr>
   );
 }
@@ -448,7 +454,7 @@ function Cycle({ cycle_id }) {
     <li className="w-full mt-2 p-4 border border-blue  rounded-xl">
       <div className="flex flex-row">
         <div className="ml-2 text-left">{cycle.name}</div>
-        <HamburgerButtom className="ml-auto" dropdownToggle={"dropdown"} />
+        <HamburgerButton className="ml-auto" dropdownToggle={"dropdown"} />
       </div>
       <div className="flex flex-col">
         <CycleSection title="Coaching Notes" info={cycle.coach_notes} />
@@ -471,17 +477,6 @@ function CycleSection({ title, info }) {
   );
 }
 
-function HamburgerButtom({ className, dropdownToggle, ...props }) {
-  return (
-    <button onClick={props.onClick} data-dropdown-toggle={dropdownToggle} className={`relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-blue-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 ${className}`} aria-expanded="false" aria-haspopup="menu" id=":r5:" type="button">
-      <span className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currenColor" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" aria-hidden="true" className="h-6 w-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>
-        </svg>
-      </span>
-    </button>
-  );
-}
 
 function SecondaryPageHeader({ historyManager, title, ...props }) {
   const buttonName = props.buttonName;
@@ -491,7 +486,7 @@ function SecondaryPageHeader({ historyManager, title, ...props }) {
         <BackButton className={`my-2 ml-3`} historyManager={historyManager} />
         <h1 className="m-auto text-black text-2xl font-bold">{title}</h1>
         <PrimaryButton className="m-2">{buttonName}</PrimaryButton>
-        <HamburgerButtom className="mx-2 my-auto" />
+        <HamburgerButton className="mx-2 my-auto" />
       </div>
       <div className="w-full border-b border-black" />
     </div>

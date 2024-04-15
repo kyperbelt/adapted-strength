@@ -71,14 +71,14 @@ public class ChatController {
         return chatUser;
     }
 
-
-    @GetMapping("/v1/chat/clientChatUsers")
+    // This function gets clients, admins can only get users
+    @PostMapping("/v1/chat/clientChatUsers")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findClientChatUsers(chatUser);
     }
-
-    @GetMapping("/v1/chat/coachChatUsers")
+    // This function gets coaches
+    @PostMapping("/v1/chat/coachChatUsers")
     public ResponseEntity<List<ChatUser>> findCoachChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findCoachChatUsers(chatUser);
     }
@@ -96,8 +96,18 @@ public class ChatController {
         return ResponseEntity.ok(chatRoomService.getAllChatRooms());
     }
 
-    @PostMapping("/v1/chat/message/setMessageRead/")
+    @PostMapping("/v1/chat/message/setMessageRead/{messageId}")
     public ResponseEntity<?> setMessageReadById(@PathVariable("messageId") long id){
         return messageService.setMessageReadById(id);
+    }
+
+    @GetMapping("/v1/chat/message/getUnreadForUser/{senderId}")
+    public ResponseEntity<?> getUnreadMessagesForUser(@PathVariable("senderId") String senderId) {
+        return messageService.getUnreadForUser(senderId);
+    }
+
+    @PostMapping("/v1/chat/message/markAsReadBySender/{senderId}")
+    public ResponseEntity<?>  markMessagesAsReadBySender(@PathVariable("senderId") String senderId) {
+        return messageService.markMessagesAsReadBySender(senderId);
     }
 }

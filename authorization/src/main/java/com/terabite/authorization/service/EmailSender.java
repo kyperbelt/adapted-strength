@@ -2,6 +2,8 @@ package com.terabite.authorization.service;
 
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.log.LoginNotFoundException;
+import com.terabite.authorization.model.ForgotPasswordToken;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -25,7 +28,10 @@ public class EmailSender {
     private final String domainPort;
     private final String webProtocol;
 
-    public EmailSender(JavaMailSender javaMailSender, LoginService loginService, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String webUrl, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_PORT) String domainPort, @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_PROTOCOL) String webProtocol){
+    public EmailSender(JavaMailSender javaMailSender, LoginService loginService, 
+                        @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_URL) String webUrl, 
+                        @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_PORT) String domainPort, 
+                        @Qualifier(GlobalConfiguration.BEAN_NAME_DOMAIN_PROTOCOL) String webProtocol){
         this.webUrl = webUrl;
         this.webProtocol = webProtocol;
         this.loginService = loginService;
@@ -48,10 +54,15 @@ public class EmailSender {
     }
 
     public void sendForgotPasswordEmail(String email) {
-        //This will change with jwt tokens
         //random 32 character string
-        String token = UUID.randomUUID().toString();
-        log.info("Password reset token: " + token);
+        String tokenId = UUID.randomUUID().toString();
+        ForgotPasswordToken token = new ForgotPasswordToken();
+
+        token.setToken(tokenId);
+
+        token.setExpiryDate(LocalDateTime.now()); //setExpiryDate method adds a set amount of hours to current time (currently 24)
+
+        log.info("Password reset token: " + tokenId);
         try {
             loginService.updatePasswordResetToken(token, email);
         } catch (LoginNotFoundException e) {
@@ -59,7 +70,7 @@ public class EmailSender {
         }
 
         String siteURL = webProtocol + "://" + webUrl + ":" + domainPort;
-        String resetPasswordLink = siteURL + "/reset-password?token=" + token;
+        String resetPasswordLink = siteURL + "/reset-password?token=" + token.getToken();
 
         String subject = "Here's the link to reset your password";
 
