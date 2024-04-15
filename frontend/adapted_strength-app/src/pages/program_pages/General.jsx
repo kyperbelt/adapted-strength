@@ -3,6 +3,7 @@ Module: General.jsx
 */
 import React, { useEffect, useState } from "react";
 import { CardBack } from "../../components/Card";
+import { ProgrammingApi } from "../../api/ProgrammingApi";
 
 export default function General() {
     const [showPrograms, setShowPrograms] = useState({
@@ -90,16 +91,7 @@ export default function General() {
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                 Movement
                                 <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                {showPrograms > 0 && (
-                                    <div>
-                                    {
-                                        showPrograms.map((showPrograms) => (
-                                            <div key={showPrograms.repCycles}>
-                                                {showPrograms.repCycles.equipment}
-                                            </div>
-                                    ))}
-                                    </div>
-                                )}
+                                    
                                 </td>
                                 <td scope="col" className="px-3 text-xs bg-gray-100">
                                     Sets
