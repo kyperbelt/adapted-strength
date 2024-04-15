@@ -196,4 +196,14 @@ public class UserInformation implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+    @Override
+    public String toString() {
+        return "UserInformation{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", subscriptionTier=" + subscriptionTier +
+                ", ...}";
+    }
 }

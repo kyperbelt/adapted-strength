@@ -129,7 +129,7 @@ public class RepCycle
     public void setMovementId(long movementId) {
         this.movementId = movementId;
     }
-    
+
     public String getWorkoutOrder() {
         return workoutOrder;
     }
@@ -138,7 +138,7 @@ public class RepCycle
         this.workoutOrder = workoutOrder;
     }
 
-    // builder pattern 
+    // builder pattern
     public RepCycle withRepCycleId(long id) {
         this.repCycleId = id;
         return this;
@@ -189,4 +189,19 @@ public class RepCycle
         return this;
     }
 
+
+    @Override
+    public String toString() {
+        return "RepCycle{" +
+                "repCycleId=" + repCycleId +
+                ", name='" + name + '\'' +
+                ", equipment='" + equipment + '\'' +
+                ", numSets='" + numSets + '\'' +
+                ", numReps='" + numReps + '\'' +
+                ", weight='" + weight + '\'' +
+                ", restTime='" + restTime + '\'' +
+                ", coachNotes='" + coachNotes + '\'' +
+                ", movementId=" + movementId +
+                '}';
+    }
 }
