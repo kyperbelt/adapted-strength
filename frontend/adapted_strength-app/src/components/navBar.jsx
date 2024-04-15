@@ -53,6 +53,7 @@ export default function NavBar() {
               {/*<NavItem to="/forgot-password"  onClick={toggleHammy}>Forgot Password</NavItem>*/}
               <NavItem to="/program-management"  onClick={toggleHammy}>Manage Programs</NavItem>
               <NavItem to="/profile"  onClick={toggleHammy}>Profile</NavItem>
+              <NavItem to="/leaderboard"  onClick={toggleHammy}>Leaderboard</NavItem>
               <NavItem to="/sign-up"  onClick={toggleHammy}>Sign Up</NavItem>
               <NavItem to="/notifications"  onClick={toggleHammy}>
                 <div className="icon baseline"> Notifications &nbsp;
