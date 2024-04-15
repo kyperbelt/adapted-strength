@@ -37,13 +37,13 @@ public class LeaderboardController {
     @DeleteMapping("/olympic/{id}")
     public ResponseEntity<Void> deleteOlympicEntry(@PathVariable Long id) {
         olympicService.deleteOlympicEntry(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/powerlifting/{id}")
     public ResponseEntity<Void> deletePowerliftingEntry(@PathVariable Long id) {
         powerliftingService.deletePowerliftingEntry(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/olympic/top10male")

@@ -59,6 +59,8 @@ export default function Leaderboard() {
   const [deadliftValue, setDeadliftValue] = useState(null);
   const [topAthletes, setTopAthletes] = useState([]);
   const [addRecords, setAddRecords] = useState(true);
+  const [deleteRank, setDeleteRank] = useState("");
+  const [idToDelete, setIdToDelete] = useState(null);
 
   // Function to calculate the total based on the entered lift values
   const calculateTotal = () => {
@@ -69,6 +71,44 @@ export default function Leaderboard() {
       total = parseFloat(squatValue) + parseFloat(benchValue) + parseFloat(deadliftValue);
     }
     return total;
+  };
+
+  useEffect(() => {
+    if (idToDelete !== null) {
+      // Call the appropriate delete API function based on the category
+      console.log(idToDelete)
+      let deleteApiCall;
+      if (selectedCategory === "Olympic") {
+        deleteApiCall = UserApi.deleteOlympicEntry(idToDelete);
+      } else if (selectedCategory === "Powerlifting") {
+        deleteApiCall = UserApi.deletePowerliftingEntry(idToDelete);
+      }
+
+      if (deleteApiCall) {
+        deleteApiCall.then((response) => {
+          console.log("Response from delete API:", response); 
+          console.log("Entry deleted successfully");
+          // Optionally, update the state to reflect the deletion
+        }).catch((error) => {
+          console.error("Error deleting entry:", error);
+        });
+      }
+    }
+  }, [idToDelete, selectedCategory]);
+
+  // Function to handle deletion of record
+  const handleDeleteRecord = () => {
+    if (topAthletes && topAthletes.length > 0) {
+      // Find the athlete object based on the rank number
+      const athleteToDelete = topAthletes[deleteRank - 1]; // Adjust for 0-based index
+      console.log('Athlete to delete: ', athleteToDelete);
+
+      // Extract the athlete ID to delete
+      const athleteIdToDelete = athleteToDelete ? athleteToDelete.id : null;
+      setIdToDelete(athleteIdToDelete);
+    } else {
+      console.error("No top athletes to delete");
+    }
   };
 
   // Handle form submission to add record to the database
@@ -194,6 +234,7 @@ const handleWeightClassChange = (weightClass) => {
     }
   }
 };
+
   
 
 return (
@@ -307,7 +348,6 @@ return (
       <p className="font-bold">Add Records Here</p>
     </div>
 
-    {/* Additional dropdown menu for ROLE_ADMIN */}
     {/* Additional dropdown menu for adding records */}
     {addRecords && (
       <div className="flex flex-col">
@@ -417,6 +457,24 @@ return (
     {/* Submit button */}
     {addCategory && addGender && addWeightClass && (
       <button onClick={handleSubmit}>Add Record</button>
+    )}
+    
+    <br></br>
+
+    {/* Input field and button for deletion */}
+    {addRecords && topAthletes && topAthletes.length > 0 && (
+      <div className="flex flex-col">
+        <div className="mb-4">
+          <label htmlFor="deleteRank">Rank Number to Delete:</label>
+          <input
+            type="number"
+            id="deleteRank"
+            value={deleteRank}
+            onChange={(e) => setDeleteRank(e.target.value)}
+          />
+        </div>
+        <button onClick={handleDeleteRecord}>Confirm Delete</button>
+      </div>
     )}
 
     <br />
