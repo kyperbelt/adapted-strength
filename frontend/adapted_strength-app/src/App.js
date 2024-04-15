@@ -25,7 +25,7 @@ import Tab from "./components/TabComponents/Tab.jsx";
 // import firebase utils
 import { fetchToken } from './firebase';
 
-import ProgramManagement from './pages/ProgramManagement.jsx';
+import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
 /*
@@ -59,7 +59,8 @@ function App() {
 
 
   return (
-    <div className="App h-full my-0">
+    <div id="app" className="flex-1 flex flex-col">
+    {
       <BrowserRouter className="">
         <Routes className="">
           <Route path="/" element={<Layout />}>
@@ -117,6 +118,7 @@ function App() {
             //-------------------------------------------------          </Route>
         </Routes>
       </BrowserRouter>
+      }
     </div>
   );
 }
