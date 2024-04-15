@@ -151,22 +151,22 @@ static updateSubscription({subscriptionTier }) {
   }
 
   static addOlympicEntry(olympic) {
-    const promise = ApiUtils.apiPost('v1/leaderboard/olympic', olympic);
+    const promise = ApiUtils.apiPost('leaderboard/olympic', olympic);
     return promise;
   }
 
   static addPowerliftingEntry(powerlifting) {
-    const promise = ApiUtils.apiPost('v1/leaderboard/powerlifting', powerlifting);
+    const promise = ApiUtils.apiPost('leaderboard/powerlifting', powerlifting);
     return promise;
   }
 
   static deleteOlympicEntry(id) {
-    const promise = ApiUtils.apiDelete(`v1/leaderboard/olympic/${id}`);
+    const promise = ApiUtils.apiDelete(`leaderboard/olympic/${id}`);
     return promise;
   }
 
   static deletePowerliftingEntry(id) {
-    const promise = ApiUtils.apiDelete(`v1/leaderboard/powerlifting/${id}`);
+    const promise = ApiUtils.apiDelete(`leaderboard/powerlifting/${id}`);
     return promise;
   }
 

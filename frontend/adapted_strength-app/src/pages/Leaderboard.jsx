@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import logo from '../assets/logo.png';
 import Footer from '../components/footer';
 import { UserApi } from '../api/UserApi';
+import { AuthApi } from '../api/AuthApi';
 
 function AdaptedStrengthLogo() {
   return (
@@ -48,7 +49,73 @@ export default function Leaderboard() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedGender, setSelectedGender] = useState(null);
   const [selectedWeightClass, setSelectedWeightClass] = useState(null);
+  const [addCategory, setAddCategory] = useState(null);
+  const [addGender, setAddGender] = useState(null);
+  const [addWeightClass, setAddWeightClass] = useState(null);
+  const [snatchValue, setSnatchValue] = useState(null);
+  const [cleanJerkValue, setCleanJerkValue] = useState(null);
+  const [squatValue, setSquatValue] = useState(null);
+  const [benchValue, setBenchValue] = useState(null);
+  const [deadliftValue, setDeadliftValue] = useState(null);
   const [topAthletes, setTopAthletes] = useState([]);
+  const [addRecords, setAddRecords] = useState(true);
+
+  // Function to calculate the total based on the entered lift values
+  const calculateTotal = () => {
+    let total = 0;
+    if (selectedCategory === 'Olympic') {
+      total = parseFloat(snatchValue) + parseFloat(cleanJerkValue);
+    } else if (selectedCategory === 'Powerlifting') {
+      total = parseFloat(squatValue) + parseFloat(benchValue) + parseFloat(deadliftValue);
+    }
+    return total;
+  };
+
+  // Handle form submission to add record to the database
+  const handleSubmit = () => {
+    const total = calculateTotal();
+    const record = {
+      weightClass: addWeightClass,
+      gender: addGender.charAt(0), // Assuming 'F' or 'M' for gender
+      total: total,
+    };
+
+    if (selectedCategory === 'Olympic') {
+      record.snatch = parseFloat(snatchValue);
+      record.cleanJerk = parseFloat(cleanJerkValue);
+      UserApi.addOlympicEntry(record)
+        .then(response => {
+          console.log('Record added successfully:', response);
+          // Reset form after successful submission
+          setSnatchValue('');
+          setCleanJerkValue('');
+        })
+        .catch(error => console.error('Error adding record:', error));
+    } else if (selectedCategory === 'Powerlifting') {
+      record.squat = parseFloat(squatValue);
+      record.bench = parseFloat(benchValue);
+      record.deadlift = parseFloat(deadliftValue);
+      UserApi.addPowerliftingEntry(record)
+        .then(response => {
+          console.log('Record added successfully:', response);
+          // Reset form after successful submission
+          setSquatValue('');
+          setBenchValue('');
+          setDeadliftValue('');
+        })
+        .catch(error => console.error('Error adding record:', error));
+    }
+  };
+
+  // Function to handle additional dropdown menu change
+  const handleAdditionalDropdownChange = (value) => {
+    // Logic to handle change in the additional dropdown menu
+    console.log('Selected value in additional dropdown:', value);
+  };
+
+  if (!addRecords && AuthApi.hasRole('ROLE_ADMIN')) {
+    setAddRecords(true);
+  }
 
   useEffect(() => {
     console.log('Top athletes have been updated:', topAthletes);
@@ -140,6 +207,7 @@ return (
       <p className="font-bold text-lg">Adapted Strength (A.S.) All Time Records</p>
       <br />
     </div>
+    
     {/* Dropdown menus */}
     <div className="flex flex-col">
       <div className="mb-4">
@@ -234,14 +302,125 @@ return (
         </tbody>
       </table>
     </div>
+
+    <div>
+      <p className="font-bold">Add Records Here</p>
+    </div>
+
+    {/* Additional dropdown menu for ROLE_ADMIN */}
+    {/* Additional dropdown menu for adding records */}
+    {addRecords && (
+      <div className="flex flex-col">
+        <div className="mb-4">
+          <label htmlFor="addRecordsCategory">Category:</label>
+          <select
+            id="addRecordsCategory"
+            onChange={(e) => setAddCategory(e.target.value)}
+            value={addCategory}
+          >
+            <option value="">Select category</option>
+            <option value="Olympic">Olympic</option>
+            <option value="Powerlifting">Powerlifting</option>
+          </select>
+        </div>
+        {addCategory && (
+          <div className="mb-4">
+            <label htmlFor="addRecordsGender">Gender:</label>
+            <select
+              id="addRecordsGender"
+              onChange={(e) => setAddGender(e.target.value)}
+              value={addGender}
+            >
+              <option value="">Select gender</option>
+              <option value="Men">Men</option>
+              <option value="Women">Women</option>
+            </select>
+          </div>
+        )}
+        {addCategory && addGender && (
+          <div className="mb-4">
+            <label htmlFor="addRecordsWeightClass">Weight Class:</label>
+            <select
+              id="addRecordsWeightClass"
+              onChange={(e) => setAddWeightClass(e.target.value)}
+              value={addWeightClass}
+            >
+              <option value="">Select weight class</option>
+              {weightClasses[addCategory][addGender].map((weight, index) => (
+                <option key={index} value={weight}>
+                  {weight}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Input boxes for discipline based on category */}
+        {addCategory === 'Olympic' && (
+          <div className="mb-4">
+            <label htmlFor="snatchInput">Snatch:</label>
+            <input
+              type="text"
+              id="snatchInput"
+              onChange={(e) => setSnatchValue(e.target.value)}
+              value={snatchValue}
+            />
+          </div>
+        )}
+        {addCategory === 'Olympic' && (
+          <div className="mb-4">
+            <label htmlFor="cleanJerkInput">Clean & Jerk:</label>
+            <input
+              type="text"
+              id="cleanJerkInput"
+              onChange={(e) => setCleanJerkValue(e.target.value)}
+              value={cleanJerkValue}
+            />
+          </div>
+        )}
+        {addCategory === 'Powerlifting' && (
+          <div className="mb-4">
+            <label htmlFor="squatInput">Squat:</label>
+            <input
+              type="text"
+              id="squatInput"
+              onChange={(e) => setSquatValue(e.target.value)}
+              value={squatValue}
+            />
+          </div>
+        )}
+        {addCategory === 'Powerlifting' && (
+          <div className="mb-4">
+            <label htmlFor="benchInput">Bench:</label>
+            <input
+              type="text"
+              id="benchInput"
+              onChange={(e) => setBenchValue(e.target.value)}
+              value={benchValue}
+            />
+          </div>
+        )}
+        {addCategory === 'Powerlifting' && (
+          <div className="mb-4">
+            <label htmlFor="deadliftInput">Deadlift:</label>
+            <input
+              type="text"
+              id="deadliftInput"
+              onChange={(e) => setDeadliftValue(e.target.value)}
+              value={deadliftValue}
+            />
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* Submit button */}
+    {addCategory && addGender && addWeightClass && (
+      <button onClick={handleSubmit}>Add Record</button>
+    )}
+
     <br />
     <Footer />
   </div>
 );
 }
-
-
-
-
-
-
