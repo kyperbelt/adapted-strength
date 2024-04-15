@@ -12,7 +12,7 @@ export default function General() {
     });
     const [workouts, setWorkout] = useState([]);
     const adptdsURL = 'http://10.0.0.63:8080/v1/programming/day/all_days';
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJpYXQiOjE3MTMwNDQ0MjgsImV4cCI6MTcxMzEzMDgyOH0.aEIDcBXEFFSwy_aGzatcrZNvRTz6RxR5MAN1r6B5kUwetqjNHhYKpbHH7Vn3Ez6TyG5qlAmjssSBy4cJKJ3YmA';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNleXRlc3RAZW1haWwuY29tIiwiaWF0IjoxNzEzMTM3MjM2LCJleHAiOjE3MTMyMjM2MzZ9.CWb3uwhCV-OiDlurgRTOpn14eDkxpiIpJmoZ3GnmuF0Y--kP4L_FbV18sy3jx5W1SRoRuTFIol-pATcwwqhd5g';
     // const fetchData = async () => {
     //     const response = await fetch(adptdsURL);
     //     const jsonData = await response.json();
@@ -31,6 +31,7 @@ export default function General() {
             [program]: !prevState[program]
         }));
     };
+
     useEffect(() => {
         const fetchData = async () => {
           try {
@@ -48,6 +49,7 @@ export default function General() {
     
         fetchData();
       }, []);
+
     const toggleDay = (program, index) => {
         switch (program) {
             case "fiveDay":
@@ -82,37 +84,18 @@ export default function General() {
                         <tr key={index}>
                             {/* LET "Order" AND "Exercise" CHANGE! 
                         This is hard coded for UI purposes */}
-                            <div>
-                                {workouts.map((week) => (
-                                    <div key={week.weekId}>
-                                        {week.name}
-
-                                        {week.days.map((day) => (
-                                            <div key={day.dayId}>
-                                                {day.name}
-
-                                                {day.repCycles.map((repCycle) => (
-                                                    <div key={repCycle.repCycleId}>
-                                                        {repCycle.name}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                 {alphabet[index]}
                             </th>
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                Movement {day.movement}
+                                Movement
                                 <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                {workouts && workouts.length > 0 && (
+                                {showPrograms > 0 && (
                                     <div>
                                     {
-                                        workouts.map((workout) => (
-                                            <div key={workout.repCycles}>
-                                                {workout.repCycles.equipment}
+                                        showPrograms.map((showPrograms) => (
+                                            <div key={showPrograms.repCycles}>
+                                                {showPrograms.repCycles.equipment}
                                             </div>
                                     ))}
                                     </div>
@@ -160,7 +143,7 @@ export default function General() {
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-                YOUR PROGRAM: General Strength!
+                Welcome to your program?
             </p>
             <CardBack>
                 <h1 className="font-bold uppercase">
