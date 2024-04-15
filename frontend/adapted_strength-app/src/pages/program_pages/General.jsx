@@ -35,22 +35,43 @@ export default function General() {
 
     useEffect(() => {
         const fetchData = async () => {
-          try {
-            const response = await fetch(adptdsURL, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const jsonData = await response.json();
-            setShowPrograms(jsonData);
-          } catch (error) {
-            console.error("Error fetching data: ", error);
-          }
+            try {
+                const response = await fetch(adptdsURL, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const jsonData = await response.json();
+                setShowPrograms(jsonData);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            }
         };
-    
-        fetchData();
-      }, []);
 
+        fetchData();
+    }, []);
+
+    const [programs, setPrograms] = useState([]);
+
+    // useEffect(() => {
+    //     const fetchPrograms = async () => {
+    //         try {
+    //             const response = await ProgrammingApi.getAllPrograms();
+    //             setPrograms(response);
+    //         } catch (error) {
+    //             console.error("Error fetching programs: ", error);
+    //         }
+    //     };
+    //     fetchPrograms();
+    // }, []);
+
+    const fetchProgram = async (programId) => {
+        try {
+            const response = await ProgrammingApi.getProgram(programId);
+        } catch (error) {
+            console.error("Error fetching program: ", error);
+        }
+    };
     const toggleDay = (program, index) => {
         switch (program) {
             case "fiveDay":
@@ -72,7 +93,7 @@ export default function General() {
                 break;
         }
     };
-    
+
     const getTable = (days) => {
         if (!days.some(day => day)) return null;
 
@@ -91,7 +112,7 @@ export default function General() {
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                 Movement
                                 <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                    
+
                                 </td>
                                 <td scope="col" className="px-3 text-xs bg-gray-100">
                                     Sets
@@ -131,11 +152,11 @@ export default function General() {
             </table>
         );
     };
-    
+
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-                Welcome to your program?
+                Welcome to your program!
             </p>
             <CardBack>
                 <h1 className="font-bold uppercase">
