@@ -1,4 +1,4 @@
-welpackage com.terabite.programming.controller;
+package com.terabite.programming.controller;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,20 +28,21 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.http.ResponseEntity;
 
 
 @RestController
 @RequestMapping("/v1/programming")
-public class ProgrammingControler {
+public class ProgrammingController {
     
     private final RepCycleService repCycleService;
     private final DayService dayService;
     private final WeekService weekService;
     private final ProgramService programService;
 
-    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService){
+    public ProgrammingController(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService){
         this.repCycleService=repCycleService;
         this.dayService=dayService;
         this.weekService=weekService;
