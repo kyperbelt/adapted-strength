@@ -51,15 +51,10 @@ public class RepCycleNoteController {
 
 
         // God as my witness
-        List<RepCycle> repCycleList = repCycleRepository.findAll();
-        for (RepCycle r : repCycleList) {
-            log.info("{} : {}", r.getRepCycleId(), noteRequest.rep_cycle_id());
-            if (r.getRepCycleId() == noteRequest.rep_cycle_id()) {
-                note.setRepCycle(r);
-            }
-        }
+        RepCycle repCycle = repCycleRepository.findById(noteRequest.rep_cycle_id()).orElse(null);
         UserInformation userInformation = userRepository.findById(noteRequest.user_id()).orElse(null);
 
+        note.setRepCycle(repCycle);
         note.setUser(userInformation);
         note.setNote(noteRequest.note());
 
