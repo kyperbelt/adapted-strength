@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
 import com.terabite.programming.model.RepCycle;
+import com.terabite.programming.dto.CreateProgramRequest;
+import com.terabite.programming.dto.DeleteProgramRequest;
 import com.terabite.programming.model.Day;
 import com.terabite.programming.model.Week;
 import com.terabite.programming.service.DayService;
@@ -18,6 +20,9 @@ import com.terabite.programming.service.WeekService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 
@@ -40,7 +45,8 @@ public class ProgrammingControler {
     
     //Program endpoints
     @PostMapping("/program")
-    public ResponseEntity<?> postProgram(@RequestBody Program program) {
+    public ResponseEntity<?> postProgram(@RequestBody CreateProgramRequest request) {
+        Program program = new Program(request.programName(), List.of());
         return programService.createNewProgram(program);
     }
 
@@ -49,18 +55,24 @@ public class ProgrammingControler {
         return programService.updateProgram(program);
     }
 
-    @GetMapping("/program")
-    public ResponseEntity<?> getProgram(@RequestBody Program program) {
+    @GetMapping("/program/{id}")
+    public ResponseEntity<?> getProgram(@RequestParam int id) {
+        Program program = new Program("name", List.of());
+        program.setProgramId(id);
+
         return programService.getProgram(program);
     }
 
-    @GetMapping("/program/all_programs")
+    @GetMapping("/all_programs")
     public ResponseEntity<?> getAllPrograms() {
         return programService.getAllPrograms();
     }
 
-    @DeleteMapping("/program")
-    public ResponseEntity<?> deleteProgram(@RequestBody Program program){
+    @DeleteMapping("/program/{id}")
+    public ResponseEntity<?> deleteProgram(@RequestParam int id){
+        Program program = new Program("name", List.of());
+        program.setProgramId(id);   
+
         return programService.deleteProgram(program);
     }
 

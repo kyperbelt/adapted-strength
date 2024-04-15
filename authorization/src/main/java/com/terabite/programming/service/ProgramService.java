@@ -8,9 +8,6 @@ import com.terabite.programming.model.Program;
 import com.terabite.programming.repository.ProgramRepository;
 
 import jakarta.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 @Service
 @Transactional
 public class ProgramService {
@@ -22,7 +19,7 @@ public class ProgramService {
 
     public ResponseEntity<?> createNewProgram(Program program) {
         programRepository.save(program);
-        return new ResponseEntity<>(program, HttpStatus.CREATED);
+        return new ResponseEntity<>(program, HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateProgram(Program program) {
@@ -31,7 +28,7 @@ public class ProgramService {
         }
         else{
             programRepository.save(program);
-            return new ResponseEntity<>(program, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(program, HttpStatus.OK);
         }
     }
 
@@ -45,7 +42,7 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> getAllPrograms() {
-        return new ResponseEntity<>(programRepository.findAll(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(programRepository.findAll(), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteProgram(Program program) {
@@ -54,7 +51,7 @@ public class ProgramService {
         }
         else{
             programRepository.delete(program);
-            return new ResponseEntity<>(program, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(program, HttpStatus.OK);
         }
     }
 

@@ -7,175 +7,55 @@ import ProgramDashboard from "./ProgramDashboard";
 import CreateProgramDialog from "./CreateProgramDialog";
 import EditProgramsDialog from "./EditProgramDialog";
 import BlockDashboard from "./BlockDashboard";
-
-// list of programs 
-const test_programs = [
-  {
-    id: 1,
-    name: "Program 1",
-    description: "This is a program",
-    selected: false,
-    blocks: []
-  },
-  {
-    id: 2,
-    name: "Program 2",
-    description: "This is a program",
-    selected: false,
-    blocks: []
-  },
-  {
-    id: 3,
-    name: "Program 3",
-    description: "This is a program",
-    selected: false,
-    blocks: [1]
-  },
-  {
-    id: 4,
-    name: "Program 4",
-    description: "This is a program",
-    selected: false,
-    blocks: []
-  },
-];
+import { ProgrammingApi } from "../../api/ProgrammingApi";
+import { HttpStatus } from "../../api/ApiUtils";
 
 
-const test_blocks = [
-  {
-    id: 1,
-    name: "Block 1",
-    description: "This is a block",
-    weeks: [1, 2]
-  },
-  {
-    id: 2,
-    name: "Block 2",
-    description: "This is a block",
-    weeks: [1, 1, 1]
-  },
-  {
-    id: 3,
-    name: "Block 3",
-    description: "This is a block",
-    weeks: [1, 1, 2, 3, 1]
-  },
-]
-
-const test_weeks = [
-  {
-    id: 1,
-    name: "Week 1",
-    description: "This is a week",
-    days: [1, 2, 3, 4, 5, 6, 7]
-  },
-  {
-    id: 2,
-    name: "Week 2",
-    description: "This is a week",
-    days: []
-  },
-  {
-    id: 3,
-    name: "Week 3",
-    description: "This is a week",
-    days: []
-  },
-]
-
-const test_days = [
-  {
-    id: 1,
-    name: "Day 1",
-    cycles: [1, 2, 1]
-  },
-  {
-    id: 2,
-    name: "Day 2",
-    cycles: []
-  },
-  {
-    id: 3,
-    name: "Day 3",
-    cycles: []
-  },
-  {
-    id: 4,
-    name: "Day 4",
-    cycles: []
-  },
-  {
-    id: 5,
-    name: "Day 5",
-    cycles: []
-  },
-  {
-    id: 6,
-    name: "Day 6",
-    cycles: []
-  },
-  {
-    id: 7,
-    name: "Day 7",
-    cycles: []
-  },
-]
-
-const test_cycles = [
-  {
-    id: 1,
-    name: "Cycle 1",
-    equipment: "Bike",
-    num_of_sets: 3,
-    num_of_reps: 10,
-    weight: 100,
-    rest_time: 60,
-    coach_notes: "This is a note that is kind of long",
-  },
-  {
-    id: 2,
-    name: "Cycle 2",
-    equipment: "Squat Rack",
-    num_of_sets: 3,
-    num_of_reps: 10,
-    weight: 100,
-    rest_time: 60,
-    coach_notes: "This is a note",
-  },
-]
+// PROGRAM FORMAT for local web state
+// id: program_id++,
+// name: name,
+// description: description,
+// selected: false,
+// blocks: []
 
 function getCyclesForDay(day_id) {
   //TODO: request to get cycles for a day from the server
 
-  const day = test_days.find((day) => day.id === day_id);
-  return test_cycles.filter((cycle) => day.cycles.includes(cycle.id));
 }
 
 function getDaysForWeek(week_id) {
   //TODO: request to get days for a week from the server
-  
-  const week = test_weeks.find((week) => week.id === week_id);
-  return test_days.filter((day) => week.days.includes(day.id));
+
 }
 
 function getWeeksForBlock(block_id) {
   //TODO: request to get weeks for a block from the server 
 
-  const block = test_blocks.find((block) => block.id === block_id);
-  return test_weeks.filter((week) => block.weeks.includes(week.id));
-
 }
 
 function getBlocksForProgram(program_id) {
   // TODO: request to get blocks for a program from the server 
-
-  const program = test_programs.find((program) => program.id === program_id);
-  return test_blocks.filter((block) => program.blocks.includes(block.id));
 }
 
 function getAllPrograms() {
-  // TODO: request to get all programs from the server
-  return test_programs;
+  try {
+    return ProgrammingApi.getAllPrograms().then((data) => {
+      // cleanse data, only return in formated program structure 
+      const programs = data.map((program) => {
+        return {
+          id: program.programId,
+          name: program.name,
+          description: "no description saved yet",
+          selected: false,
+          // map array of week objects to just an array of week ids
+          blocks: program.weeks.map((block) => block.weekId)
+        };
+      });
+      return programs;
+    });
+  } catch (e) {
+    console.error('Error getting all programs:', e);
+  }
 }
 
 
@@ -184,9 +64,11 @@ let program_id = 5;
 
 export default function ProgramMamagement() {
 
-  const [programs, setPrograms] = useState(test_programs);
+  const [programs, setPrograms] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedProgramBlocks, setSelectedProgramBlocks] = useState([]);
+
+  
 
 
   const onAddProgram = () => {
@@ -201,31 +83,59 @@ export default function ProgramMamagement() {
     element.classList.add("hidden");
   }
 
-  const onCreate = (name, description) => {
+  const onCreate = async (name, description) => {
     // TODO: request to create a program
     const newProgram = {
-      id: program_id++,
       name: name,
       description: description,
-      selected: false,
-      blocks: []
     };
-    setPrograms([...programs, newProgram]);
+
+
+    try {
+      const createProgramResponse = await ProgrammingApi.createProgram(newProgram);
+      console.log("Create program response: ", createProgramResponse);
+      if (createProgramResponse.status === HttpStatus.OK) {
+        console.log("Program created: ", newProgram);
+      }else{
+        console.error("Error creating program: ", newProgram);
+      }
+    } catch (e) {
+      console.error('Error creating program:', e);
+    }
+
+    await getAllPrograms().then((data) => {
+      // match all programs to new programs and keep selected state if any 
+      const newPrograms = data.map((program) => {
+        const matchedProgram = programs.find((p) => p.id === program.id);
+        if (matchedProgram) {
+          return {
+            ...program,
+            selected: matchedProgram.selected
+          };
+        }
+        return program;
+      });
+      // setting new programs
+      console.log("New programs: ", newPrograms);
+      setPrograms(newPrograms);
+    });
+
   };
 
   const onClickProgram = (program) => {
     console.log("Program clicked: ", program);
-    const selectedProgramBlocks = test_blocks.filter((block) => program.blocks.includes(block.id));
-    setSelectedProgramBlocks(selectedProgramBlocks);
-    setSelectedProgram(program);
+    // get blocks for the program
+    // const selectedProgramBlocks = test_blocks.filter((block) => program.blocks.includes(block.id));
+    // setSelectedProgramBlocks(selectedProgramBlocks);
+    // setSelectedProgram(program);
   }
 
   return (
     <BlankPageContainer id="program-management">
       {/*Dialogs*/}
       <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
-      { !selectedProgram && <ProgramDashboard onClickProgram={onClickProgram} trainingPrograms={[programs, setPrograms]} onAddProgram={onAddProgram} /> }
-      { selectedProgram && <BlockDashboard programBlocks={[selectedProgramBlocks, setSelectedProgramBlocks]}/>}
+      {!selectedProgram && <ProgramDashboard onClickProgram={onClickProgram} trainingPrograms={[programs, setPrograms]} onAddProgram={onAddProgram} />}
+      {selectedProgram && <BlockDashboard programBlocks={[selectedProgramBlocks, setSelectedProgramBlocks]} />}
     </BlankPageContainer>
   );
 }
