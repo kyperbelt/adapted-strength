@@ -1,6 +1,7 @@
 package com.terabite.programming.dto;
 
 import com.terabite.programming.model.RepCycle;
+import com.terabite.programming.model.RepCycleNote;
 import com.terabite.user.model.UserInformation;
 
 public class RepCycleNoteResponse {
@@ -14,6 +15,13 @@ public class RepCycleNoteResponse {
         this.repCycle = repCycle;
         this.user = user;
         this.note = note;
+    }
+
+    public RepCycleNoteResponse(RepCycleNote note) {
+        this.id = note.getId();
+        this.repCycle = note.getRepCycle();
+        this.user = note.getUser();
+        this.note = note.getNote();
     }
 
     public long getId() {
