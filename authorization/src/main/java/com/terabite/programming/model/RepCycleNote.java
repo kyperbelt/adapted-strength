@@ -1,7 +1,6 @@
 package com.terabite.programming.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.terabite.movement.model.Movement;
 import com.terabite.user.model.UserInformation;
 import jakarta.persistence.*;
 
@@ -16,7 +15,7 @@ public class RepCycleNote {
     @JsonAlias("rep_cycle")
     private RepCycle repCycle;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonAlias("user")
     private UserInformation user;
 
@@ -42,5 +41,13 @@ public class RepCycleNote {
 
     public void setUser(UserInformation user) {
         this.user = user;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getNote() {
+        return note;
     }
 }

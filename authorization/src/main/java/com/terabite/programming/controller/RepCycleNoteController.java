@@ -1,7 +1,10 @@
 package com.terabite.programming.controller;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.programming.dto.RepCycleNoteRequest;
+import com.terabite.programming.dto.RepCycleNoteResponse;
 import com.terabite.programming.model.RepCycle;
 import com.terabite.programming.model.RepCycleNote;
 import com.terabite.programming.repository.RepCycleNoteRepository;
@@ -19,7 +22,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/programming/note")
-@Transactional
 public class RepCycleNoteController {
     private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
 
@@ -49,8 +51,6 @@ public class RepCycleNoteController {
         log.info(noteRequest.toString());
         RepCycleNote note = new RepCycleNote();
 
-
-        // God as my witness
         RepCycle repCycle = repCycleRepository.findById(noteRequest.rep_cycle_id()).orElse(null);
         UserInformation userInformation = userRepository.findById(noteRequest.user_id()).orElse(null);
 
@@ -60,7 +60,8 @@ public class RepCycleNoteController {
 
         log.info(note.toString());
         noteRepository.save(note);
-        return ResponseEntity.ok(note);
+
+        return ResponseEntity.ok(new RepCycleNoteResponse(note.getId(), repCycle, userInformation, note.getNote()));
     }
 
     // Put
