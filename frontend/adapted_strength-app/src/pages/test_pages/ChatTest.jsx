@@ -4,7 +4,6 @@ import { Stomp } from '@stomp/stompjs';
 let stompClient=null;
 let nickname = null;
 let fullname = null;
-let usertype = null;
 let message = null;
 
 
@@ -12,11 +11,18 @@ let message = null;
 // In the actual implementation of this we would grab the nickname (email), fullname and usertype from the logged in user
 // Note: usertype will eventually be scrapped. We need to use JWT tokens to check for permissions in the long run
 function connect1(event){
-    nickname = "alex@adaptedstrength.com"
+    nickname = "admin@email.com"
     fullname = "Alex Palting"
-    usertype = "COACH"
 
-    const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, onConnected, onError)
+    event.preventDefault();
+
+}
+
+function connect1Mod(nickname, fullname, event){
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
@@ -26,9 +32,8 @@ function connect1(event){
 function connect2(event){
     nickname = "bob@gmail.com";
     fullname = "Bob Doe";
-    usertype = "CLIENT"
 
-    const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
@@ -39,9 +44,8 @@ function connect2(event){
 function connect3(event){
     nickname = "john@aol.com"
     fullname = "John Bon"
-    usertype = "CLIENT"
 
-    const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
@@ -56,57 +60,68 @@ function connect3(event){
 // content will be typed in by the user
 function alexToBob(event){
     const chatMessage={
-        senderId: "alex@adaptedstrength.com",
+        senderId: "admin@email.com",
         recipientId: "bob@gmail.com",
         content: "Hello Bob, this is Alex",
-        timeStamp: new Date()
+        timeStamp: new Date(),
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
 function alexToJohn(event){
     const chatMessage={
-        senderId: "alex@adaptedstrength.com",
+        senderId: "admin@email.com",
         recipientId: "john@aol.com",
         content: "Hello John, this is Alex",
-        timeStamp: new Date()
+        timeStamp: new Date(),
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
 function bobToAlex(event){
     const chatMessage={
         senderId: "bob@gmail.com",
-        recipientId: "alex@adaptedstrength.com",
+        recipientId: "admin@email.com",
         content: "Hello Alex, this is Bob",
-        timeStamp: new Date()
+        timeStamp: new Date(),
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
 function johnToAlex(event){
     const chatMessage={
         senderId: "john@aol.com",
-        recipientId: "alex@adaptedstrength.com",
+        recipientId: "admin@email.com",
         content: "Hello Alex, this is John",
         timeStamp: new Date()
     };
-    stompClient.send("/v1/chat/app/processMessage", {}, JSON.stringify(chatMessage));
+    stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
     event.preventDefault();
 }
 
-// This function demonstrates how subscribing to a topic works. 
-// Each user will have a queue of messages that they subscribe to
+// // This function demonstrates how subscribing to a topic works. 
+// // Each user will have a queue of messages that they subscribe to
+// function onConnected(){
+//     stompClient.subscribe(`/v1/chat/user/${nickname}/queue/messages`, onMessageReceived);
+//     console.log('connected');
+
+//     // register the connected user
+//     stompClient.send("/v1/chat/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname, userType : usertype }));
+// }
+
+
 function onConnected(){
     stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`user/public`, onMessageReceived);
     console.log('connected');
 
     // register the connected user
-    stompClient.send("/v1/chat/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname, userType : usertype }));
+    stompClient.send("/app/chatUser.addUser",{}, JSON.stringify({ email: nickname, fullName: fullname}));
 }
+
 
 function onError(){
     console.log("error");
@@ -122,6 +137,7 @@ export default function ChatTest() {
     return (
         <div className="flex flex-col items-center">
             <MyButton text={"Connect1"} onClick={connect1}/>
+            <MyButton text={"Connect1Mod"} onClick={(event) => connect1Mod("admin@email.com", "Alex Palting", event)} />
             <MyButton text={"Connect2"} onClick={connect2}/>
             <MyButton text={"Connect3"} onClick={connect3}/>
 

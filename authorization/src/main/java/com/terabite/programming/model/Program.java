@@ -19,9 +19,9 @@ public class Program
     @JoinColumn
     private List<Week> weeks;
 
-    public Program(String name, List<Week> blocks){
+    public Program(String name, List<Week> weeks){
         this.name=name;
-        this.weeks=blocks;
+        this.weeks=weeks;
     }
 
     public Program(){

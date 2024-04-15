@@ -1,11 +1,14 @@
 package com.terabite.user.controller;
 
+
 import java.util.Optional;
 import java.util.Set;
-
+import com.stripe.exception.StripeException;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
+import com.terabite.payment.model.Customer;
+import com.terabite.payment.service.CustomerService;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
@@ -56,7 +59,8 @@ public class UserController {
     private final UnsubscribeService unsubscribeService;
 
     private final AuthorizationApi authorizationApi;
-    private final UserProgrammingService userProgrammingService;
+    // private final UserProgrammingService userProgrammingService;
+    private final CustomerService customerService;
 
     private final String authCookieName;
     private final JwtService jwtService;
@@ -64,11 +68,10 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController(
-            SubscriptionService subscriptionService, UserRepository userRepository, UnsubscribeService unsubscribeService,
+            SubscriptionService subscriptionService,
+            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi, CustomerService customerService,
+            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
-            AuthorizationApi authorizationApi, UserProgrammingService userProgrammingService, JwtService jwtService,
-
-            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName) {
         this.subscriptionService = subscriptionService;
         this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
@@ -76,6 +79,7 @@ public class UserController {
         this.userRepository = userRepository;
         this.userProgrammingService = userProgrammingService;
         this.jwtService = jwtService;
+        this.customerService = customerService;
     }
 
     @PostMapping("/create")
@@ -86,6 +90,16 @@ public class UserController {
         if (existingUser.isPresent()) {
             log.error("UserInformation for " + userInformation.getEmail() + " already exists");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userInformation);
+        }
+
+        //Create stripe customer with user email
+        Customer customer;
+        try{
+            customer = customerService.createNewCustomer(userInformation);
+            userInformation.setCustomer(customer);
+        }
+        catch(StripeException e){
+            e.printStackTrace();
         }
 
         userRepository.save(userInformation);

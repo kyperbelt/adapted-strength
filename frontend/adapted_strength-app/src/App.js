@@ -3,8 +3,8 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
-import { lazy, Suspense } from 'react';
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { lazy, Suspense, useState } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
 // They are still only react components
@@ -15,13 +15,17 @@ import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional.jsx';
 import Memberships from './pages/Memberships.jsx'
+import Leaderboard from './pages/Leaderboard.jsx';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
+import Tab from "./components/TabComponents/Tab.jsx";
+// import firebase utils
+import { fetchToken } from './firebase';
 
-import ProgramManagement from './pages/ProgramManagement.jsx';
+import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
 /*
@@ -50,10 +54,13 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 // import footer from '../footer'
 
 function App() {
+  const [isTokenFound, setTokenFound] = useState(false);
+  { !isTokenFound && fetchToken(setTokenFound); }
 
 
   return (
-    <div className="App h-full my-0">
+    <div id="app" className="flex-1 flex flex-col">
+    {
       <BrowserRouter className="">
         <Routes className="">
           <Route path="/" element={<Layout />}>
@@ -73,7 +80,7 @@ function App() {
                 <EditProfile />
               </RouteGuard>
             </Suspense>} />
-            
+
             <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
             <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />
@@ -93,6 +100,7 @@ function App() {
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path='video-library' element={<VideoLibrary />} />
             <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
@@ -102,9 +110,15 @@ function App() {
             //--------------------------------------------------
             <Route path="manageChats" element={<ManageChats />} />
             //--------------------------------------------------
-          </Route>
+
+
+            /* Route for notifications & announcements tabs */
+            //-------------------------------------------------
+            <Route path="notifications" element={<Tab />} />
+            //-------------------------------------------------          </Route>
         </Routes>
       </BrowserRouter>
+      }
     </div>
   );
 }

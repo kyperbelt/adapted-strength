@@ -1,6 +1,9 @@
 package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.terabite.payment.model.Customer;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +11,6 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -32,7 +34,7 @@ public class UserInformation implements Serializable {
 
     @JsonAlias("expiration_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate expirationDate;
+    private Date expirationDate;
 
     @NotNull
     @JsonAlias("date_of_birth")
@@ -52,6 +54,11 @@ public class UserInformation implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Customer customer;
 
     @JsonAlias("cell_phone")
     @Pattern(regexp = "^[0-9]{10}$")
@@ -102,10 +109,12 @@ public class UserInformation implements Serializable {
 
     public SubscriptionStatus getSubscriptionTier() { return subscriptionTier; }
 
-    public LocalDate getExpirationDate() {return expirationDate; }
+    public Date getExpirationDate() {return expirationDate; }
 
-    // Set subscription expiration date to be 30 days from the current date
-    public void setExpirationDate() {this.expirationDate = LocalDate.now().plusDays(30); }
+    // Subscription expiration date will come from Stripe api in WebhookService.java
+    public void setExpirationDate(Date date) {
+        this.expirationDate = date; 
+    }
     public void cancelExpirationDate() {this.expirationDate = null; }
 
     public Date getDateOfBirth() {
@@ -178,5 +187,13 @@ public class UserInformation implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

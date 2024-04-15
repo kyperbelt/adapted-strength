@@ -22,6 +22,7 @@ done
 
 if [ $error_count -gt 0 ]; then
     echo "Error: $error_count Environment Variables are not set. Exiting."
+    echo "If you are just doing testing, then you can run './gradlew bootRun -x checkEnvVars' to bypass this check."
     exit 1
 fi
 
