@@ -1,4 +1,6 @@
 import { ApiUtils } from './ApiUtils';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 
 export class ChatApi {
 
@@ -14,9 +16,9 @@ export class ChatApi {
    */
 
     static getChatUsers(coach) {
-      const promise = ApiUtils.apiPost('chat/chatUsers', coach);
+      const promise = ApiUtils.apiPost('chat/clientChatUsers', coach);
       return promise;
-  }
+    }
 
     /**
    * @param {string} senderId
@@ -28,8 +30,9 @@ export class ChatApi {
    * UserApi.getChatUsers()
    * .then(response => console.log(response));
    */
-    static getChat({ senderId, receiverId }) {
+    static getChat(senderId, receiverId) {
       const endpoint = `chat/messages/${senderId}/${receiverId}`;
+
       const promise = ApiUtils.apiGet(endpoint);
       return promise;
     }
@@ -63,6 +66,52 @@ export class ChatApi {
           return promise;
         }
 
+        static getChatUsersStomp (coach) {
+            return new Promise((resolve, reject) => {
+              const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+              const stompClient = Stomp.over(socket);
+              
+              stompClient.connect({}, () => {
+                stompClient.subscribe('/chat/chatUsers', (response) => {
+                  resolve(JSON.parse(response.body));
+                  stompClient.disconnect();
+                });
+        
+                stompClient.send('/chat/chatUsers', {}, JSON.stringify(coach));
+              }, (error) => {
+                reject(error);
+              });
+            });
+        }
 
+        static getChatSocket({ senderId, receiverId }) {
+          return new Promise((resolve, reject) => {
+            const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+            const stompClient = Stomp.over(socket);
+            
+            stompClient.connect({}, () => {
+              stompClient.subscribe(`/chat/messages/${senderId}/${receiverId}`, (response) => {
+                resolve(JSON.parse(response.body));
+                stompClient.disconnect();
+              });
+            }, (error) => {
+              reject(error);
+            });
+          });
+        }
+
+        static getUserHasUnread(receiverId){
+          const endpoint = `chat/message/getUnreadForUser/${receiverId}`;
+
+          const promise = ApiUtils.apiGet(endpoint);
+          return promise;
+        }
+
+        static setMessagesToRead(receiverId){
+          const endpoint = `chat/message/markAsReadBySender/${receiverId}`;
+
+          const promise = ApiUtils.apiPost(endpoint);
+          return promise;
+        }
 
 }
