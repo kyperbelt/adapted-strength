@@ -120,7 +120,7 @@ export default function Leaderboard() {
       total: total,
     };
 
-    if (selectedCategory === 'Olympic') {
+    if (addCategory === 'Olympic') {
       record.snatch = parseFloat(snatchValue);
       record.cleanJerk = parseFloat(cleanJerkValue);
       UserApi.addOlympicEntry(record)
@@ -131,7 +131,7 @@ export default function Leaderboard() {
           setCleanJerkValue('');
         })
         .catch(error => console.error('Error adding record:', error));
-    } else if (selectedCategory === 'Powerlifting') {
+    } else if (addCategory === 'Powerlifting') {
       record.squat = parseFloat(squatValue);
       record.bench = parseFloat(benchValue);
       record.deadlift = parseFloat(deadliftValue);
