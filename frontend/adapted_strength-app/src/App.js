@@ -15,6 +15,7 @@ import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional.jsx';
 import Memberships from './pages/Memberships.jsx'
+import Leaderboard from './pages/Leaderboard.jsx';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
@@ -98,6 +99,7 @@ function App() {
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path='video-library' element={<VideoLibrary />} />
             <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
