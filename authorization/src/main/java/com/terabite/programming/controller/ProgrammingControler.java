@@ -1,4 +1,4 @@
-package com.terabite.programming.controller;
+welpackage com.terabite.programming.controller;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,13 +52,13 @@ public class ProgrammingControler {
     //Program endpoints
     @PostMapping("/program")
     public ResponseEntity<?> postProgram(@RequestBody CreateProgramRequest request) {
-        Program program = new Program(request.programName(), List.of());
+        Program program = new Program(request.programName(), new ArrayList());
         return programService.createNewProgram(program);
     }
 
     @PutMapping("/program")
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
-        List<Week> weeks = List.of();
+        List<Week> weeks = new ArrayList();
         for (int weekId : program.weekIds()) {
             Week week = new Week();
             week.setWeekId(weekId);
@@ -70,7 +70,7 @@ public class ProgrammingControler {
 
     @GetMapping("/program/{id}")
     public ResponseEntity<?> getProgram(@RequestParam int id) {
-        Program program = new Program("name", List.of());
+        Program program = new Program("name", new ArrayList());
         program.setProgramId(id);
 
         return programService.getProgram(program);
@@ -83,7 +83,7 @@ public class ProgrammingControler {
 
     @DeleteMapping("/program/{id}")
     public ResponseEntity<?> deleteProgram(@RequestParam int id){
-        Program program = new Program("name", List.of());
+        Program program = new Program("name", new ArrayList());
         program.setProgramId(id);   
 
         return programService.deleteProgram(program);
@@ -100,7 +100,7 @@ public class ProgrammingControler {
      */
     @PostMapping("/week")
     public ResponseEntity<?> createWeek(@RequestBody CreateWeekRequest request) {
-        Week week = new Week(request.weekName(), List.of());
+        Week week = new Week(request.weekName(), new ArrayList());
 
         return weekService.createNewWeek(week);
     }
@@ -118,7 +118,7 @@ public class ProgrammingControler {
     @PutMapping("/week")
     public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
         
-        List<Day> days = List.of();
+        List<Day> days = new ArrayList();
         for (int dayId : request.dayIds()) {
             Day day = new Day();
             day.setDayId(dayId);
@@ -129,7 +129,7 @@ public class ProgrammingControler {
 
     @GetMapping("/week/{id}")
     public ResponseEntity<?> getWeek(@RequestParam long id) {
-        Week week = new Week("name", List.of());
+        Week week = new Week("name", new ArrayList());
         week.setWeekId(id);
         return weekService.getWeek(week);
     }
@@ -150,7 +150,7 @@ public class ProgrammingControler {
     //Day endpoints
     @PostMapping("/day")
     public ResponseEntity<?> createDay(@RequestBody CreateDayRequest request) {
-        Day day = new Day(request.dayName(), List.of());
+        Day day = new Day(request.dayName(), new ArrayList());
 
         return dayService.createNewDay(day);
     }
@@ -158,7 +158,7 @@ public class ProgrammingControler {
     @PutMapping("/day")
     public ResponseEntity<?> updateDay(@RequestBody UpdateDayRequest request) {
 
-        List<RepCycle> repCycles = List.of();
+        List<RepCycle> repCycles = new ArrayList();
         for (int repCycleId : request.repCycleIds()) {
             RepCycle repCycle = new RepCycle();
             repCycle.setRepCycleId(repCycleId);
@@ -169,7 +169,7 @@ public class ProgrammingControler {
 
     @GetMapping("/day/{id}")
     public ResponseEntity<?> getDay(@RequestParam long id) {
-        Day day = new Day("name", List.of());
+        Day day = new Day("name", new ArrayList());
         return dayService.getDay(day);
     }
 
@@ -180,7 +180,7 @@ public class ProgrammingControler {
 
     @DeleteMapping("/day/{id}")
     public ResponseEntity<?> deleteDay(@RequestParam long id){
-        Day day = new Day("name", List.of());
+        Day day = new Day("name", new ArrayList());
         return dayService.deleteDay(day);
     }
 
