@@ -123,7 +123,7 @@ export default function Chat()
 
                 const chatMessage = {
                     senderId: email,
-                    recipientId: "one@email.com",
+                    recipientId: "two@email.com",
                     content: message,
                     timeStamp: new Date(),
                 };
