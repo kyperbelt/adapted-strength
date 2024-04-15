@@ -170,23 +170,23 @@ static updateSubscription({subscriptionTier }) {
     return promise;
   }
 
-  static getTop10MaleAthletesByWeightClass(weightClass) {
-    const promise = ApiUtils.apiGet(`v1/leaderboard/olympic/top10male?weightClass=${weightClass}`);
+  static getTop10OlympicMalesByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/olympic/top10male?weightClass=${weightClass}`);
     return promise;
   }
 
-  static getTop10FemaleAthletesByWeightClass(weightClass) {
-    const promise = ApiUtils.apiGet(`v1/leaderboard/olympic/top10female?weightClass=${weightClass}`);
+  static getTop10OlympicFemalesByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/olympic/top10female?weightClass=${weightClass}`);
     return promise;
   }
 
   static getTop10MalePowerliftersByWeightClass(weightClass) {
-    const promise = ApiUtils.apiGet(`v1/leaderboard/powerlifting/top10male?weightClass=${weightClass}`);
+    const promise = ApiUtils.apiGet(`leaderboard/powerlifting/top10male?weightClass=${weightClass}`);
     return promise;
   }
 
   static getTop10FemalePowerliftersByWeightClass(weightClass) {
-    const promise = ApiUtils.apiGet(`v1/leaderboard/powerlifting/top10female?weightClass=${weightClass}`);
+    const promise = ApiUtils.apiGet(`leaderboard/powerlifting/top10female?weightClass=${weightClass}`);
     return promise;
   }
 }
