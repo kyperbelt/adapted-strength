@@ -344,6 +344,8 @@ return (
       </table>
     </div>
 
+    <br></br>
+
     <div>
       <p className="font-bold">Add Records Here</p>
     </div>
@@ -456,10 +458,15 @@ return (
 
     {/* Submit button */}
     {addCategory && addGender && addWeightClass && (
-      <button onClick={handleSubmit}>Add Record</button>
+      <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleSubmit}>Add Record</button>
     )}
     
     <br></br>
+    <br></br>
+
+    <div>
+      <p className="font-bold">Delete Records Here</p>
+    </div>
 
     {/* Input field and button for deletion */}
     {addRecords && topAthletes && topAthletes.length > 0 && (
@@ -473,8 +480,11 @@ return (
             onChange={(e) => setDeleteRank(e.target.value)}
           />
         </div>
-        <button onClick={handleDeleteRecord}>Confirm Delete</button>
       </div>
+    )}
+
+    {addRecords && topAthletes && topAthletes.length > 0 && (
+      <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleDeleteRecord}>Confirm Delete</button>
     )}
 
     <br />
