@@ -6,5 +6,5 @@ package com.terabite.programming.dto;
 /**
  * DeleteProgramRequest
  */
-public record DeleteProgramRequest(int id) {
+public record DeleteRequest(int id) {
 }

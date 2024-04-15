@@ -8,8 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
 import com.terabite.programming.model.RepCycle;
+import com.terabite.programming.dto.CreateDayRequest;
 import com.terabite.programming.dto.CreateProgramRequest;
-import com.terabite.programming.dto.DeleteProgramRequest;
+import com.terabite.programming.dto.CreateRepCycleRequest;
+import com.terabite.programming.dto.CreateWeekRequest;
+import com.terabite.programming.dto.UpdateDayRequest;
+import com.terabite.programming.dto.UpdateProgramRequest;
+import com.terabite.programming.dto.UpdateRepCycleRequest;
+import com.terabite.programming.dto.UpdateWeekRequest;
 import com.terabite.programming.model.Day;
 import com.terabite.programming.model.Week;
 import com.terabite.programming.service.DayService;
@@ -51,8 +57,15 @@ public class ProgrammingControler {
     }
 
     @PutMapping("/program")
-    public ResponseEntity<?> putProgram(@RequestBody Program program) {
-        return programService.updateProgram(program);
+    public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
+        List<Week> weeks = List.of();
+        for (int weekId : program.weekIds()) {
+            Week week = new Week();
+            week.setWeekId(weekId);
+            weeks.add(week);
+        }
+
+        return programService.updateProgram(program, weeks);
     }
 
     @GetMapping("/program/{id}")
@@ -76,19 +89,48 @@ public class ProgrammingControler {
         return programService.deleteProgram(program);
     }
 
-    //Week endpoints
+    /**
+     * POST MAPING EXAMPLE: 
+     <p>
+     {
+        "weekName": "Week 1",
+        "weekDescription": "This is the first week of the program"
+     }
+     <p>
+     */
     @PostMapping("/week")
-    public ResponseEntity<?> postWeek(@RequestBody Week week) {
+    public ResponseEntity<?> createWeek(@RequestBody CreateWeekRequest request) {
+        Week week = new Week(request.weekName(), List.of());
+
         return weekService.createNewWeek(week);
     }
 
+    /**
+     * POST MAPING EXAMPLE:
+        <p>
+        {
+            "weekId": 0,
+            "weekName": "Week 1",
+            "days":[]
+        }
+        <p>
+    */
     @PutMapping("/week")
-    public ResponseEntity<?> putWeek(@RequestBody Week week) {
-        return weekService.updateWeek(week);
+    public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
+        
+        List<Day> days = List.of();
+        for (int dayId : request.dayIds()) {
+            Day day = new Day();
+            day.setDayId(dayId);
+            days.add(day);
+        }
+        return weekService.updateWeek(request, days);
     }
 
-    @GetMapping("/week")
-    public ResponseEntity<?> getWeek(@RequestBody Week week) {
+    @GetMapping("/week/{id}")
+    public ResponseEntity<?> getWeek(@RequestParam long id) {
+        Week week = new Week("name", List.of());
+        week.setWeekId(id);
         return weekService.getWeek(week);
     }
 
@@ -97,25 +139,37 @@ public class ProgrammingControler {
         return weekService.getAllWeeks();
     }
     
-    @DeleteMapping("/week")
-    public ResponseEntity<?> deleteWeek(@RequestBody Week week){
+    @DeleteMapping("/week/{id}")
+    public ResponseEntity<?> deleteWeek(@RequestParam long id){
+        Week week = weekService.getWeekById(id);
+
         return weekService.deleteWeekByName(week);
     }
 
 
     //Day endpoints
     @PostMapping("/day")
-    public ResponseEntity<?> postDay(@RequestBody Day day) {
+    public ResponseEntity<?> createDay(@RequestBody CreateDayRequest request) {
+        Day day = new Day(request.dayName(), List.of());
+
         return dayService.createNewDay(day);
     }
 
     @PutMapping("/day")
-    public ResponseEntity<?> putDay(@RequestBody Day day) {
-        return dayService.updateDay(day);
+    public ResponseEntity<?> updateDay(@RequestBody UpdateDayRequest request) {
+
+        List<RepCycle> repCycles = List.of();
+        for (int repCycleId : request.repCycleIds()) {
+            RepCycle repCycle = new RepCycle();
+            repCycle.setRepCycleId(repCycleId);
+            repCycles.add(repCycle);
+        }
+        return dayService.updateDay(request, repCycles);
     }
 
-    @GetMapping("/day")
-    public ResponseEntity<?> getDay(@RequestBody Day day) {
+    @GetMapping("/day/{id}")
+    public ResponseEntity<?> getDay(@RequestParam long id) {
+        Day day = new Day("name", List.of());
         return dayService.getDay(day);
     }
 
@@ -124,25 +178,50 @@ public class ProgrammingControler {
         return dayService.getAllDays();
     }
 
-    @DeleteMapping("/day")
-    public ResponseEntity<?> deleteDay(@RequestBody Day day){
+    @DeleteMapping("/day/{id}")
+    public ResponseEntity<?> deleteDay(@RequestParam long id){
+        Day day = new Day("name", List.of());
         return dayService.deleteDay(day);
     }
 
 
     //RepCycle endpoints
     @PostMapping("/rep_cycle")
-    public ResponseEntity<?> postRepCycle(@RequestBody RepCycle repCycle) {
+    public ResponseEntity<?> postRepCycle(@RequestBody CreateRepCycleRequest request) {
+        RepCycle repCycle = new RepCycle().withName(request.repCycleName())
+                                        // .withDescription(request.repCycleDescription())
+                                        .withNumReps(request.numReps())
+                                        .withNumSets(request.numSets())
+                                        .withWeight(request.weight())
+                                        .withRestTime(request.restTime())
+                                        .withCoachNotes(request.coachNotes())
+                                        .withWorkoutOrder(request.workoutOrder())
+                                        .withEquipment(request.equipment())
+                                        .withMovementId(request.movementId());
+
         return repCycleService.createNewRepCycle(repCycle);
     }
 
     @PutMapping("/rep_cycle")
-    public ResponseEntity<?> putRepCycle(@RequestBody RepCycle repCycle) {
-        return repCycleService.updateRepCycle(repCycle);
+    public ResponseEntity<?> putRepCycle(@RequestBody UpdateRepCycleRequest repCycle) {
+        RepCycle updatedRepCycle = new RepCycle()
+                                        .withRepCycleId(repCycle.id())
+                                        .withName(repCycle.repCycleName().orElse(null))
+                                        .withEquipment(repCycle.equipment().orElse(null))
+                                        .withNumSets(repCycle.numSets().orElse(null))
+                                        .withNumReps(repCycle.numReps().orElse(null))
+                                        .withWeight(repCycle.weight().orElse(null))
+                                        .withRestTime(repCycle.restTime().orElse(null))
+                                        .withCoachNotes(repCycle.coachNotes().orElse(null))
+                                        .withWorkoutOrder(repCycle.workoutOrder().orElse(null))
+                                        .withMovementId(repCycle.movementId().orElse(null));
+
+        return repCycleService.updateRepCycle(updatedRepCycle);
     }
 
-    @GetMapping("/rep_cycle")
-    public ResponseEntity<?> getRepCycle(@RequestBody RepCycle repCycle) {
+    @GetMapping("/rep_cycle/{id}")
+    public ResponseEntity<?> getRepCycle(@RequestParam long id) {
+        RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.getRepCycle(repCycle);
     }
 
@@ -151,8 +230,9 @@ public class ProgrammingControler {
         return repCycleService.getAllRepCycles();
     }
 
-    @DeleteMapping("/rep_cycle")
-    public ResponseEntity<?> deleteRepCycle(@RequestBody RepCycle repCycle){
+    @DeleteMapping("/rep_cycle/{id}")
+    public ResponseEntity<?> deleteRepCycle(@RequestParam long id){
+        RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.deleteRepCycle(repCycle);
     }
 
