@@ -16,6 +16,7 @@ public class Message {
     private String recipientId;
     private String content;
     private Date timeStamp;
+    private Boolean hasBeenRead;
 
     public Message(String chatRoomId, String senderId, String recipientId, String content, Date timeStamp){
         this.chatRoomId=chatRoomId;
@@ -23,10 +24,15 @@ public class Message {
         this.recipientId=recipientId;
         this.content=content;
         this.timeStamp=timeStamp;
+        this.hasBeenRead = false;
     }
 
     public Message(){
 
+    }
+    
+    public String toString(){
+        return (String.format("id: %s, chatRoomId: %s, senderId: %s, recipientId: %s, content: %s, timeStamp: %s", id, chatRoomId, senderId, recipientId, content, timeStamp));
     }
 
     public String getChatRoomId() {
@@ -68,4 +74,14 @@ public class Message {
     public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+    public Boolean getHasBeenRead() {
+        return hasBeenRead;
+    }
+
+    public void setHasBeenRead(Boolean hasBeenRead) {
+        this.hasBeenRead = hasBeenRead;
+    }
+
+
 }

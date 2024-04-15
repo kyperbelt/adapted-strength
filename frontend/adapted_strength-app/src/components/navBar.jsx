@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import StateGuard from "../util/StateGuard";
+import Logo from "../assets/logo.png";
 
 export default function NavBar() {
   const nav = useNavigate();
@@ -41,6 +42,7 @@ export default function NavBar() {
           <Link to="/program-management" className="py-2  my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Manage Programs</Link>
           <Link to="/profile" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Profile</Link>
           <Link to="/sign-up" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Sign Up</Link>
+          <Link to="/leaderboard" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>Leaderboard</Link>
           <Link to="/notifications" className="py-2 my-1 bg-gray-700 rounded-full hover:bg-gray-800" onClick={toggleHammy}>
             <div className="icon baseline"> Notifications &nbsp;
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
@@ -50,11 +52,20 @@ export default function NavBar() {
           </Link>
         </div>
       </nav>
-      <div className="h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
-        <div className={`w-6 h-0.5 bg-white mt-2 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></div>
-        <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'opacity-0' : ''}`}></div>
-        <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></div>
-      </div>
     </div>
+  );
+}
+
+
+      // <div className="block md:hidden h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
+      //   <div className={`w-6 h-0.5 bg-white mt-2 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></div>
+      //   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'opacity-0' : ''}`} />
+      //   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></div>
+      // </div>
+function NavItem({ to, children, onClick }) {
+  return (
+    <li>
+      <Link to={to} className="text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0" onClick={onClick}>{children}</Link>
+    </li>
   );
 }

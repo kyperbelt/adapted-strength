@@ -11,13 +11,11 @@ public class ChatRoom {
     private String chatRoomId;
     private String senderId;
     private String recipientId;
-    private Boolean hasNewMessage;
 
-    public ChatRoom(String chatRoomId, String senderId, String recipientId, Boolean hasNewMessage){
+    public ChatRoom(String chatRoomId, String senderId, String recipientId){
         this.chatRoomId=chatRoomId;
         this.senderId=senderId;
         this.recipientId=recipientId;
-        this.hasNewMessage=hasNewMessage;
     }
 
     public ChatRoom(){
@@ -48,11 +46,4 @@ public class ChatRoom {
         this.recipientId = recipientId;
     }
 
-    public Boolean getHasNewMessage() {
-        return hasNewMessage;
-    }
-
-    public void setHasNewMessage(Boolean hasNewMessage) {
-        this.hasNewMessage = hasNewMessage;
-    }
 }
