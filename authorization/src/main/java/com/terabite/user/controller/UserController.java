@@ -59,7 +59,7 @@ public class UserController {
     private final UnsubscribeService unsubscribeService;
 
     private final AuthorizationApi authorizationApi;
-    // private final UserProgrammingService userProgrammingService;
+    private final UserProgrammingService userProgrammingService;
     private final CustomerService customerService;
 
     private final String authCookieName;
@@ -68,6 +68,7 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController(
+            UserProgrammingService userProgrammingService,
             SubscriptionService subscriptionService,
             UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi, CustomerService customerService,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {

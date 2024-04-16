@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
 import com.terabite.programming.model.RepCycle;
+import com.google.api.client.util.Lists;
 import com.terabite.programming.dto.CreateDayRequest;
 import com.terabite.programming.dto.CreateProgramRequest;
 import com.terabite.programming.dto.CreateRepCycleRequest;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -53,13 +53,13 @@ public class ProgrammingControler {
     //Program endpoints
     @PostMapping("/program")
     public ResponseEntity<?> postProgram(@RequestBody CreateProgramRequest request) {
-        Program program = new Program(request.programName(), new ArrayList());
+        Program program = new Program(request.programName(), Lists.newArrayList());
         return programService.createNewProgram(program);
     }
 
     @PutMapping("/program")
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
-        List<Week> weeks = new ArrayList();
+        List<Week> weeks = Lists.newArrayList();
         for (int weekId : program.weekIds()) {
             Week week = new Week();
             week.setWeekId(weekId);
@@ -71,7 +71,7 @@ public class ProgrammingControler {
 
     @GetMapping("/program/{id}")
     public ResponseEntity<?> getProgram(@RequestParam int id) {
-        Program program = new Program("name", new ArrayList());
+        Program program = new Program("name", Lists.newArrayList());
         program.setProgramId(id);
 
         return programService.getProgram(program);
@@ -84,7 +84,7 @@ public class ProgrammingControler {
 
     @DeleteMapping("/program/{id}")
     public ResponseEntity<?> deleteProgram(@RequestParam int id){
-        Program program = new Program("name", new ArrayList());
+        Program program = new Program("name", Lists.newArrayList());
         program.setProgramId(id);   
 
         return programService.deleteProgram(program);
@@ -101,7 +101,7 @@ public class ProgrammingControler {
      */
     @PostMapping("/week")
     public ResponseEntity<?> createWeek(@RequestBody CreateWeekRequest request) {
-        Week week = new Week(request.weekName(), new ArrayList());
+        Week week = new Week(request.weekName(), Lists.newArrayList());
 
         return weekService.createNewWeek(week);
     }
@@ -119,7 +119,7 @@ public class ProgrammingControler {
     @PutMapping("/week")
     public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
         
-        List<Day> days = new ArrayList();
+        List<Day> days = Lists.newArrayList();
         for (int dayId : request.dayIds()) {
             Day day = new Day();
             day.setDayId(dayId);
@@ -130,7 +130,7 @@ public class ProgrammingControler {
 
     @GetMapping("/week/{id}")
     public ResponseEntity<?> getWeek(@RequestParam long id) {
-        Week week = new Week("name", new ArrayList());
+        Week week = new Week("name", Lists.newArrayList());
         week.setWeekId(id);
         return weekService.getWeek(week);
     }
@@ -151,7 +151,7 @@ public class ProgrammingControler {
     //Day endpoints
     @PostMapping("/day")
     public ResponseEntity<?> createDay(@RequestBody CreateDayRequest request) {
-        Day day = new Day(request.dayName(), new ArrayList());
+        Day day = new Day(request.dayName(), Lists.newArrayList());
 
         return dayService.createNewDay(day);
     }
@@ -159,7 +159,7 @@ public class ProgrammingControler {
     @PutMapping("/day")
     public ResponseEntity<?> updateDay(@RequestBody UpdateDayRequest request) {
 
-        List<RepCycle> repCycles = new ArrayList();
+        List<RepCycle> repCycles = Lists.newArrayList();
         for (int repCycleId : request.repCycleIds()) {
             RepCycle repCycle = new RepCycle();
             repCycle.setRepCycleId(repCycleId);
@@ -170,7 +170,7 @@ public class ProgrammingControler {
 
     @GetMapping("/day/{id}")
     public ResponseEntity<?> getDay(@RequestParam long id) {
-        Day day = new Day("name", new ArrayList());
+        Day day = new Day("name", Lists.newArrayList());
         return dayService.getDay(day);
     }
 
@@ -181,7 +181,7 @@ public class ProgrammingControler {
 
     @DeleteMapping("/day/{id}")
     public ResponseEntity<?> deleteDay(@RequestParam long id){
-        Day day = new Day("name", new ArrayList());
+        Day day = new Day("name", Lists.newArrayList());
         return dayService.deleteDay(day);
     }
 
