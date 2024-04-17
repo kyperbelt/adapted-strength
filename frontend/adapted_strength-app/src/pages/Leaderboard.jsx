@@ -33,7 +33,6 @@ const getRowStyle = (index) => {
   }
 };
 
-
 const weightClasses = {
   Olympic: {
     Men: [55, 61, 67, 73, 81, 89, 96, 102, 109, '109+'],
@@ -135,15 +134,21 @@ export default function Leaderboard() {
     }
   };
 
-  // Handle form submission to add record to the database
   const handleSubmit = () => {
-    //const total = calculateTotal();
     const record = {
       weightClass: addWeightClass,
       gender: addGender.charAt(0), // Assuming 'F' or 'M' for gender
       total: totalValue,
     };
-
+  
+    // Check if the weight class ends with '+'
+    if (addWeightClass.endsWith('+')) {
+      // Extract the numeric part of the weight class
+      const numericWeight = parseInt(addWeightClass);
+      // Add 1 to the numeric value
+      record.weightClass = numericWeight + 1;
+    }
+  
     if (addCategory === 'Olympic') {
       record.snatch = parseFloat(snatchValue);
       record.cleanJerk = parseFloat(cleanJerkValue);
@@ -170,6 +175,7 @@ export default function Leaderboard() {
         .catch(error => console.error('Error adding record:', error));
     }
   };
+  
 
   // Function to handle additional dropdown menu change
   const handleAdditionalDropdownChange = (value) => {
@@ -198,66 +204,85 @@ export default function Leaderboard() {
     setTopAthletes([]); // Clear top athletes when gender changes
   };
 
-  // Inside handleWeightClassChange function
-const handleWeightClassChange = (weightClass) => {
-  setSelectedWeightClass(weightClass);
-  console.log('Selected weight class:', weightClass);
+  const handleWeightClassChange = (weightClass) => {
+    setSelectedWeightClass(weightClass);
 
-  // Fetch top athletes based on selected category, gender, and weight class
-  if (selectedCategory === 'Olympic') {
-    if (selectedGender === 'Men') {
-      UserApi.getTop10OlympicMalesByWeightClass(weightClass)
-        .then(response => {
-          console.log('Top Olympic male athletes:', response);
-          // Ensure response.data is an array before setting state
-          if (Array.isArray(response.data)) {
-            setTopAthletes(response.data);
-          } else {
-            setTopAthletes([]);
-          }
-        })
-        .catch(error => console.error('Error fetching top Olympic male athletes:', error));
-    } else if (selectedGender === 'Women') {
-      UserApi.getTop10OlympicFemalesByWeightClass(weightClass)
-        .then(response => {
-          console.log('Top Olympic female athletes:', response);
-          // Ensure response.data is an array before setting state
-          if (Array.isArray(response.data)) {
-            setTopAthletes(response.data);
-          } else {
-            setTopAthletes([]);
-          }
-        })
-        .catch(error => console.error('Error fetching top Olympic female athletes:', error));
+    // Check if the weight class ends with '+'
+    if (weightClass.endsWith('+')) {
+      // Extract the numeric part of the weight class
+      const numericWeight = parseInt(weightClass);
+      // Add 1 to the numeric value
+      const incrementedWeight = numericWeight + 1;
+      setSelectedWeightClass(incrementedWeight)
+      // Pass the incremented value to the backend
+      console.log('Selected altered weight class:', incrementedWeight);
+      // Continue with your API call or other logic here
+    } else {
+      // If weight class does not end with '+', just pass the selected value to the backend
+      console.log('Selected weight class:', weightClass);
+      // Continue with your API call or other logic here
     }
-  } else if (selectedCategory === 'Powerlifting') {
-    if (selectedGender === 'Men') {
-      UserApi.getTop10MalePowerliftersByWeightClass(weightClass)
-        .then(response => {
-          console.log('Top Powerlifting male athletes:', response);
-          // Ensure response.data is an array before setting state
-          if (Array.isArray(response.data)) {
-            setTopAthletes(response.data);
-          } else {
-            setTopAthletes([]);
-          }
-        })
-        .catch(error => console.error('Error fetching top Powerlifting male athletes:', error));
-    } else if (selectedGender === 'Women') {
-      UserApi.getTop10FemalePowerliftersByWeightClass(weightClass)
-        .then(response => {
-          console.log('Top Powerlifting female athletes:', response);
-          // Ensure response.data is an array before setting state
-          if (Array.isArray(response.data)) {
-            setTopAthletes(response.data);
-          } else {
-            setTopAthletes([]);
-          }
-        })
-        .catch(error => console.error('Error fetching top Powerlifting female athletes:', error));
+  
+    // Fetch top athletes based on selected category, gender, and weight class
+    if (selectedCategory === 'Olympic') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top Olympic males for weight class:', selectedWeightClass);
+        UserApi.getTop10OlympicMalesByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top Olympic male athletes:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([]);
+            }
+          })
+          .catch(error => console.error('Error fetching top Olympic male athletes:', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top Olympic females for weight class:', selectedWeightClass);
+        UserApi.getTop10OlympicFemalesByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top Olympic female athletes:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([]);
+            }
+          })
+          .catch(error => console.error('Error fetching top Olympic female athletes:', error));
+      }
+    } else if (selectedCategory === 'Powerlifting') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top Powerlifting males for weight class:', selectedWeightClass);
+        UserApi.getTop10MalePowerliftersByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top Powerlifting male athletes:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([]);
+            }
+          })
+          .catch(error => console.error('Error fetching top Powerlifting male athletes:', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top Powerlifting females for weight class:', selectedWeightClass);
+        UserApi.getTop10FemalePowerliftersByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top Powerlifting female athletes:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([]);
+            }
+          })
+          .catch(error => console.error('Error fetching top Powerlifting female athletes:', error));
+      }
     }
-  }
-};
+  };
+  
 
   
 
