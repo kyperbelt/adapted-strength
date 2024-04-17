@@ -12,6 +12,24 @@ function AdaptedStrengthLogo() {
   );
 }
 
+function adjustWeightClass(weightClass) {
+  console.log("Original weight class:", weightClass); // Debugging
+  
+  // Convert weightClass to a string for substring check
+  const weightString = weightClass.toString();
+
+  // Check if the weight class contains specific substrings
+  if (weightString.includes('101') || weightString.includes('88') || weightString.includes('140') || weightString.includes('110')) {
+    // If any of the substrings are found, subtract one
+    const adjustedWeightClass = weightClass - 1;
+    console.log("Adjusted weight class:", adjustedWeightClass); // Debugging
+    return adjustedWeightClass + '+';
+  } else {
+    return weightClass;
+  }
+}
+
+
  // Function to generate CSS for table columns
  const getColumnStyle = () => {
   return {
@@ -373,7 +391,7 @@ return (
             <tr key={index} style={getRowStyle(index)}>
               <td>{index + 1}</td>
               <td>{athlete.gender}</td>
-              <td>{athlete.weightClass}</td>
+              <td>{adjustWeightClass(athlete.weightClass)}</td>
               {selectedCategory === 'Powerlifting' ? (
                 <>
                   <td>{athlete.squat}</td>

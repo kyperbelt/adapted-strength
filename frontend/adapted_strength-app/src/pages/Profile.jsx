@@ -4,6 +4,7 @@ import { UserApi } from "../api/UserApi";
 import { HttpStatus } from "../api/ApiUtils";
 import Footer from '../components/footer';
 import logo from '../assets/logo.png';
+import { AuthApi } from "../api/AuthApi";
 
 function AdaptedStrengthLogo() {
     return (
@@ -41,8 +42,9 @@ function formatPhoneNumber(phoneNumber) {
 }
 
 export default function Profile() {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
-    const [profileInfo, setProfileInfo] = useState({});
+    const [profileInfo, setProfileInfo] = useState([]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -50,18 +52,32 @@ export default function Profile() {
             .then((response) => {
                 if (response.status === HttpStatus.OK) {
                     setProfileInfo(response.data);
+                    setIsLoading(false);
+                    console.log(response.data)
+                } else if (response.status === HttpStatus.UNAUTHORIZED) { // unauthorized
+                    // TODO: same as error, redirect to login page or display error message
+                    console.error(`ERROR HAPPENED: ${JSON.stringify(response.data)}`);
+                    if (response.data.all.includes("ROLE_TERMS_ACCEPTED")) {
+                        console.log("User has not accepted terms and conditions");
+                        AuthApi.logout();
+                        navigate("/login");
+
+                    } else if (response.data.all.includes("ROLE_ACCOUNT_SETUP")) {
+                        console.log("User has not setup account");
+                        navigate("/logout");
+                    }
                 }
             }).catch((error) => {
-                console.error(`Error: ${error}`);
-            }).finally(() => {
+                console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
                 setIsLoading(false);
+                //TODO: User was unable to get profile information, 
+                //     redirect to login page or display error message
             });
     }, []);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div>{"Loading..."}</div>
     }
-
     const formattedCellPhone = formatPhoneNumber(profileInfo.cellPhone);
     const formattedHomePhone = formatPhoneNumber(profileInfo.homePhone);
 
