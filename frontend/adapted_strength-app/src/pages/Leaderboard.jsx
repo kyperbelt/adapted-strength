@@ -52,26 +52,49 @@ export default function Leaderboard() {
   const [addCategory, setAddCategory] = useState(null);
   const [addGender, setAddGender] = useState(null);
   const [addWeightClass, setAddWeightClass] = useState(null);
-  const [snatchValue, setSnatchValue] = useState(null);
-  const [cleanJerkValue, setCleanJerkValue] = useState(null);
-  const [squatValue, setSquatValue] = useState(null);
-  const [benchValue, setBenchValue] = useState(null);
-  const [deadliftValue, setDeadliftValue] = useState(null);
+  const [snatchValue, setSnatchValue] = useState(0.0);
+  const [cleanJerkValue, setCleanJerkValue] = useState(0.0);
+  const [squatValue, setSquatValue] = useState(0.0);
+  const [benchValue, setBenchValue] = useState(0.0);
+  const [deadliftValue, setDeadliftValue] = useState(0.0);
   const [topAthletes, setTopAthletes] = useState([]);
   const [addRecords, setAddRecords] = useState(true);
   const [deleteRank, setDeleteRank] = useState("");
   const [idToDelete, setIdToDelete] = useState(null);
 
-  // Function to calculate the total based on the entered lift values
   const calculateTotal = () => {
     let total = 0;
-    if (selectedCategory === 'Olympic') {
-      total = parseFloat(snatchValue) + parseFloat(cleanJerkValue);
-    } else if (selectedCategory === 'Powerlifting') {
-      total = parseFloat(squatValue) + parseFloat(benchValue) + parseFloat(deadliftValue);
+  
+    // Check if selectedCategory is set and at least one lift value is provided
+    if (selectedCategory) {
+      if (selectedCategory === 'Olympic') {
+        const snatch = parseFloat(snatchValue);
+        const cleanJerk = parseFloat(cleanJerkValue);
+  
+        // Check if both snatch and clean & jerk values are valid numbers
+        if (!isNaN(snatch) && !isNaN(cleanJerk)) {
+          total = snatch + cleanJerk;
+        }
+      } else if (selectedCategory === 'Powerlifting') {
+        const squat = parseFloat(squatValue);
+        const bench = parseFloat(benchValue);
+        const deadlift = parseFloat(deadliftValue);
+  
+        // Check if all squat, bench, and deadlift values are valid numbers
+        if (!isNaN(squat) && !isNaN(bench) && !isNaN(deadlift)) {
+          total = squat + bench + deadlift;
+        }
+      }
     }
+  
     return total;
   };
+
+  useEffect(() => {
+    const total = calculateTotal();
+    // Update any UI or state based on the new total here
+  }, [snatchValue, cleanJerkValue, squatValue, benchValue, deadliftValue]);
+  
 
   useEffect(() => {
     if (idToDelete !== null) {

@@ -31,6 +31,6 @@ public class PowerliftingServiceImpl implements PowerliftingService {
 
     @Override
     public List<Powerlifting> getTop10FemalePowerliftersByWeightClass(String weightClass) {
-        return powerliftingRepository.findTop10ByWeightClassAndGenderOrderByTotalDesc(weightClass, 'F');
+        return powerliftingRepository.findTop10ByWeightClassAndGenderOrderByTotalDesc(weightClass, 'W');
     }
 }
