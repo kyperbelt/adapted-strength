@@ -57,6 +57,7 @@ export default function Leaderboard() {
   const [squatValue, setSquatValue] = useState(0.0);
   const [benchValue, setBenchValue] = useState(0.0);
   const [deadliftValue, setDeadliftValue] = useState(0.0);
+  const [totalValue, setTotalValue] = useState(0.0);
   const [topAthletes, setTopAthletes] = useState([]);
   const [addRecords, setAddRecords] = useState(true);
   const [deleteRank, setDeleteRank] = useState("");
@@ -136,11 +137,11 @@ export default function Leaderboard() {
 
   // Handle form submission to add record to the database
   const handleSubmit = () => {
-    const total = calculateTotal();
+    //const total = calculateTotal();
     const record = {
       weightClass: addWeightClass,
       gender: addGender.charAt(0), // Assuming 'F' or 'M' for gender
-      total: total,
+      total: totalValue,
     };
 
     if (addCategory === 'Olympic') {
@@ -425,7 +426,7 @@ return (
           <div className="mb-4">
             <label htmlFor="snatchInput">Snatch:</label>
             <input
-              type="text"
+              type="number"
               id="snatchInput"
               onChange={(e) => setSnatchValue(e.target.value)}
               value={snatchValue}
@@ -436,10 +437,21 @@ return (
           <div className="mb-4">
             <label htmlFor="cleanJerkInput">Clean & Jerk:</label>
             <input
-              type="text"
+              type="number"
               id="cleanJerkInput"
               onChange={(e) => setCleanJerkValue(e.target.value)}
               value={cleanJerkValue}
+            />
+          </div>
+        )}
+        {addCategory === 'Olympic' && (
+          <div className="mb-4">
+            <label htmlFor="totalInput">Total:</label>
+            <input
+              type="number"
+              id="totalInput"
+              onChange={(e) => setTotalValue(e.target.value)}
+              value={totalValue}
             />
           </div>
         )}
@@ -447,7 +459,7 @@ return (
           <div className="mb-4">
             <label htmlFor="squatInput">Squat:</label>
             <input
-              type="text"
+              type="number"
               id="squatInput"
               onChange={(e) => setSquatValue(e.target.value)}
               value={squatValue}
@@ -458,7 +470,7 @@ return (
           <div className="mb-4">
             <label htmlFor="benchInput">Bench:</label>
             <input
-              type="text"
+              type="number"
               id="benchInput"
               onChange={(e) => setBenchValue(e.target.value)}
               value={benchValue}
@@ -469,10 +481,21 @@ return (
           <div className="mb-4">
             <label htmlFor="deadliftInput">Deadlift:</label>
             <input
-              type="text"
+              type="number"
               id="deadliftInput"
               onChange={(e) => setDeadliftValue(e.target.value)}
               value={deadliftValue}
+            />
+          </div>
+        )}
+        {addCategory === 'Powerlifting' && (
+          <div className="mb-4">
+            <label htmlFor="totalInput">Total:</label>
+            <input
+              type="number"
+              id="totalInput"
+              onChange={(e) => setTotalValue(e.target.value)}
+              value={totalValue}
             />
           </div>
         )}

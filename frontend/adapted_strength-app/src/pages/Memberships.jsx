@@ -41,7 +41,7 @@ function SubscriptionField({...props}) {
         return (<div> <p>General Client</p></div>);
     } else if (props.tier === 'SPECIFIC_CLIENT') {
         return (<div> <p>Specific Client</p></div>);
-    }
+    } 
 }
 
 function ExpirationField({...props}) {
@@ -60,6 +60,7 @@ export default function Memberships() {
         .then((response) => {
           if (response.status === 200) {
             setProfileInfo(response.data);
+            setSelectedTier(response.data.subscriptionTier); // Set selectedTier with user's subscription tier
             setIsLoading(false);
             console.log(response.data);
           } else {
