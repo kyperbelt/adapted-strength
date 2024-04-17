@@ -1,7 +1,7 @@
 import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { CardBack } from "../../components/Card";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BlankPageContainer } from "../../components/PageContainer";
 import ProgramDashboard from "./ProgramDashboard";
 import CreateProgramDialog from "./CreateProgramDialog";
@@ -42,10 +42,11 @@ function getAllPrograms() {
     return ProgrammingApi.getAllPrograms().then((data) => {
       // cleanse data, only return in formated program structure 
       const programs = data.map((program) => {
+        console.log("Program: ", program);
         return {
           id: program.programId,
           name: program.name,
-          description: "no description saved yet",
+          description: program.description.body,
           selected: false,
           // map array of week objects to just an array of week ids
           blocks: program.weeks.map((block) => block.weekId)
@@ -69,6 +70,11 @@ export default function ProgramMamagement() {
   const [selectedProgramBlocks, setSelectedProgramBlocks] = useState([]);
 
   
+  useEffect(() => {
+    getAllPrograms().then((data) => {
+      setPrograms(data);
+    });
+  }, []);
 
 
   const onAddProgram = () => {

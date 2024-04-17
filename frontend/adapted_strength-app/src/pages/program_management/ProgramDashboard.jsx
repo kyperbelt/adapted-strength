@@ -1,6 +1,8 @@
 import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { CardBack } from "../../components/Card";
 import EditProgramsDialog from "./EditProgramDialog";
+import { ProgrammingApi } from "../../api/ProgrammingApi";
+import { HttpStatus } from "../../api/ApiUtils";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 
 import { useState } from "react";
@@ -10,7 +12,24 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, onCli
   const [programEditId, setEditProgramId] = useState(null);
 
 
-  const DeleteProgram = (programsToDelete) => {
+  const DeleteProgram = async (programsToDelete) => {
+
+    let promiseList = [];
+
+    for (const program of programsToDelete) {
+      console.log(`Deleting program ${program.id}`);
+      promiseList.push(ProgrammingApi.deleteProgram(program.id).then((r) => {
+        if (r.status === HttpStatus.OK) {
+          console.log(`Program ${program.id} deleted`);
+        }
+      }).catch((error) => {
+        console.error('Error deleting program:', error);
+      }));
+    }
+
+    await Promise.all(promiseList).then(() => {
+      console.log(`All programs deleted`);
+    });
 
     const newPrograms = programs.filter((program) => !programsToDelete.includes(program));
     setPrograms(newPrograms);

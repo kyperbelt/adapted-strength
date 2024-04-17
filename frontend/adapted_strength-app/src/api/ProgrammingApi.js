@@ -46,7 +46,7 @@ export class ProgrammingApi {
   static createProgram({ name, description }) {
     const program = {
       programName: name,
-      description: description
+      programDescription: description
     };
 
     return ApiUtils.apiPost('programming/program', program).then((r) => {

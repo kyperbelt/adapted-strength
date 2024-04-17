@@ -3,10 +3,11 @@ package com.terabite.programming.controller;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
+import com.terabite.programming.model.ProgramDescription;
 import com.terabite.programming.model.RepCycle;
 import com.google.api.client.util.Lists;
 import com.terabite.programming.dto.CreateDayRequest;
@@ -52,8 +53,9 @@ public class ProgrammingControler {
     
     //Program endpoints
     @PostMapping("/program")
-    public ResponseEntity<?> postProgram(@RequestBody CreateProgramRequest request) {
+    public ResponseEntity<?> createProgram(@RequestBody CreateProgramRequest request) {
         Program program = new Program(request.programName(), Lists.newArrayList());
+        program.setDescription(new ProgramDescription(request.programDescription()));
         return programService.createNewProgram(program);
     }
 
@@ -70,7 +72,7 @@ public class ProgrammingControler {
     }
 
     @GetMapping("/program/{id}")
-    public ResponseEntity<?> getProgram(@RequestParam int id) {
+    public ResponseEntity<?> getProgram(@PathVariable int id) {
         Program program = new Program("name", Lists.newArrayList());
         program.setProgramId(id);
 
@@ -83,7 +85,7 @@ public class ProgrammingControler {
     }
 
     @DeleteMapping("/program/{id}")
-    public ResponseEntity<?> deleteProgram(@RequestParam int id){
+    public ResponseEntity<?> deleteProgram(@PathVariable int id){
         Program program = new Program("name", Lists.newArrayList());
         program.setProgramId(id);   
 
@@ -129,7 +131,7 @@ public class ProgrammingControler {
     }
 
     @GetMapping("/week/{id}")
-    public ResponseEntity<?> getWeek(@RequestParam long id) {
+    public ResponseEntity<?> getWeek(@PathVariable long id) {
         Week week = new Week("name", Lists.newArrayList());
         week.setWeekId(id);
         return weekService.getWeek(week);
@@ -141,7 +143,7 @@ public class ProgrammingControler {
     }
     
     @DeleteMapping("/week/{id}")
-    public ResponseEntity<?> deleteWeek(@RequestParam long id){
+    public ResponseEntity<?> deleteWeek(@PathVariable long id){
         Week week = weekService.getWeekById(id);
 
         return weekService.deleteWeekByName(week);
@@ -169,7 +171,7 @@ public class ProgrammingControler {
     }
 
     @GetMapping("/day/{id}")
-    public ResponseEntity<?> getDay(@RequestParam long id) {
+    public ResponseEntity<?> getDay(@PathVariable long id) {
         Day day = new Day("name", Lists.newArrayList());
         return dayService.getDay(day);
     }
@@ -180,7 +182,7 @@ public class ProgrammingControler {
     }
 
     @DeleteMapping("/day/{id}")
-    public ResponseEntity<?> deleteDay(@RequestParam long id){
+    public ResponseEntity<?> deleteDay(@PathVariable long id){
         Day day = new Day("name", Lists.newArrayList());
         return dayService.deleteDay(day);
     }
@@ -221,7 +223,7 @@ public class ProgrammingControler {
     }
 
     @GetMapping("/rep_cycle/{id}")
-    public ResponseEntity<?> getRepCycle(@RequestParam long id) {
+    public ResponseEntity<?> getRepCycle(@PathVariable long id) {
         RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.getRepCycle(repCycle);
     }
@@ -232,7 +234,7 @@ public class ProgrammingControler {
     }
 
     @DeleteMapping("/rep_cycle/{id}")
-    public ResponseEntity<?> deleteRepCycle(@RequestParam long id){
+    public ResponseEntity<?> deleteRepCycle(@PathVariable long id){
         RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.deleteRepCycle(repCycle);
     }
