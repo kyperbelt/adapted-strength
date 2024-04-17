@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { UserApi } from "../api/UserApi";
 import { HttpStatus } from "../api/ApiUtils";
 import Footer from '../components/footer';
@@ -166,6 +167,12 @@ export default function Profile() {
                         <p className="value">{profileInfo.howDidYouHear}</p>
                     </div>
                     {/* Add more fields as needed */}
+                </div>
+                <br></br>
+                <div>
+                    <Link to="/edit-profile" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 ">
+                        Edit Profile
+                    </Link>
                 </div>
             </div>
             <Footer />
