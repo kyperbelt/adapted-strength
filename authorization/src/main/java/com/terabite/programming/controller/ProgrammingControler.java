@@ -126,8 +126,11 @@ public class ProgrammingControler {
         
         List<Day> days = Lists.newArrayList();
         for (int dayId : request.dayIds()) {
-            Day day = new Day();
-            day.setDayId(dayId);
+            final Day day = dayService.getDayById(dayId);
+            if (day == null) {
+                log.error("Day with id {} not found", dayId);
+                continue;
+            }
             days.add(day);
         }
         return weekService.updateWeek(request, days);

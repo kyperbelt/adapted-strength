@@ -27,6 +27,10 @@ public class DayService {
         return new ResponseEntity<>(day, HttpStatus.OK);
     }
 
+    public Day getDayById(long id){
+        return dayRepository.findOneByDayId(id);
+    }
+
     public ResponseEntity<?> updateDay(UpdateDayRequest request, List<RepCycle> repCycles) {
         if(dayRepository.findById(request.id()).isEmpty()){
             return new ResponseEntity<>(Payload.of(String.valueOf(request.id())), HttpStatus.NOT_FOUND);        }

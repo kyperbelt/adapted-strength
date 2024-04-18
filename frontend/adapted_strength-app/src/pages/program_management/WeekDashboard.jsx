@@ -21,7 +21,15 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
         useEffect(() => {
                 ProgrammingApi.getProgram(breadcrumb[0]).then((data) => {
                         setSelectedProgram(data);
-                        setWeeks(data.weeks);
+                        const weeks = data.weeks.map((week) => {
+                                return {
+                                        weekId: week.weekId,
+                                        name: week.name,
+                                        description: "",//week.description.body,
+                                        selected: false
+                                };
+                        });
+                        setWeeks(weeks);
                 }).catch((error) => {
                         console.error(`Error getting program ${breadcrumb[0]}: ${error}`);
                 });
