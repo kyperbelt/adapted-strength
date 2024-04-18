@@ -11,6 +11,16 @@ export default function General() {
         fourDay: false,
         threeDay: false
     });
+
+    const [program, setProgram] = useState(null);
+    useEffect(() => {
+        ProgrammingApi.getProgram(1)
+            .then((data) => {
+                const p = data;
+                setProgram(p);
+            });
+    }, []);
+
     const [workouts, setWorkout] = useState([]);
     const adptdsURL = 'http://10.0.0.63:8080/v1/programming/day/all_days';
     const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNleXRlc3RAZW1haWwuY29tIiwiaWF0IjoxNzEzMTM3MjM2LCJleHAiOjE3MTMyMjM2MzZ9.CWb3uwhCV-OiDlurgRTOpn14eDkxpiIpJmoZ3GnmuF0Y--kP4L_FbV18sy3jx5W1SRoRuTFIol-pATcwwqhd5g';
@@ -33,45 +43,6 @@ export default function General() {
         }));
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(adptdsURL, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const jsonData = await response.json();
-                setShowPrograms(jsonData);
-            } catch (error) {
-                console.error("Error fetching data: ", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const [programs, setPrograms] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchPrograms = async () => {
-    //         try {
-    //             const response = await ProgrammingApi.getAllPrograms();
-    //             setPrograms(response);
-    //         } catch (error) {
-    //             console.error("Error fetching programs: ", error);
-    //         }
-    //     };
-    //     fetchPrograms();
-    // }, []);
-
-    const fetchProgram = async (programId) => {
-        try {
-            const response = await ProgrammingApi.getProgram(programId);
-        } catch (error) {
-            console.error("Error fetching program: ", error);
-        }
-    };
     const toggleDay = (program, index) => {
         switch (program) {
             case "fiveDay":
@@ -110,9 +81,12 @@ export default function General() {
                                 {alphabet[index]}
                             </th>
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                Movement
+                                Movement: {
+                                                program &&
+                                                program.weeks[0].days[0].repCycles[0].name
+                                            }
                                 <td scope="col" className="px-1.5 text-xs bg-gray-200">
-
+                                    Equipment
                                 </td>
                                 <td scope="col" className="px-3 text-xs bg-gray-100">
                                     Sets
@@ -129,19 +103,34 @@ export default function General() {
                                 <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
                                     <tr key={index}>
                                         <td className="border px-4 py-2">
-                                            {day.equipment}
+                                            {
+                                                program &&
+                                                program.weeks[0].days[0].repCycles[0].equipment
+                                            }
                                         </td>
                                         <td className="border px-4 py-2">
-                                            {day.sets}
+                                            {
+                                                program &&
+                                                program.weeks[0].days[0].repCycles[0].numSets
+                                            }
                                         </td>
                                         <td className="border px-4 py-2">
-                                            {day.reps}
+                                            {
+                                                program &&
+                                                program.weeks[0].days[0].repCycles[0].numReps
+                                            }
                                         </td>
                                         <td className="border px-4 py-2">
-                                            {day.weight}
+                                            {
+                                                program &&
+                                                program.weeks[0].days[0].repCycles[0].weight
+                                            }
                                         </td>
                                         <td className="border px-4 py-2">
-                                            {day.rest}
+                                            {
+                                                program &&
+                                                program.weeks[0].days[0].repCycles[0].restTime
+                                            }
                                         </td>
                                     </tr>
                                 </tbody>
