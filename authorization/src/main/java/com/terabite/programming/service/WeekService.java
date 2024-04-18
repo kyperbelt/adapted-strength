@@ -25,7 +25,7 @@ public class WeekService {
 
     public ResponseEntity<?> createNewWeek(Week week){
         weekRepository.save(week);
-        return new ResponseEntity<>(week, HttpStatus.CREATED);
+        return new ResponseEntity<>(week, HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateWeek(UpdateWeekRequest updateRequest, List<Day> days){
@@ -37,7 +37,7 @@ public class WeekService {
             week.setDays(days);
 
             weekRepository.save(week);
-            return new ResponseEntity<>(week, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(week, HttpStatus.OK);
         }
     }
 
@@ -55,7 +55,7 @@ public class WeekService {
     }
 
     public ResponseEntity<?> getAllWeeks() {
-        return new ResponseEntity<>(weekRepository.findAll(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(weekRepository.findAll(), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteWeekByName(Week week){
@@ -64,7 +64,7 @@ public class WeekService {
         }
         else{
             weekRepository.delete(week);
-            return new ResponseEntity<>(week, HttpStatus.FOUND);
+            return new ResponseEntity<>(week, HttpStatus.OK);
         }
     }
 

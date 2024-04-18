@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
@@ -63,9 +64,7 @@ public class ProgrammingControler {
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
         List<Week> weeks = Lists.newArrayList();
         for (int weekId : program.weekIds()) {
-            Week week = new Week();
-            week.setWeekId(weekId);
-            weeks.add(week);
+            weeks.add(weekService.getWeekById(weekId));
         }
 
         return programService.updateProgram(program, weeks);
@@ -140,6 +139,19 @@ public class ProgrammingControler {
     @GetMapping("/week/all_weeks")
     public ResponseEntity<?> getAllWeeks() {
         return weekService.getAllWeeks();
+    }
+
+    @GetMapping("/week/all_weeks/{programId}")
+    public ResponseEntity<?> getAllWeeksByProgramId(@PathVariable long programId) {
+        List<Week> weeks = Lists.newArrayList();
+
+        Optional<Program> programOptional = programService.getProgramById(programId);
+
+        if(programOptional.isPresent()){
+            weeks = programOptional.get().getWeeks();
+        }
+        return ResponseEntity.ok(weeks);
+
     }
     
     @DeleteMapping("/week/{id}")

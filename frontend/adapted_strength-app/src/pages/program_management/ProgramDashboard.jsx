@@ -1,3 +1,6 @@
+import BreadCrumb from "../../components/BreadCrumb";
+import { useNavigate, useLocation } from "react-router-dom";
+import CreateProgramDialog from "./CreateProgramDialog";
 import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { CardBack } from "../../components/Card";
 import EditProgramsDialog from "./EditProgramDialog";
@@ -5,11 +8,111 @@ import { ProgrammingApi } from "../../api/ProgrammingApi";
 import { HttpStatus } from "../../api/ApiUtils";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function ProgramDashboard({ trainingPrograms, onAddProgram, onClickProgram, ...props }) {
-  const [programs, setPrograms] = trainingPrograms;
+function getAllPrograms() {
+  try {
+    return ProgrammingApi.getAllPrograms().then((data) => {
+      // cleanse data, only return in formated program structure 
+      const programs = data.map((program) => {
+        console.log("Program: ", program);
+        return {
+          id: program.programId,
+          name: program.name,
+          description: program.description.body,
+          selected: false,
+          // map array of week objects to just an array of week ids
+          weeks: program.weeks
+        };
+      });
+      return programs;
+    });
+  } catch (e) {
+    console.error('Error getting all programs:', e);
+    throw e;
+  }
+}
+
+
+export default function ProgramDashboard({ breadCrumbState, ...props }) {
+  const nav = useNavigate();
+  const loc = useLocation();
+  const url = loc.pathname;
+  const [breadcrumb, setBreadcrumb] = breadCrumbState;
+  const [programs, setPrograms] = useState([]);
   const [programEditId, setEditProgramId] = useState(null);
+
+
+  // Fetch programs on first render once and update the state
+  const programsFetched = useRef(false);
+  useEffect(() => {
+    if (!programsFetched.current) {
+      programsFetched.current = true;
+      getAllPrograms().then((data) => {
+        setPrograms(data);
+      }).catch((_error) => {
+        programsFetched.current = false;
+        // TODO: retry to fetch programs
+      });
+    }
+  }, []);
+
+  const onAddProgram = () => {
+    console.log("Add program");
+    const element = document.getElementById("create-program");
+    element.classList.remove("hidden");
+  }
+
+  const onCreateProgramClose = () => {
+    console.log("Close program");
+    const element = document.getElementById("create-program");
+    element.classList.add("hidden");
+  }
+
+  const onCreate = async (name, description) => {
+    // TODO: request to create a program
+    const newProgram = {
+      name: name,
+      description: description,
+    };
+
+
+    try {
+      const createProgramResponse = await ProgrammingApi.createProgram(newProgram);
+      console.log("Create program response: ", createProgramResponse);
+      if (createProgramResponse.status === HttpStatus.OK) {
+        console.log("Program created: ", newProgram);
+      } else {
+        console.error("Error creating program: ", newProgram);
+      }
+    } catch (e) {
+      console.error('Error creating program:', e);
+    }
+
+    await getAllPrograms().then((data) => {
+      // match all programs to new programs and keep selected state if any 
+      const newPrograms = data.map((program) => {
+        const matchedProgram = programs.find((p) => p.id === program.id);
+        if (matchedProgram) {
+          return {
+            ...program,
+            selected: matchedProgram.selected
+          };
+        }
+        return program;
+      });
+      // setting new programs
+      console.log("New programs: ", newPrograms);
+      setPrograms(newPrograms);
+    });
+
+  };
+
+  const onClickProgram = (program) => {
+    console.log("Program clicked: ", program);
+    nav(`${url}/${program.id}`, { relative : true });
+    
+  }
 
 
   const DeleteProgram = async (programsToDelete) => {
@@ -56,10 +159,15 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, onCli
     onClickProgram(program);
   }
 
+      // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
   return (
 
     <div className="flex flex-col px-6" {...props}>
-      <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
+
+      {/*Dialogs*/}
+      <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
+
+      <BreadCrumb first={{name: "Projects", to: "/program-management"}} breadCrumbs={breadcrumb}/>
       <CardBack className="">
         <div className="flex flex-col sm:flex-row mt-2">
 

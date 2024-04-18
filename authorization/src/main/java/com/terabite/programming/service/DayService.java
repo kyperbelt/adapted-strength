@@ -24,7 +24,7 @@ public class DayService {
 
     public ResponseEntity<?> createNewDay(Day day) {
         dayRepository.save(day);
-        return new ResponseEntity<>(day, HttpStatus.CREATED);
+        return new ResponseEntity<>(day, HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateDay(UpdateDayRequest request, List<RepCycle> repCycles) {
@@ -46,7 +46,7 @@ public class DayService {
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(dayRepository.findOneByDayId(day.getDayId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(dayRepository.findOneByDayId(day.getDayId()), HttpStatus.OK);
         }
     }
 
@@ -60,7 +60,7 @@ public class DayService {
         }
         else{
             dayRepository.delete(day);
-            return new ResponseEntity<>(day, HttpStatus.FOUND);
+            return new ResponseEntity<>(day, HttpStatus.OK);
         }
     }
     

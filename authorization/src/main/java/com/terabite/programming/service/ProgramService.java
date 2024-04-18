@@ -28,17 +28,21 @@ public class ProgramService {
         programRepository.save(program);
         return new ResponseEntity<>(program, HttpStatus.OK);
     }
+    
+    public Optional<Program> getProgramById(long id){
+        return programRepository.findById(id);
+    }
 
     public ResponseEntity<?> updateProgram(UpdateProgramRequest request, List<Week> weeks) {
-        Optional<Program> programOptional = programRepository.findById(request.id());
+        Optional<Program> programOptional = programRepository.findById(request.programId());
         if(programOptional.isEmpty()){
-            return new ResponseEntity<>(Payload.of(String.valueOf(request.id())), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Payload.of(String.valueOf(request.programId())), HttpStatus.NOT_FOUND);
         }
         else{
             Program program = programOptional.get();
             program.setName(request.programName());
             program.setWeeks(weeks);
-            program.setDescription(new ProgramDescription(request.programDescription()));
+            program.getDescription().setBody(request.programDescription());
             programRepository.save(program);
             return new ResponseEntity<>(program, HttpStatus.OK);
         }

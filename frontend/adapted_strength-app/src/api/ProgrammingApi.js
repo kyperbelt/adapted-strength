@@ -83,7 +83,7 @@ export class ProgrammingApi {
    *  console.log('Program updated:', response);
    *  }
    */
-  static editProgram({ programId, name, description, weekIds = [] }) {
+  static updateProgram({ programId, name, description, weekIds = [] }) {
     const updateProgramRequest = {
       programId: programId,
       programName: name,

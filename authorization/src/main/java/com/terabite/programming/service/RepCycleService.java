@@ -21,7 +21,7 @@ public class RepCycleService {
 
     public ResponseEntity<?> createNewRepCycle(RepCycle repCycle) {
         repCycleRepository.save(repCycle);
-        return new ResponseEntity<>(repCycle, HttpStatus.CREATED);
+        return new ResponseEntity<>(repCycle, HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateRepCycle(RepCycle repCycle) {
@@ -30,7 +30,7 @@ public class RepCycleService {
         }
         else{
             repCycleRepository.save(repCycle);
-            return new ResponseEntity<>(repCycle, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(repCycle, HttpStatus.OK);
         }
     }
 
@@ -39,12 +39,12 @@ public class RepCycleService {
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(repCycleRepository.findOneByRepCycleId(repCycle.getRepCycleId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(repCycleRepository.findOneByRepCycleId(repCycle.getRepCycleId()), HttpStatus.OK);
         }
     }
 
     public ResponseEntity<?> getAllRepCycles() {
-        return new ResponseEntity<>(repCycleRepository.findAll(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(repCycleRepository.findAll(), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteRepCycle(RepCycle repCycle) {
@@ -53,7 +53,7 @@ public class RepCycleService {
         }
         else{
             repCycleRepository.delete(repCycle);
-            return new ResponseEntity<>(repCycle, HttpStatus.FOUND);
+            return new ResponseEntity<>(repCycle, HttpStatus.OK);
         }
     }
     

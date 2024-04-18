@@ -66,7 +66,7 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
 }
 
 
-export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick, ...props }) {
+export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick, options =["Edit", "Delete"],...props }) {
   const data = props.data;
   const whenOptionsClicked = (e) => {
     e.stopPropagation();
@@ -96,12 +96,12 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
         <input type="checkbox" onClick={(e) => { e.stopPropagation() }} onChange={(e) => oneSelected(e, selectedOrUnselected)} checked={props.checked} />
       </td>
       {data.map((item) => {
-        return (<td key={item} className="px-6 py-3">{item}</td>);
+        return (<td key={`${item}_key`} className="px-6 py-3">{item}</td>);
       })}
       {props.children}
       <td className="relative">
         <HamburgerButton onBlur={onFocusLost} className="ml-auto" onClick={(e) => { whenOptionsClicked(e) }} />
-        <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={['Edit', 'Delete']} className="absolute hidden right-0" />
+        <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={options} className="absolute hidden right-0" />
       </td>
     </tr>
   );
@@ -110,6 +110,7 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
 export function DropDownMenu({ options, onOptionClick, className, ...props }) {
 
   const onClick = (e, option) => {
+    e.stopPropagation();
     console.log(`${option} clicked`);
     if (onOptionClick) {
       onOptionClick(option);
