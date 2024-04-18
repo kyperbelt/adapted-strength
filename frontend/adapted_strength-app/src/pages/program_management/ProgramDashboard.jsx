@@ -167,7 +167,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
       {/*Dialogs*/}
       <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
 
-      <BreadCrumb first={{name: "Projects", to: "/program-management"}} breadCrumbs={breadcrumb}/>
+      <BreadCrumb first={{name: "Programs", to: "/program-management"}} breadCrumbs={breadcrumb}/>
       <CardBack className="">
         <div className="flex flex-col sm:flex-row mt-2">
 

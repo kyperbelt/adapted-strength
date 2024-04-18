@@ -68,7 +68,12 @@ public class ProgrammingControler {
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
         List<Week> weeks = Lists.newArrayList();
         for (int weekId : program.weekIds()) {
-            weeks.add(weekService.getWeekById(weekId));
+            final Week week = weekService.getWeekById(weekId);
+            if (week == null) {
+                log.error("Week with id {} not found", weekId);
+                continue;
+            }
+            weeks.add(week);
         }
 
         return programService.updateProgram(program, weeks);

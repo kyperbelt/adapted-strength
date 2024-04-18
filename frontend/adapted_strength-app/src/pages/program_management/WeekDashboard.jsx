@@ -125,7 +125,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                 <div className="flex flex-col px-6">
                         <CreateWeekDialog className="hidden" title="Create Week" id="create-week" onClose={() => { document.getElementById("create-week").classList.add("hidden") }} onSubmit={onCreateWeek} />
 
-                        <BreadCrumb first={{ name: "Projects", to: "/program-management" }} breadCrumbs={[
+                        <BreadCrumb first={{ name: "Programs", to: "/program-management" }} breadCrumbs={[
                                 { name: selectedProgram.name, to: `/program-management/${selectedProgram.id}` },
                         ]} />
                         <CardBack className="">
