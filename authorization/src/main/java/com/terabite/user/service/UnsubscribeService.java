@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UnsubscribeService {
 
@@ -28,7 +31,7 @@ public class UnsubscribeService {
         UserInformation existingUser = userRepository.findByEmail(email).orElse(null);
         Login existingLogin = loginRepository.findByEmail(email).orElse(null);
 
-        if (existingUser != null) {
+        if (existingUser != null && existingLogin != null) {
             existingUser.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
             existingUser.cancelExpirationDate();
 
@@ -36,6 +39,9 @@ public class UnsubscribeService {
             // Iterates through all roles of a given login, and removes all subscription related roles
             // TODO: We should eventually convert Login Roles to a Set instead of it being a list to simplify logic
             UserApi.ResetSubscriptionRoles(existingLogin);
+            List<String> resetRoles = new ArrayList<>(List.copyOf(existingLogin.getRoles()));
+            resetRoles.add("ROLE_" + SubscriptionStatus.NO_SUBSCRIPTION.name());
+            existingLogin.setRoles(resetRoles);
 
             // Save the updated user
             userRepository.save(existingUser);
@@ -46,7 +52,7 @@ public class UnsubscribeService {
             return ResponseEntity.ok("Cancelled subscription successfully.");
 
         } else {
-            return ResponseEntity.badRequest().body("No UserInformation: " + email);
+            return ResponseEntity.badRequest().body("No UserInformation or Login: " + email);
         }
 
     }
