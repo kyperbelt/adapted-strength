@@ -47,6 +47,10 @@ public class RepCycleService {
         return new ResponseEntity<>(repCycleRepository.findAll(), HttpStatus.OK);
     }
 
+    public RepCycle getRepCycleById(long id){
+        return repCycleRepository.findOneByRepCycleId(id);
+    }
+
     public ResponseEntity<?> deleteRepCycle(RepCycle repCycle) {
         if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);

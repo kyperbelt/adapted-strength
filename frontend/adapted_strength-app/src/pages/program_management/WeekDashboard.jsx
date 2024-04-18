@@ -44,7 +44,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                 }
 
                 await Promise.all(promiseList).then(() => {
-                        console.log(`All programs deleted`);
+                        console.log(`All weeks deleted`);
                 });
                 setWeeks(newWeeks);
         }
@@ -52,7 +52,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
         const OptionSelected = (option) => {
                 if (option === 'Delete Selected') {
                         const weeksToDelete = weeks.filter((week) => week.selected);
-                        console.log(`Delete Selected so im deleting ${weeksToDelete.length} weeks`);
+                        console.log(`Delete Selected, so im deleting ${weeksToDelete.length} weeks`);
                         DeleteWeek(weeksToDelete);
                 }
         }
@@ -131,31 +131,31 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                         </PrimaryButton>
                                 </div>
                                 <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-                                        {weeks.map((block) => (
+                                        {weeks.map((week) => (
                                                 <CustomTableRow
-                                                        key={block.weekId}
+                                                        key={week.weekId}
                                                         data={[
-                                                                block.name,
-                                                                block.description,
+                                                                week.name,
+                                                                week.description,
                                                         ]}
                                                         onOptionClick={(option) => {
                                                                 if (option === 'Delete') {
-                                                                        DeleteWeek([block]);
+                                                                        DeleteWeek([week]);
                                                                 } else if (option === 'Edit') {
                                                                         document.getElementById("edit-block").classList.remove("hidden");
-                                                                        setWeekEditId(block.id);
+                                                                        setWeekEditId(week.weekId);
                                                                 }
                                                         }}
-                                                        selected={block.selected}
+                                                        selected={week.selected}
                                                         onClick={() => {
-                                                                const newBlocks = weeks.map((b) => {
-                                                                        if (b.id === block.id) {
+                                                                const newWeeks = weeks.map((b) => {
+                                                                        if (b.weekId === week.weekId) {
                                                                                 return { ...b, selected: !b.selected };
                                                                         }
                                                                         return b;
                                                                 });
-                                                                setWeeks(newBlocks);
-                                                                console.log(`Block ${block.id} selected: ${block.selected}`);
+                                                                setWeeks(newWeeks);
+                                                                console.log(`Week ${week.weekId} selected: ${week.selected}`);
                                                         }}
                                                 />
                                         ))}

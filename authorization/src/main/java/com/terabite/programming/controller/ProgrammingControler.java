@@ -32,12 +32,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 
 
 @RestController
 @RequestMapping("/v1/programming")
 public class ProgrammingControler {
+
+    private static final Logger log = LoggerFactory.getLogger(ProgrammingControler.class);
     
     private final RepCycleService repCycleService;
     private final DayService dayService;
@@ -175,8 +179,11 @@ public class ProgrammingControler {
 
         List<RepCycle> repCycles = Lists.newArrayList();
         for (int repCycleId : request.repCycleIds()) {
-            RepCycle repCycle = new RepCycle();
-            repCycle.setRepCycleId(repCycleId);
+            RepCycle repCycle = repCycleService.getRepCycleById(repCycleId);
+            if (repCycle == null) {
+                log.error("RepCycle with id {} not found", repCycleId);
+                continue;
+            }
             repCycles.add(repCycle);
         }
         return dayService.updateDay(request, repCycles);
@@ -202,7 +209,7 @@ public class ProgrammingControler {
 
     //RepCycle endpoints
     @PostMapping("/rep_cycle")
-    public ResponseEntity<?> postRepCycle(@RequestBody CreateRepCycleRequest request) {
+    public ResponseEntity<?> createRepCycle(@RequestBody CreateRepCycleRequest request) {
         RepCycle repCycle = new RepCycle().withName(request.repCycleName())
                                         // .withDescription(request.repCycleDescription())
                                         .withNumReps(request.numReps())
