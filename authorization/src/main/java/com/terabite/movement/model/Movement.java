@@ -76,4 +76,15 @@ public class Movement
         this.categories.add(category);
         category.getMovements().add(this);
     }
+
+    @Override
+    public String toString() {
+        return "Movement{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", link='" + link + '\'' +
+                ", categories=" + categories +
+                '}';
+    }
 }
