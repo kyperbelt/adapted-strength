@@ -12,6 +12,8 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.SubscriptionUpdateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.terabite.common.dto.Payload;
+import com.terabite.payment.model.Customer;
+import com.terabite.payment.repository.CustomerRepository;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 
@@ -19,14 +21,29 @@ import com.terabite.user.repository.UserRepository;
 public class PaymentService {
     @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
     private String stripeKey;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
-    public PaymentService(UserRepository userRepository) {
+    public PaymentService(UserRepository userRepository, CustomerRepository customerRepository) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<?> cancelSubscriptionById(String subscriptionId) throws StripeException {
+    public ResponseEntity<?> cancelSubscriptionById(String userEmail) throws StripeException {
         Stripe.apiKey = stripeKey;
+        UserInformation userInformation = userRepository.findByEmail(userEmail).orElse(null);
+        if(userInformation == null){
+            return new ResponseEntity<>(Payload.of("User not found"), HttpStatus.BAD_REQUEST);
+        }
+        Customer customer = customerRepository.findByUserInformation(userInformation).orElse(null);
+        if(customer == null){
+            return new ResponseEntity<>(Payload.of("Customer not found"), HttpStatus.BAD_REQUEST);
+        }
+        String subscriptionId = customer.getSubscriptionId();
+        if(subscriptionId == null){
+            return new ResponseEntity<>(Payload.of("Customer does not have a subscription"), HttpStatus.BAD_REQUEST);
+        }
+        
 
         // get the subscription
         Subscription resource = Subscription.retrieve(subscriptionId);

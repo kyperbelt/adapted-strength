@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -28,8 +27,8 @@ public class PaymentController {
 
 
     @PostMapping("/cancel_subscription")
-    public ResponseEntity<?> cancelSubscriptionById(@RequestBody String subscriptionId) throws StripeException {
-        return paymentService.cancelSubscriptionById(subscriptionId);
+    public ResponseEntity<?> cancelSubscriptionById(@AuthenticationPrincipal UserDetails userDetails) throws StripeException {
+        return paymentService.cancelSubscriptionById(userDetails.getUsername());
     }
     
     @PostMapping("/create_checkout_session")
@@ -40,7 +39,6 @@ public class PaymentController {
         else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
     }
 
     @GetMapping("/session_status?session_id={checkoutSessionId}")

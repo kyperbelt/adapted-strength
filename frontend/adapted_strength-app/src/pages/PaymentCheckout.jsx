@@ -1,7 +1,4 @@
 import * as React from "react";
-import PageContainer1 from "../components/PageContainer";
-import { useEffect } from "react";
-import { useState } from "react";
 import { HttpStatus, ApiUtils, AUTH_TOKEN_NAME } from "../api/ApiUtils";
 import { loadStripe } from "@stripe/stripe-js";
 import {

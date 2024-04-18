@@ -28,7 +28,6 @@ public class WebhookController {
     public HttpStatus handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") Map<String, String> stripeSignature) {
 
-        log.info("Received webhook event: {}", payload);
         return webhookService.handleWebhookEvent(payload, stripeSignature);
     }
 
