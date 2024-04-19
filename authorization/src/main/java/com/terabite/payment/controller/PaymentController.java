@@ -31,10 +31,10 @@ public class PaymentController {
         return paymentService.cancelSubscriptionById(userDetails.getUsername());
     }
     
-    @PostMapping("/create_checkout_session")
-    public ResponseEntity<?> createCheckoutSession(@AuthenticationPrincipal UserDetails userDetails) throws StripeException{
+    @PostMapping("/create_checkout_session/{subType}")
+    public ResponseEntity<?> createCheckoutSession(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subType") String subType) throws StripeException{
         if(userDetails!=null){
-            return paymentService.createCheckoutSession("price_1Osq2IFNE1ftX3iy9K9vCz6u",userDetails.getUsername() );
+            return paymentService.createCheckoutSession(userDetails.getUsername(), subType);
         }
         else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

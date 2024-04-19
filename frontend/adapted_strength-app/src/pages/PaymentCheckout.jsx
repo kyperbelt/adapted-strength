@@ -17,7 +17,7 @@ const Checkout = ({ fetchClientSecret }) => {
   const options = {
     fetchClientSecret: async () => {
       console.log("FETCHING CLIENT SECRET");
-      return ApiUtils.apiPost("payments/create_checkout_session")
+      return ApiUtils.apiPost("payments/create_checkout_session/specific")
         .then((response) => {
           if (response.status === HttpStatus.OK) {
             console.log("CLIENT SECRET: " + response.data.payload);

@@ -19,10 +19,20 @@ import com.terabite.user.repository.UserRepository;
 
 @Service
 public class PaymentService {
-    @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
-    private String stripeKey;
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
+
+    @Value("${ADAPTED_STRENGTH_STRIPE_SECRET_KEY}")
+    private String stripeKey;
+
+    @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
+    private String baseClientPriceId;
+
+    @Value("${ADAPTED_STRENGTH_GENERAL_PRICE_ID}")
+    private String generalClientPriceId;
+
+    @Value("${ADAPTED_STRENGTH_SPECIFIC_PRICE_ID}")
+    private String specificClientPriceId;
 
     public PaymentService(UserRepository userRepository, CustomerRepository customerRepository) {
         this.userRepository = userRepository;
@@ -60,7 +70,7 @@ public class PaymentService {
         return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> createCheckoutSession(String priceId, String email) throws StripeException {
+    public ResponseEntity<?> createCheckoutSession(String email, String subType) throws StripeException {
         Stripe.apiKey = stripeKey;
 
         // find the user based on email so that we can assign customer
@@ -69,9 +79,24 @@ public class PaymentService {
         if (userInformation == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         String stripeCustomer = userInformation.getCustomer().getId();
 
-        // need to fill in this return url
+        String priceId = "";
+        if(subType.equals("base")){
+            priceId = baseClientPriceId;
+        }
+        else if(subType.equals("general")){
+            priceId = generalClientPriceId;
+        }
+        else if(subType.equals("specific")){
+            priceId = specificClientPriceId;
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // TODO: update this retun url to live website on deployment
         String returnUrl = "http://localhost:3000";
 
         SessionCreateParams params = SessionCreateParams.builder()
@@ -83,7 +108,7 @@ public class PaymentService {
                                 .build())
                 .setCustomer(stripeCustomer)
                 .setUiMode(SessionCreateParams.UiMode.EMBEDDED)
-                .setReturnUrl(returnUrl + "?session_id={CHECKOUT_SESSION_ID}")
+                .setReturnUrl(returnUrl)
                 .build();
 
         Session session = Session.create(params);
