@@ -61,75 +61,72 @@ export default function General() {
                     {program &&
                         program.weeks[0].days.map((day, index) => {
                             return (
-                                <tr key={index}>
-                                    {/* LET "Order" AND "Exercise" CHANGE! 
-                        This is hard coded for UI purposes */}
-                                    <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                        {
-                                            day.repCycles[0].workoutOrder
-                                        }
-                                    </th>
-                                    <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                        Movement: {
-                                            day.repCycles[0].name
-                                        }
-                                        <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                            Equipment
-                                        </td>
-                                        <td scope="col" className="px-3 text-xs bg-gray-100">
-                                            Sets
-                                        </td>
-                                        <td scope="col" className="px-3 text-xs bg-gray-200">
-                                            Reps/Time
-                                        </td>
-                                        <td scope="col" className="px-3 text-xs bg-gray-100">
-                                            % or RPE
-                                        </td>
-                                        <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
-                                            Rest
-                                        </td>
-                                        <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+                                day.repCycles.map(repCycle => {
+                                    return (
+                                        <div>
                                             <tr key={index}>
-                                                <td className="border px-4 py-2">
+                                                {/* LET "Order" AND "Exercise" CHANGE! 
+                        This is hard coded for UI purposes */}
+                                                <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                                     {
-                                                    
-                                                    day.repCycles[0].equipment
-                                                    /* {
-                                                        day.repCycles.map(repCycle => {
-                                                            return (
-                                                                <div>
-                                                                    {
-                                                                        repCycle.equipment
-                                                                    }
-                                                                </div>
-                                                            );
-                                                        })
-                                                    } */}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {
-                                                        day.repCycles[0].numSets
+                                                        repCycle.workoutOrder
                                                     }
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {
-                                                        day.repCycles[0].numReps
+                                                </th>
+                                                <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
+                                                    Movement: {
+                                                        repCycle.name
                                                     }
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {
-                                                        day.repCycles[0].weight
-                                                    }
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {
-                                                        day.repCycles[0].restTime
-                                                    }
-                                                </td>
+                                                    <td scope="col" className="px-1.5 text-xs bg-gray-200">
+                                                        Equipment
+                                                    </td>
+                                                    <td scope="col" className="px-3 text-xs bg-gray-100">
+                                                        Sets
+                                                    </td>
+                                                    <td scope="col" className="px-3 text-xs bg-gray-200">
+                                                        Reps/Time
+                                                    </td>
+                                                    <td scope="col" className="px-3 text-xs bg-gray-100">
+                                                        % or RPE
+                                                    </td>
+                                                    <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
+                                                        Rest
+                                                    </td>
+                                                    <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+                                                        <tr key={index}>
+                                                            <td className="border px-4 py-2">
+                                                                {
+                                                                    repCycle.equipment
+                                                                               
+                                                                }
+                                                            </td>
+                                                            <td className="border px-4 py-2">
+                                                                {
+                                                                    repCycle.numSets
+                                                                }
+                                                            </td>
+                                                            <td className="border px-4 py-2">
+                                                                {
+                                                                    repCycle.numReps
+                                                                }
+                                                            </td>
+                                                            <td className="border px-4 py-2">
+                                                                {
+                                                                    repCycle.weight
+                                                                }
+                                                            </td>
+                                                            <td className="border px-4 py-2">
+                                                                {
+                                                                    repCycle.restTime
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </th>
                                             </tr>
-                                        </tbody>
-                                    </th>
-                                </tr>
+                                        </div>
+                                    );
+                                })
+
                             );
                         })}
                 </tbody>
@@ -146,8 +143,8 @@ export default function General() {
                 }
             </p>
             <CardBack>
-                <h1 className="font-bold uppercase">
-                    March 1 - April 5
+                <h1 className="font-bold flex justify-center uppercase">
+                    Week {program && program.weeks[0].weekId}:
                 </h1>
                 {["Five", "Four", "Three"].map((days, index) => (
                     <div key={index}>
@@ -156,7 +153,7 @@ export default function General() {
                         </button>
                         {showPrograms[`${days.toLowerCase()}Day`] && (
                             <CardBack className="xl:w-11/12 xl:mx-auto w-full">
-                                <div className="overflow-x-auto">
+                                <div className="overflow-x-auto flex justify-center">
                                     {eval(`${days.toLowerCase()}DayProgram`).map((day, dayIndex) => (
                                         <button onClick={() => toggleDay(`${days.toLowerCase()}Day`, dayIndex)} className={`w-500 mr-1 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
                                             {day ? 'Close' : `Day ${dayIndex + 1}`}
