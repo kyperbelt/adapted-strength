@@ -40,7 +40,9 @@ public class PaymentService {
     }
 
     public ResponseEntity<?> cancelSubscriptionById(String userEmail) throws StripeException {
+        
         Stripe.apiKey = stripeKey;
+
         UserInformation userInformation = userRepository.findByEmail(userEmail).orElse(null);
         if(userInformation == null){
             return new ResponseEntity<>(Payload.of("User not found"), HttpStatus.BAD_REQUEST);
@@ -54,7 +56,7 @@ public class PaymentService {
             return new ResponseEntity<>(Payload.of("Customer does not have a subscription"), HttpStatus.BAD_REQUEST);
         }
         
-
+        System.out.println(subscriptionId);
         // get the subscription
         Subscription resource = Subscription.retrieve(subscriptionId);
 
@@ -65,31 +67,33 @@ public class PaymentService {
                 .build();
 
         // call stripe to update subscription
-        Subscription updatedSubscription = resource.update(params);
+        resource.update(params);
 
-        return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> createCheckoutSession(String email, String subType) throws StripeException {
+
+
+    public ResponseEntity<?> createCheckoutSession(String email, String subLevel) throws StripeException {
         Stripe.apiKey = stripeKey;
 
         // find the user based on email so that we can assign customer
         UserInformation userInformation = userRepository.findByEmail(email).orElse(null);
         // add null protection
         if (userInformation == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
 
         String stripeCustomer = userInformation.getCustomer().getId();
 
         String priceId = "";
-        if(subType.equals("base")){
+        if(subLevel.equals("base")){
             priceId = baseClientPriceId;
         }
-        else if(subType.equals("general")){
+        else if(subLevel.equals("general")){
             priceId = generalClientPriceId;
         }
-        else if(subType.equals("specific")){
+        else if(subLevel.equals("specific")){
             priceId = specificClientPriceId;
         }
         else{
@@ -116,9 +120,59 @@ public class PaymentService {
         return new ResponseEntity<>(Payload.of(clientSecret), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> retrieveCheckoutSessionStatus(String checkoutSessionId) throws StripeException {
+
+    
+    public ResponseEntity<?> changeSubscriptionLevel(String email, String subLevel) throws StripeException {
         Stripe.apiKey = stripeKey;
-        Session session = Session.retrieve(checkoutSessionId);
-        return new ResponseEntity<>(session, HttpStatus.OK);
+
+        // find the user based on email so that we can assign customer
+        UserInformation userInformation = userRepository.findByEmail(email).orElse(null);
+        // add null protection
+        if (userInformation == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+        }
+
+        // find TeraBITE customer object so that we can get the user's subscriptionId
+        Customer customer = customerRepository.findByUserInformation(userInformation).orElse(null);
+        if (customer == null){
+            return new ResponseEntity<>("Customer not found", HttpStatus.BAD_REQUEST);
+        }
+
+        // get the subscriptionId
+        String subscriptionId = customer.getSubscriptionId();
+        if(subscriptionId == null){
+            return new ResponseEntity<>("Customer is not subscribed", HttpStatus.BAD_REQUEST);
+        }
+
+        Subscription subscription = Subscription.retrieve(subscriptionId);
+
+        String priceId = "";
+        if(subLevel.equals("base")){
+            priceId = baseClientPriceId;
+        }
+        else if(subLevel.equals("general")){
+            priceId = generalClientPriceId;
+        }
+        else if(subLevel.equals("specific")){
+            priceId = specificClientPriceId;
+        }
+        else{
+            return new ResponseEntity<>("Invalid Subscription Level", HttpStatus.BAD_REQUEST);
+        }
+
+        String itemId = subscription.getItems().getData().get(0).getId();
+
+        SubscriptionUpdateParams params = SubscriptionUpdateParams.builder()
+            .addItem(
+                SubscriptionUpdateParams.Item.builder()
+                .setId(itemId)
+                .setPrice(priceId)
+                .build()
+            )
+            .build();
+        subscription.update(params);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    
 }

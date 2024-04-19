@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -31,19 +30,24 @@ public class PaymentController {
         return paymentService.cancelSubscriptionById(userDetails.getUsername());
     }
     
-    @PostMapping("/create_checkout_session/{subType}")
-    public ResponseEntity<?> createCheckoutSession(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subType") String subType) throws StripeException{
+    @PostMapping("/create_checkout_session/{subLevel}")
+    public ResponseEntity<?> createCheckoutSession(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subLevel") String subLevel) throws StripeException{
         if(userDetails!=null){
-            return paymentService.createCheckoutSession(userDetails.getUsername(), subType);
+            return paymentService.createCheckoutSession(userDetails.getUsername(), subLevel);
         }
         else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/session_status?session_id={checkoutSessionId}")
-    public ResponseEntity<?> retrieveCheckoutSessionStatus(@PathVariable("checkoutSessionId") String checkoutSessionId) throws StripeException {
-        return paymentService.retrieveCheckoutSessionStatus(checkoutSessionId);
+    @PostMapping("/change_subscription_level/{subLevel}")
+    public ResponseEntity<?> changeSubscriptionLevel(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subLevel") String subLevel) throws StripeException{
+        if(userDetails!= null && subLevel != null){
+            return paymentService.changeSubscriptionLevel(userDetails.getUsername(), subLevel);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     
 }
