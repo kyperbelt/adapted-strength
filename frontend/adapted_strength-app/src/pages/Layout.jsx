@@ -19,12 +19,17 @@ function ChatButton({...props})
     );
 }
 
-export default function Layout() {
+export default function Layout() { 
+
     return (
-        <div className="w-full h-full flex flex-col my-0">
-            <NavBar />
+        <div id="layout" className="grow flex flex-col">
+            <NavBar currentPage="" />
             <Outlet className="" />
             <ChatButton messageNotification={false}/>
+            {/*add footer here*/}
         </div>
     );
 }
+            // <footer className="bg-primary text-secondary p-4">
+            //     <p>Footer</p>
+            // </footer>

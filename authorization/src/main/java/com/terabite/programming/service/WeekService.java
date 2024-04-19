@@ -1,9 +1,14 @@
 package com.terabite.programming.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.terabite.common.dto.Payload;
+import com.terabite.programming.dto.UpdateWeekRequest;
+import com.terabite.programming.model.Day;
 import com.terabite.programming.model.Week;
 import com.terabite.programming.repository.WeekRepository;
 
@@ -23,13 +28,21 @@ public class WeekService {
         return new ResponseEntity<>(week, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> updateWeek(Week week){
-        if(weekRepository.findById(week.getWeekId()).isEmpty()){
-            return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);        }
+    public ResponseEntity<?> updateWeek(UpdateWeekRequest updateRequest, List<Day> days){
+        if(weekRepository.findById(updateRequest.id()).isEmpty()){
+            return new ResponseEntity<>(Payload.of(String.valueOf(updateRequest.id())), HttpStatus.NOT_FOUND);        }
         else{
+            Week week = weekRepository.findOneByWeekId(updateRequest.id());
+            week.setName(updateRequest.weekName());
+            week.setDays(days);
+
             weekRepository.save(week);
             return new ResponseEntity<>(week, HttpStatus.ACCEPTED);
         }
+    }
+
+    public Week getWeekById(long id){
+        return weekRepository.findOneByWeekId(id);
     }
 
     public ResponseEntity<?> getWeek(Week week){

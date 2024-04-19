@@ -1,5 +1,6 @@
 package com.terabite.authorization.service;
 
+import com.terabite.authorization.model.ForgotPasswordToken;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.log.LoginNotFoundException;
 import com.terabite.authorization.repository.LoginRepository;
@@ -58,7 +59,7 @@ public class LoginService implements UserDetailsService {
         return Optional.empty();
     }
 
-    public void updatePasswordResetToken(String token, String email) throws LoginNotFoundException {
+    public void updatePasswordResetToken(ForgotPasswordToken token, String email) throws LoginNotFoundException {
 
         Login login = loginRepository.findOneByEmail(email);
 
