@@ -65,78 +65,81 @@ export default function General() {
         }
     };
 
-    const getTable = (days) => {
-        if (!days.some(day => day)) return null;
-
-        const alphabet = 'ABCDEFGHIJ';
-
+    const getTable = () => {
         return (
             <table className="w-full text-left mt-4">
                 <tbody className="rounded-full text-[#161A1D]">
-                    {days.map((day, index) => (
-                        <tr key={index}>
-                            {/* LET "Order" AND "Exercise" CHANGE! 
+                    {program &&
+                        program.weeks[1].days.map((day, index) => {
+                            return (
+                                <tr key={index}>
+                                    {/* LET "Order" AND "Exercise" CHANGE! 
                         This is hard coded for UI purposes */}
-                            <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                {alphabet[index]}
-                            </th>
-                            <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                Movement: {
-                                                program &&
-                                                program.weeks[0].days[0].repCycles[0].name
-                                            }
-                                <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                    Equipment
-                                </td>
-                                <td scope="col" className="px-3 text-xs bg-gray-100">
-                                    Sets
-                                </td>
-                                <td scope="col" className="px-3 text-xs bg-gray-200">
-                                    Reps/Time
-                                </td>
-                                <td scope="col" className="px-3 text-xs bg-gray-100">
-                                    % or RPE
-                                </td>
-                                <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
-                                    Rest
-                                </td>
-                                <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
-                                    <tr key={index}>
-                                        <td className="border px-4 py-2">
-                                            {
-                                                program &&
-                                                program.weeks[0].days[0].repCycles[0].equipment
-                                            }
+                                    <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
+                                        {
+                                            day.repCycles[0].workoutOrder
+                                        }
+                                    </th>
+                                    <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
+                                        Movement: {
+                                            day.repCycles[0].name
+                                        }
+                                        <td scope="col" className="px-1.5 text-xs bg-gray-200">
+                                            Equipment
                                         </td>
-                                        <td className="border px-4 py-2">
-                                            {
-                                                program &&
-                                                program.weeks[0].days[0].repCycles[0].numSets
-                                            }
+                                        <td scope="col" className="px-3 text-xs bg-gray-100">
+                                            Sets
                                         </td>
-                                        <td className="border px-4 py-2">
-                                            {
-                                                program &&
-                                                program.weeks[0].days[0].repCycles[0].numReps
-                                            }
+                                        <td scope="col" className="px-3 text-xs bg-gray-200">
+                                            Reps/Time
                                         </td>
-                                        <td className="border px-4 py-2">
-                                            {
-                                                program &&
-                                                program.weeks[0].days[0].repCycles[0].weight
-                                            }
+                                        <td scope="col" className="px-3 text-xs bg-gray-100">
+                                            % or RPE
                                         </td>
-                                        <td className="border px-4 py-2">
-                                            {
-                                                program &&
-                                                program.weeks[0].days[0].repCycles[0].restTime
-                                            }
+                                        <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
+                                            Rest
                                         </td>
-                                    </tr>
-                                </tbody>
-                            </th>
-                        </tr>
-                    ))}
+                                        <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+                                            <tr key={index}>
+                                                <td className="border px-4 py-2">
+                                                    {
+                                                        day.repCycles.map(repCycle => {
+                                                            return (
+                                                                <div>
+                                                                    {
+                                                                        repCycle.equipment
+                                                                    }
+                                                                </div>
+                                                            );
+                                                        })
+                                                    }
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {
+                                                        day.repCycles[0].numSets
+                                                    }
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {
+                                                        day.repCycles[0].numReps
+                                                    }
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {
+                                                        day.repCycles[0].weight
+                                                    }
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {
+                                                        day.repCycles[0].restTime
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </th>
+                                </tr>
+                            );
+                        })}
                 </tbody>
             </table>
         );
@@ -145,7 +148,10 @@ export default function General() {
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-                Welcome to your program!
+                Your Program: {
+                    program &&
+                    program.name
+                }
             </p>
             <CardBack>
                 <h1 className="font-bold uppercase">
