@@ -50,6 +50,7 @@ import ChatTest from './pages/test_pages/ChatTest';
 
 // TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
+const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 
 // import footer from '../footer'
 
@@ -105,6 +106,9 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="payment-checkout/:plan?" element={
+                <RouteGuard state = {()=>AuthApi.isLoggedIn()} routeTo="/login"> <PaymentCheckout /> </RouteGuard>
+            } />
 
             /* ROUTES FOR CHAT PAGES */
             //--------------------------------------------------

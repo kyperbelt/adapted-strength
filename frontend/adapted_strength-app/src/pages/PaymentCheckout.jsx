@@ -1,6 +1,10 @@
-import * as React from "react";
+import {SubscriptionApi} from "../api/SubscriptionApi.js"
+import {useState, useEffect} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import { HttpStatus, ApiUtils, AUTH_TOKEN_NAME } from "../api/ApiUtils";
 import { loadStripe } from "@stripe/stripe-js";
+import PageContainer1 from "../components/PageContainer.jsx"
+import { BlankPageContainer } from "../components/PageContainer.jsx";
 import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout,
@@ -13,20 +17,11 @@ const stripePromise = loadStripe(
   {}
 );
 
-const Checkout = ({ fetchClientSecret }) => {
+const Checkout = ({plan}) => {
   const options = {
     fetchClientSecret: async () => {
       console.log("FETCHING CLIENT SECRET");
-      return ApiUtils.apiPost("payments/create_checkout_session/base")
-        .then((response) => {
-          if (response.status === HttpStatus.OK) {
-            console.log("CLIENT SECRET: " + response.data.payload);
-            return response.data.payload;
-          }
-        })
-        .catch((error) => {
-          console.log("BIGTIME ERROR: " + error);
-        });
+      return SubscriptionApi.getClientSecret({plan})
     },
   };
 
@@ -37,9 +32,33 @@ const Checkout = ({ fetchClientSecret }) => {
   );
 };
 
+const PLANS = ["base", "general", "specific"];
+
+function getAvailablePlans(){
+  // TODO: HOOK to backend to get all available plans
+  //      example: return SubAPI.getPlans();
+  return PLANS;
+}
+
 export default function CheckoutPage() {
-  //   const [clientSecret, setClientSecret] = useState(null);
-  //await ApiUtils.apiPost('/payments/create_checkout_session').data;
-  console.log("LOADING BROTHER YEAH!");
-  return <Checkout></Checkout>;
+  const nav = useNavigate();
+  const {plan} = useParams();
+  const [plans, setPlans] = useState([])
+  console.log(`LOADING Plan ${plan}, BROTHER, OH YEAH!`);
+
+  useEffect(()=>{
+    try{
+        setPlans(getAvailablePlans());
+    }catch(e){
+      console.log(e);
+    }
+  },[]);
+
+
+  return (
+    <BlankPageContainer>
+      {!(plans.includes(plan)) && <span>Plan not found!</span>}
+      {plans.includes(plan) && <Checkout plan={plan}></Checkout>}
+    </BlankPageContainer>
+  );
 }

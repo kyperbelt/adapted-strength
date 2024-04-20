@@ -3,6 +3,7 @@ package com.terabite.payment.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.stripe.Stripe;
@@ -172,6 +173,37 @@ public class PaymentService {
             .build();
         subscription.update(params);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getActiveSubscriptionStatus(String email) throws StripeException {
+        Stripe.apiKey = stripeKey;
+
+        // find the user based on email so that we can assign customer
+        UserInformation userInformation = userRepository.findByEmail(email).orElse(null);
+        // add null protection
+        if (userInformation == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+        }
+
+        // find TeraBITE customer object so that we can get the user's subscriptionId
+        Customer customer = customerRepository.findByUserInformation(userInformation).orElse(null);
+        if (customer == null){
+            return new ResponseEntity<>("Customer not found", HttpStatus.BAD_REQUEST);
+        }
+
+        // get the subscriptionId
+        String subscriptionId = customer.getSubscriptionId();
+        if(subscriptionId == null){
+            return new ResponseEntity<>("Customer is not subscribed", HttpStatus.BAD_REQUEST);
+        }
+
+        Subscription subscription = Subscription.retrieve(subscriptionId);
+        if(subscription.getStatus().equals("active")){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
     }
 
     
