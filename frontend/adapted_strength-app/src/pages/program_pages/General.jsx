@@ -21,6 +21,17 @@ export default function General() {
             });
     }, []);
 
+    const [workouts, setWorkout] = useState([]);
+    const adptdsURL = 'http://10.0.0.63:8080/v1/programming/day/all_days';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNleXRlc3RAZW1haWwuY29tIiwiaWF0IjoxNzEzMTM3MjM2LCJleHAiOjE3MTMyMjM2MzZ9.CWb3uwhCV-OiDlurgRTOpn14eDkxpiIpJmoZ3GnmuF0Y--kP4L_FbV18sy3jx5W1SRoRuTFIol-pATcwwqhd5g';
+    // const fetchData = async () => {
+    //     const response = await fetch(adptdsURL);
+    //     const jsonData = await response.json();
+    //     setWorkout(jsonData);
+    // };
+    // fetchData();
+    // }, []);
+
     const [fiveDayProgram, setFiveDayProgram] = useState(Array(5).fill(false));
     const [fourDayProgram, setFourDayProgram] = useState(Array(4).fill(false));
     const [threeDayProgram, setThreeDayProgram] = useState(Array(3).fill(false));
@@ -91,10 +102,7 @@ export default function General() {
                                         <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
                                             <tr key={index}>
                                                 <td className="border px-4 py-2">
-                                                    {
-                                                    
-                                                    day.repCycles[0].equipment
-                                                    /* {
+                                                    { 
                                                         day.repCycles.map(repCycle => {
                                                             return (
                                                                 <div>
@@ -104,7 +112,7 @@ export default function General() {
                                                                 </div>
                                                             );
                                                         })
-                                                    } */}
+                                                    } 
                                                 </td>
                                                 <td className="border px-4 py-2">
                                                     {
