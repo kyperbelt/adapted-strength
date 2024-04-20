@@ -37,9 +37,6 @@ public class WebhookService {
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
     private String baseClientPriceId;
 
-    @Value("${ADAPTED_STRENGTH_GENERAL_PRICE_ID}")
-    private String generalClientPriceId;
-
     @Value("${ADAPTED_STRENGTH_SPECIFIC_PRICE_ID}")
     private String specificClientPriceId;
 
@@ -181,11 +178,6 @@ public class WebhookService {
 
             if(priceId.equals(baseClientPriceId)){      
                 SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.BASE_CLIENT);
-                subscriptionService.subscribe(subscribeRequest, userInformation.getEmail());
-            }
-
-            else if(priceId.equals(generalClientPriceId)){
-                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.GENERAL_CLIENT);
                 subscriptionService.subscribe(subscribeRequest, userInformation.getEmail());
             }
 

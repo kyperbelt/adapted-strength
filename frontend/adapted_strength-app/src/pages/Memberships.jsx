@@ -1,5 +1,6 @@
 import logo from "../assets/logo.png";
 import {Link} from "react-router-dom"
+import { startTransition } from "react";
 import Footer from "../components/footer";
 import { useEffect, useState } from "react";
 import { UserApi } from "../api/UserApi";
@@ -16,63 +17,9 @@ function AdaptedStrengthLogo() {
   );
 }
 
-function SubscriptionField({ ...props }) {
-  if (props.tier === "BASE_CLIENT") {
-    return (
-      <div>
-        {" "}
-        <div>Base Client</div>
-      </div>
-    );
-  } else if (props.tier === "GENERAL_CLIENT") {
-    return (
-      <div>
-        {" "}
-        <div>General Client</div>
-      </div>
-    );
-  } else if (props.tier === "SPECIFIC_CLIENT") {
-    return (
-      <div>
-        {" "}
-        <div>Specific Client</div>
-      </div>
-    );
-  }
-}
-
-function ExpirationField({ ...props }) {
-  return <div> (Need to implement) {props.expirationDate}</div>;
-}
 
 export default function Memberships() {
   const nav = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [profileInfo, setProfileInfo] = useState([]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    UserApi.getProfileInformation()
-      .then((response) => {
-        if (response.status === 200) {
-          setProfileInfo(response.data);
-          setIsLoading(false);
-          console.log(response.data);
-        } else {
-          // TODO: Handle error - redirect to login page or display error message
-        }
-      })
-      .catch((error) => {
-        console.error(`ERROR HAPPENED: ${error}`);
-        setIsLoading(false);
-        // TODO: Handle error - redirect to login page or display error message
-      });
-  }, []);
-
-  if (isLoading) {
-    return <div>{"Loading..."}</div>;
-  }
-
   return (
     <PageContainer1>
       <div className="bg-secondary p-6 w-full flex flex-col items-center justify-center">
@@ -95,23 +42,8 @@ export default function Memberships() {
             ]}
           >
             <span className="mb-auto" />
-            <SecondaryButton onClick={async ()=>{nav("/payment-checkout/base")}}>Subscribe</SecondaryButton>
+            <SecondaryButton onClick={async () => {startTransition(() => {nav("/payment-checkout/base");});}}>Subscribe</SecondaryButton>
   
-          </SubCard>
-
-          <SubCard
-            name="General client"
-            cost="199.99"
-            description="For those experienced in Adapted Strength methodolgies"
-            benefits={[
-              "Access to all Base Client benefits",
-              "Full access to Adapted Strength facility",
-              "Access to detailed coaching sessions"
-            ]}
-          >
-
-            <span className="mb-auto" />
-            <PrimaryButton onClick={async ()=>{nav("/payment-checkout/general")}}>Subscribe</PrimaryButton>
           </SubCard>
 
           <SubCard
@@ -124,51 +56,17 @@ export default function Memberships() {
               "Exclusive monitored training",
               "Nutritional advice"
             ]}
+            notes={[
+              "Intended for those seeking in-depth coaching",
+              "Once experienced in Adapted Strength Methodologies, Athleses will be given General Client rate"
+            ]}
           >
 
             <span className="mb-auto" />
-            <SecondaryButton onClick={async ()=>{nav("/payment-checkout/specific")}}>Subscribe</SecondaryButton>
+            <SecondaryButton onClick={async () => {startTransition(() => {nav("/payment-checkout/specific");});}}>Subscribe</SecondaryButton>
           </SubCard>
 
-
-          {/* <CardBack
-            classNameCard="flex-1"
-            className="p-6 xl:h-full flex-grow text-sm"
-          >
-            <div className="font-bold">Specific Client</div>
-            <div>$299.99/month</div>
-            <div className="font-light">
-              For all, even those new to the barbell and new to the gym
-            </div>
-            <div className="font-bold">ACCESS TO: GENERAL, PLUS...</div>
-            <div>
-              <ul>
-                <li>- FULLY GUIDED 1:1 SESSIONS</li>
-                <li>- EXCLUSIVE MONITORED TRAINING </li>
-                <li>- NUTRITIONAL ADVICE</li>
-              </ul>
-            </div>
-            <div className="font-light">
-              (INTENDED FOR THOSE SEEKING IN-DEPTH COACHING)
-            </div>
-            <div>
-              * ONCE EXPERIENCED IN ADAPTED STRENGTH METHODOLOGIES, ATHLETES
-              WILL BE GIVEN "GENERAL CLIENT" RATE
-            </div>
-            <SecondaryButton className="mb-0 mt-6">Subscribe</SecondaryButton>
-          </CardBack> */}
         </div>
-        {/* <div className="container mx-auto w-2/6 content-center text-center px-2 bg-blue-200 text-black rounded-md">
-          <h2 className="font-bold">YOUR SUBSCRIPTION TIER</h2>
-          <div>
-            <SubscriptionField tier={profileInfo.subscriptionTier} />
-          </div>
-
-          <h2 className="font-bold">PAYMENT DATE</h2>
-          <div>
-            <ExpirationField exp={profileInfo.expirationDate} />
-          </div>
-        </div> */}
       </div>
     </PageContainer1>
   );

@@ -23,9 +23,6 @@ public class CustomerService {
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
     private String baseClientPriceId;
 
-    @Value("${ADAPTED_STRENGTH_GENERAL_PRICE_ID}")
-    private String generalClientPriceId;
-
     @Value("${ADAPTED_STRENGTH_SPECIFIC_PRICE_ID}")
     private String specificClientPriceId;
 
@@ -101,9 +98,6 @@ public class CustomerService {
                         String priceId = subscription.getItems().getData().get(6).getPrice().getId();
                         if(priceId == baseClientPriceId){
                             return 1;
-                        }
-                        else if (priceId == generalClientPriceId){
-                            return 2;
                         }
                         else if (priceId == specificClientPriceId){
                             return 3;

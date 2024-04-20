@@ -29,9 +29,6 @@ public class PaymentService {
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
     private String baseClientPriceId;
 
-    @Value("${ADAPTED_STRENGTH_GENERAL_PRICE_ID}")
-    private String generalClientPriceId;
-
     @Value("${ADAPTED_STRENGTH_SPECIFIC_PRICE_ID}")
     private String specificClientPriceId;
 
@@ -91,9 +88,6 @@ public class PaymentService {
         if(subLevel.equals("base")){
             priceId = baseClientPriceId;
         }
-        else if(subLevel.equals("general")){
-            priceId = generalClientPriceId;
-        }
         else if(subLevel.equals("specific")){
             priceId = specificClientPriceId;
         }
@@ -150,9 +144,6 @@ public class PaymentService {
         String priceId = "";
         if(subLevel.equals("base")){
             priceId = baseClientPriceId;
-        }
-        else if(subLevel.equals("general")){
-            priceId = generalClientPriceId;
         }
         else if(subLevel.equals("specific")){
             priceId = specificClientPriceId;
