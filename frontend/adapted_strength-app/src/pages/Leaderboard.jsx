@@ -223,24 +223,24 @@ export default function Leaderboard() {
   };
 
   const handleWeightClassChange = (weightClass) => {
-    setSelectedWeightClass(weightClass);
-
+    console.log('Selected weight class:', weightClass);
+  
     // Check if the weight class ends with '+'
-    if (weightClass.endsWith('+')) {
+    if (weightClass && weightClass.endsWith('+')) {
       // Extract the numeric part of the weight class
       const numericWeight = parseInt(weightClass);
       // Add 1 to the numeric value
       const incrementedWeight = numericWeight + 1;
-      setSelectedWeightClass(incrementedWeight)
+      setSelectedWeightClass(incrementedWeight);
       // Pass the incremented value to the backend
       console.log('Selected altered weight class:', incrementedWeight);
-      // Continue with your API call or other logic here
     } else {
-      // If weight class does not end with '+', just pass the selected value to the backend
-      console.log('Selected weight class:', weightClass);
-      // Continue with your API call or other logic here
+      setSelectedWeightClass(weightClass);
     }
+  };
   
+  // Use useEffect to trigger API call when selectedWeightClass changes
+  useEffect(() => {
     // Fetch top athletes based on selected category, gender, and weight class
     if (selectedCategory === 'Olympic') {
       if (selectedGender === 'Men') {
@@ -299,7 +299,8 @@ export default function Leaderboard() {
           .catch(error => console.error('Error fetching top Powerlifting female athletes:', error));
       }
     }
-  };
+  }, [selectedWeightClass, selectedCategory, selectedGender]);
+  
   
 
   
