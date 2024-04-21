@@ -3,7 +3,6 @@ package com.terabite.payment.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.stripe.Stripe;
@@ -17,6 +16,8 @@ import com.terabite.payment.model.Customer;
 import com.terabite.payment.repository.CustomerRepository;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Service
 public class PaymentService {
@@ -98,6 +99,10 @@ public class PaymentService {
         // TODO: update this retun url to live website on deployment
         String returnUrl = "http://localhost:3000";
 
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfNextMonth = today.withDayOfMonth(1).plusMonths(1);
+        long firstDayTimestamp = firstDayOfNextMonth.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
+
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .addLineItem(
@@ -108,6 +113,9 @@ public class PaymentService {
                 .setCustomer(stripeCustomer)
                 .setUiMode(SessionCreateParams.UiMode.EMBEDDED)
                 .setReturnUrl(returnUrl)
+                .setSubscriptionData(SessionCreateParams.SubscriptionData.builder()
+                    .setBillingCycleAnchor(firstDayTimestamp)
+                    .build())
                 .build();
 
         Session session = Session.create(params);

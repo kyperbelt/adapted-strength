@@ -100,7 +100,7 @@ public class CustomerService {
                             return 1;
                         }
                         else if (priceId == specificClientPriceId){
-                            return 3;
+                            return 2;
                         }
                         else{
                             return -1;  //price id does not match one of the three tiers offered. Not sure how this could happen
