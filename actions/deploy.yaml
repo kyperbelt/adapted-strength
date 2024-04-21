@@ -1,4 +1,5 @@
 name: deploy-app
+id: deploy
 
 on:
   workflow_call
@@ -12,16 +13,20 @@ jobs:
     id: build
     runs-on: ubuntu-latest
     outputs:
-      jar: ${{ steps.out.outputs.JAR }}
+      jar: ${{ steps.out_jar.outputs.JAR }}
+      prop: ${{ steps.out_jar.outputs.APP_PROP }}
+      front : ${{ steps.out_front.outputs.FRONT }}
+      compose: ${{ steps.out_jar.outputs.COMPOSE }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install java
+      - name: Install java & npm
         run: |
           sudo apt-get update
-          sudo apt-get install openjdk-17-jdk
+          sudo apt-get install -y openjdk-17-jdk
+          sudo apt-get install -y npm
 
       - name: Compile to jar
         run: |
@@ -29,15 +34,24 @@ jobs:
 
       - name: Remove plain jar
         run: |
-          "rm ./authorization/build/libs/*plain.jar
+          rm ./authorization/build/libs/*plain.jar
 
       - name: Output jar 
-        id: out
+        id: out_jar
         run: |
           echo "JAR=$(cat ./authorization/build/libs/*.jar)"" >> $GITHUB_OUTPUT 
           echo "APP_PROP=$(./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
           echo "COMPOSE=$(./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
-      
+
+      - name: Compile & output front end
+        id: out_front
+        run: |
+          cd adapted-strength/frontend/adapted_strength-app
+          npm install
+          npm run build
+          tar -czf web.tar.gz build        
+          echo "FRONT=$(cat web.tar.gz)" >> $GITHUB_OUTPUT
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -49,8 +63,8 @@ jobs:
       CONN: ${{ join({0}@{1}, secrets.AWS_INSTANCE_URL, secrets.AWS_INSTANCE_USER) }}
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      # - name: Checkout Repo
+      #   uses: actions/checkout@v4
 
       - name: Write ssh key to file
         run: |
@@ -58,9 +72,14 @@ jobs:
 
       - name: Write outputs to file
         run: |
-          echo "${{ needs.build.outputs.JAR }}" > app.jar
-          echo "${{ needs.build.outputs.PROP }}" > application.properites
-          echo "${{ needs.build.outputs.COMPOSE }}" > compose.yaml
+          echo "${{ needs.build.outputs.jar }}" > app.jar
+          echo "${{ needs.build.outputs.prop }}" > application.properites
+          echo "${{ needs.build.outputs.compose }}" > compose.yaml
+          echo "${{ needs.build.outputs.front }}" > web.tar.gz
+
+      - name: Compress files
+        run: |
+          tar -czf app.tar.gz app.jar application.properites compose.yaml
 
       - name: Set up known hosts file
         run: |
@@ -68,9 +87,9 @@ jobs:
 
       - name: Copy build files to instance
         run: |
-          echo "put app.jar > batchfile
-          echo "put application.properites tmp/application.properties" >> batchfile
-          echo "put compose.yaml" >> batchfile
+          echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
+          echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
+
           sftp -i "~/.ssh/key.pem" -b batchfile $CONN
 
       # TODO - add expand / contract pattern for database migration
