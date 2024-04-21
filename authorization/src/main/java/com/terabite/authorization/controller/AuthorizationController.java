@@ -1,5 +1,6 @@
 package com.terabite.authorization.controller;
 
+import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.dto.ApiResponse;
 import com.terabite.authorization.dto.AuthRequest;
 import com.terabite.authorization.dto.ForgotPasswordRequest;
@@ -13,9 +14,7 @@ import com.terabite.authorization.service.SignupService;
 import com.terabite.common.dto.Payload;
 import com.terabite.common.dto.PayloadType;
 import com.terabite.common.model.LoginDetails;
-
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,21 +42,23 @@ public class AuthorizationController {
     private final PasswordEncoder passwordEncoder;
 
     private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
+    private final AuthorizationApi authorizationApi;
 
     public AuthorizationController(ForgotPasswordService forgotPasswordService, LoginService loginService,
-            SignupService signupService,
-            JwtService jwtService,
-            LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
+                                   SignupService signupService,
+                                   JwtService jwtService,
+                                   LoginRepository loginRepository, PasswordEncoder passwordEncoder, AuthorizationApi authorizationApi) {
         this.forgotPasswordService = forgotPasswordService;
         this.loginService = loginService;
         this.signupService = signupService;
         this.jwtService = jwtService;
         this.loginRepository = loginRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authorizationApi = authorizationApi;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+    public ResponseEntity<?> userSignupPost(@RequestBody AuthRequest authRequest) {
 
         final Optional<String> token = signupService.signup(authRequest);
 
@@ -94,7 +95,7 @@ public class AuthorizationController {
             if (loginDetails != null) {
                 log.info(" User {} does not have role {}", loginDetails.getUsername(), role);
                 log.info(" User roles are {}", loginDetails.getRoles());
-            }else{
+            } else {
                 log.info("User details are null becasue user is not logged in, probably");
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse("User does not have role " + role,
@@ -103,13 +104,10 @@ public class AuthorizationController {
     }
 
     /**
-     *
-     * @param login
-     * @param response
-     * @return
+     * @param login The JSON Login object provided to the endpoint
      */
     @PostMapping("/login")
-    public ResponseEntity<?> userLoginPost(@RequestBody Login login, HttpServletResponse response) {
+    public ResponseEntity<?> userLoginPost(@RequestBody Login login) {
 
         Optional<String> token = loginService.login(login);
 
@@ -125,10 +123,9 @@ public class AuthorizationController {
     }
 
     @PostMapping("/logout")
-    public Payload userLogoutPost(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse response,
-            HttpServletRequest request) {
+    public Payload userLogoutPost(HttpServletRequest request) {
         // Get Authorization Header
-        String authorizationHeader = null;
+        String authorizationHeader;
         try {
             authorizationHeader = request.getHeader("Authorization");
         } catch (Exception e) {
@@ -141,7 +138,7 @@ public class AuthorizationController {
 
         // Invalidate token
         jwtService.invalidateToken(token);
-        log.info("Token blacklist size: " + jwtService.getTokenBlacklist().size());
+        log.info("Token blacklist size: {}", jwtService.getTokenBlacklist().size());
 
 //        LoginDetails loginDetails = (LoginDetails) userDetails;
         // Token should be added to a blacklist until it expires
@@ -194,6 +191,40 @@ public class AuthorizationController {
                     .body(new ApiResponse("Invalid password", authRequest));
         }
 
+    }
+
+    /**
+     * Hit this endpoint with a request containing a bearer token JWT and get a new JWT.
+     * Also invalidates the provided, old JWT.
+     *
+     * @param request The underlying servlet representing an incoming request. Spring Boot automatically supplies this
+     */
+    @GetMapping("/refresh_token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        // Grab Authorization Bearer token
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse("Bad Request", "No Bearer token provided"));
+        }
+
+        try {
+            String token = header.substring(7); // "Bearer " is 7 chars
+            Optional<String> newToken = authorizationApi.refreshToken(token);
+
+            if (newToken.isPresent()) {
+                jwtService.invalidateToken(token);
+                log.info("Refreshed token - new token: {}", newToken.get());
+                return ResponseEntity.ok(new ApiResponse("Refresh Token", newToken));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse("Unauthorized", "No token provided"));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse("Internal Server Error", "Could not refresh token"));
+        }
     }
 
     @PostMapping("/change_role")

@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private static Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME)
     @Autowired
@@ -60,15 +60,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // Email existence checks
             email = jwtService.extractUsername(token.get());
             if (email.isEmpty()) {
-                raiseException(request, response, token.get());
-                log.error("Invalid token provided: ");
+                raiseException(response, token.get());
+                log.error("Invalid token provided: {}", token.get());
                 return;
             }
 
             // Token blacklist checks
             Cache<String, Boolean> blacklist = jwtService.getTokenBlacklist();
             if (blacklist.getIfPresent(token.get()) != null) {
-                raiseException(request, response, token.get());
+                raiseException(response, token.get());
                 log.error("Blacklisted token provided: " + token.get());
                 return;
             }
@@ -87,7 +87,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (UsernameNotFoundException e) {
                 log.error("User not found");
-                raiseException(request, response, token.get());
+                raiseException(response, token.get());
                 return;
             }
         }
@@ -103,12 +103,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * "https://stackoverflow.com/questions/30335157/make-simple-servlet-filter-work-with-controlleradvice">Stackoverflow
      * Post</a>
      *
-     * @param request  Incoming request
      * @param response Outgoing response
      * @param token    JWT
      * @throws IOException from raw byte writing into response body
      */
-    private void raiseException(HttpServletRequest request, HttpServletResponse response, String token)
+    private void raiseException(HttpServletResponse response, String token)
             throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
