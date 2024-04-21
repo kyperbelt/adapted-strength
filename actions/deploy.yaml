@@ -1,0 +1,78 @@
+name: deploy-app
+
+on:
+  workflow_call
+  # push:
+  #   branches:
+  #     - production
+
+jobs:
+  build:
+    name: Build jar
+    id: build
+    runs-on: ubuntu-latest
+    outputs:
+      jar: ${{ steps.out.outputs.JAR }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install java
+        run: |
+          sudo apt-get update
+          sudo apt-get install openjdk-17-jdk
+
+      - name: Compile to jar
+        run: |
+          ./authorization/gradlew build
+
+      - name: Remove plain jar
+        run: |
+          "rm ./authorization/build/libs/*plain.jar
+
+      - name: Output jar 
+        id: out
+        run: |
+          echo "JAR=$(cat ./authorization/build/libs/*.jar)"" >> $GITHUB_OUTPUT 
+          echo "APP_PROP=$(./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
+          echo "COMPOSE=$(./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
+      
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      SSH_KEY: ${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}
+      HOST: ${{ secrets.AWS_INSTANCE_URL }}
+      USER: ${{ secrets.AWS_INSTANCE_USER }}
+      CONN: ${{ join({0}@{1}, secrets.AWS_INSTANCE_URL, secrets.AWS_INSTANCE_USER) }}
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Write ssh key to file
+        run: |
+          echo $SSH_KEY > "~/.ssh/key.pem"
+
+      - name: Write outputs to file
+        run: |
+          echo "${{ needs.build.outputs.JAR }}" > app.jar
+          echo "${{ needs.build.outputs.PROP }}" > application.properites
+          echo "${{ needs.build.outputs.COMPOSE }}" > compose.yaml
+
+      - name: Set up known hosts file
+        run: |
+          ssh-keyscan $HOST >> ~/.ssh/known_hosts
+
+      - name: Copy build files to instance
+        run: |
+          echo "put app.jar > batchfile
+          echo "put application.properites tmp/application.properties" >> batchfile
+          echo "put compose.yaml" >> batchfile
+          sftp -i "~/.ssh/key.pem" -b batchfile $CONN
+
+      # TODO - add expand / contract pattern for database migration
+      - name: Run deployment script
+          ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
