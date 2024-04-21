@@ -130,8 +130,10 @@ public class ProgrammingControler {
     public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
         
         List<Day> days = Lists.newArrayList();
+        log.info("Day ids: {}", request.dayIds());
         for (int dayId : request.dayIds()) {
             final Day day = dayService.getDayById(dayId);
+            log.info("Day: {}", day);
             if (day == null) {
                 log.error("Day with id {} not found", dayId);
                 continue;

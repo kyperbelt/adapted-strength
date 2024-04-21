@@ -9,6 +9,7 @@ import { HttpStatus } from "../../api/ApiUtils";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 
 import { useState, useEffect, useRef } from "react";
+import { levenshteinDistance } from "../../util/search";
 
 function getAllPrograms() {
   try {
@@ -33,6 +34,15 @@ function getAllPrograms() {
   }
 }
 
+function getFilteredPrograms(programs, searchText) {
+  if (!searchText || searchText === "") {
+    return programs;
+  }
+  return programs.filter((program) => {
+    return program.name.toLowerCase().includes(searchText.toLowerCase()) || program.description.toLowerCase().includes(searchText.toLowerCase()) || levenshteinDistance(program.name, searchText) < 3 || levenshteinDistance(program.description, searchText) < 3;
+  });
+}
+
 
 export default function ProgramDashboard({ breadCrumbState, ...props }) {
   const nav = useNavigate();
@@ -41,7 +51,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
   const [breadcrumb, setBreadcrumb] = breadCrumbState;
   const [programs, setPrograms] = useState([]);
   const [programEditId, setEditProgramId] = useState(null);
-
+  const [searchText, setSearchText] = useState("");
 
   // Fetch programs on first render once and update the state
   const programsFetched = useRef(false);
@@ -70,46 +80,51 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
   }
 
   const onCreate = async (name, description) => {
-    // TODO: request to create a program
-    const newProgram = {
-      name: name,
-      description: description,
-    };
-
 
     try {
-      const createProgramResponse = await ProgrammingApi.createProgram(newProgram);
+      const createProgramResponse = await ProgrammingApi.createProgram({ name, description });
       console.log("Create program response: ", createProgramResponse);
       if (createProgramResponse.status === HttpStatus.OK) {
+        const programData = createProgramResponse.data;
+        const newProgram = {
+          id: programData.programId,
+          name: programData.name,
+          description: programData.description.body,
+          selected: false,
+          weeks: programData.weeks
+        };
         console.log("Program created: ", newProgram);
+        setPrograms([...programs, newProgram]);
       } else {
-        console.error("Error creating program: ", newProgram);
+        console.error("Error creating program: ", name);
       }
     } catch (e) {
       console.error('Error creating program:', e);
     }
 
-    await getAllPrograms().then((data) => {
-      // match all programs to new programs and keep selected state if any 
-      const newPrograms = data.map((program) => {
-        const matchedProgram = programs.find((p) => p.id === program.id);
-        if (matchedProgram) {
-          return {
-            ...program,
-            selected: matchedProgram.selected
-          };
-        }
-        return program;
-      });
-      // setting new programs
-      console.log("New programs: ", newPrograms);
-      setPrograms(newPrograms);
-    });
+    // await getAllPrograms().then((data) => {
+    //   // match all programs to new programs and keep selected state if any 
+    //   const newPrograms = data.map((program) => {
+    //     const matchedProgram = programs.find((p) => p.id === program.id);
+    //     if (matchedProgram) {
+    //       return {
+    //         ...program,
+    //         selected: matchedProgram.selected
+    //       };
+    //     }
+    //     return program;
+    //   });
+    //   // setting new programs
+    //   console.log("New programs: ", newPrograms);
+    //   setPrograms(newPrograms);
+    // });
 
   };
 
   const onClickProgram = (program) => {
     console.log("Program clicked: ", program);
+    // TODO: add the program to the state and navigate to the program page
+    // this way we dont have to fetch the program again from the week page
     nav(`${url}/${program.id}`, { relative : true });
     
   }
@@ -159,6 +174,12 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     onClickProgram(program);
   }
 
+  const onSearch = (text) =>{
+    console.log("Searching for: ", text);
+    setSearchText(text);
+  };
+
+
       // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
   return (
 
@@ -171,7 +192,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
       <CardBack className="">
         <div className="flex flex-col sm:flex-row mt-2">
 
-          <SearchBar />
+          <SearchBar onSearch={onSearch} />
           <PrimaryButton
             className="sm:ml-auto w-32"
             onClick={onAddProgram}>
@@ -179,7 +200,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
           </PrimaryButton>
         </div>
         <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-          {programs.map((program) => (
+          {getFilteredPrograms(programs,searchText).map((program) => (
             <CustomTableRow
               key={program.id}
               data={[

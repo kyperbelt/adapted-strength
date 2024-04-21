@@ -131,19 +131,19 @@ export class ProgrammingApi {
     });
   }
 
-  static editWeek({ weekId, weekName, description, days=[]}) {
+  static updateWeek({ weekId, weekName, description, dayIds=[]}) {
     const updateWeekRequest = {
-      weekId: weekId,
+      id: weekId,
       weekName: weekName,
       weekDescription: description,
-      daysIds: days
+      dayIds: dayIds
     };
 
     return ApiUtils.apiPut('programming/week', updateWeekRequest).then((r) => {
       if (r.status === HttpStatus.OK) {
         return r;
       }
-      throw new Error(`Error updating week: ${r.status}`);
+      throw new Error(`Error updating week: ${weekId} status:${r.status}`);
     }).catch((error) => {
       console.error('Error updating week:', error);
       throw error;
@@ -203,7 +203,7 @@ export class ProgrammingApi {
     });
   }
 
-  static editDay({ dayId, dayName, description, cycles=[]}) {
+  static updateDay({ dayId, dayName, description, cycles=[]}) {
     const updateDayRequest = {
       dayId: dayId,
       dayName: dayName,

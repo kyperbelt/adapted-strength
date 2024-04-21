@@ -66,7 +66,7 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
 }
 
 
-export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick, options =["Edit", "Delete"],...props }) {
+export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick, options = ["Edit", "Delete"], ...props }) {
   const data = props.data;
   const whenOptionsClicked = (e) => {
     e.stopPropagation();
@@ -92,7 +92,7 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
 
   return (
     <tr className="odd:bg-white even:bg-gray-200 border-b hover:bg-gray-300 hover:cursor-pointer" onClick={onRowClick}>
-      <td className="px-6 py-3">
+      <td className="px-6 py-3" onClick={(e) => { e.stopPropagation() }}>
         <input type="checkbox" onClick={(e) => { e.stopPropagation() }} onChange={(e) => oneSelected(e, selectedOrUnselected)} checked={props.checked} />
       </td>
       {data.map((item) => {
@@ -147,7 +147,12 @@ export function SearchBar({ onSearch, ...props }) {
             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
           </svg>
         </div>
-        <input type="text" id="table-search" className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg max-w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="" />
+        <input type="text" onChange={(e) => {
+          const text = e.target.value; 
+          if (onSearch) {
+            onSearch(text);
+          }
+        }} id="table-search" className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg max-w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="" />
       </div>
     </div>
   );

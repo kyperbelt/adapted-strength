@@ -118,8 +118,13 @@ export class ApiUtils {
 function promiseWrapper(promise) {
   return promise.then(response => {
     return response.json().then(body => {
+      const status_code = response.status;
+      if (status_code  == HttpStatus.UNAUTHORIZED || status_code == HttpStatus.FORBIDDEN) {
+        ApiUtils.removeAuthToken();
+      }
+
       return {
-        status: response.status,
+        status: status_code,
         data: body,
       }
     })

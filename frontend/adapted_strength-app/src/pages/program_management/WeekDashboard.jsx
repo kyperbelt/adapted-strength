@@ -6,13 +6,22 @@ import { BasicModalDialogue } from "../../components/Dialog";
 import LabeledInputField from "../../components/forms/LabeledInputField";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 import { HttpStatus } from "../../api/ApiUtils";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 import EditBlockDIalog from "./EditBlockDialog";
 
 
+/**
+ * A dasboard that displays all the weeks in a program.
+ * @param {Object} props
+ * @param {Array} props.breadCrumbState - The state of the breadcrumb component
+ */
 export default function WeekDashboard({ breadCrumbState, ...props }) {
 
+        const nav = useNavigate();
+        const loc = useLocation();
+        const url = loc.pathname;
         const [breadcrumb, setBreadcrumb] = breadCrumbState;
         const [weeks, setWeeks] = useState([]);
         const [weekEditId, setWeekEditId] = useState(null);
@@ -34,6 +43,14 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         console.error(`Error getting program ${breadcrumb[0]}: ${error}`);
                 });
         }, []);
+
+        const OnWeekClicked = (week) => {
+                console.log("Week Clicked clicked: ", week);
+                // TODO: add the week to the state and navigate to the week page
+                // this way we dont have to fetch the week again from the week page
+                nav(`${url}/${week.weekId}`, { relative: true });
+        };
+
 
         const DeleteWeek = async (weeksToDelete) => {
 
@@ -74,25 +91,34 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
         }
 
         const onAddWeek = () => {
-                console.log("Add week");
-                const element = document.getElementById("create-week");
-                // clear the form
-                document.getElementById("week_name_field").value = "";
-                document.getElementById("week_description").value = "";
-                element.classList.remove("hidden");
+                // console.log("Add week");
+                // const element = document.getElementById("create-week");
+                // // clear the form
+                // document.getElementById("week_name_field").value = "";
+                // document.getElementById("week_description").value = "";
+                // element.classList.remove("hidden");
+
+                const currentWeeks = weeks;
+                const weekName = `Week ${currentWeeks.length + 1}`;
+                // TODO: Descriptions for weeks implemented
+                const weekDescription = `Description for ${weekName}`;
+                onCreateWeek(weekName, weekDescription);
         }
 
-        const onCreateWeek = async (data) => {
-                const newWeek = {
-                        name: data.name,
-                        description: data.description,
-                        selected: false
-                };
+        const onCreateWeek = async (weekName, weekDescription) => {
+
+                let week = null;
 
                 try {
-                        const createWeekResponse = await ProgrammingApi.createWeek({ weekName: newWeek.name, weekDescription: newWeek.description, programId: selectedProgram.id }).then((response) => {
+                        const createWeekResponse = await ProgrammingApi.createWeek({ weekName, weekDescription}).then((response) => {
                                 if (response.status === HttpStatus.OK) {
                                         console.log("Week created: ", response.data);
+                                        const newWeek = {
+                                                weekId: response.data.weekId,
+                                                name: response.data.name,
+                                                description: response.data?.description?.body || "",
+                                                selected: false
+                                        }
                                         // update the program with the new week
                                         const updateProgramPayload = {
                                                 programId: selectedProgram.programId,
@@ -101,6 +127,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                 weekIds: [...selectedProgram.weeks.map((week) => week.weekId), response.data.weekId]
                                         };
                                         console.log("Update program payload: ", updateProgramPayload);
+                                        week = newWeek;
                                         return ProgrammingApi.updateProgram(updateProgramPayload);
                                 } else {
                                         throw new Error(`Error creating week: ${response.status}`);
@@ -109,6 +136,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         if (createWeekResponse.status === HttpStatus.OK) {
                                 console.log("Program updated with new week: ", createWeekResponse.data);
                                 setSelectedProgram(createWeekResponse.data);
+                                setWeeks([...weeks, week]);
                         } else {
                                 throw new Error(`Error updating program: ${createWeekResponse.status}`);
                         }
@@ -116,7 +144,6 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         console.error('Error creating program:', e);
                 }
 
-                setWeeks([...weeks, newWeek]);
                 document.getElementById("create-week").classList.add("hidden");
         }
 
@@ -155,6 +182,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                                 }
                                                         }}
                                                         selected={week.selected}
+                                                        onRowClick={() => OnWeekClicked(week)}
                                                         onClick={() => {
                                                                 const newWeeks = weeks.map((b) => {
                                                                         if (b.weekId === week.weekId) {
