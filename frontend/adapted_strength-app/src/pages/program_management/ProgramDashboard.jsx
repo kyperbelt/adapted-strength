@@ -231,7 +231,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
           ))}
         </StyledCheckboxTable>
       </CardBack>
-      <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="Edit Program" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
+      <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="EditrProgram" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
     </div>
   );
 }

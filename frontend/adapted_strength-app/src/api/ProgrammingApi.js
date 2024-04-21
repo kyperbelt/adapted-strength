@@ -205,7 +205,7 @@ export class ProgrammingApi {
 
   static updateDay({ dayId, dayName, description, cycles=[]}) {
     const updateDayRequest = {
-      dayId: dayId,
+      id: dayId,
       dayName: dayName,
       dayDescription: description,
       repCycleIds: cycles

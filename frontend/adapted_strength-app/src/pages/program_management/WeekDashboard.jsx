@@ -35,7 +35,8 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                         weekId: week.weekId,
                                         name: week.name,
                                         description: "",//week.description.body,
-                                        selected: false
+                                        selected: false,
+                                        days: week.days
                                 };
                         });
                         setWeeks(weeks);
@@ -177,8 +178,9 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                                 if (option === 'Delete') {
                                                                         DeleteWeek([week]);
                                                                 } else if (option === 'Edit') {
-                                                                        document.getElementById("edit-block").classList.remove("hidden");
+                                                                        document.getElementById("edit-week").classList.remove("hidden");
                                                                         setWeekEditId(week.weekId);
+                                                                        console.log(`Edit week ${JSON.stringify(week)}`);
                                                                 }
                                                         }}
                                                         selected={week.selected}
@@ -197,7 +199,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                         ))}
                                 </StyledCheckboxTable>
                         </CardBack>
-                        <EditBlockDIalog blockId={weekEditId} blockState={[weeks, setWeeks]} id="edit-week" className="hidden" title="Edit Block" onClose={() => { document.getElementById("edit-block").classList.add("hidden") }} />
+                        <EditBlockDIalog blockId={weekEditId} blockState={[weeks, setWeeks]} id="edit-week" className="hidden" title="Edit Week" onClose={() => { document.getElementById("edit-week").classList.add("hidden") }} />
 
                 </div>
         );
