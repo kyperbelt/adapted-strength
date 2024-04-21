@@ -1,9 +1,10 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import ReactPlayer from "react-player";
 import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs'
 import {UserApi} from "../api/UserApi";
 import {ChatApi} from "../api/ChatApi";
+import {HttpStatus} from "../api/ApiUtils";
 
 
 function RightMessage({...props})
@@ -39,17 +40,56 @@ function onError(){
 
 async function onMessageReceived(payload){
     console.log('Message received', payload);
+}
+
+function GetChat({senderId, receiverId})
+{
+    const [data, setData] = useState(null);
+
+    console.log(`Sender ID: ${senderId}\nReceiver ID: ${receiverId}`);
+
+    const fetchApi = () => {
+        ChatApi.getChat(receiverId, senderId)
+            .then(response => {
+                if(response.status == HttpStatus.OK)
+                {
+                    setData(response.data);
+                    console.log(`Message here: ${JSON.stringify(response)}`);
+                }
+                throw new Error(`${response}`);
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+    };
+
+    useEffect(() => {
+        fetchApi();
+    }, []);
+
+    return (
+        <div>
+            <div>data: {JSON.stringify(data)}</div>
+            <div>
+                <button onClick={fetchApi}>manual fetch</button>
+            </div>
+        </div>
+    )
+}
+
+function GetUser()
+{
 
 }
+
 
 export default function Chat()
 {
     const [message, setMessage] = useState("");
     const [videoFilePath, setVideoFilePath] = useState("");
     const [videoName, setVideoName] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
     const [messageList, setMessageList] = useState([]);
+    const [userData, setUserData] = useState(null);
     let subscription = IsSubscribed(1);
     let stompClient = null;
 
@@ -58,21 +98,23 @@ export default function Chat()
     }
 
     useEffect(() => {
-        if(fullName == "" || email == "")
-        {
-            UserApi.getProfileInformation().then(function (response) {
-                setFullName(response.data.firstName + " " + response.data.lastName)
-                setEmail(response.data.email)
-                console.log("touched!")
+        UserApi.getProfileInformation()
+            .then(response => {
+                setUserData(response.data);
             })
-        }
-    })
+            .catch(e => {
+                console.log(e);
+            })
+    }, [])
 
     useEffect(() => {
-        ChatApi.getChat({senderId: "two@email.com", receiverId: email}).then(function (response) {
-            setMessageList(response.data)
-        })
-    })
+        if(userData !== null)
+        {
+            ChatApi.getChat("two@email.com", userData.email).then(function (response) {
+                setMessageList(response.data)
+            })
+        }
+    }, [])
 
     // const addToList = () => {
     //     let tempList = list;
@@ -106,9 +148,9 @@ export default function Chat()
     const onConnected = () => {
         UserApi.getProfileInformation().then(function (response) {
             let email2 = response.data.email
-            let fullName2 = response.data.firstName + " " + response.data.lastName
+            let fullName2 = userData.firstName + " " + userData.lastName
 
-            stompClient.subscribe(`/user/${email}/queue/messages`, onMessageReceived);
+            stompClient.subscribe(`/user/${userData.email}/queue/messages`, onMessageReceived);
             stompClient.send("/app/chatUser.addUser",{}, JSON.stringify({email: email2, fullName: fullName2}));
         })
     }
@@ -122,7 +164,7 @@ export default function Chat()
                 let email2 = response.data.email
 
                 const chatMessage = {
-                    senderId: email,
+                    senderId: userData.email,
                     recipientId: "two@email.com",
                     content: message,
                     timeStamp: new Date(),
@@ -145,17 +187,18 @@ export default function Chat()
                 <div className="flex flex-col space-y-2" id="a">
                     <ul>
                         {
-                            messageList.length > 0 && messageList.map((data) => data.senderId == email ? <RightMessage>{data.content}</RightMessage> : <LeftMessage>{data.content}</LeftMessage>)
+                            messageList.length > 0 && messageList.map((data) => data.senderId == userData.email ? <RightMessage>{data.content}</RightMessage> : <LeftMessage>{data.content}</LeftMessage>)
                         }
                     </ul>
                 </div>
             </div>
-            <div>{videoName}</div>
+            {/*<div>{videoName}</div>*/}
+            {
+                userData !== null && <GetChat senderId={userData.email} receiverId={"two@email.com"}/>}
             <div className="bg-custom-gray p-4 flex items-center">
                 {
                     (subscription)
                         ? <>
-
                             <input type="file" id="file-input" className="hidden" onChange={handleVideoUpload}/>
                             <label htmlFor="file-input" className="w-7 h-7 rounded-full bg-custom-red flex justify-center mr-2">+</label>
                             <input type="text" placeholder="Type your message..." className="flex-1 border rounded-full px-4 py-2 focus:outline-none" onChange={change} value={message}/>
