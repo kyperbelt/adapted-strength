@@ -4,9 +4,8 @@ name: deploy-app
 on:
   # workflow_call:
   push:
-  # push:
-  #   branches:
-  #     - production
+    branches:
+      - action
 
 jobs:
   build:
