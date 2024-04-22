@@ -21,6 +21,7 @@ import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
+import PlayGround from "./pages/test/PlayGround";
 import Tab from "./components/TabComponents/Tab.jsx";
 // import firebase utils
 import { fetchToken } from './firebase';
@@ -74,6 +75,7 @@ function App() {
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="chat-test" element={<ChatTest />} />
+            <Route path="playground" element={<PlayGround />} />
 
             <Route path="edit-profile" element={<Suspense fallback="...">
               <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">

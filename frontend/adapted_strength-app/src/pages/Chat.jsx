@@ -5,6 +5,7 @@ import {Stomp} from '@stomp/stompjs'
 import {UserApi} from "../api/UserApi";
 import {ChatApi} from "../api/ChatApi";
 import {HttpStatus} from "../api/ApiUtils";
+import {on} from "ws";
 
 
 function RightMessage({...props})
@@ -29,15 +30,6 @@ function LeftMessage({...props})
     )
 }
 
-function IsSubscribed(subscription)
-{
-    return subscription > 0;
-}
-
-function onError(){
-    console.log("error");
-}
-
 async function onMessageReceived(payload){
     console.log('Message received', payload);
 }
@@ -45,9 +37,6 @@ async function onMessageReceived(payload){
 function GetChat({senderId, receiverId})
 {
     const [data, setData] = useState(null);
-
-    console.log(`Sender ID: ${senderId}\nReceiver ID: ${receiverId}`);
-
     const fetchApi = () => {
         ChatApi.getChat(receiverId, senderId)
             .then(response => {
@@ -77,11 +66,6 @@ function GetChat({senderId, receiverId})
     )
 }
 
-function GetUser()
-{
-
-}
-
 
 export default function Chat()
 {
@@ -90,17 +74,13 @@ export default function Chat()
     const [videoName, setVideoName] = useState("");
     const [messageList, setMessageList] = useState([]);
     const [userData, setUserData] = useState(null);
-    let subscription = IsSubscribed(1);
     let stompClient = null;
-
-    const change = event => {
-        setMessage(event.target.value)
-    }
 
     useEffect(() => {
         UserApi.getProfileInformation()
             .then(response => {
                 setUserData(response.data);
+                console.log(`Inside Effect: ${userData}`);
             })
             .catch(e => {
                 console.log(e);
@@ -115,6 +95,11 @@ export default function Chat()
             })
         }
     }, [])
+
+    const test = () => {
+        registerUser();
+        onConnected();
+    }
 
     // const addToList = () => {
     //     let tempList = list;
@@ -134,6 +119,10 @@ export default function Chat()
     //     // setVideoFilePath("");
     // }
 
+    const handleMessage = event => {
+        setMessage(event.target.value)
+    }
+
     const handleVideoUpload = event => {
         setVideoFilePath(URL.createObjectURL(event.target.files[0]))
         setVideoName(event.target.files[0].name)
@@ -142,38 +131,35 @@ export default function Chat()
     const registerUser = () => {
         let Sock = new SockJS('http://localhost:8080/ws');
         stompClient = Stomp.over(Sock);
+        console.log(`Is error here!? ${stompClient}`);
         stompClient.connect({}, onConnected, onError);
     }
 
-    const onConnected = () => {
-        UserApi.getProfileInformation().then(function (response) {
-            let email2 = response.data.email
-            let fullName2 = userData.firstName + " " + userData.lastName
+    const onError = (error) => {
+        console.log(`What is the error!!! ${error}`);
+    }
 
-            stompClient.subscribe(`/user/${userData.email}/queue/messages`, onMessageReceived);
-            stompClient.send("/app/chatUser.addUser",{}, JSON.stringify({email: email2, fullName: fullName2}));
-        })
+    const onConnected = () => {
+        stompClient.subscribe(`/user/${userData.email}/queue/messages`, onMessageReceived);
+        stompClient.send("/app/chatUser.addUser",{}, JSON.stringify({email: userData.email, fullName: `${userData.firstName} ${userData.lastName}`}));
+
+        console.log(`Stomp Client: ${stompClient}`);
     }
 
     const sendMessage = () => {
-        registerUser()
-        if(stompClient)
+        console.log(`What is going on!? ${stompClient}`);
+        if (stompClient)
         {
+            const chatMessage = {
+                senderId: userData.email,
+                recipientId: "admin@email.com",
+                content: message,
+                timeStamp: new Date(),
+            };
 
-            UserApi.getProfileInformation().then(function (response) {
-                let email2 = response.data.email
 
-                const chatMessage = {
-                    senderId: userData.email,
-                    recipientId: "two@email.com",
-                    content: message,
-                    timeStamp: new Date(),
-                };
 
-                stompClient.send("/app/processMessage", {}, JSON.stringify(chatMessage));
-                setMessage("");
-            })
-
+            setMessage("");
         }
     }
 
@@ -187,28 +173,27 @@ export default function Chat()
                 <div className="flex flex-col space-y-2" id="a">
                     <ul>
                         {
-                            messageList.length > 0 && messageList.map((data) => data.senderId == userData.email ? <RightMessage>{data.content}</RightMessage> : <LeftMessage>{data.content}</LeftMessage>)
+                            messageList.length > 0 && messageList.map((data) => data.senderId == userData.email ?
+                                <RightMessage>{data.content}</RightMessage> : <LeftMessage>{data.content}</LeftMessage>)
                         }
                     </ul>
                 </div>
             </div>
             {/*<div>{videoName}</div>*/}
             {
-                userData !== null && <GetChat senderId={userData.email} receiverId={"two@email.com"}/>}
+                userData !== null && <GetChat senderId={userData.email} receiverId={"two@email.com"}/>
+            }
+            <button onClick={test}>Connect Work Please :(</button>
             <div className="bg-custom-gray p-4 flex items-center">
-                {
-                    (subscription)
-                        ? <>
-                            <input type="file" id="file-input" className="hidden" onChange={handleVideoUpload}/>
-                            <label htmlFor="file-input" className="w-7 h-7 rounded-full bg-custom-red flex justify-center mr-2">+</label>
-                            <input type="text" placeholder="Type your message..." className="flex-1 border rounded-full px-4 py-2 focus:outline-none" onChange={change} value={message}/>
-                            <button className="rounded-full bg-custom-red block p-2 ml-2 hover:bg-custom-dark-red" onClick={sendMessage}>Send</button></>
-                        : <><input type="file" id="file-input" className="hidden" disabled/>
-                            {/*onChange={handleVideoUpload}*/}
-                            <label htmlFor="file-input" className="w-7 h-7 rounded-full bg-custom-red flex justify-center mr-2 opacity-50 cursor-not-allowed">+</label>
-                            <input type="text" placeholder="Subscribed to access this feature" className="flex-1 border rounded-full px-4 py-2 focus:outline-none" onChange={change} value={message} disabled/>
-                            <button className="rounded-full bg-custom-red block p-2 ml-2 cursor-not-allowed opacity-50 " disabled>Send</button></>
-                }
+                <input type="file" id="file-input" className="hidden" onChange={handleVideoUpload}/>
+                <label htmlFor="file-input"
+                       className="w-7 h-7 rounded-full bg-custom-red flex justify-center mr-2">+</label>
+                <input type="text" placeholder="Type your message..."
+                       className="flex-1 border rounded-full px-4 py-2 focus:outline-none" onChange={handleMessage}
+                       value={message}/>
+                <button className="rounded-full bg-custom-red block p-2 ml-2 hover:bg-custom-dark-red"
+                        onClick={sendMessage}>Send
+                </button>
             </div>
         </div>
     );

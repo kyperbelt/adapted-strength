@@ -18,7 +18,7 @@ function connect1(event){
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
     event.preventDefault();
-
+    console.log(stompClient)
 }
 
 function connect1Mod(nickname, fullname, event){
