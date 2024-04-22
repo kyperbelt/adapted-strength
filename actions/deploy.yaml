@@ -2,10 +2,10 @@ name: deploy-app
 # id: deploy
 
 on:
-  # workflow_call:
+  workflow_dispatch:
   push:
     branches:
-      - action
+      - actions
 
 jobs:
   build:
