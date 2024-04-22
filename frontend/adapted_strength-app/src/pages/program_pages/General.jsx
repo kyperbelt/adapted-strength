@@ -76,25 +76,10 @@ export default function General() {
                                     return (
                                         <div>
                                             <tr key={index}>
-                                                <td className="border px-4 py-2">
-                                                    { 
-                                                        day.repCycles.map(repCycle => {
-                                                            return (
-                                                                <div>
-                                                                    {
-                                                                        repCycle.equipment
-                                                                    }
-                                                                </div>
-                                                            );
-                                                        })
-                                                    } 
+                                                <td className="justify-center items-center px-1.5 border-solid border-2 border-black bg-gray-300 w-1/12 font-bold">
+                                                    {repCycle.workoutOrder}
                                                 </td>
-                                                <td className="border px-4 py-2">
-                                                    {
-                                                        day.repCycles[0].numSets
-                                                    }
-                                                </td>
-                                                <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
+                                                <th scope="col" className="px-1.5 mx-1 py-1 border-solid border-2 border-black bg-gray-300 w-screen">
                                                     Movement: {
                                                         repCycle.name
                                                     }
@@ -118,7 +103,6 @@ export default function General() {
                                                             <td className="border px-4 py-2">
                                                                 {
                                                                     repCycle.equipment
-                                                                               
                                                                 }
                                                             </td>
                                                             <td className="border px-4 py-2">
@@ -158,7 +142,7 @@ export default function General() {
 
     return (
         <div className="w-full h-full flex flex-col bottom-20">
-            <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
+            <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
                 Your Program: {
                     program &&
                     program.name
@@ -173,18 +157,20 @@ export default function General() {
                         <button onClick={() => toggleProgram(`${days.toLowerCase()}Day`)} className="w-full border-solid border-2 border-black uppercase rounded-full font-bold mt-1 mb-3 px-2 py-3 bg-gray-200">
                             {showPrograms[`${days.toLowerCase()}Day`] ? `Close ${days}-Day Program` : `Show ${days}-Day`}
                         </button>
-                        {showPrograms[`${days.toLowerCase()}Day`] && (
-                            <CardBack className="xl:w-11/12 xl:mx-auto w-full">
-                                <div className="overflow-x-auto flex justify-center">
-                                    {eval(`${days.toLowerCase()}DayProgram`).map((day, dayIndex) => (
-                                        <button onClick={() => toggleDay(`${days.toLowerCase()}Day`, dayIndex)} className={`w-500 mr-1 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
-                                            {day ? 'Close' : `Day ${dayIndex + 1}`}
-                                        </button>
-                                    ))}
-                                </div>
-                                {getTable(eval(`${days.toLowerCase()}DayProgram`).filter(day => day + 1))}
-                            </CardBack>
-                        )}
+                        {
+                            showPrograms[`${days.toLowerCase()}Day`] && (
+                                <CardBack className="xl:w-11/12 xl:mx-auto w-full">
+                                    <div className="overflow-x-auto flex justify-center">
+                                        {eval(`${days.toLowerCase()}DayProgram`).map((day, dayIndex) => (
+                                            <button onClick={() => toggleDay(`${days.toLowerCase()}Day`, dayIndex)} className={`w-500 mr-1 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
+                                                {day ? 'Close' : `Day ${dayIndex + 1}`}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {eval(`${days.toLowerCase()}DayProgram`).some(day => day) && getTable()}
+                                </CardBack>
+                            )
+                        }
                     </div>
                 ))}
             </CardBack>
