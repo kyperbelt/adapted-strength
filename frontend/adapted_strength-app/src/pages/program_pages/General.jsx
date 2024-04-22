@@ -22,15 +22,6 @@ export default function General() {
     }, []);
 
     const [workouts, setWorkout] = useState([]);
-    const adptdsURL = 'http://10.0.0.63:8080/v1/programming/day/all_days';
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNleXRlc3RAZW1haWwuY29tIiwiaWF0IjoxNzEzMTM3MjM2LCJleHAiOjE3MTMyMjM2MzZ9.CWb3uwhCV-OiDlurgRTOpn14eDkxpiIpJmoZ3GnmuF0Y--kP4L_FbV18sy3jx5W1SRoRuTFIol-pATcwwqhd5g';
-    // const fetchData = async () => {
-    //     const response = await fetch(adptdsURL);
-    //     const jsonData = await response.json();
-    //     setWorkout(jsonData);
-    // };
-    // fetchData();
-    // }, []);
 
     const [fiveDayProgram, setFiveDayProgram] = useState(Array(5).fill(false));
     const [fourDayProgram, setFourDayProgram] = useState(Array(4).fill(false));
@@ -65,80 +56,64 @@ export default function General() {
         }
     };
 
-    const getTable = () => {
+    const getTable = (dayId) => {
         return (
-            <table className="w-full text-left mt-4">
-                <tbody className="rounded-full text-[#161A1D]">
-                    {program &&
-                        program.weeks[0].days.map((day, index) => {
-                            return (
-                                day.repCycles.map(repCycle => {
-                                    return (
-                                        <div>
-                                            <tr key={index}>
-                                                <td className="justify-center items-center px-1.5 border-solid border-2 border-black bg-gray-300 w-1/12 font-bold">
-                                                    {repCycle.workoutOrder}
-                                                </td>
-                                                <th scope="col" className="px-1.5 mx-1 py-1 border-solid border-2 border-black bg-gray-300 w-screen">
-                                                    Movement: {
-                                                        repCycle.name
-                                                    }
-                                                    <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                                        Equipment
-                                                    </td>
-                                                    <td scope="col" className="px-3 text-xs bg-gray-100">
-                                                        Sets
-                                                    </td>
-                                                    <td scope="col" className="px-3 text-xs bg-gray-200">
-                                                        Reps/Time
-                                                    </td>
-                                                    <td scope="col" className="px-3 text-xs bg-gray-100">
-                                                        % or RPE
-                                                    </td>
-                                                    <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
-                                                        Rest
-                                                    </td>
-                                                    <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
-                                                        <tr key={index}>
-                                                            <td className="border px-4 py-2">
-                                                                {
-                                                                    repCycle.equipment
-                                                                }
-                                                            </td>
-                                                            <td className="border px-4 py-2">
-                                                                {
-                                                                    repCycle.numSets
-                                                                }
-                                                            </td>
-                                                            <td className="border px-4 py-2">
-                                                                {
-                                                                    repCycle.numReps
-                                                                }
-                                                            </td>
-                                                            <td className="border px-4 py-2">
-                                                                {
-                                                                    repCycle.weight
-                                                                }
-                                                            </td>
-                                                            <td className="border px-4 py-2">
-                                                                {
-                                                                    repCycle.restTime
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </th>
-                                            </tr>
-                                        </div>
-                                    );
-                                })
-
-                            );
-                        })}
-                </tbody>
-            </table>
+          <table className="w-full text-left mt-4">
+            <tbody className="rounded-full text-[#161A1D]">
+              {program &&
+                program.weeks[0].days
+                  .filter((day) => day.dayId === dayId) // Filter based on dayId
+                  .map((day) =>
+                    day.repCycles.map((repCycle) => (
+                      <tr key={repCycle.repCycleId}>
+                        <td className="justify-center items-center px-1.5 border-solid border-2 border-black bg-gray-300 w-1/12 font-bold">
+                          {repCycle.workoutOrder}
+                        </td>
+                        <th scope="col" className="px-1.5 mx-1 py-1 border-solid border-2 border-black bg-gray-300 w-screen">
+                          Movement: {repCycle.name}
+                          <td scope="col" className="px-1.5 text-xs bg-gray-200">
+                            Equipment
+                          </td>
+                          <td scope="col" className="px-3 text-xs bg-gray-100">
+                            Sets
+                          </td>
+                          <td scope="col" className="px-3 text-xs bg-gray-200">
+                            Reps/Time
+                          </td>
+                          <td scope="col" className="px-3 text-xs bg-gray-100">
+                            % or RPE
+                          </td>
+                          <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
+                            Rest
+                          </td>
+                          <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+                            <tr key={repCycle.repCycleId}>
+                              <td className="border text-center px-4 py-2">
+                                {repCycle.equipment}
+                              </td>
+                              <td className="border text-center px-4 py-2">
+                                {repCycle.numSets}
+                              </td>
+                              <td className="border text-center px-4 py-2">
+                                {repCycle.numReps}
+                              </td>
+                              <td className="border text-center px-4 py-2">
+                                {repCycle.weight}
+                              </td>
+                              <td className="border text-center px-4 py-2">
+                                {repCycle.restTime}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </th>
+                      </tr>
+                    ))
+                  )}
+            </tbody>
+          </table>
         );
-    };
+      };
+      
 
     return (
         <div className="w-full h-full flex flex-col bottom-20">
@@ -167,7 +142,7 @@ export default function General() {
                                             </button>
                                         ))}
                                     </div>
-                                    {eval(`${days.toLowerCase()}DayProgram`).some(day => day) && getTable()}
+                                    {eval(`${days.toLowerCase()}DayProgram`).some(day => day) && getTable(eval(`${days.toLowerCase()}DayProgram`).findIndex(day => day) + 1)}
                                 </CardBack>
                             )
                         }
