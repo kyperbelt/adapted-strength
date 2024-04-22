@@ -1,8 +1,9 @@
 name: deploy-app
-id: deploy
+# id: deploy
 
 on:
-  workflow_call
+  workflow_call:
+  pull_request:
   # push:
   #   branches:
   #     - production
@@ -93,5 +94,5 @@ jobs:
           sftp -i "~/.ssh/key.pem" -b batchfile $CONN
 
       # TODO - add expand / contract pattern for database migration
-      - name: Run deployment script
-          ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
+      # - name: Run deployment script
+      #     ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
