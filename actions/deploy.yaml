@@ -2,8 +2,8 @@ name: deploy-app
 # id: deploy
 
 on:
-  workflow_call:
-  pull_request:
+  # workflow_call:
+  push:
   # push:
   #   branches:
   #     - production
