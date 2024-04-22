@@ -21,8 +21,6 @@ export default function General() {
             });
     }, []);
 
-    const [workouts, setWorkout] = useState([]);
-
     const [fiveDayProgram, setFiveDayProgram] = useState(Array(5).fill(false));
     const [fourDayProgram, setFourDayProgram] = useState(Array(4).fill(false));
     const [threeDayProgram, setThreeDayProgram] = useState(Array(3).fill(false));
@@ -83,7 +81,7 @@ export default function General() {
                           <td scope="col" className="px-3 text-xs bg-gray-100">
                             % or RPE
                           </td>
-                          <td scope="col" className="p-3 px-5 text-xs bg-gray-200">
+                          <td scope="col" className="p-3 px-5text-xs bg-gray-200">
                             Rest
                           </td>
                           <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
