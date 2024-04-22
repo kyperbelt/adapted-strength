@@ -282,7 +282,65 @@ export class ProgrammingApi {
     });
   }
 
+  static updateCycle({ cycleId, cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId}) {
+    const updateCycleRequest = {
+      id: cycleId,
+      repCycleName: cycleName,
+      equipment: equipment,
+      numSets: numSets,
+      numReps: numReps,
+      weight: weight,
+      restTime: restTime,
+      coachNotes: coachNotes,
+      workoutOrder: workoutOrder,
+      movementId: movementId
+    };
 
+    return ApiUtils.apiPut('programming/rep_cycle', updateCycleRequest).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r;
+      }
+      throw new Error(`Error updating cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error updating cycle:', error);
+      throw error;
+    });
+  }
 
+  static getCycle(cycleId) {
+    return ApiUtils.apiGet(`programming/rep_cycle/${cycleId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error getting cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error getting cycle:', error);
+      throw error;
+    });
+  }
+
+  static deleteCycle(cycleId) {
+    return ApiUtils.apiDelete(`programming/rep_cycle/${cycleId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r;
+      }
+      throw new Error(`Error deleting cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error deleting cycle:', error);
+      throw error;
+    });
+  }
+
+  static getAllCycles() {
+    return ApiUtils.apiGet('programming/all_rep_cycles').then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error getting all cycles: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error getting all cycles:', error);
+      throw error;
+    });
+  }
 
 }
