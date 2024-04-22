@@ -61,6 +61,27 @@ export class ApiUtils {
     }));
   }
 
+  /**
+   * 
+   * @param {*} endpoint 
+   * @param {*} body Must be of type FormData
+   * @param {*} options 
+   * @param {*} version 
+   * @returns 
+   */
+  static apiPostFormData(endpoint, body, options = {}, version = 'v1') {
+    return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
+      method: 'POST',
+      // credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
+        ...options.headers,
+      },
+      body: body,
+    }));
+  }
+
+
   static apiPut(endpoint, body, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'PUT',
@@ -74,6 +95,27 @@ export class ApiUtils {
       ...options,
     }));
   }
+
+  /**
+   * 
+   * @param {*} endpoint 
+   * @param {*} body 
+   * @param {*} options 
+   * @param {*} version 
+   * @returns 
+   */
+  static apiPutFormData(endpoint, body, options = {}, version = 'v1') {
+    return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
+      method: 'PUT',
+      // credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${ApiUtils.getAuthToken()}`,
+        ...options.headers,
+      },
+      body: body,
+    }));
+  }
+
 
   static apiDelete(endpoint, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
