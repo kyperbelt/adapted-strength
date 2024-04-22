@@ -76,11 +76,13 @@ function App() {
               <Route path="reset-password" element={<ResetPassword />} />
               <Route path="chat-test" element={<ChatTest />} />
 
-              <Route path="edit-profile" element={<Suspense fallback="...">
+              <Route path="edit-profile" element={
                 <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
-                  <EditProfile />
+                  <Suspense fallback="...">
+                    <EditProfile />
+                  </Suspense>
                 </RouteGuard>
-              </Suspense>} />
+              } />
 
               <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
@@ -88,8 +90,11 @@ function App() {
               <Route path="sign-up" element={<SignUp />} />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={<RouteGuard state={()=>AuthApi.isLoggedIn()} routeTo="/login">
+              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+
+                  <Suspense fallback="...">
                 <ProgramManagement />
+                </Suspense>
               </RouteGuard>} />
 
             /* ROUTES FOR PROGRAM PAGES */
@@ -122,7 +127,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       }
-    </div>
+    </div >
   );
 }
 

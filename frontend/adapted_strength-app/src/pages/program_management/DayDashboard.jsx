@@ -1,6 +1,6 @@
 import BreadCrumb from "../../components/BreadCrumb";
 import { ProgrammingApi } from "../../api/ProgrammingApi";
-import { PrimaryButton, SecondaryButton } from "../../components/Button";
+import { PrimaryButton, SecondaryButton, IconButton } from "../../components/Button";
 import { CardBack, CardBack1 } from "../../components/Card";
 import { BasicModalDialogue } from "../../components/Dialog";
 import LabeledInputField from "../../components/forms/LabeledInputField";
@@ -304,7 +304,7 @@ function RepCycleContainer({ day }) {
                         <td className="px-6 py-3" colSpan="4">
                                 <div className="flex flex-col p-0 w-full">
                                         {repCycles.map((repCycle) => {
-                                                return <RepCycle repCycle={repCycle} />
+                                                return <RepCycle repCycle={repCycle} cycleState={[repCycles, setRepCycles]} />
                                         })}
                                 </div>
                                 <button className="mt-2 flex flex-row items-center italic text-secondary-dark hover:text-accent" onClick={addCycle}>
@@ -317,13 +317,59 @@ function RepCycleContainer({ day }) {
                 </tr>);
 }
 
-function RepCycle({ repCycle, id }) {
+function AreYouSureDialog({ onYes, onNo, ...props }) {
+        return (
+                <BasicModalDialogue className="hidden" id="are-you-sure" title="Are you Sure?" onCloseDialog={onNo}>
+                        <div className="flex flex-row">
+                                <PrimaryButton onClick={onYes}>Yes</PrimaryButton>
+                                <SecondaryButton onClick={onNo}>No</SecondaryButton>
+                        </div>
+                </BasicModalDialogue>
+        );
+}
+
+function RepCycle({ repCycle, cycleState }) {
         console.log("RepCycle: ", repCycle);
+        const [repCycles, setRepCycles] = cycleState;
+
+        const onDelete = async () => {
+                console.log("Delete RepCycle: ", repCycle);
+                await ProgrammingApi.deleteCycle(repCycle.repCycleId).then((r) => {
+                        if (r.status === HttpStatus.OK) {
+                                console.log("RepCycle deleted: ", repCycle.repCycleId);
+                                const newCycles = repCycles.filter((cycle) => cycle.repCycleId !== repCycle.repCycleId);
+                                setRepCycles(newCycles);
+                                return r;
+                        } else {
+                                throw new Error("Error deleting rep cycle with status: " + r.status);
+                        }
+                }).catch((e) => {
+                        console.error('Error deleting rep cycle:', e);
+                });
+                document.getElementById("are-you-sure").classList.add("hidden");
+        }
+
+        const deleteClicked = () => {
+                document.getElementById("are-you-sure").classList.remove("hidden");
+        }
+
+        const closeAreYouSure = (e) => {
+                e.target.closest("#are-you-sure").classList.add("hidden");
+        }
+
         const { name, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId } = repCycle;
         return (
+
                 <CardBack1 className={`flex flex-col px-6 py-2 mb-2`}>
-                        <div className="text-lg font-semibold">{name}</div>
-                        <div className="flex flex-row ">
+                        <AreYouSureDialog id="delete-rep-cycle" onYes={onDelete} onNo={closeAreYouSure} />
+                        <div className="flex flex-row ms-2 items-center justify-items-center pt-2">
+                                <div className="text-lg font-semibold mr-auto">{name}</div>
+                                <IconButton className="p-2 bg-secondary-light me-2" onClick={() => { console.log("Edit RepCycle: ", repCycle) }}>
+                                        <PencilIcon />
+                                </IconButton>
+                                <IconButton className="p-2" onClick={deleteClicked}><TrashIcon /></IconButton>
+                        </div>
+                        <div className="grid grid-cols-2 md:flex md:flex-row ">
                                 <RepCycleItem title="Order" value={workoutOrder} />
                                 <RepCycleItem title="Equipment" value={equipment} />
                                 <RepCycleItem title="Sets" value={numSets} />
@@ -331,13 +377,7 @@ function RepCycle({ repCycle, id }) {
                                 <RepCycleItem title="Weight" value={weight} />
                                 <RepCycleItem title="Rest Time" value={restTime} />
                                 <RepCycleItem title="Movement ID" value={movementId} />
-                                <RepCycleItem className="grow" title="Coach Notes" value={coachNotes} />
-                                <div className="flex flex-row ms-2 items-center pt-2">
-                                        <SecondaryButton className="p-0" onClick={() => { console.log("Edit RepCycle: ", repCycle) }}>
-                                                <PencilIcon />
-                                        </SecondaryButton>
-                                        <PrimaryButton onClick={() => { console.log("Delete RepCycle: ", repCycle) }}><TrashIcon /></PrimaryButton>
-                                </div>
+                                <RepCycleItem className="grow text-sm col-span-2" title="Coach Notes" value={coachNotes} />
 
                         </div>
 
@@ -364,9 +404,9 @@ function TrashIcon({ className, ...props }) {
 function RepCycleItem({ className, title, value }) {
 
         return (
-                <div className={`border-primary-dark last:border-transparent border-2 flex flex-col bg-primary-dark even:bg-primary ${className} px-2`}>
-                        <div className="text-sm font-semibold">{title}</div>
-                        <div className="text-sm">{value}</div>
+                <div className={`text-2xl border-primary-dark last:border-transparent border-2 flex flex-col bg-primary-dark even:bg-primary ${className} px-2`}>
+                        <div className="text-sm font-semibold text-nowrap">{title}</div>
+                        <div className="align-bottom">{value}</div>
                 </div>
 
         );
@@ -405,7 +445,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                         numReps: dataRaw.get(`num-reps-${dayId}`),
                         weight: dataRaw.get(`weight-${dayId}`),
                         restTime: dataRaw.get(`rest-time-${dayId}`),
-                        coachNotes:"",
+                        coachNotes: "",
                         workoutOrder: dataRaw.get(`workout-order-${dayId}`),
                         movementId: dataRaw.get(`movement-id-${dayId}`),
                 };
@@ -440,8 +480,35 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                         }
 
                         onClose();
-                }
+                } else if (mode === "edit") {
 
+                        console.log("Editing rep cycle: ", data);
+                        const updateRepCycleResponse = await ProgrammingApi.updateCycle({ repCycleId: repCycle.repCycleId, cycleName: data.name, equipment: data.equipment, numSets: data.numSets, numReps: data.numReps, weight: data.weight, restTime: data.restTime, coachNotes: data.coachNotes, workoutOrder: data.workoutOrder, movementId: data.movementId }).then((r) => {
+                                if (r.status === HttpStatus.OK) {
+                                        console.log("Rep cycle updated: ", r.data);
+                                        return r.data;
+                                } else {
+                                        console.error("Error updating rep cycle: ", r.status);
+                                }
+                        }).catch((error) => {
+                                console.error("Error updating rep cycle: ", error);
+                        });
+
+                        if (updateRepCycleResponse && updateRepCycleResponse.status === HttpStatus.OK) {
+                                console.log("Rep cycle updated: ", updateRepCycleResponse.data);
+                                const newRepCycles = repCycles.map((cycle) => {
+                                        if (cycle.repCycleId === repCycle.repCycleId) {
+                                                return updateRepCycleResponse.data;
+                                        } else {
+                                                return cycle;
+                                        }
+                                });
+
+                                setRepCycles(newRepCycles);
+                                onClose();
+                        }
+
+                }
         }
 
         const onClose = () => {
@@ -475,13 +542,20 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
         return (
                 <BasicModalDialogue title={title} onCloseDialog={onClose} className="hidden" id={`rep-cycle-form-${dayId}`} >
                         <form onSubmit={onSubmit} className="space-y-4 pt-2 ">
+
                                 <LabeledInputField id={`rep-cycle-name-${dayId}`} placeholder="RepCycle Name" required={true} type="text" />
-                                <LabeledInputField id={`equipment-${dayId}`} placeholder="Equipment" required={true} type="text" />
-                                <LabeledInputField id={`num-sets-${dayId}`} placeholder="Number of Sets" required={true} type="number" />
-                                <LabeledInputField id={`num-reps-${dayId}`} placeholder="Number of Reps" required={true} type="number" />
-                                <LabeledInputField id={`weight-${dayId}`} placeholder="Weight" required={true} type="number" />
-                                <LabeledInputField id={`rest-time-${dayId}`} placeholder="Rest Time" required={true} type="number" />
-                                <LabeledInputField id={`workout-order-${dayId}`} placeholder="Workout Order" required={true} type="text" />
+                                <div className="flex flex-row space-x-2">
+                                        <LabeledInputField className="flex-1" id={`workout-order-${dayId}`} placeholder="Workout Order" required={true} type="text" />
+                                        <LabeledInputField className="flex-1" id={`equipment-${dayId}`} placeholder="Equipment" required={true} type="text" />
+                                </div>
+                                <div className="flex flex-row w-full space-x-2">
+                                        <LabeledInputField className="flex-1" id={`num-sets-${dayId}`} placeholder="Number of Sets" required={true} type="text" />
+                                        <LabeledInputField className="flex-1" id={`num-reps-${dayId}`} placeholder="Number of Reps" required={true} type="text" />
+                                </div>
+                                <div className="flex flex-row space-x-2">
+                                        <LabeledInputField className="flex-1" id={`weight-${dayId}`} placeholder="Weight" required={true} type="text" />
+                                        <LabeledInputField className="flex-1" id={`rest-time-${dayId}`} placeholder="Rest Time" required={true} type="text" />
+                                </div>
                                 <LabeledInputField id={`movement-id-${dayId}`} placeholder="Movement ID" required={true} type="number" />
 
                                 {/*TODO: map movement it to movement names and show a dropdown list */}
