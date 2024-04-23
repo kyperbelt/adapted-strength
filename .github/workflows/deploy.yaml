@@ -23,8 +23,8 @@ jobs:
 
       - name: Install java & npm
         run: |
-          java --version
           sudo apt-get update
+          sudo apt-get uninstall -y openjdk-11-jdk
           sudo apt-get install -y openjdk-17-jdk
           sudo apt-get install -y npm
 
