@@ -62,12 +62,11 @@ jobs:
       - name: Compile and compress front end
         id: out_front
         run: |
-          cd adapted-strength/frontend/adapted_strength-app
+          cd frontend/adapted_strength-app
           npm install
           npm run build
           tar -czf web.tar.gz build 
-          cd ..
-          cd ..
+          cd ../..
 
       - name: Write ssh key to file
         run: |
