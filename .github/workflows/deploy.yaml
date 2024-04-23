@@ -9,14 +9,19 @@ on:
 
 jobs:
   build:
-    name: Build jar
+    name: Build and deploy
     runs-on: ubuntu-latest
-    outputs:
-      # jar: ${{ steps.out_jar.outputs.JAR }}
-      # prop: ${{ steps.out_jar.outputs.APP_PROP }}
-      front : ${{ steps.out_front.outputs.FRONT }}
-      app : ${{ steps.out_app.outputs.APP }}
-      # compose: ${{ steps.out_jar.outputs.COMPOSE }}
+    env:
+      SSH_KEY: ${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}
+      HOST: ${{ secrets.AWS_INSTANCE_URL }}
+      USER: ${{ secrets.AWS_INSTANCE_USER }}
+
+    # outputs:
+    #   # jar: ${{ steps.out_jar.outputs.JAR }}
+    #   # prop: ${{ steps.out_jar.outputs.APP_PROP }}
+    #   front : ${{ steps.out_front.outputs.FRONT }}
+    #   app : ${{ steps.out_app.outputs.APP }}
+    #   # compose: ${{ steps.out_jar.outputs.COMPOSE }}
 
     steps:
       - name: Checkout
@@ -30,24 +35,22 @@ jobs:
       #     # Installed
       #     # sudo apt-get install -y npm
 
-      - name: Compile to jar
+      - name: Build and compress jar
         run: |
-          # java --version
-          # pwd
           cd authorization
-          # ls
           ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME_17_X64
           cd ..
-
-      - name: Remove plain jar
-        run: |
           rm ./authorization/build/libs/*plain.jar
-
-      - name: Output app
-        id: out_app
-        run: |
           tar -czf app.tar.gz authorization/build/libs/*.jar authorization/build/resources/main/application.properties authorization/compose.yaml
-          echo "APP=$(cat app.tar.gz)" >> $GITHUB_OUTPUT
+
+      # - name: Remove plain jar
+      #   run: |
+      #     rm ./authorization/build/libs/*plain.jar
+
+      # - name: Output app
+      #   id: out_app
+      #   run: |
+      #     tar -czf app.tar.gz authorization/build/libs/*.jar authorization/build/resources/main/application.properties authorization/compose.yaml
 
       # - name: Output jar 
       #   id: out_jar
@@ -56,41 +59,19 @@ jobs:
       #     echo "APP_PROP=$(cat ./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
       #     echo "COMPOSE=$(cat ./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
 
-      - name: Compile & output front end
+      - name: Compile and compress front end
         id: out_front
         run: |
           cd adapted-strength/frontend/adapted_strength-app
           npm install
           npm run build
-          tar -czf web.tar.gz build        
-          echo "FRONT=$(cat web.tar.gz)" >> $GITHUB_OUTPUT
-
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      SSH_KEY: ${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}
-      HOST: ${{ secrets.AWS_INSTANCE_URL }}
-      USER: ${{ secrets.AWS_INSTANCE_USER }}
-      # CONN: ${{ join("{0}@{1}", secrets.AWS_INSTANCE_URL, secrets.AWS_INSTANCE_USER) }}
-
-    steps:
-      # - name: Checkout Repo
-      #   uses: actions/checkout@v4
+          tar -czf web.tar.gz build 
+          cd ..
+          cd ..
 
       - name: Write ssh key to file
         run: |
           echo $SSH_KEY > "~/.ssh/key.pem"
-
-      - name: Write outputs to file
-        run: |
-          echo "${{ needs.build.outputs.app }}" > app.tar.gz
-          echo "${{ needs.build.outputs.front }}" > web.tar.gz
-
-      # - name: Compress files
-      #   run: |
-      #     tar -czf app.tar.gz app.jar application.properites compose.yaml
 
       - name: Set up known hosts file
         run: |
@@ -102,7 +83,4 @@ jobs:
           echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
 
           sftp -i "~/.ssh/key.pem" -b batchfile "$USER@$HOST"
-
-      # TODO - add expand / contract pattern for database migration
-      # - name: Run deployment script
-      #     ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
+  
