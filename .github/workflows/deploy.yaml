@@ -32,7 +32,7 @@ jobs:
           pwd
           cd authorization
           ls
-          gradlew build
+          ./gradlew build
           cd ..
 
       - name: Remove plain jar
