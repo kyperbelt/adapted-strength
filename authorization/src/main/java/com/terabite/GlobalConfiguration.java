@@ -10,6 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.JwtService;
+import com.terabite.programming.ProgrammingApi;
+import com.terabite.programming.repository.DayRepository;
+import com.terabite.programming.repository.ProgramRepository;
+import com.terabite.programming.repository.RepCycleRepository;
+import com.terabite.programming.repository.WeekRepository;
 import com.terabite.user.UserApi;
 import com.terabite.user.repository.UserRepository;
 
@@ -88,6 +93,10 @@ public class GlobalConfiguration {
 		// later we might want to set this up some better way. I am still new to
 		// spring boot and I am not sure if this is the best approach.
 		return new AuthorizationApi(jwtService, loginRepository);
+	}
+
+	@Bean ProgrammingApi programmingApi(final ProgramRepository programRepository, final WeekRepository weekRepository, final DayRepository dayRepository, final RepCycleRepository repCycleRepository) {
+		return new ProgrammingApi(programRepository, weekRepository, dayRepository, repCycleRepository);
 	}
 
 	@Bean

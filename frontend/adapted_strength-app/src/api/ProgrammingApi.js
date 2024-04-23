@@ -114,7 +114,7 @@ export class ProgrammingApi {
     });
   }
 
-  static createWeek({weekName, description }) {
+  static createWeek({ weekName, description }) {
     const week = {
       weekName: weekName,
       weekDescription: description
@@ -131,7 +131,7 @@ export class ProgrammingApi {
     });
   }
 
-  static updateWeek({ weekId, weekName, description, dayIds=[]}) {
+  static updateWeek({ weekId, weekName, description, dayIds = [] }) {
     const updateWeekRequest = {
       id: weekId,
       weekName: weekName,
@@ -186,7 +186,7 @@ export class ProgrammingApi {
     });
   }
 
-  static createDay({dayName, description }) {
+  static createDay({ dayName, description }) {
     const day = {
       dayName: dayName,
       dayDescription: description
@@ -203,7 +203,7 @@ export class ProgrammingApi {
     });
   }
 
-  static updateDay({ dayId, dayName, description, cycles=[]}) {
+  static updateDay({ dayId, dayName, description, cycles = [] }) {
     const updateDayRequest = {
       id: dayId,
       dayName: dayName,
@@ -258,7 +258,7 @@ export class ProgrammingApi {
     });
   }
 
-  static createCycle({cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId}) {
+  static createCycle({ cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId }) {
     const cycle = {
       repCycleName: cycleName,
       equipment: equipment,
@@ -282,9 +282,9 @@ export class ProgrammingApi {
     });
   }
 
-  static updateCycle({ cycleId, cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId}) {
+  static updateCycle({ repCycleId, cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId }) {
     const updateCycleRequest = {
-      id: cycleId,
+      id: repCycleId,
       repCycleName: cycleName,
       equipment: equipment,
       numSets: numSets,
@@ -343,4 +343,53 @@ export class ProgrammingApi {
     });
   }
 
+  static duplicateProgram(program) {
+    return ApiUtils.apiPost(`programming/program/duplicate/${program.id}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating program: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating program:', error);
+      throw error;
+    });
+  }
+
+
+  static duplicateWeek(week) {
+    return ApiUtils.apiPost(`programming/week/duplicate/${week.weekId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating week: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating week:', error);
+      throw error;
+    });
+
+  }
+
+  static duplicateDay(day) {
+    return ApiUtils.apiPost(`programming/day/duplicate/${day.dayId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating day: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating day:', error);
+      throw error;
+    });
+  }
+
+  static duplicateCycle(cycle) {
+    return ApiUtils.apiPost(`programming/rep_cycle/duplicate/${cycle.repCycleId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating cycle:', error);
+      throw error;
+    });
+  }
 }

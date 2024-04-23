@@ -111,7 +111,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                 let week = null;
 
                 try {
-                        const createWeekResponse = await ProgrammingApi.createWeek({ weekName, weekDescription}).then((response) => {
+                        const createWeekResponse = await ProgrammingApi.createWeek({ weekName, weekDescription }).then((response) => {
                                 if (response.status === HttpStatus.OK) {
                                         console.log("Week created: ", response.data);
                                         const newWeek = {
@@ -148,6 +148,46 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                 document.getElementById("create-week").classList.add("hidden");
         }
 
+        const DuplicateWeek = async (week) => {
+                try {
+                        const newWeekResponse = await ProgrammingApi.duplicateWeek(week);
+
+                        if (newWeekResponse) {
+                                // add (Duplicate) to the name 
+                                const newWeek = {
+                                        id: newWeekResponse.weekId,
+                                        name: `${newWeekResponse.name} (Duplicate)`,
+                                        description: "",
+                                        selected: false,
+                                        days: newWeekResponse.days
+                                };
+                                const updatedNewWeekResponse = await ProgrammingApi.updateWeek({ weekId: newWeek.id, weekName: newWeek.name, description: newWeek.description, dayIds: newWeek.days.map((day) => day.dayId) }).then((response) => {
+                                        // update the program
+                                        const updateProgramPayload = {
+                                                programId: selectedProgram.programId,
+                                                name: selectedProgram.name,
+                                                description: selectedProgram.description.body,
+                                                weekIds: [...selectedProgram.weeks.map((week) => week.weekId), newWeek.id]
+                                        };
+                                        console.log("Update program payload: ", updateProgramPayload);
+                                        return ProgrammingApi.updateProgram(updateProgramPayload);
+
+                                });
+
+                                if (updatedNewWeekResponse.status === HttpStatus.OK) {
+                                        console.log("Week duplicated: ", updatedNewWeekResponse.data);
+                                        setWeeks([...weeks, newWeek]);
+                                } else {
+                                        throw new Error(`Error updating week: ${updatedNewWeekResponse.status}`);
+                                }
+                        }
+
+                } catch (e) {
+                        console.error('Error duplicating week:', e);
+                }
+
+        };
+
         return (selectedProgram &&
 
                 <div className="flex flex-col px-6">
@@ -158,7 +198,6 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         ]} />
                         <CardBack className="">
                                 <div className="flex flex-col sm:flex-row mt-2">
-
                                         <SearchBar />
                                         <PrimaryButton
                                                 className="sm:ml-auto w-32"
@@ -181,6 +220,8 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                                         document.getElementById("edit-week").classList.remove("hidden");
                                                                         setWeekEditId(week.weekId);
                                                                         console.log(`Edit week ${JSON.stringify(week)}`);
+                                                                } else if (option === 'Duplicate') {
+                                                                        DuplicateWeek(week);
                                                                 }
                                                         }}
                                                         selected={week.selected}

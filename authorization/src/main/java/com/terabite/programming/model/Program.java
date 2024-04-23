@@ -1,6 +1,10 @@
 package com.terabite.programming.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.google.api.client.util.Lists;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -64,4 +68,17 @@ public class Program {
     public void setWeeks(List<Week> weeks) {
         this.weeks = weeks;
     }
+
+    public Program duplicate() {
+        Program newProgram = new Program();
+        List<Week> newWeeks = new ArrayList<>();
+        for (Week week : this.weeks) {
+            newWeeks.add(week.duplicate());
+        }
+        newProgram.setWeeks(newWeeks);
+        newProgram.setName(String.format("%s", this.name));
+        newProgram.setDescription(new ProgramDescription(this.description.getBody()));
+        return newProgram;
+    }
+    
 }

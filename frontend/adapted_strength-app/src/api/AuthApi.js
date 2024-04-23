@@ -35,6 +35,7 @@ export class AuthApi {
     return promise;
   }
 
+  // open
   static resetPassword(password, token) {
     const request = {
       newPassword: password,

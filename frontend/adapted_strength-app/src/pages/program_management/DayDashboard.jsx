@@ -51,6 +51,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
         }, []);
 
         const OnDayClicked = (day) => {
+
                 console.log("Day Clicked clicked: ", day);
                 // TODO: pass the day object to the day page so that we dont have to fetch it again.
                 //      should only fetch if the day object is not passed
@@ -84,7 +85,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                 }
 
                 await Promise.all(promiseList).then(() => {
-                        console.log(`All days deleted`);
+                        console.log(`days deleted: ${daysToDelete.length}`);
                 });
                 setDays(newDayss);
         }
@@ -106,6 +107,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
         }
 
         const onAddDay = () => {
+
                 const currentDays = days;
                 if (currentDays.length >= 7) {
                         console.log("Cannot create more than 7 days in a week");
@@ -120,7 +122,6 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
 
         const onCreateDay = async (dayName, description) => {
                 let newDay = null;
-
                 try {
                         const createDayResponse = await ProgrammingApi.createDay({ dayName, description }).then((response) => {
                                 if (response.status === HttpStatus.OK) {
@@ -129,7 +130,8 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                                 dayId: response.data.dayId,
                                                 name: response.data.name,
                                                 description: response.data?.description?.body || "",
-                                                selected: false
+                                                selected: false,
+                                                repCycles: []
                                         };
                                         // update the program with the new week
                                         const updateWeekPayload = {
@@ -143,20 +145,71 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                 } else {
                                         throw new Error(`Error creating day: ${response.status}`);
                                 }
+                        }).then((response) => {
+                                if (response.status === HttpStatus.OK) {
+                                        console.log("Week updated with new day: ", response.data);
+                                        console.log("New day: ", newDay);
+                                        setSelectedWeek(response.data);
+                                        setDays([...days, newDay]);
+                                } else {
+                                        throw new Error(`Error updating day: ${response.status}`);
+                                }
                         });
 
-                        if (createDayResponse.status === HttpStatus.OK) {
-                                console.log("Week updated with new day: ", createDayResponse.data);
-                                console.log("New day: ", newDay);
-                                setDays([...days, newDay]);
-                                setSelectedWeek(createDayResponse.data);
-                        } else {
-                                throw new Error(`Error updating day: ${createDayResponse.status}`);
-                        }
                 } catch (e) {
                         console.error('Error creating day:', e);
                 }
+
         }
+
+        const DuplicateDay = async (day) => {
+                if (days.length >= 7) {
+                        console.log("Cannot create more than 7 days in a week");
+                        return;
+                }
+                try {
+                        const newDayResponse = await ProgrammingApi.duplicateDay(day);
+
+                        if (newDayResponse) {
+                                // add (Duplicate) to the name 
+                                const newDay = {
+                                        dayId: newDayResponse.dayId,
+                                        name: `${day.name} (Duplicate)`,
+                                        description: "",
+                                        selected: false,
+                                        repCycles: newDayResponse.repCycles,
+                                };
+                                const updatedNewDayResponse = await ProgrammingApi.updateDay({
+                                        dayId: newDay.dayId, dayName: newDay.name, dayDescription: newDay.description, cycles: newDay.repCycles.map((cycle) => cycle.repCycleId)
+                                }).then((r) => {
+                                        if (r.status === HttpStatus.OK) {
+                                                // update week 
+                                                const dayIds = [...selectedWeek.days.map((d) => d.dayId), newDay.dayId];
+                                                const updateWeekPayload = {
+                                                        weekId: selectedWeek.weekId,
+                                                        weekName: selectedWeek.name,
+                                                        weekDescription: "",
+                                                        dayIds: dayIds
+                                                };
+                                                return ProgrammingApi.updateWeek(updateWeekPayload);
+                                        }
+                                        throw new Error(`Error updating day: ${r.status}`);
+                                });
+
+                                if (updatedNewDayResponse.status === HttpStatus.OK) {
+                                        console.log("Day duplicated: ", updatedNewDayResponse.data);
+                                        setDays([...days, newDay]);
+                                } else {
+                                        throw new Error(`Error updating week: ${updatedNewDayResponse.status}`);
+                                }
+                        }
+
+                } catch (e) {
+                        console.error('Error duplicating week:', e);
+                }
+
+        };
+
 
         return (selectedWeek &&
                 <div className="flex flex-col px-6">
@@ -189,6 +242,8 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                                                         } else if (option === 'Edit') {
                                                                                 document.getElementById("edit-day").classList.remove("hidden");
                                                                                 setDayEditId(day.dayId);
+                                                                        } else if (option === 'Duplicate') {
+                                                                                DuplicateDay(day);
                                                                         }
                                                                 }}
                                                                 selected={day.selected}
@@ -304,7 +359,7 @@ function RepCycleContainer({ day }) {
                         <td className="px-6 py-3" colSpan="4">
                                 <div className="flex flex-col p-0 w-full">
                                         {repCycles.map((repCycle) => {
-                                                return <RepCycle repCycle={repCycle} cycleState={[repCycles, setRepCycles]} />
+                                                return <RepCycle repCycle={repCycle} cycleState={[repCycles, setRepCycles]} onEdit={() => editCycle(repCycle)} />
                                         })}
                                 </div>
                                 <button className="mt-2 flex flex-row items-center italic text-secondary-dark hover:text-accent" onClick={addCycle}>
@@ -312,7 +367,9 @@ function RepCycleContainer({ day }) {
                                                 <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
                                         </svg> Add RepCycle
                                 </button>
-                                <RepCycleForm day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} />
+                                <RepCycleForm day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} onClose={() => {
+                                        setMode("create");
+                                }} />
                         </td>
                 </tr>);
 }
@@ -328,7 +385,7 @@ function AreYouSureDialog({ onYes, onNo, ...props }) {
         );
 }
 
-function RepCycle({ repCycle, cycleState }) {
+function RepCycle({ repCycle, cycleState, onEdit }) {
         console.log("RepCycle: ", repCycle);
         const [repCycles, setRepCycles] = cycleState;
 
@@ -353,6 +410,11 @@ function RepCycle({ repCycle, cycleState }) {
                 document.getElementById("are-you-sure").classList.remove("hidden");
         }
 
+        const editClicked = () => {
+                onEdit();
+
+        }
+
         const closeAreYouSure = (e) => {
                 e.target.closest("#are-you-sure").classList.add("hidden");
         }
@@ -362,9 +424,9 @@ function RepCycle({ repCycle, cycleState }) {
 
                 <CardBack1 className={`flex flex-col px-6 py-2 mb-2`}>
                         <AreYouSureDialog id="delete-rep-cycle" onYes={onDelete} onNo={closeAreYouSure} />
-                        <div className="flex flex-row ms-2 items-center justify-items-center pt-2">
+                        <div className="flex flex-row items-center justify-items-center">
                                 <div className="text-lg font-semibold mr-auto">{name}</div>
-                                <IconButton className="p-2 bg-secondary-light me-2" onClick={() => { console.log("Edit RepCycle: ", repCycle) }}>
+                                <IconButton className="p-2 bg-secondary-light me-2" onClick={editClicked}>
                                         <PencilIcon />
                                 </IconButton>
                                 <IconButton className="p-2" onClick={deleteClicked}><TrashIcon /></IconButton>
@@ -413,7 +475,7 @@ function RepCycleItem({ className, title, value }) {
 
 }
 
-function RepCycleForm({ day, mode, repCycle, repCycleState }) {
+function RepCycleForm({ day, mode, repCycle, repCycleState, onClose }) {
 
         const dayId = day.dayId;
         const title = mode === "create" ? "Create RepCycle" : "Edit RepCycle";
@@ -423,7 +485,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
         if (mode === "edit") {
                 // fill in the form with the rep cycle data
                 console.log("Editing rep cycle: ", repCycle);
-                document.getElementById(`rep-cycle-name-${dayId}`).value = repCycle.repCycleName;
+                document.getElementById(`rep-cycle-name-${dayId}`).value = repCycle.name;
                 document.getElementById(`equipment-${dayId}`).value = repCycle.equipment;
                 document.getElementById(`num-sets-${dayId}`).value = repCycle.numSets;
                 document.getElementById(`num-reps-${dayId}`).value = repCycle.numReps;
@@ -479,14 +541,26 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                                 setRepCycles([...repCycles, cycle]);
                         }
 
-                        onClose();
+                        onCloseHere();
                 } else if (mode === "edit") {
 
-                        console.log("Editing rep cycle: ", data);
-                        const updateRepCycleResponse = await ProgrammingApi.updateCycle({ repCycleId: repCycle.repCycleId, cycleName: data.name, equipment: data.equipment, numSets: data.numSets, numReps: data.numReps, weight: data.weight, restTime: data.restTime, coachNotes: data.coachNotes, workoutOrder: data.workoutOrder, movementId: data.movementId }).then((r) => {
+                        const payload = {
+                                repCycleId: repCycle.repCycleId,
+                                cycleName: data.repCycleName,
+                                equipment: data.equipment,
+                                numSets: data.numSets,
+                                numReps: data.numReps,
+                                weight: data.weight,
+                                restTime: data.restTime,
+                                coachNotes: data.coachNotes,
+                                workoutOrder: data.workoutOrder,
+                                movementId: data.movementId
+                        };
+                        console.log("Editing rep cycle with payload: ", payload);
+                        const updateRepCycleResponse = await ProgrammingApi.updateCycle(payload).then((r) => {
                                 if (r.status === HttpStatus.OK) {
                                         console.log("Rep cycle updated: ", r.data);
-                                        return r.data;
+                                        return r;
                                 } else {
                                         console.error("Error updating rep cycle: ", r.status);
                                 }
@@ -495,7 +569,6 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                         });
 
                         if (updateRepCycleResponse && updateRepCycleResponse.status === HttpStatus.OK) {
-                                console.log("Rep cycle updated: ", updateRepCycleResponse.data);
                                 const newRepCycles = repCycles.map((cycle) => {
                                         if (cycle.repCycleId === repCycle.repCycleId) {
                                                 return updateRepCycleResponse.data;
@@ -505,13 +578,13 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                                 });
 
                                 setRepCycles(newRepCycles);
-                                onClose();
+                                onCloseHere();
                         }
 
                 }
         }
 
-        const onClose = () => {
+        const onCloseHere = () => {
                 const form = document.getElementById(`rep-cycle-form-${dayId}`);
                 form.classList.add("hidden");
                 // clear form 
@@ -524,6 +597,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                 document.getElementById(`coach-notes-${dayId}`).value = "";
                 document.getElementById(`workout-order-${dayId}`).value = "";
                 document.getElementById(`movement-id-${dayId}`).value = "";
+                onClose();
         }
 
 
@@ -540,7 +614,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
         // }
 
         return (
-                <BasicModalDialogue title={title} onCloseDialog={onClose} className="hidden" id={`rep-cycle-form-${dayId}`} >
+                <BasicModalDialogue title={title} onCloseDialog={onCloseHere} className="hidden" id={`rep-cycle-form-${dayId}`} >
                         <form onSubmit={onSubmit} className="space-y-4 pt-2 ">
 
                                 <LabeledInputField id={`rep-cycle-name-${dayId}`} placeholder="RepCycle Name" required={true} type="text" />
@@ -561,7 +635,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState }) {
                                 {/*TODO: map movement it to movement names and show a dropdown list */}
                                 <BasicTextArea id={`coach-notes-${dayId}`} label="Coach Notes" placeholder="Write your notes here..." />
                                 <div className="flex justify-end">
-                                        <SecondaryButton onClick={onClose} className="mr-2">Cancel</SecondaryButton>
+                                        <SecondaryButton onClick={onCloseHere} className="mr-2">Cancel</SecondaryButton>
                                         <PrimaryButton type="submit" className="mr-2">{buttonText}</PrimaryButton>
                                 </div>
                         </form>

@@ -190,6 +190,19 @@ public class RepCycle
     }
 
 
+    public RepCycle duplicate(){
+        return new RepCycle()
+            .withName(this.getName())
+            .withEquipment(this.getEquipment())
+            .withNumSets(this.getNumSets())
+            .withNumReps(this.getNumReps())
+            .withWeight(this.getWeight())
+            .withRestTime(this.getRestTime())
+            .withCoachNotes(this.getCoachNotes())
+            .withWorkoutOrder(this.getWorkoutOrder())
+            .withMovementId(this.getMovementId());
+    }
+
     @Override
     public String toString() {
         return "RepCycle{" +

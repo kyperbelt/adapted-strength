@@ -125,8 +125,8 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     console.log("Program clicked: ", program);
     // TODO: add the program to the state and navigate to the program page
     // this way we dont have to fetch the program again from the week page
-    nav(`${url}/${program.id}`, { relative : true });
-    
+    nav(`${url}/${program.id}`, { relative: true });
+
   }
 
 
@@ -174,13 +174,43 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     onClickProgram(program);
   }
 
-  const onSearch = (text) =>{
+  const onSearch = (text) => {
     console.log("Searching for: ", text);
     setSearchText(text);
   };
 
+  const DuplicateProgram = async (program) => {
+    console.log(`Duplicating program ${program.id}`);
+    try {
+      const newProgramResponse = await ProgrammingApi.duplicateProgram(program);
 
-      // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
+      if (newProgramResponse) {
+        // add (Duplicate) to the name 
+        const newProgram = {
+          id: newProgramResponse.programId,
+          name: `${newProgramResponse.name} (Duplicate)`,
+          description: newProgramResponse.description.body,
+          selected: false,
+          weeks: newProgramResponse.weeks
+        };
+        // static updateProgram({ programId, name, description, weekIds = [] }) {
+        const updatedNewProgramResponse = await ProgrammingApi.updateProgram({ programId: newProgram.id, name: newProgram.name, description: newProgram.description, weekIds: newProgram.weeks.map((week) => week.weekId) });
+
+        if (updatedNewProgramResponse.status === HttpStatus.OK) {
+          console.log(`Program ${program.id} duplicated to ${newProgram.id}`);
+          setPrograms([...programs, newProgram]);
+        } else {
+          console.error(`Error updating duplicated program ${newProgram.id}`);
+        }
+      }
+
+    } catch (e) {
+      console.error('Error duplicating program:', e);
+    }
+  }
+
+
+  // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
   return (
 
     <div className="flex flex-col px-6" {...props}>
@@ -188,7 +218,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
       {/*Dialogs*/}
       <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
 
-      <BreadCrumb first={{name: "Programs", to: "/program-management"}} breadCrumbs={breadcrumb}/>
+      <BreadCrumb first={{ name: "Programs", to: "/program-management" }} breadCrumbs={breadcrumb} />
       <CardBack className="">
         <div className="flex flex-col sm:flex-row mt-2">
 
@@ -199,13 +229,15 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
             Add Program
           </PrimaryButton>
         </div>
-        <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-          {getFilteredPrograms(programs,searchText).map((program) => (
+        <StyledCheckboxTable headers={["Name", "Description", "Weeks", "Users"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
+          {getFilteredPrograms(programs, searchText).map((program) => (
             <CustomTableRow
               key={program.id}
               data={[
                 program.name,
                 program.description,
+                program.weeks.length,
+                0
               ]}
               onOptionClick={(option) => {
                 if (option === 'Delete') {
@@ -213,6 +245,9 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
                 } else if (option === 'Edit') {
                   document.getElementById("edit-program").classList.remove("hidden");
                   setEditProgramId(program.id);
+                } else if (option === 'Duplicate') {
+                  console.log(`Duplicating program ${program.id}`);
+                  DuplicateProgram(program);
                 }
               }}
               selected={program.selected}
