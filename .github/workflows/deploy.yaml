@@ -30,7 +30,8 @@ jobs:
       - name: Compile to jar
         run: |
           pwd
-          cd adapted-strength/authorization
+          cd authorization
+          ls
           gradlew build
           cd ..
 
