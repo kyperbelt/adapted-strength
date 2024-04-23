@@ -46,8 +46,8 @@ jobs:
         id: out_jar
         run: |
           echo "JAR=$(cat ./authorization/build/libs/*.jar)" >> $GITHUB_OUTPUT 
-          echo "APP_PROP=$(./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
-          echo "COMPOSE=$(./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
+          echo "APP_PROP=$(cat ./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
+          echo "COMPOSE=$(cat ./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
 
       - name: Compile & output front end
         id: out_front
