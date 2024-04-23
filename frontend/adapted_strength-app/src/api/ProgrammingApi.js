@@ -114,7 +114,7 @@ export class ProgrammingApi {
     });
   }
 
-  static createWeek({weekName, description }) {
+  static createWeek({ weekName, description }) {
     const week = {
       weekName: weekName,
       weekDescription: description
@@ -131,19 +131,19 @@ export class ProgrammingApi {
     });
   }
 
-  static editWeek({ weekId, weekName, description, days=[]}) {
+  static updateWeek({ weekId, weekName, description, dayIds = [] }) {
     const updateWeekRequest = {
-      weekId: weekId,
+      id: weekId,
       weekName: weekName,
       weekDescription: description,
-      daysIds: days
+      dayIds: dayIds
     };
 
     return ApiUtils.apiPut('programming/week', updateWeekRequest).then((r) => {
       if (r.status === HttpStatus.OK) {
         return r;
       }
-      throw new Error(`Error updating week: ${r.status}`);
+      throw new Error(`Error updating week: ${weekId} status:${r.status}`);
     }).catch((error) => {
       console.error('Error updating week:', error);
       throw error;
@@ -186,7 +186,7 @@ export class ProgrammingApi {
     });
   }
 
-  static createDay({dayName, description }) {
+  static createDay({ dayName, description }) {
     const day = {
       dayName: dayName,
       dayDescription: description
@@ -203,9 +203,9 @@ export class ProgrammingApi {
     });
   }
 
-  static editDay({ dayId, dayName, description, cycles=[]}) {
+  static updateDay({ dayId, dayName, description, cycles = [] }) {
     const updateDayRequest = {
-      dayId: dayId,
+      id: dayId,
       dayName: dayName,
       dayDescription: description,
       repCycleIds: cycles
@@ -258,7 +258,7 @@ export class ProgrammingApi {
     });
   }
 
-  static createCycle({cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId}) {
+  static createCycle({ cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId }) {
     const cycle = {
       repCycleName: cycleName,
       equipment: equipment,
@@ -282,7 +282,114 @@ export class ProgrammingApi {
     });
   }
 
+  static updateCycle({ repCycleId, cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId }) {
+    const updateCycleRequest = {
+      id: repCycleId,
+      repCycleName: cycleName,
+      equipment: equipment,
+      numSets: numSets,
+      numReps: numReps,
+      weight: weight,
+      restTime: restTime,
+      coachNotes: coachNotes,
+      workoutOrder: workoutOrder,
+      movementId: movementId
+    };
+
+    return ApiUtils.apiPut('programming/rep_cycle', updateCycleRequest).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r;
+      }
+      throw new Error(`Error updating cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error updating cycle:', error);
+      throw error;
+    });
+  }
+
+  static getCycle(cycleId) {
+    return ApiUtils.apiGet(`programming/rep_cycle/${cycleId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error getting cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error getting cycle:', error);
+      throw error;
+    });
+  }
+
+  static deleteCycle(cycleId) {
+    return ApiUtils.apiDelete(`programming/rep_cycle/${cycleId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r;
+      }
+      throw new Error(`Error deleting cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error deleting cycle:', error);
+      throw error;
+    });
+  }
+
+  static getAllCycles() {
+    return ApiUtils.apiGet('programming/all_rep_cycles').then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error getting all cycles: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error getting all cycles:', error);
+      throw error;
+    });
+  }
+
+  static duplicateProgram(program) {
+    return ApiUtils.apiPost(`programming/program/duplicate/${program.id}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating program: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating program:', error);
+      throw error;
+    });
+  }
 
 
+  static duplicateWeek(week) {
+    return ApiUtils.apiPost(`programming/week/duplicate/${week.weekId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating week: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating week:', error);
+      throw error;
+    });
 
+  }
+
+  static duplicateDay(day) {
+    return ApiUtils.apiPost(`programming/day/duplicate/${day.dayId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating day: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating day:', error);
+      throw error;
+    });
+  }
+
+  static duplicateCycle(cycle) {
+    return ApiUtils.apiPost(`programming/rep_cycle/duplicate/${cycle.repCycleId}`).then((r) => {
+      if (r.status === HttpStatus.OK) {
+        return r.data;
+      }
+      throw new Error(`Error duplicating cycle: ${r.status}`);
+    }).catch((error) => {
+      console.error('Error duplicating cycle:', error);
+      throw error;
+    });
+  }
 }

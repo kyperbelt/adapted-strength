@@ -2,6 +2,8 @@ package com.terabite.programming.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class WeekService {
+    public static final Logger log = LoggerFactory.getLogger(WeekService.class);
     WeekRepository weekRepository;
 
     public WeekService(WeekRepository weekRepository){
@@ -30,12 +33,12 @@ public class WeekService {
 
     public ResponseEntity<?> updateWeek(UpdateWeekRequest updateRequest, List<Day> days){
         if(weekRepository.findById(updateRequest.id()).isEmpty()){
+            log.error("Week {} not found", updateRequest.id()); 
             return new ResponseEntity<>(Payload.of(String.valueOf(updateRequest.id())), HttpStatus.NOT_FOUND);        }
         else{
             Week week = weekRepository.findOneByWeekId(updateRequest.id());
             week.setName(updateRequest.weekName());
             week.setDays(days);
-
             weekRepository.save(week);
             return new ResponseEntity<>(week, HttpStatus.OK);
         }
@@ -47,10 +50,11 @@ public class WeekService {
 
     public ResponseEntity<?> getWeek(Week week){
         if(weekRepository.findById(week.getWeekId()).isEmpty()){
+            log.error("Week {} not found", week.getWeekId());
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(weekRepository.findOneByWeekId(week.getWeekId()), HttpStatus.FOUND);
+            return new ResponseEntity<>(weekRepository.findOneByWeekId(week.getWeekId()), HttpStatus.OK);
         }
     }
 
@@ -60,6 +64,7 @@ public class WeekService {
 
     public ResponseEntity<?> deleteWeekByName(Week week){
         if(weekRepository.findById(week.getWeekId()).isEmpty()){
+            log.error("Week {} not found", week.getWeekId());
             return new ResponseEntity<>(week, HttpStatus.NOT_FOUND);
         }
         else{

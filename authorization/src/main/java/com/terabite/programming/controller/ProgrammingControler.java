@@ -10,6 +10,7 @@ import com.terabite.programming.model.Program;
 import com.terabite.programming.model.ProgramDescription;
 import com.terabite.programming.model.RepCycle;
 import com.google.api.client.util.Lists;
+import com.terabite.common.dto.Payload;
 import com.terabite.programming.dto.CreateDayRequest;
 import com.terabite.programming.dto.CreateProgramRequest;
 import com.terabite.programming.dto.CreateRepCycleRequest;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 
@@ -68,7 +70,12 @@ public class ProgrammingControler {
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
         List<Week> weeks = Lists.newArrayList();
         for (int weekId : program.weekIds()) {
-            weeks.add(weekService.getWeekById(weekId));
+            final Week week = weekService.getWeekById(weekId);
+            if (week == null) {
+                log.error("Week with id {} not found", weekId);
+                continue;
+            }
+            weeks.add(week);
         }
 
         return programService.updateProgram(program, weeks);
@@ -125,8 +132,10 @@ public class ProgrammingControler {
     public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
         
         List<Day> days = Lists.newArrayList();
+        log.info("Day ids: {}", request.dayIds());
         for (int dayId : request.dayIds()) {
             final Day day = dayService.getDayById(dayId);
+            log.info("Day: {}", day);
             if (day == null) {
                 log.error("Day with id {} not found", dayId);
                 continue;
@@ -206,6 +215,7 @@ public class ProgrammingControler {
     @DeleteMapping("/day/{id}")
     public ResponseEntity<?> deleteDay(@PathVariable long id){
         Day day = new Day("name", Lists.newArrayList());
+        day.setDayId(id);
         return dayService.deleteDay(day);
     }
 
@@ -228,7 +238,7 @@ public class ProgrammingControler {
     }
 
     @PutMapping("/rep_cycle")
-    public ResponseEntity<?> putRepCycle(@RequestBody UpdateRepCycleRequest repCycle) {
+    public ResponseEntity<?> updateRepCycle(@RequestBody UpdateRepCycleRequest repCycle) {
         RepCycle updatedRepCycle = new RepCycle()
                                         .withRepCycleId(repCycle.id())
                                         .withName(repCycle.repCycleName().orElse(null))
@@ -259,6 +269,46 @@ public class ProgrammingControler {
     public ResponseEntity<?> deleteRepCycle(@PathVariable long id){
         RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.deleteRepCycle(repCycle);
+    }
+
+    @PostMapping("/program/duplicate/{programId}")
+    public ResponseEntity<?> duplicateProgram(@PathVariable long programId){
+        final Optional<Program> programOptional = programService.getProgramById(programId);
+        if(programOptional.isPresent()){
+            Program program = programOptional.get().duplicate();
+            return programService.createNewProgram(program);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(programId)));
+    }
+
+    @PostMapping("/week/duplicate/{weekId}")
+    public ResponseEntity<?> duplicateWeek(@PathVariable long weekId){
+        final Optional<Week> weekOptional = Optional.ofNullable(weekService.getWeekById(weekId));
+        if(weekOptional.isPresent()){
+            Week week = weekOptional.get().duplicate();
+            return weekService.createNewWeek(week);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(weekId)));
+    }
+
+    @PostMapping("/day/duplicate/{dayId}")
+    public ResponseEntity<?> duplicateDay(@PathVariable long dayId){
+        final Optional<Day> dayOptional = Optional.ofNullable(dayService.getDayById(dayId));
+        if(dayOptional.isPresent()){
+            Day day = dayOptional.get().duplicate();
+            return dayService.createNewDay(day);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(dayId)));
+    }
+
+    @PostMapping("/rep_cycle/duplicate/{repCycleId}")
+    public ResponseEntity<?> duplicateRepCycle(@PathVariable long repCycleId){
+        final Optional<RepCycle> repCycleOptional = Optional.ofNullable(repCycleService.getRepCycleById(repCycleId));
+        if(repCycleOptional.isPresent()){
+            RepCycle repCycle = repCycleOptional.get().duplicate();
+            return repCycleService.createNewRepCycle(repCycle);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(repCycleId)));
     }
 
 }

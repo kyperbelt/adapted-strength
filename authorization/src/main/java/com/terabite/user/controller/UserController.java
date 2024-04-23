@@ -28,7 +28,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -156,26 +158,40 @@ public class UserController {
 
     @GetMapping("/programming")
     public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
-        
-        // TODO - is this needed - Josh?
-        // Auth check
-        // final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
-        // if(email.isEmpty()){
-        //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        // }
-        
+        if (userdetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
+        }
         return userProgrammingService.getUserPrograms(userdetails.getUsername());
+    }
+
+    @GetMapping("/programming/user/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getUserProgramming(@PathVariable("email") String email) {
+        return userProgrammingService.getUserPrograms(email);
+    }
+
+    @PostMapping("/programming")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> addProgramming(@RequestParam("email") String email, @RequestParam("programId") long programId) {
+        return userProgrammingService.addProgramming(email, programId);
+    }
+
+    @DeleteMapping("/programming/{upid}/remove")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> removeProgramming(@PathVariable("upid") long userProgrammingId) {
+        return userProgrammingService.removeProgramming(userProgrammingId);
     }
 
 
     @PostMapping("/programming/{upid}/comment")
-    public ResponseEntity<?> addComment(@RequestParam("upid") long userProgrammingId, HttpServletRequest request, @RequestParam("comment") String comment){
+    public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,@RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails){
         // return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
+
         return userProgrammingService.addComment(userProgrammingId, comment);
     } 
 
     @PutMapping("/programming/comment/{cid}")
-    public ResponseEntity<?> updateComment(@RequestParam("cid") long commentId, @RequestParam("comment") String comment){
+    public ResponseEntity<?> updateComment(@PathVariable("cid") long commentId, @RequestParam("comment") String comment){
         // return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
         return userProgrammingService.updateComment(commentId, comment);
     }

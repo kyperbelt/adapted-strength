@@ -9,6 +9,7 @@ import { HttpStatus } from "../../api/ApiUtils";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 
 import { useState, useEffect, useRef } from "react";
+import { levenshteinDistance } from "../../util/search";
 
 function getAllPrograms() {
   try {
@@ -33,6 +34,15 @@ function getAllPrograms() {
   }
 }
 
+function getFilteredPrograms(programs, searchText) {
+  if (!searchText || searchText === "") {
+    return programs;
+  }
+  return programs.filter((program) => {
+    return program.name.toLowerCase().includes(searchText.toLowerCase()) || program.description.toLowerCase().includes(searchText.toLowerCase()) || levenshteinDistance(program.name, searchText) < 3 || levenshteinDistance(program.description, searchText) < 3;
+  });
+}
+
 
 export default function ProgramDashboard({ breadCrumbState, ...props }) {
   const nav = useNavigate();
@@ -41,7 +51,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
   const [breadcrumb, setBreadcrumb] = breadCrumbState;
   const [programs, setPrograms] = useState([]);
   const [programEditId, setEditProgramId] = useState(null);
-
+  const [searchText, setSearchText] = useState("");
 
   // Fetch programs on first render once and update the state
   const programsFetched = useRef(false);
@@ -70,48 +80,53 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
   }
 
   const onCreate = async (name, description) => {
-    // TODO: request to create a program
-    const newProgram = {
-      name: name,
-      description: description,
-    };
-
 
     try {
-      const createProgramResponse = await ProgrammingApi.createProgram(newProgram);
+      const createProgramResponse = await ProgrammingApi.createProgram({ name, description });
       console.log("Create program response: ", createProgramResponse);
       if (createProgramResponse.status === HttpStatus.OK) {
+        const programData = createProgramResponse.data;
+        const newProgram = {
+          id: programData.programId,
+          name: programData.name,
+          description: programData.description.body,
+          selected: false,
+          weeks: programData.weeks
+        };
         console.log("Program created: ", newProgram);
+        setPrograms([...programs, newProgram]);
       } else {
-        console.error("Error creating program: ", newProgram);
+        console.error("Error creating program: ", name);
       }
     } catch (e) {
       console.error('Error creating program:', e);
     }
 
-    await getAllPrograms().then((data) => {
-      // match all programs to new programs and keep selected state if any 
-      const newPrograms = data.map((program) => {
-        const matchedProgram = programs.find((p) => p.id === program.id);
-        if (matchedProgram) {
-          return {
-            ...program,
-            selected: matchedProgram.selected
-          };
-        }
-        return program;
-      });
-      // setting new programs
-      console.log("New programs: ", newPrograms);
-      setPrograms(newPrograms);
-    });
+    // await getAllPrograms().then((data) => {
+    //   // match all programs to new programs and keep selected state if any 
+    //   const newPrograms = data.map((program) => {
+    //     const matchedProgram = programs.find((p) => p.id === program.id);
+    //     if (matchedProgram) {
+    //       return {
+    //         ...program,
+    //         selected: matchedProgram.selected
+    //       };
+    //     }
+    //     return program;
+    //   });
+    //   // setting new programs
+    //   console.log("New programs: ", newPrograms);
+    //   setPrograms(newPrograms);
+    // });
 
   };
 
   const onClickProgram = (program) => {
     console.log("Program clicked: ", program);
-    nav(`${url}/${program.id}`, { relative : true });
-    
+    // TODO: add the program to the state and navigate to the program page
+    // this way we dont have to fetch the program again from the week page
+    nav(`${url}/${program.id}`, { relative: true });
+
   }
 
 
@@ -159,7 +174,43 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     onClickProgram(program);
   }
 
-      // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
+  const onSearch = (text) => {
+    console.log("Searching for: ", text);
+    setSearchText(text);
+  };
+
+  const DuplicateProgram = async (program) => {
+    console.log(`Duplicating program ${program.id}`);
+    try {
+      const newProgramResponse = await ProgrammingApi.duplicateProgram(program);
+
+      if (newProgramResponse) {
+        // add (Duplicate) to the name 
+        const newProgram = {
+          id: newProgramResponse.programId,
+          name: `${newProgramResponse.name} (Duplicate)`,
+          description: newProgramResponse.description.body,
+          selected: false,
+          weeks: newProgramResponse.weeks
+        };
+        // static updateProgram({ programId, name, description, weekIds = [] }) {
+        const updatedNewProgramResponse = await ProgrammingApi.updateProgram({ programId: newProgram.id, name: newProgram.name, description: newProgram.description, weekIds: newProgram.weeks.map((week) => week.weekId) });
+
+        if (updatedNewProgramResponse.status === HttpStatus.OK) {
+          console.log(`Program ${program.id} duplicated to ${newProgram.id}`);
+          setPrograms([...programs, newProgram]);
+        } else {
+          console.error(`Error updating duplicated program ${newProgram.id}`);
+        }
+      }
+
+    } catch (e) {
+      console.error('Error duplicating program:', e);
+    }
+  }
+
+
+  // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
   return (
 
     <div className="flex flex-col px-6" {...props}>
@@ -167,24 +218,26 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
       {/*Dialogs*/}
       <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
 
-      <BreadCrumb first={{name: "Projects", to: "/program-management"}} breadCrumbs={breadcrumb}/>
+      <BreadCrumb first={{ name: "Programs", to: "/program-management" }} breadCrumbs={breadcrumb} />
       <CardBack className="">
         <div className="flex flex-col sm:flex-row mt-2">
 
-          <SearchBar />
+          <SearchBar onSearch={onSearch} />
           <PrimaryButton
             className="sm:ml-auto w-32"
             onClick={onAddProgram}>
             Add Program
           </PrimaryButton>
         </div>
-        <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-          {programs.map((program) => (
+        <StyledCheckboxTable headers={["Name", "Description", "Weeks", "Users"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
+          {getFilteredPrograms(programs, searchText).map((program) => (
             <CustomTableRow
               key={program.id}
               data={[
                 program.name,
                 program.description,
+                program.weeks.length,
+                0
               ]}
               onOptionClick={(option) => {
                 if (option === 'Delete') {
@@ -192,6 +245,9 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
                 } else if (option === 'Edit') {
                   document.getElementById("edit-program").classList.remove("hidden");
                   setEditProgramId(program.id);
+                } else if (option === 'Duplicate') {
+                  console.log(`Duplicating program ${program.id}`);
+                  DuplicateProgram(program);
                 }
               }}
               selected={program.selected}
@@ -210,7 +266,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
           ))}
         </StyledCheckboxTable>
       </CardBack>
-      <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="Edit Program" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
+      <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="EditrProgram" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
     </div>
   );
 }

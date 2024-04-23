@@ -43,30 +43,35 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
 
 
   return (
-    <table className={`text-sm text-left rtl:text-right text-gray-500 ${props.className}`}>
-      <thead>
-        <tr className="border-b" key="headers">
-          <th className="w-1 px-6">
-            <input id="select_all" type="checkbox" onChange={(e) => selectAll(e, props.onAllSelected)} />
-          </th>
-          {headers.map((header) => {
-            return (<th key={header} className="px-6 py-3 text-left font-bold">{header}</th>);
-          })}
-          <th className="relative">
-            <HamburgerButton onBlur={onFocusLost} onClick={whenOptionsClicked} />
-            <DropDownMenu id="all-dropdown" options={['Delete Selected']} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal" />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {children}
-      </tbody>
-    </table>
+    <div className="w-full block max-h-full h-full overflow-y-auto">
+      <table className={`text-sm text-left rtl:text-right text-gray-500 w-full ${props.className}`}>
+        <thead className="bg-primary">
+          <tr className="z-10 border-b bg-primary sticky top-0" key="headers" onClick={(e)=>e.stopPropagation()}>
+            <th className="w-1 px-6">
+              <input id="select_all" type="checkbox" onChange={(e) => selectAll(e, props.onAllSelected)} />
+            </th>
+            {headers.map((header) => {
+              return (<th key={header} className="px-6 py-3 text-left font-bold">{header}</th>);
+            })}
+            <th className="relative">
+              <HamburgerButton onBlur={onFocusLost} onClick={(e) => {
+                e.stopPropagation();
+                whenOptionsClicked(e);
+              }} />
+              <DropDownMenu id="all-dropdown" options={['Delete Selected']} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal z-10" />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {children}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 
-export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick, options =["Edit", "Delete"],...props }) {
+export function CustomTableRow({ children, selectedOrUnselected, onRowClick, onOptionClick, options = ["Move Up","Move Down","---","Edit", "Duplicate", "---", "Delete"], ...props }) {
   const data = props.data;
   const whenOptionsClicked = (e) => {
     e.stopPropagation();
@@ -91,14 +96,15 @@ export function CustomTableRow({ selectedOrUnselected, onRowClick, onOptionClick
   }
 
   return (
-    <tr className="odd:bg-white even:bg-gray-200 border-b hover:bg-gray-300 hover:cursor-pointer" onClick={onRowClick}>
-      <td className="px-6 py-3">
+    <tr className="odd:bg-white even:bg-gray-200 border-b hover:bg-gray-300 hover:cursor-pointer" onClick={onRowClick}
+    >
+
+      <td className="px-6 py-3" onClick={(e) => { e.stopPropagation() }}>
         <input type="checkbox" onClick={(e) => { e.stopPropagation() }} onChange={(e) => oneSelected(e, selectedOrUnselected)} checked={props.checked} />
       </td>
       {data.map((item) => {
         return (<td key={`${item}_key`} className="px-6 py-3">{item}</td>);
       })}
-      {props.children}
       <td className="relative">
         <HamburgerButton onBlur={onFocusLost} className="ml-auto" onClick={(e) => { whenOptionsClicked(e) }} />
         <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={options} className="absolute hidden right-0" />
@@ -121,15 +127,16 @@ export function DropDownMenu({ options, onOptionClick, className, ...props }) {
 
     <div className={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 ${className}`} {...props}>
       <ul className="py-2 text-sm text-gray-700">
-        {options.map((option) => {
+        {options.map((option, index) => {
           return (
-            <li key={option}>
-              <a className="block px-4 py-2 hover:bg-gray-200" onClick={(e) => {
-                onClick(e, option);
-              }}>
-                {option}
-              </a>
-            </li>
+            option === "---" ? <li key={option} className="py-1"><hr /></li> :
+              <li key={option+`${index}`}>
+                <a className="block px-4 py-2 hover:bg-gray-200" onClick={(e) => {
+                  onClick(e, option);
+                }}>
+                  {option}
+                </a>
+              </li>
           );
         })}
       </ul>
@@ -147,7 +154,12 @@ export function SearchBar({ onSearch, ...props }) {
             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
           </svg>
         </div>
-        <input type="text" id="table-search" className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg max-w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="" />
+        <input type="text" onChange={(e) => {
+          const text = e.target.value;
+          if (onSearch) {
+            onSearch(text);
+          }
+        }} id="table-search" className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg max-w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="" />
       </div>
     </div>
   );

@@ -6,13 +6,22 @@ import { BasicModalDialogue } from "../../components/Dialog";
 import LabeledInputField from "../../components/forms/LabeledInputField";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
 import { HttpStatus } from "../../api/ApiUtils";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 import EditBlockDIalog from "./EditBlockDialog";
 
 
+/**
+ * A dasboard that displays all the weeks in a program.
+ * @param {Object} props
+ * @param {Array} props.breadCrumbState - The state of the breadcrumb component
+ */
 export default function WeekDashboard({ breadCrumbState, ...props }) {
 
+        const nav = useNavigate();
+        const loc = useLocation();
+        const url = loc.pathname;
         const [breadcrumb, setBreadcrumb] = breadCrumbState;
         const [weeks, setWeeks] = useState([]);
         const [weekEditId, setWeekEditId] = useState(null);
@@ -26,7 +35,8 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                         weekId: week.weekId,
                                         name: week.name,
                                         description: "",//week.description.body,
-                                        selected: false
+                                        selected: false,
+                                        days: week.days
                                 };
                         });
                         setWeeks(weeks);
@@ -34,6 +44,14 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         console.error(`Error getting program ${breadcrumb[0]}: ${error}`);
                 });
         }, []);
+
+        const OnWeekClicked = (week) => {
+                console.log("Week Clicked clicked: ", week);
+                // TODO: add the week to the state and navigate to the week page
+                // this way we dont have to fetch the week again from the week page
+                nav(`${url}/${week.weekId}`, { relative: true });
+        };
+
 
         const DeleteWeek = async (weeksToDelete) => {
 
@@ -74,25 +92,34 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
         }
 
         const onAddWeek = () => {
-                console.log("Add week");
-                const element = document.getElementById("create-week");
-                // clear the form
-                document.getElementById("week_name_field").value = "";
-                document.getElementById("week_description").value = "";
-                element.classList.remove("hidden");
+                // console.log("Add week");
+                // const element = document.getElementById("create-week");
+                // // clear the form
+                // document.getElementById("week_name_field").value = "";
+                // document.getElementById("week_description").value = "";
+                // element.classList.remove("hidden");
+
+                const currentWeeks = weeks;
+                const weekName = `Week ${currentWeeks.length + 1}`;
+                // TODO: Descriptions for weeks implemented
+                const weekDescription = `Description for ${weekName}`;
+                onCreateWeek(weekName, weekDescription);
         }
 
-        const onCreateWeek = async (data) => {
-                const newWeek = {
-                        name: data.name,
-                        description: data.description,
-                        selected: false
-                };
+        const onCreateWeek = async (weekName, weekDescription) => {
+
+                let week = null;
 
                 try {
-                        const createWeekResponse = await ProgrammingApi.createWeek({ weekName: newWeek.name, weekDescription: newWeek.description, programId: selectedProgram.id }).then((response) => {
+                        const createWeekResponse = await ProgrammingApi.createWeek({ weekName, weekDescription }).then((response) => {
                                 if (response.status === HttpStatus.OK) {
                                         console.log("Week created: ", response.data);
+                                        const newWeek = {
+                                                weekId: response.data.weekId,
+                                                name: response.data.name,
+                                                description: response.data?.description?.body || "",
+                                                selected: false
+                                        }
                                         // update the program with the new week
                                         const updateProgramPayload = {
                                                 programId: selectedProgram.programId,
@@ -101,6 +128,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                 weekIds: [...selectedProgram.weeks.map((week) => week.weekId), response.data.weekId]
                                         };
                                         console.log("Update program payload: ", updateProgramPayload);
+                                        week = newWeek;
                                         return ProgrammingApi.updateProgram(updateProgramPayload);
                                 } else {
                                         throw new Error(`Error creating week: ${response.status}`);
@@ -109,6 +137,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         if (createWeekResponse.status === HttpStatus.OK) {
                                 console.log("Program updated with new week: ", createWeekResponse.data);
                                 setSelectedProgram(createWeekResponse.data);
+                                setWeeks([...weeks, week]);
                         } else {
                                 throw new Error(`Error updating program: ${createWeekResponse.status}`);
                         }
@@ -116,21 +145,59 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         console.error('Error creating program:', e);
                 }
 
-                setWeeks([...weeks, newWeek]);
                 document.getElementById("create-week").classList.add("hidden");
         }
+
+        const DuplicateWeek = async (week) => {
+                try {
+                        const newWeekResponse = await ProgrammingApi.duplicateWeek(week);
+
+                        if (newWeekResponse) {
+                                // add (Duplicate) to the name 
+                                const newWeek = {
+                                        id: newWeekResponse.weekId,
+                                        name: `${newWeekResponse.name} (Duplicate)`,
+                                        description: "",
+                                        selected: false,
+                                        days: newWeekResponse.days
+                                };
+                                const updatedNewWeekResponse = await ProgrammingApi.updateWeek({ weekId: newWeek.id, weekName: newWeek.name, description: newWeek.description, dayIds: newWeek.days.map((day) => day.dayId) }).then((response) => {
+                                        // update the program
+                                        const updateProgramPayload = {
+                                                programId: selectedProgram.programId,
+                                                name: selectedProgram.name,
+                                                description: selectedProgram.description.body,
+                                                weekIds: [...selectedProgram.weeks.map((week) => week.weekId), newWeek.id]
+                                        };
+                                        console.log("Update program payload: ", updateProgramPayload);
+                                        return ProgrammingApi.updateProgram(updateProgramPayload);
+
+                                });
+
+                                if (updatedNewWeekResponse.status === HttpStatus.OK) {
+                                        console.log("Week duplicated: ", updatedNewWeekResponse.data);
+                                        setWeeks([...weeks, newWeek]);
+                                } else {
+                                        throw new Error(`Error updating week: ${updatedNewWeekResponse.status}`);
+                                }
+                        }
+
+                } catch (e) {
+                        console.error('Error duplicating week:', e);
+                }
+
+        };
 
         return (selectedProgram &&
 
                 <div className="flex flex-col px-6">
                         <CreateWeekDialog className="hidden" title="Create Week" id="create-week" onClose={() => { document.getElementById("create-week").classList.add("hidden") }} onSubmit={onCreateWeek} />
 
-                        <BreadCrumb first={{ name: "Projects", to: "/program-management" }} breadCrumbs={[
+                        <BreadCrumb first={{ name: "Programs", to: "/program-management" }} breadCrumbs={[
                                 { name: selectedProgram.name, to: `/program-management/${selectedProgram.id}` },
                         ]} />
                         <CardBack className="">
                                 <div className="flex flex-col sm:flex-row mt-2">
-
                                         <SearchBar />
                                         <PrimaryButton
                                                 className="sm:ml-auto w-32"
@@ -150,11 +217,15 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                                 if (option === 'Delete') {
                                                                         DeleteWeek([week]);
                                                                 } else if (option === 'Edit') {
-                                                                        document.getElementById("edit-block").classList.remove("hidden");
+                                                                        document.getElementById("edit-week").classList.remove("hidden");
                                                                         setWeekEditId(week.weekId);
+                                                                        console.log(`Edit week ${JSON.stringify(week)}`);
+                                                                } else if (option === 'Duplicate') {
+                                                                        DuplicateWeek(week);
                                                                 }
                                                         }}
                                                         selected={week.selected}
+                                                        onRowClick={() => OnWeekClicked(week)}
                                                         onClick={() => {
                                                                 const newWeeks = weeks.map((b) => {
                                                                         if (b.weekId === week.weekId) {
@@ -169,7 +240,7 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                         ))}
                                 </StyledCheckboxTable>
                         </CardBack>
-                        <EditBlockDIalog blockId={weekEditId} blockState={[weeks, setWeeks]} id="edit-week" className="hidden" title="Edit Block" onClose={() => { document.getElementById("edit-block").classList.add("hidden") }} />
+                        <EditBlockDIalog blockId={weekEditId} blockState={[weeks, setWeeks]} id="edit-week" className="hidden" title="Edit Week" onClose={() => { document.getElementById("edit-week").classList.add("hidden") }} />
 
                 </div>
         );

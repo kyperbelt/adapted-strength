@@ -5,12 +5,17 @@ export function BasicButton({ className, children, ...props }) {
 }
 
 export function PrimaryButton({ className, children, ...props }) {
-  return <BasicButton className={` ${className} text-white bg-accent hover:bg-accent-dark focus:ring-4 focus:bg-accent-light font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none`} {...props}>{children}</BasicButton>
+  return <BasicButton className={`text-white bg-accent hover:bg-accent-dark focus:ring-4 focus:bg-accent-light font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none ${className}`} {...props}>{children}</BasicButton>
 }
 
 export function SecondaryButton({ className, children, ...props }) {
   return <BasicButton className={`py-2.5 px-5 me-2 mb-2 text-sm font-medium text-white focus:outline-none bg-secondary-light rounded-lg border border-primary-dark hover:bg-primary-dark hover:text-secondary-dark focus:z-10 focus:ring-4 focus:ring-gray-100  ${className}`} {...props}>{children}</BasicButton>
 }
+
+export function IconButton({ className, children, ...props }) {
+  return <button className={`text-white bg-accent hover:bg-accent-dark focus:ring-4 focus:bg-accent-light font-medium rounded-lg text-sm focus:outline-none ${className}`} {...props}>{children}</button>
+}
+
 
 export function HamburgerSettingsButton({ className, children, ...props }) {
   return (

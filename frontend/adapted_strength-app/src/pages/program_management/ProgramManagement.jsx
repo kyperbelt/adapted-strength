@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { BlankPageContainer } from "../../components/PageContainer";
 import ProgramDashboard from "./ProgramDashboard";
 import WeekDashboard from "./WeekDashboard";
+import DayDashboard from "./DayDashboard";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 
@@ -51,6 +52,7 @@ export default function ProgramMamagement() {
     <BlankPageContainer id="program-management">
       {breadcrumb.length <= 0 && <ProgramDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
       {breadcrumb.length == 1 && <WeekDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
+      {breadcrumb.length == 2 && <DayDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
     </BlankPageContainer>
   );
 }

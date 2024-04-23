@@ -189,4 +189,20 @@ static updateSubscription({subscriptionTier }) {
     const promise = ApiUtils.apiGet(`leaderboard/powerlifting/top10female?weightClass=${weightClass}`);
     return promise;
   }
+
+  // USER PROGRAMMING
+  static getUserProgramming() {
+    const promise = ApiUtils.apiGet('user/programming');
+    return promise;
+  }
+
+  static addProgramming(email,programId) {
+    const promise = ApiUtils.apiPost(`user/programming?email=${email}&programId=${programId}`);
+    return promise;
+  }
+
+  static deleteProgramming(upid) {
+    const promise = ApiUtils.apiDelete(`user/programming/${upid}/remove`);
+    return promise;
+  }
 }
