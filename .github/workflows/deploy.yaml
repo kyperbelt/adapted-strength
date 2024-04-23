@@ -21,20 +21,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install java & npm
-        run: |
-          sudo apt-get update
-          sudo apt-get remove -y openjdk-11-jdk
-          sudo apt-get install -y openjdk-17-jdk
-          sudo apt-get install -y npm
+      # - name: Install java & npm
+      #   run: |
+      #     sudo apt-get update
+      #     # sudo apt-get remove -y openjdk-11-jdk
+      #     # sudo apt-get install -y openjdk-17-jdk
+      #     # Installed
+      #     # sudo apt-get install -y npm
 
       - name: Compile to jar
         run: |
-          java --version
-          pwd
+          # java --version
+          # pwd
           cd authorization
-          ls
-          ./gradlew build
+          # ls
+          ./gradlew build gradle build
           cd ..
 
       - name: Remove plain jar
