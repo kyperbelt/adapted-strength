@@ -112,7 +112,6 @@ export default function General() {
         );
       };
       
-
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
