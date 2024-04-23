@@ -12,10 +12,11 @@ jobs:
     name: Build jar
     runs-on: ubuntu-latest
     outputs:
-      jar: ${{ steps.out_jar.outputs.JAR }}
-      prop: ${{ steps.out_jar.outputs.APP_PROP }}
+      # jar: ${{ steps.out_jar.outputs.JAR }}
+      # prop: ${{ steps.out_jar.outputs.APP_PROP }}
       front : ${{ steps.out_front.outputs.FRONT }}
-      compose: ${{ steps.out_jar.outputs.COMPOSE }}
+      app : ${{ steps.out_app.outputs.APP }}
+      # compose: ${{ steps.out_jar.outputs.COMPOSE }}
 
     steps:
       - name: Checkout
@@ -42,12 +43,18 @@ jobs:
         run: |
           rm ./authorization/build/libs/*plain.jar
 
-      - name: Output jar 
-        id: out_jar
+      - name: Output app
+        id: out_app
         run: |
-          echo "JAR=$(cat ./authorization/build/libs/*.jar)" >> $GITHUB_OUTPUT 
-          echo "APP_PROP=$(cat ./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
-          echo "COMPOSE=$(cat ./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
+          tar -czf app.tar.gz authorization/build/libs/*.jar authorization/build/resources/main/application.properties authorization/compose.yaml app.tar.gz
+          echo "APP=$(cat app.tar.gz)" >> $GITHUB_OUTPUT
+
+      # - name: Output jar 
+      #   id: out_jar
+      #   run: |
+      #     echo "JAR=$(cat ./authorization/build/libs/*.jar)" >> $GITHUB_OUTPUT 
+      #     echo "APP_PROP=$(cat ./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
+      #     echo "COMPOSE=$(cat ./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
 
       - name: Compile & output front end
         id: out_front
@@ -78,14 +85,12 @@ jobs:
 
       - name: Write outputs to file
         run: |
-          echo "${{ needs.build.outputs.jar }}" > app.jar
-          echo "${{ needs.build.outputs.prop }}" > application.properites
-          echo "${{ needs.build.outputs.compose }}" > compose.yaml
+          echo "${{ needs.build.outputs.app }}" > app.tar.gz
           echo "${{ needs.build.outputs.front }}" > web.tar.gz
 
-      - name: Compress files
-        run: |
-          tar -czf app.tar.gz app.jar application.properites compose.yaml
+      # - name: Compress files
+      #   run: |
+      #     tar -czf app.tar.gz app.jar application.properites compose.yaml
 
       - name: Set up known hosts file
         run: |
@@ -96,7 +101,7 @@ jobs:
           echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
           echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
 
-          sftp -i "~/.ssh/key.pem" -b batchfile "$USER@HOST"
+          sftp -i "~/.ssh/key.pem" -b batchfile "$USER@$HOST"
 
       # TODO - add expand / contract pattern for database migration
       # - name: Run deployment script
