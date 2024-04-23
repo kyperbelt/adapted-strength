@@ -177,6 +177,7 @@ export default function Chat()
                                 <RightMessage>{data.content}</RightMessage> : <LeftMessage>{data.content}</LeftMessage>)
                         }
                     </ul>
+
                 </div>
             </div>
             {/*<div>{videoName}</div>*/}

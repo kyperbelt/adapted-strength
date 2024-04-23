@@ -1,15 +1,13 @@
 package com.terabite.chat.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Date;
 @Entity
 @Table(name = "message")
 public class Message {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     private String chatRoomId;
     private String senderId;
@@ -82,6 +80,11 @@ public class Message {
     public void setHasBeenRead(Boolean hasBeenRead) {
         this.hasBeenRead = hasBeenRead;
     }
+
+//    public String getId()
+//    {
+//        return Long.toString(id);
+//    }
 
 
 }

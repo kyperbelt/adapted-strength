@@ -29,6 +29,9 @@ export default function NavBar() {
   // TODO: We need to use conditional rendering for nav so that we do not show 
   //      certain options when the user is not logged in for example, or if they 
   //      dont have the right permissions or are in a wrong state/certain page/step.
+
+
+
   return (
     <div className={'sticky top-0 w-full bg-primary z-20'}>
       <div className={`right-0 bottom-0 left-0 bg-black opacity-50  ${hamburgerOpen ? 'flex' : 'hidden'}`} onClick={toggleHammy} />
