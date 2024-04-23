@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     name: Build jar
-    id: build
     runs-on: ubuntu-latest
     outputs:
       jar: ${{ steps.out_jar.outputs.JAR }}
