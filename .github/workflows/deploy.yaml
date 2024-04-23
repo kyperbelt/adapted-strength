@@ -46,7 +46,7 @@ jobs:
       - name: Output app
         id: out_app
         run: |
-          tar -czf app.tar.gz authorization/build/libs/*.jar authorization/build/resources/main/application.properties authorization/compose.yaml app.tar.gz
+          tar -czf app.tar.gz authorization/build/libs/*.jar authorization/build/resources/main/application.properties authorization/compose.yaml
           echo "APP=$(cat app.tar.gz)" >> $GITHUB_OUTPUT
 
       # - name: Output jar 
