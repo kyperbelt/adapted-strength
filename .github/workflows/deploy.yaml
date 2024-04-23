@@ -23,12 +23,14 @@ jobs:
 
       - name: Install java & npm
         run: |
+          java --version
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
           sudo apt-get install -y npm
 
       - name: Compile to jar
         run: |
+          java --version
           pwd
           cd authorization
           ls
