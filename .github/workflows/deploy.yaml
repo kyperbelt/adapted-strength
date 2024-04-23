@@ -29,7 +29,9 @@ jobs:
 
       - name: Compile to jar
         run: |
-          ./authorization/gradlew build
+          cd authorization
+          gradlew build
+          cd ..
 
       - name: Remove plain jar
         run: |
