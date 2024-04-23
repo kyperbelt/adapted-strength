@@ -35,7 +35,7 @@ jobs:
           # pwd
           cd authorization
           # ls
-          ./gradlew build gradle build -Dorg.gradle.java.home=$JAVA_HOME_17_X64
+          ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME_17_X64
           cd ..
 
       - name: Remove plain jar
