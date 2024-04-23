@@ -59,7 +59,7 @@ jobs:
       SSH_KEY: ${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}
       HOST: ${{ secrets.AWS_INSTANCE_URL }}
       USER: ${{ secrets.AWS_INSTANCE_USER }}
-      CONN: ${{ join({0}@{1}, secrets.AWS_INSTANCE_URL, secrets.AWS_INSTANCE_USER) }}
+      # CONN: ${{ join("{0}@{1}", secrets.AWS_INSTANCE_URL, secrets.AWS_INSTANCE_USER) }}
 
     steps:
       # - name: Checkout Repo
@@ -89,7 +89,7 @@ jobs:
           echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
           echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
 
-          sftp -i "~/.ssh/key.pem" -b batchfile $CONN
+          sftp -i "~/.ssh/key.pem" -b batchfile "$USER@HOST"
 
       # TODO - add expand / contract pattern for database migration
       # - name: Run deployment script
