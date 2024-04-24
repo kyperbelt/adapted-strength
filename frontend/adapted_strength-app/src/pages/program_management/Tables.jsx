@@ -43,7 +43,7 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
 
 
   return (
-    <div className="w-full block max-h-full h-full overflow-y-auto">
+    <div className="w-full h-full">
       <table className={`text-sm text-left rtl:text-right text-gray-500 w-full ${props.className}`}>
         <thead className="bg-primary">
           <tr className="z-10 border-b bg-primary sticky top-0" key="headers" onClick={(e)=>e.stopPropagation()}>
