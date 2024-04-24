@@ -71,7 +71,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo $SSH_KEY >> ~/.ssh/key.pem
+          echo $SSH_KEY > ~/.ssh/key.pem
           sudo chmod 400 ~/.ssh/key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
@@ -82,7 +82,7 @@ jobs:
       - name: Copy build files to instance
         run: |
           echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
-          echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
+          # echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
 
           sftp -i "~/.ssh/key.pem" -b batchfile $USER@$HOST
 
