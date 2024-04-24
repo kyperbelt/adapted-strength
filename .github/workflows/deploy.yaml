@@ -71,7 +71,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo $SSH_KEY >> "~/.ssh/key.pem"
+          echo $SSH_KEY >> ~/.ssh/key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
       # - name: Set up known hosts file
