@@ -25,7 +25,11 @@ import Tab from "./components/TabComponents/Tab.jsx";
 // import firebase utils
 import { fetchToken } from './firebase';
 
+<<<<<<< HEAD
 // import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
+=======
+import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
+>>>>>>> program_management_redo
 
 
 /*
@@ -61,6 +65,7 @@ function App() {
 
   return (
     <div id="app" className="flex-1 flex flex-col">
+<<<<<<< HEAD
       {
         <BrowserRouter className="">
           <Routes className="">
@@ -68,6 +73,15 @@ function App() {
               <Route index element={<Home />} />
               {/* Add more routes here the same way as above */}
               {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+=======
+    {
+      <BrowserRouter className="">
+        <Routes className="">
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            {/* Add more routes here the same way as above */}
+            {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+>>>>>>> program_management_redo
 
               {/* When no route available we go to not found */}
               {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
@@ -124,10 +138,17 @@ function App() {
               //-------------------------------------------------
               <Route path="notifications" element={<Tab />} />
             //-------------------------------------------------          </Route>
+<<<<<<< HEAD
           </Routes>
         </BrowserRouter>
       }
     </div >
+=======
+        </Routes>
+      </BrowserRouter>
+      }
+    </div>
+>>>>>>> program_management_redo
   );
 }
 

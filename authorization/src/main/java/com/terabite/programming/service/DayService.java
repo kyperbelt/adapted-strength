@@ -2,8 +2,11 @@ package com.terabite.programming.service;
 
 import java.util.List;
 
+<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+=======
+>>>>>>> program_management_redo
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class DayService {
         return new ResponseEntity<>(day, HttpStatus.OK);
     }
 
+<<<<<<< HEAD
     public Day getDayById(long id){
         return dayRepository.findOneByDayId(id);
     }
@@ -37,6 +41,10 @@ public class DayService {
     public ResponseEntity<?> updateDay(UpdateDayRequest request, List<RepCycle> repCycles) {
         if(dayRepository.findById(request.id()).isEmpty()){
             log.error("Day {} not found", request.id());
+=======
+    public ResponseEntity<?> updateDay(UpdateDayRequest request, List<RepCycle> repCycles) {
+        if(dayRepository.findById(request.id()).isEmpty()){
+>>>>>>> program_management_redo
             return new ResponseEntity<>(Payload.of(String.valueOf(request.id())), HttpStatus.NOT_FOUND);        }
         else{
             Day day = dayRepository.findOneByDayId(request.id());

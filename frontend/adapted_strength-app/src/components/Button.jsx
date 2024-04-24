@@ -5,7 +5,11 @@ export function BasicButton({ className, children, ...props }) {
 }
 
 export function PrimaryButton({ className, children, ...props }) {
+<<<<<<< HEAD
   return <BasicButton className={`text-white bg-accent hover:bg-accent-dark focus:ring-4 focus:bg-accent-light font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none ${className}`} {...props}>{children}</BasicButton>
+=======
+  return <BasicButton className={` ${className} text-white bg-accent hover:bg-accent-dark focus:ring-4 focus:bg-accent-light font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none`} {...props}>{children}</BasicButton>
+>>>>>>> program_management_redo
 }
 
 export function SecondaryButton({ className, children, ...props }) {

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import BreadCrumb from "../../components/BreadCrumb";
 import { useNavigate, useLocation } from "react-router-dom";
 import CreateProgramDialog from "./CreateProgramDialog";
@@ -148,6 +149,21 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     await Promise.all(promiseList).then(() => {
       console.log(`All programs deleted`);
     });
+=======
+import { PrimaryButton, SecondaryButton } from "../../components/Button";
+import { CardBack } from "../../components/Card";
+import EditProgramsDialog from "./EditProgramDialog";
+import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
+
+import { useState } from "react";
+
+export default function ProgramDashboard({ trainingPrograms, onAddProgram, onClickProgram, ...props }) {
+  const [programs, setPrograms] = trainingPrograms;
+  const [programEditId, setEditProgramId] = useState(null);
+
+
+  const DeleteProgram = (programsToDelete) => {
+>>>>>>> program_management_redo
 
     const newPrograms = programs.filter((program) => !programsToDelete.includes(program));
     setPrograms(newPrograms);
@@ -174,6 +190,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     onClickProgram(program);
   }
 
+<<<<<<< HEAD
   const onSearch = (text) => {
     console.log("Searching for: ", text);
     setSearchText(text);
@@ -223,21 +240,39 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
         <div className="flex flex-col sm:flex-row mt-2">
 
           <SearchBar onSearch={onSearch} />
+=======
+  return (
+
+    <div className="flex flex-col px-6" {...props}>
+      <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
+      <CardBack className="">
+        <div className="flex flex-col sm:flex-row mt-2">
+
+          <SearchBar />
+>>>>>>> program_management_redo
           <PrimaryButton
             className="sm:ml-auto w-32"
             onClick={onAddProgram}>
             Add Program
           </PrimaryButton>
         </div>
+<<<<<<< HEAD
         <StyledCheckboxTable headers={["Name", "Description", "Weeks", "Users"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
           {getFilteredPrograms(programs, searchText).map((program) => (
+=======
+        <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
+          {programs.map((program) => (
+>>>>>>> program_management_redo
             <CustomTableRow
               key={program.id}
               data={[
                 program.name,
                 program.description,
+<<<<<<< HEAD
                 program.weeks.length,
                 0
+=======
+>>>>>>> program_management_redo
               ]}
               onOptionClick={(option) => {
                 if (option === 'Delete') {
@@ -245,9 +280,12 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
                 } else if (option === 'Edit') {
                   document.getElementById("edit-program").classList.remove("hidden");
                   setEditProgramId(program.id);
+<<<<<<< HEAD
                 } else if (option === 'Duplicate') {
                   console.log(`Duplicating program ${program.id}`);
                   DuplicateProgram(program);
+=======
+>>>>>>> program_management_redo
                 }
               }}
               selected={program.selected}
@@ -266,7 +304,11 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
           ))}
         </StyledCheckboxTable>
       </CardBack>
+<<<<<<< HEAD
       <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="EditrProgram" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
+=======
+      <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="Edit Program" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
+>>>>>>> program_management_redo
     </div>
   );
 }
