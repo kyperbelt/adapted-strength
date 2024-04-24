@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo $SSH_KEY > ~/.ssh/key.pem
-          sudo chmod 400 ~/.ssh/key.pem
+          chmod 600 ~/.ssh/key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
       # - name: Set up known hosts file
