@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import StateGuard from "../util/StateGuard";
 import Logo from "../assets/logo.png";
+<<<<<<< HEAD
 
 const navigation = [
   { text: "Home", to: "/", selected: true },
@@ -23,6 +24,8 @@ const navigation = [
   { text: "Sign Up", to: "/sign-up", selected: false },
   { text: "Notifications", to: "/notifications", selected: false },
 ];
+=======
+>>>>>>> program_management_redo
 
 export default function NavBar() {
   const nav = useNavigate();
@@ -84,6 +87,7 @@ export default function NavBar() {
   );
 }
 
+<<<<<<< HEAD
 function BellIcon() {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-bell-fill" viewBox="0 0 16 16">
     <path id="icon-info" d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
@@ -94,6 +98,18 @@ function NavItem({ to, children, onClick, selected, className}) {
   return (
     <li>
       <Link id="nav-item" to={to} className={`${className} text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark md:hover:bg-transparent md:border-0 md:hover:text-accent md:p-0`} onClick={onClick}>{children}</Link>
+=======
+
+      // <div className="block md:hidden h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
+      //   <div className={`w-6 h-0.5 bg-white mt-2 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></div>
+      //   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'opacity-0' : ''}`} />
+      //   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></div>
+      // </div>
+function NavItem({ to, children, onClick }) {
+  return (
+    <li>
+      <Link to={to} className="text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0" onClick={onClick}>{children}</Link>
+>>>>>>> program_management_redo
     </li>
   );
 }

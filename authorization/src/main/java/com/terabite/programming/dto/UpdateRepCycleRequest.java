@@ -5,9 +5,15 @@ import java.util.Optional;
 /**
  * CreateRepCycleRequest
  *
+<<<<<<< HEAD
     long id;
 
     String repCycleName;
+=======
+    long repCycleId;
+
+    String name;
+>>>>>>> program_management_redo
 
     String equipment;
 

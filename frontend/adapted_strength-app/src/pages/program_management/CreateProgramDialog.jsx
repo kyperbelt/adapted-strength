@@ -2,6 +2,7 @@ import { PrimaryButton, SecondaryButton } from '../../components/Button';
 import { BasicModalDialogue } from '../../components/Dialog';
 import LabeledInputField from '../../components/forms/LabeledInputField';
 
+<<<<<<< HEAD
 export default function CreateProgramDialog({onCreate, className, ...props }) {
 
         const onCreateHandler = (e) => {
@@ -10,6 +11,16 @@ export default function CreateProgramDialog({onCreate, className, ...props }) {
                 const description = document.getElementById("program_description").value;
                 if (onCreate) {
                         onCreate(name, description);
+=======
+export default function CreateProgramDialog({ className, ...props }) {
+
+        const onCreate = (e) => {
+                e.preventDefault();
+                const name = document.getElementById("program_name_field").value;
+                const description = document.getElementById("program_description").value;
+                if (props.onCreate) {
+                        props.onCreate(name, description);
+>>>>>>> program_management_redo
                 }else{
                         window.alert(`Unable to create program ${name}. Because onCreate is not defined for CreateProgramDialog.`);
                 }
@@ -22,7 +33,11 @@ export default function CreateProgramDialog({onCreate, className, ...props }) {
 
         return (
                 <BasicModalDialogue title={props.title} className={className} onCloseDialog={props.onClose} {...props}>
+<<<<<<< HEAD
                         <form onSubmit={onCreateHandler}>
+=======
+                        <form onSubmit={onCreate}>
+>>>>>>> program_management_redo
                                 <LabeledInputField id="program_name_field" placeholder="Program Name" required={true} />
                                 <div className="py-5">
                                         <label htmlFor="program_description" className="block mb-2 text-sm font-medium text-gray-900 ">Program Description</label>
