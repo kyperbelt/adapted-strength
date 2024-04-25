@@ -33,7 +33,7 @@ export default function General() {
   const getTable = (day) => {
     return (
       <table className="w-full text-left mt-4 min-h-full">
-        <tbody className="rounded-full text-[#161A1D]">
+        <tbody className="text-[#161A1D]">
           {program &&
             day.repCycles.map((repCycle) => (
               <RepCycle repCycle={repCycle} />
@@ -71,7 +71,7 @@ export default function General() {
             <div className="overflow-x-auto flex flex-col text-left justify-center space-y-2 h-full">
               {currentDays.map((day, dayIndex) => (
                 <>
-                  <button onClick={() => onDayClick(day)} className={`w-500 text-left pl-4 mx-2 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day.toggled ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
+                  <button onClick={() => onDayClick(day)} className={`w-500 text-left pl-4 mx-4 border-solid border-2 border-black uppercase rounded-full font-bold p-2 ${day.toggled ? 'bg-[#f54242]' : 'bg-gray-200'}`}>
                     {day.toggled ? 'Close' : `Day ${dayIndex + 1}: ${day.name}`}
                   </button>
                   {day.toggled && getTable(day)}
@@ -96,33 +96,33 @@ function RepCycle({ repCycle }) {
         <td scope="col" className="px-1.5 text-xs bg-gray-200">
           Equipment
         </td>
-        <td scope="col" className="px-3 text-xs bg-gray-100">
+        <td scope="col" className="px-1.5 text-xs bg-gray-100">
           Sets
         </td>
-        <td scope="col" className="px-3 text-xs bg-gray-200">
+        <td scope="col" className="px-1.5 text-xs bg-gray-200">
           Reps/Time
         </td>
-        <td scope="col" className="px-3 text-xs bg-gray-100">
-          % RPE
+        <td scope="col" className="px-1.5 text-xs bg-gray-100">
+          % / RPE
         </td>
-        <td scope="col" className="p-3 px-5text-xs bg-gray-200">
+        <td scope="col" className="p-1.5 text-xs bg-gray-200">
           Rest
         </td>
         <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
           <tr key={repCycle.repCycleId}>
-            <td className="border text-center px-4 py-2">
+            <td className="border text-center px-1.5 py-2">
               {repCycle.equipment}
             </td>
-            <td className="border text-center px-4 py-2">
+            <td className="border text-center px-1.5 py-2">
               {repCycle.numSets}
             </td>
-            <td className="border text-center px-4 py-2">
+            <td className="border text-center px-1.5 py-2">
               {repCycle.numReps}
             </td>
-            <td className="border text-center px-4 py-2">
+            <td className="border text-center px-1.5 py-2">
               {repCycle.weight}
             </td>
-            <td className="border text-center px-4 py-2">
+            <td className="border text-center px-1.5 py-2">
               {repCycle.restTime}
             </td>
           </tr>

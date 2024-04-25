@@ -28,14 +28,9 @@ import { fetchToken } from './firebase';
 // import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
-/*
-IMPORTS FOR PROGRAM PAGES
-*/
+/*IMPORTS FOR PROGRAM PAGE*/
 //--------------------------------------------------
-import BodyBuild from './pages/program_pages/BodyBuild.jsx';
-import Oly from './pages/program_pages/Oly.jsx';
-import Power from './pages/program_pages/Power.jsx';
-import General from './pages/program_pages/General.jsx';
+import UserProgram from './pages/program_pages/UserProgram.jsx';
 //--------------------------------------------------
 
 import Booking from './pages/Booking.jsx';
@@ -98,11 +93,7 @@ function App() {
               </RouteGuard>} />
 
             /* ROUTES FOR PROGRAM PAGES */
-              //--------------------------------------------------
-              <Route path="bodybuild" element={<BodyBuild />} />
-            // <Route path="power-lifting" element={<Power />} />
-            // <Route path="oly-lifting" element={<Oly />} />
-            // <Route path="general-program" element={<General />} />
+            <Route path="user-program" element={<UserProgram />} />
             //--------------------------------------------------
 
               <Route path="terms-of-service" element={<TermsOfService />} />
