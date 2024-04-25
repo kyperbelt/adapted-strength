@@ -2,11 +2,6 @@ import { PrimaryButton, SecondaryButton } from '../../components/Button';
 import { BasicModalDialogue } from '../../components/Dialog';
 import LabeledInputField from '../../components/forms/LabeledInputField';
 import { BasicTextArea } from '../../components/TextArea';
-<<<<<<< HEAD
-import { ProgrammingApi } from '../../api/ProgrammingApi';
-import {HttpStatus} from '../../api/ApiUtils';
-=======
->>>>>>> program_management_redo
 
 export default function EditProgramsDialog({ programId, programState, className, ...props }) {
         const [programs, setPrograms] = programState;
@@ -19,11 +14,7 @@ export default function EditProgramsDialog({ programId, programState, className,
                 descriptionInput.value = program.description;
         }
 
-<<<<<<< HEAD
-        const onEdit = async (e) => {
-=======
         const onEdit = (e) => {
->>>>>>> program_management_redo
                 e.preventDefault();
                 const name = document.getElementById("edit_program_name_field").value;
                 const description = document.getElementById("edit_program_description").value;
@@ -33,23 +24,7 @@ export default function EditProgramsDialog({ programId, programState, className,
                                 return { ...program, name: name, description: description };
                         }
                         return program;
-<<<<<<< HEAD
-                });
-
-                const weeks = program.weeks.map((week) => week.weekId);
-
-                await ProgrammingApi.updateProgram({ programId: programId, name: name, description: description, weekIds: [...weeks]}).then((r) => {
-                        if (r.status === HttpStatus.OK) {
-                                console.log("Program updated: ", name, description);
-                        } else {
-                                console.error("Error updating program: ", name, description);
-                        }
-                }).catch((e) => {
-                        console.error('Error updating program:', e);
-                });
-=======
                });
->>>>>>> program_management_redo
 
                 setPrograms(newPrograms);
 

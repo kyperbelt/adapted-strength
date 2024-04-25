@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import BreadCrumb from "../../components/BreadCrumb";
 import { useNavigate, useLocation } from "react-router-dom";
 import CreateProgramDialog from "./CreateProgramDialog";
@@ -149,21 +148,6 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
     await Promise.all(promiseList).then(() => {
       console.log(`All programs deleted`);
     });
-=======
-import { PrimaryButton, SecondaryButton } from "../../components/Button";
-import { CardBack } from "../../components/Card";
-import EditProgramsDialog from "./EditProgramDialog";
-import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
-
-import { useState } from "react";
-
-export default function ProgramDashboard({ trainingPrograms, onAddProgram, onClickProgram, ...props }) {
-  const [programs, setPrograms] = trainingPrograms;
-  const [programEditId, setEditProgramId] = useState(null);
-
-
-  const DeleteProgram = (programsToDelete) => {
->>>>>>> program_management_redo
 
     const newPrograms = programs.filter((program) => !programsToDelete.includes(program));
     setPrograms(newPrograms);
@@ -190,57 +174,6 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, onCli
     onClickProgram(program);
   }
 
-<<<<<<< HEAD
-  const onSearch = (text) => {
-    console.log("Searching for: ", text);
-    setSearchText(text);
-  };
-
-  const DuplicateProgram = async (program) => {
-    console.log(`Duplicating program ${program.id}`);
-    try {
-      const newProgramResponse = await ProgrammingApi.duplicateProgram(program);
-
-      if (newProgramResponse) {
-        // add (Duplicate) to the name 
-        const newProgram = {
-          id: newProgramResponse.programId,
-          name: `${newProgramResponse.name} (Duplicate)`,
-          description: newProgramResponse.description.body,
-          selected: false,
-          weeks: newProgramResponse.weeks
-        };
-        // static updateProgram({ programId, name, description, weekIds = [] }) {
-        const updatedNewProgramResponse = await ProgrammingApi.updateProgram({ programId: newProgram.id, name: newProgram.name, description: newProgram.description, weekIds: newProgram.weeks.map((week) => week.weekId) });
-
-        if (updatedNewProgramResponse.status === HttpStatus.OK) {
-          console.log(`Program ${program.id} duplicated to ${newProgram.id}`);
-          setPrograms([...programs, newProgram]);
-        } else {
-          console.error(`Error updating duplicated program ${newProgram.id}`);
-        }
-      }
-
-    } catch (e) {
-      console.error('Error duplicating program:', e);
-    }
-  }
-
-
-  // <h3 className="text-3xl font-bold text-secondary-light">Programs</h3>
-  return (
-
-    <div className="flex flex-col px-6" {...props}>
-
-      {/*Dialogs*/}
-      <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
-
-      <BreadCrumb first={{ name: "Programs", to: "/program-management" }} breadCrumbs={breadcrumb} />
-      <CardBack className="">
-        <div className="flex flex-col sm:flex-row mt-2">
-
-          <SearchBar onSearch={onSearch} />
-=======
   return (
 
     <div className="flex flex-col px-6" {...props}>
@@ -249,30 +182,19 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, onCli
         <div className="flex flex-col sm:flex-row mt-2">
 
           <SearchBar />
->>>>>>> program_management_redo
           <PrimaryButton
             className="sm:ml-auto w-32"
             onClick={onAddProgram}>
             Add Program
           </PrimaryButton>
         </div>
-<<<<<<< HEAD
-        <StyledCheckboxTable headers={["Name", "Description", "Weeks", "Users"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-          {getFilteredPrograms(programs, searchText).map((program) => (
-=======
         <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
           {programs.map((program) => (
->>>>>>> program_management_redo
             <CustomTableRow
               key={program.id}
               data={[
                 program.name,
                 program.description,
-<<<<<<< HEAD
-                program.weeks.length,
-                0
-=======
->>>>>>> program_management_redo
               ]}
               onOptionClick={(option) => {
                 if (option === 'Delete') {
@@ -280,12 +202,6 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, onCli
                 } else if (option === 'Edit') {
                   document.getElementById("edit-program").classList.remove("hidden");
                   setEditProgramId(program.id);
-<<<<<<< HEAD
-                } else if (option === 'Duplicate') {
-                  console.log(`Duplicating program ${program.id}`);
-                  DuplicateProgram(program);
-=======
->>>>>>> program_management_redo
                 }
               }}
               selected={program.selected}
@@ -304,11 +220,7 @@ export default function ProgramDashboard({ trainingPrograms, onAddProgram, onCli
           ))}
         </StyledCheckboxTable>
       </CardBack>
-<<<<<<< HEAD
-      <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="EditrProgram" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
-=======
       <EditProgramsDialog programId={programEditId} programState={[programs, setPrograms]} id="edit-program" className="hidden" title="Edit Program" onClose={() => { document.getElementById("edit-program").classList.add("hidden") }} />
->>>>>>> program_management_redo
     </div>
   );
 }

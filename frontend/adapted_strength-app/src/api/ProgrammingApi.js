@@ -46,11 +46,7 @@ export class ProgrammingApi {
   static createProgram({ name, description }) {
     const program = {
       programName: name,
-<<<<<<< HEAD
       programDescription: description
-=======
-      description: description
->>>>>>> program_management_redo
     };
 
     return ApiUtils.apiPost('programming/program', program).then((r) => {
@@ -87,11 +83,7 @@ export class ProgrammingApi {
    *  console.log('Program updated:', response);
    *  }
    */
-<<<<<<< HEAD
   static updateProgram({ programId, name, description, weekIds = [] }) {
-=======
-  static editProgram({ programId, name, description, weekIds = [] }) {
->>>>>>> program_management_redo
     const updateProgramRequest = {
       programId: programId,
       programName: name,
@@ -122,11 +114,7 @@ export class ProgrammingApi {
     });
   }
 
-<<<<<<< HEAD
   static createWeek({ weekName, description }) {
-=======
-  static createWeek({weekName, description }) {
->>>>>>> program_management_redo
     const week = {
       weekName: weekName,
       weekDescription: description
@@ -143,32 +131,19 @@ export class ProgrammingApi {
     });
   }
 
-<<<<<<< HEAD
   static updateWeek({ weekId, weekName, description, dayIds = [] }) {
     const updateWeekRequest = {
       id: weekId,
       weekName: weekName,
       weekDescription: description,
       dayIds: dayIds
-=======
-  static editWeek({ weekId, weekName, description, days=[]}) {
-    const updateWeekRequest = {
-      weekId: weekId,
-      weekName: weekName,
-      weekDescription: description,
-      daysIds: days
->>>>>>> program_management_redo
     };
 
     return ApiUtils.apiPut('programming/week', updateWeekRequest).then((r) => {
       if (r.status === HttpStatus.OK) {
         return r;
       }
-<<<<<<< HEAD
       throw new Error(`Error updating week: ${weekId} status:${r.status}`);
-=======
-      throw new Error(`Error updating week: ${r.status}`);
->>>>>>> program_management_redo
     }).catch((error) => {
       console.error('Error updating week:', error);
       throw error;
@@ -211,11 +186,7 @@ export class ProgrammingApi {
     });
   }
 
-<<<<<<< HEAD
   static createDay({ dayName, description }) {
-=======
-  static createDay({dayName, description }) {
->>>>>>> program_management_redo
     const day = {
       dayName: dayName,
       dayDescription: description
@@ -232,15 +203,9 @@ export class ProgrammingApi {
     });
   }
 
-<<<<<<< HEAD
   static updateDay({ dayId, dayName, description, cycles = [] }) {
     const updateDayRequest = {
       id: dayId,
-=======
-  static editDay({ dayId, dayName, description, cycles=[]}) {
-    const updateDayRequest = {
-      dayId: dayId,
->>>>>>> program_management_redo
       dayName: dayName,
       dayDescription: description,
       repCycleIds: cycles
@@ -293,11 +258,7 @@ export class ProgrammingApi {
     });
   }
 
-<<<<<<< HEAD
   static createCycle({ cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId }) {
-=======
-  static createCycle({cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId}) {
->>>>>>> program_management_redo
     const cycle = {
       repCycleName: cycleName,
       equipment: equipment,
@@ -321,7 +282,6 @@ export class ProgrammingApi {
     });
   }
 
-<<<<<<< HEAD
   static updateCycle({ repCycleId, cycleName, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId }) {
     const updateCycleRequest = {
       id: repCycleId,
@@ -432,9 +392,4 @@ export class ProgrammingApi {
       throw error;
     });
   }
-=======
-
-
-
->>>>>>> program_management_redo
 }

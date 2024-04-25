@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { useState, useEffect, useRef } from "react";
-import { BlankPageContainer } from "../../components/PageContainer";
-import ProgramDashboard from "./ProgramDashboard";
-import WeekDashboard from "./WeekDashboard";
-import DayDashboard from "./DayDashboard";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
-=======
 import { PrimaryButton, SecondaryButton } from "../../components/Button";
 import { CardBack } from "../../components/Card";
 import { StyledCheckboxTable, CustomTableRow, SearchBar } from "./Tables";
@@ -17,7 +9,6 @@ import EditProgramsDialog from "./EditProgramDialog";
 import BlockDashboard from "./BlockDashboard";
 import { ProgrammingApi } from "../../api/ProgrammingApi";
 import { HttpStatus } from "../../api/ApiUtils";
->>>>>>> program_management_redo
 
 
 // PROGRAM FORMAT for local web state
@@ -27,48 +18,6 @@ import { HttpStatus } from "../../api/ApiUtils";
 // selected: false,
 // blocks: []
 
-<<<<<<< HEAD
-
-export default function ProgramMamagement() {
-
-  const location = useLocation();
-  // get path variables 
-  const { programId, weekId, dayId } = useParams();
-  let breadcrumbPreload = [];
-  if (programId) {
-    breadcrumbPreload.push(programId);
-  }
-  if (weekId) {
-    breadcrumbPreload.push(weekId);
-  }
-  if (dayId) {
-    breadcrumbPreload.push(dayId);
-  }
-  const [breadcrumb, setBreadcrumb] = useState(breadcrumbPreload);
-
-  useEffect(() => {
-    let breadcrumbPreload = [];
-    if (programId) {
-      breadcrumbPreload.push(programId);
-    }
-    if (weekId) {
-      breadcrumbPreload.push(weekId);
-    }
-    if (dayId) {
-      breadcrumbPreload.push(dayId);
-    }
-    setBreadcrumb(breadcrumbPreload);
-    console.log("breadcrumbPreload", breadcrumbPreload);
-  }, [location]);
-
-
-
-  return (
-    <BlankPageContainer id="program-management">
-      {breadcrumb.length <= 0 && <ProgramDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
-      {breadcrumb.length == 1 && <WeekDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
-      {breadcrumb.length == 2 && <DayDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
-=======
 function getCyclesForDay(day_id) {
   //TODO: request to get cycles for a day from the server
 
@@ -187,7 +136,6 @@ export default function ProgramMamagement() {
       <CreateProgramDialog onCreate={onCreate} id="create-program" className="hidden" title="Create Program" onClose={onCreateProgramClose} />
       {!selectedProgram && <ProgramDashboard onClickProgram={onClickProgram} trainingPrograms={[programs, setPrograms]} onAddProgram={onAddProgram} />}
       {selectedProgram && <BlockDashboard programBlocks={[selectedProgramBlocks, setSelectedProgramBlocks]} />}
->>>>>>> program_management_redo
     </BlankPageContainer>
   );
 }
