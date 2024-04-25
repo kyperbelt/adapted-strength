@@ -43,25 +43,30 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
 
 
   return (
-    <table className={`text-sm text-left rtl:text-right text-gray-500 ${props.className}`}>
-      <thead>
-        <tr className="border-b" key="headers">
-          <th className="w-1 px-6">
-            <input id="select_all" type="checkbox" onChange={(e) => selectAll(e, props.onAllSelected)} />
-          </th>
-          {headers.map((header) => {
-            return (<th key={header} className="px-6 py-3 text-left font-bold">{header}</th>);
-          })}
-          <th className="relative">
-            <HamburgerButton onBlur={onFocusLost} onClick={whenOptionsClicked} />
-            <DropDownMenu id="all-dropdown" options={['Delete Selected']} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal" />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {children}
-      </tbody>
-    </table>
+    <div className="w-full h-full">
+      <table className={`text-sm text-left rtl:text-right text-gray-500 w-full ${props.className}`}>
+        <thead className="bg-primary">
+          <tr className="z-10 border-b bg-primary sticky top-0" key="headers" onClick={(e)=>e.stopPropagation()}>
+            <th className="w-1 px-6">
+              <input id="select_all" type="checkbox" onChange={(e) => selectAll(e, props.onAllSelected)} />
+            </th>
+            {headers.map((header) => {
+              return (<th key={header} className="px-6 py-3 text-left font-bold">{header}</th>);
+            })}
+            <th className="relative">
+              <HamburgerButton onBlur={onFocusLost} onClick={(e) => {
+                e.stopPropagation();
+                whenOptionsClicked(e);
+              }} />
+              <DropDownMenu id="all-dropdown" options={['Delete Selected']} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal z-10" />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {children}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
