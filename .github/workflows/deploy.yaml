@@ -70,7 +70,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}" > key.pem
+          echo "::add-mask::${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}" > key.pem
           chmod 600 key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
