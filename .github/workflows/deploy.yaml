@@ -58,14 +58,14 @@ jobs:
       #     echo "APP_PROP=$(cat ./authorization/build/resources/main/application.properties)" >> $GITHUB_OUTPUT 
       #     echo "COMPOSE=$(cat ./authorization/compose.yaml)" >> $GITHUB_OUTPUT 
 
-      # - name: Compile and compress front end
-      #   id: out_front
-      #   run: |
-      #     cd frontend/adapted_strength-app
-      #     npm install
-      #     npm run build
-      #     tar -czf web.tar.gz build 
-      #     cd ../..
+      - name: Compile and compress front end
+        id: out_front
+        run: |
+          cd frontend/adapted_strength-app
+          npm install
+          npm run build
+          tar -czf web.tar.gz build 
+          cd ../..
 
       - name: Set up ssh
         run: |
@@ -81,7 +81,7 @@ jobs:
       - name: Copy build files to instance
         run: |
           echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
-          # echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
+          echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
 
           sftp -i key.pem -b batchfile $USER@$HOST
 
