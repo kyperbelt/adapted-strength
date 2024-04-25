@@ -70,7 +70,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo "::add-mask::${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}" > key.pem
+          echo "${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}" > key.pem
           chmod 600 key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
@@ -80,7 +80,7 @@ jobs:
 
       - name: Copy build files to instance
         run: |
-          echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
+          # echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
           echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
 
           sftp -i key.pem -b batchfile $USER@$HOST
