@@ -12,7 +12,6 @@ jobs:
     name: Build and deploy
     runs-on: ubuntu-latest
     env:
-      SSH_KEY: ${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}
       HOST: ${{ secrets.AWS_INSTANCE_URL }}
       USER: ${{ secrets.AWS_INSTANCE_USER }}
 
@@ -71,7 +70,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > key.pem
+          echo "${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}" > key.pem
           chmod 600 key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
