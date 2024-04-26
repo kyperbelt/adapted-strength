@@ -4,7 +4,7 @@ import { HamburgerButton } from '../../components/Button';
  * @description Contains the styled table components
  */
 
-export function StyledCheckboxTable({ onOptionsClick, ...props }) {
+export function StyledCheckboxTable({ onOptionsClick, options = ["Delete Selected"], ...props }) {
   const headers = props.headers;
   const children = props.children;
 
@@ -46,7 +46,7 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
     <div className="w-full h-full">
       <table className={`text-sm text-left rtl:text-right text-gray-500 w-full ${props.className}`}>
         <thead className="bg-primary">
-          <tr className="z-10 border-b bg-primary sticky top-0" key="headers" onClick={(e)=>e.stopPropagation()}>
+          <tr className="z-10 border-b bg-primary sticky top-0" key="headers" onClick={(e) => e.stopPropagation()}>
             <th className="w-1 px-6">
               <input id="select_all" type="checkbox" onChange={(e) => selectAll(e, props.onAllSelected)} />
             </th>
@@ -58,7 +58,7 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
                 e.stopPropagation();
                 whenOptionsClicked(e);
               }} />
-              <DropDownMenu id="all-dropdown" options={['Delete Selected']} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal z-10" />
+              <DropDownMenu id="all-dropdown" options={options} onOptionClick={OnOptionSelected} className="hidden absolute right-0 font-normal z-10" />
             </th>
           </tr>
         </thead>
@@ -71,7 +71,7 @@ export function StyledCheckboxTable({ onOptionsClick, ...props }) {
 }
 
 
-export function CustomTableRow({ children, selectedOrUnselected, onRowClick, onOptionClick, options = ["Move Up","Move Down","---","Edit", "Duplicate", "---", "Delete"], ...props }) {
+export function CustomTableRow({ children, selectedOrUnselected, onRowClick, onOptionClick, options = [/*"Move Up","Move Down","---",*/"Edit", "Duplicate", "---", "Delete"], ...props }) {
   const data = props.data;
   const whenOptionsClicked = (e) => {
     e.stopPropagation();
@@ -105,6 +105,7 @@ export function CustomTableRow({ children, selectedOrUnselected, onRowClick, onO
       {data.map((item) => {
         return (<td key={`${item}_key`} className="px-6 py-3">{item}</td>);
       })}
+      {children}
       <td className="relative">
         <HamburgerButton onBlur={onFocusLost} className="ml-auto" onClick={(e) => { whenOptionsClicked(e) }} />
         <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={options} className="absolute hidden right-0" />
@@ -129,8 +130,8 @@ export function DropDownMenu({ options, onOptionClick, className, ...props }) {
       <ul className="py-2 text-sm text-gray-700">
         {options.map((option, index) => {
           return (
-            option === "---" ? <li key={option} className="py-1"><hr /></li> :
-              <li key={option+`${index}`}>
+            option === "---" ? <li key={option + `${index}`} className="py-1"><hr /></li> :
+              <li key={option + `${index}`}>
                 <a className="block px-4 py-2 hover:bg-gray-200" onClick={(e) => {
                   onClick(e, option);
                 }}>

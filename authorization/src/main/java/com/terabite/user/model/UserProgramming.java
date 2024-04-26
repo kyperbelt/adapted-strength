@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "user_programming_mapping")
@@ -18,7 +19,8 @@ public class UserProgramming implements Serializable {
     private Long userProgrammingId;
 
     @ManyToOne
-    @JsonAlias("user_info")
+    // @JsonAlias("user_info")
+    @JsonIgnore
     private UserInformation userInfo;
 
     @JoinTable(name = "user_workout_comments_table")
@@ -30,9 +32,26 @@ public class UserProgramming implements Serializable {
 
     private Date startDate;
 
-    private int currentWeek;
+
+    private int startWeek;
+
+    public int getStartWeek() {
+        return startWeek;
+    }
+
+    public void setStartWeek(int startWeek) {
+        this.startWeek = startWeek;
+    }
 
 
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+    
 
     public Long getId() {
         return userProgrammingId;

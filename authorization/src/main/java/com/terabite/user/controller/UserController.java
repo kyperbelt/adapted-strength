@@ -1,6 +1,5 @@
 package com.terabite.user.controller;
 
-
 import java.util.Optional;
 import java.util.Set;
 import com.stripe.exception.StripeException;
@@ -72,7 +71,8 @@ public class UserController {
     public UserController(
             UserProgrammingService userProgrammingService,
             SubscriptionService subscriptionService,
-            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi, CustomerService customerService,
+            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
+            CustomerService customerService,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
         this.subscriptionService = subscriptionService;
@@ -85,6 +85,39 @@ public class UserController {
         this.customerService = customerService;
     }
 
+    @GetMapping("/get/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getUserInformation(@PathVariable("email") String email) {
+        Optional<UserInformation> userInformation = userRepository.findByEmail(email);
+
+        if (userInformation.isEmpty()) {
+            log.error("UserInformation for " + email + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("User not found"));
+        }
+
+        return ResponseEntity.ok(userInformation);
+    }
+
+    @GetMapping("/get")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getAllUserInformation() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    @DeleteMapping("/delete/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteUserInformation(@PathVariable("email") String email) {
+        Optional<UserInformation> userInformation = userRepository.findByEmail(email);
+
+        if (userInformation.isEmpty()) {
+            log.error("UserInformation for " + email + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("User not found"));
+        }
+
+        userRepository.delete(userInformation.get());
+        return ResponseEntity.ok(Payload.of("User deleted successfully"));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createAccountInformation(@AuthenticationPrincipal UserDetails userDetails,
             @RequestBody UserInformation userInformation) {
@@ -95,13 +128,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userInformation);
         }
 
-        //Create stripe customer with user email
+        // Create stripe customer with user email
         Customer customer;
-        try{
+        try {
             customer = customerService.createNewCustomer(userInformation);
             userInformation.setCustomer(customer);
-        }
-        catch(StripeException e){
+        } catch (StripeException e) {
             e.printStackTrace();
         }
 
@@ -172,8 +204,9 @@ public class UserController {
 
     @PostMapping("/programming")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
-    public ResponseEntity<?> addProgramming(@RequestParam("email") String email, @RequestParam("programId") long programId) {
-        return userProgrammingService.addProgramming(email, programId);
+    public ResponseEntity<?> addProgramming(@RequestParam("email") String email,
+            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek) {
+        return userProgrammingService.addProgramming(email, programId, startWeek);
     }
 
     @DeleteMapping("/programming/{upid}/remove")
@@ -182,17 +215,20 @@ public class UserController {
         return userProgrammingService.removeProgramming(userProgrammingId);
     }
 
-
     @PostMapping("/programming/{upid}/comment")
-    public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,@RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails){
-        // return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,
+            @RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails) {
+        // return new ResponseEntity<>("Endpoint to add comment",
+        // HttpStatus.NOT_IMPLEMENTED);
 
         return userProgrammingService.addComment(userProgrammingId, comment);
-    } 
+    }
 
     @PutMapping("/programming/comment/{cid}")
-    public ResponseEntity<?> updateComment(@PathVariable("cid") long commentId, @RequestParam("comment") String comment){
-        // return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<?> updateComment(@PathVariable("cid") long commentId,
+            @RequestParam("comment") String comment) {
+        // return new ResponseEntity<>("Endpoint to edit / update comment",
+        // HttpStatus.NOT_IMPLEMENTED);
         return userProgrammingService.updateComment(commentId, comment);
     }
 

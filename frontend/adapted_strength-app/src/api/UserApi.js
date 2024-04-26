@@ -1,5 +1,5 @@
 
-import { ApiUtils } from './ApiUtils';
+import { ApiUtils, HttpStatus } from './ApiUtils';
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class UserApi {
@@ -49,10 +49,10 @@ export class UserApi {
 
     const promise = ApiUtils.apiPut('user/profile', profile);
     return promise;
-    
+
   }
 
-static updateSubscription({subscriptionTier }) {
+  static updateSubscription({ subscriptionTier }) {
     console.log("THIS IS THE API RECEIVED DATA: ", subscriptionTier);
     const data = {
       status: subscriptionTier
@@ -190,19 +190,58 @@ static updateSubscription({subscriptionTier }) {
     return promise;
   }
 
-  // USER PROGRAMMING
+  // USER PROGRAMMING  static 
+
+  // get user programming for self
   static getUserProgramming() {
     const promise = ApiUtils.apiGet('user/programming');
     return promise;
   }
 
-  static addProgramming(email,programId) {
-    const promise = ApiUtils.apiPost(`user/programming?email=${email}&programId=${programId}`);
+  //ADMIN/COACH access
+  // add programming to user
+  static addProgramming(email, programId, startWeek) {
+    const promise = ApiUtils.apiPost(`user/programming?email=${email}&programId=${programId}&startWeek=${startWeek}`).then((response) => {
+      if (response.status === HttpStatus.OK) {
+        return response.data;
+      }
+    });
     return promise;
   }
 
+  // delete programming
   static deleteProgramming(upid) {
     const promise = ApiUtils.apiDelete(`user/programming/${upid}/remove`);
     return promise;
   }
+
+  static getProgramming(email) {
+    const promise = ApiUtils.apiGet(`user/programming/user/${email}`).then((response) => {
+      if (response.status === HttpStatus.OK) {
+        return response.data;
+      }
+      throw new Error(`Failed to get programming: ${response.status}`);
+    });
+    return promise;
+  }
+
+  // ADMIN/COACH User access
+
+  static getAllUsers() {
+    return ApiUtils.apiGet('user/get').then((response) => {
+      if (response.status === HttpStatus.OK) {
+        return response.data;
+      }
+      throw new Error(`Failed to get users: ${response.status}`);
+    });
+  }
+
+  static getUser(email) {
+    return ApiUtils.apiGet(`user/get/${email}`);
+  }
+
+  static deleteUser(email) {
+    return ApiUtils.apiDelete(`user/delete/${email}`);
+  }
+
 }

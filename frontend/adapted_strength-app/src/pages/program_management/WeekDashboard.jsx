@@ -118,7 +118,8 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                                                 weekId: response.data.weekId,
                                                 name: response.data.name,
                                                 description: response.data?.description?.body || "",
-                                                selected: false
+                                                selected: false,
+                                                days: response.data.days
                                         }
                                         // update the program with the new week
                                         const updateProgramPayload = {
@@ -155,19 +156,19 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         if (newWeekResponse) {
                                 // add (Duplicate) to the name 
                                 const newWeek = {
-                                        id: newWeekResponse.weekId,
+                                        weekId: newWeekResponse.weekId,
                                         name: `${newWeekResponse.name} (Duplicate)`,
                                         description: "",
                                         selected: false,
                                         days: newWeekResponse.days
                                 };
-                                const updatedNewWeekResponse = await ProgrammingApi.updateWeek({ weekId: newWeek.id, weekName: newWeek.name, description: newWeek.description, dayIds: newWeek.days.map((day) => day.dayId) }).then((response) => {
+                                const updatedNewWeekResponse = await ProgrammingApi.updateWeek({ weekId: newWeek.weekId, weekName: newWeek.name, description: newWeek.description, dayIds: newWeek.days.map((day) => day.dayId) }).then((response) => {
                                         // update the program
                                         const updateProgramPayload = {
                                                 programId: selectedProgram.programId,
                                                 name: selectedProgram.name,
                                                 description: selectedProgram.description.body,
-                                                weekIds: [...selectedProgram.weeks.map((week) => week.weekId), newWeek.id]
+                                                weekIds: [...selectedProgram.weeks.map((week) => week.weekId), newWeek.weekId]
                                         };
                                         console.log("Update program payload: ", updateProgramPayload);
                                         return ProgrammingApi.updateProgram(updateProgramPayload);
@@ -188,6 +189,8 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
 
         };
 
+
+        // <SearchBar />
         return (selectedProgram &&
 
                 <div className="flex flex-col px-6">
@@ -198,20 +201,19 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
                         ]} />
                         <CardBack className="">
                                 <div className="flex flex-col sm:flex-row mt-2">
-                                        <SearchBar />
                                         <PrimaryButton
                                                 className="sm:ml-auto w-32"
                                                 onClick={onAddWeek}>
                                                 Add Week
                                         </PrimaryButton>
                                 </div>
-                                <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-                                        {weeks.map((week) => (
+                                <StyledCheckboxTable headers={["Name", "Days"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
+                                        {weeks.map((week, index) => (
                                                 <CustomTableRow
-                                                        key={week.weekId}
+                                                        key={`${week.weekId}_${index}`}
                                                         data={[
                                                                 week.name,
-                                                                week.description,
+                                                                week.days.length,
                                                         ]}
                                                         onOptionClick={(option) => {
                                                                 if (option === 'Delete') {

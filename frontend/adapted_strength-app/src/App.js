@@ -51,6 +51,7 @@ import ChatTest from './pages/test_pages/ChatTest';
 // TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
+const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
 
 // import footer from '../footer'
 
@@ -90,6 +91,7 @@ function App() {
               <Route path="sign-up" element={<SignUp />} />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
+              <Route path="user-management/:email?" element={<UserManagement/>} />
               <Route path="/program-management/:programId?/:weekId?/:dayId?" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
 
                   <Suspense fallback="...">
@@ -124,6 +126,7 @@ function App() {
               //-------------------------------------------------
               <Route path="notifications" element={<Tab />} />
             //-------------------------------------------------          </Route>
+            
           </Routes>
         </BrowserRouter>
       }

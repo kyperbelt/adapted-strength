@@ -1,10 +1,12 @@
 package com.terabite.user;
 
+import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.authorization.model.Login;
 import com.terabite.common.Roles;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.user.model.UserInformation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +40,11 @@ public class UserApi {
     private static final Logger log = LoggerFactory.getLogger(UserApi.class);
 
     private final UserRepository userRepository;
+    private final UserProgrammingRepository userProgrammingRepository;
 
-    public UserApi(UserRepository userRepository) {
+    public UserApi(UserRepository userRepository, UserProgrammingRepository userProgrammingRepository) {
         this.userRepository = userRepository;
+        this.userProgrammingRepository = userProgrammingRepository;
     }
 
     /**
@@ -118,5 +122,9 @@ public class UserApi {
                 break;
         }
         return rolesList.stream().map(Roles::name).toList();
+    }
+
+    public static List<UserInformation> getAllUsersForProgram(long programId) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

@@ -1,5 +1,7 @@
 package com.terabite.user.service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +34,22 @@ public class UserProgrammingService {
         this.commentRepository = commentRepository;
     }
 
-    public ResponseEntity<?> addProgramming(String userEmail, long programId) {
+    public ResponseEntity<?> addProgramming(String userEmail, long programId, int startWeek) {
         Optional<UserInformation> user = userRepository.findByEmail(userEmail);
         if (user.isEmpty()) {
             return new ResponseEntity<>(Payload.of("User not found"), HttpStatus.NOT_FOUND);
         }
 
+        // get todays date 
+
+        final Date startDate = new Date();
+        
+
         UserProgramming userProgramming = new UserProgramming();
         userProgramming.setAssignedProgramId(programId);
         userProgramming.setUserInfo(user.get());
+        userProgramming.setStartWeek(startWeek);
+        userProgramming.setStartDate(startDate);
         userProgrammingRepository.save(userProgramming);
         return new ResponseEntity<>(userProgramming, HttpStatus.OK);
     }

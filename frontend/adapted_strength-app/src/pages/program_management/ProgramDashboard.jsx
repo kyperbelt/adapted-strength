@@ -230,9 +230,10 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
           </PrimaryButton>
         </div>
         <StyledCheckboxTable headers={["Name", "Description", "Weeks", "Users"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-          {getFilteredPrograms(programs, searchText).map((program) => (
+          {getFilteredPrograms(programs, searchText).map((program, index) => (
+
             <CustomTableRow
-              key={program.id}
+              key={`${program.id}_${index}`}
               data={[
                 program.name,
                 program.description,
@@ -262,7 +263,8 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
                 console.log(`Program ${program.id} clicked`);
               }}
               onRowClick={() => OnProgramClicked(program)}
-            />
+            >
+            </CustomTableRow>
           ))}
         </StyledCheckboxTable>
       </CardBack>
