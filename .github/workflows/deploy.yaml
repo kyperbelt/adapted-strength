@@ -70,6 +70,19 @@ jobs:
       #     npm run build
       #     tar -czf web.tar.gz build 
       #     cd ../..
+      - name: Build and compress envfile
+        run: |
+          echo export ADAPTED_STRENGTH_BASE_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_BASE_PRICE_ID }}' >> envfile
+          echo export ADAPTED_STRENGTH_GENERAL_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_GENERAL_PRICE_ID }}' >> envfile
+          echo export ADAPTED_STRENGTH_EMAIL='${{ secrets.ADAPTED_STRENGTH_EMAIL }}' >> envfile
+          echo export ADAPTED_STRENGTH_PASSWORD='${{ secrets.ADAPTED_STRENGTH_PASSWORD }}' >> envfile
+          echo export ADAPTED_STRENGTH_GENERAL_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_GENERAL_PRICE_ID }}' >> envfile
+          echo export ADAPTED_STRENGTH_SPECIFIC_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_SPECIFIC_PRICE_ID }}' >> envfile
+          echo export ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET='${{ secrets.ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET }}' >> envfile
+          echo export ADAPTED_STRENGTH_STRIPE_SECRET_KEY='${{ secrets.ADAPTED_STRENGTH_STRIPE_SECRET_KEY }}' >> envfile
+          echo export AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' >> envfile
+          echo export AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' >> envfile
+          tar -czf envfile.tar.gz envfile
 
       - name: Set up ssh
         run: |
@@ -86,23 +99,13 @@ jobs:
         run: |
           # echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
           echo "put app.tar.gz tmp/app.tar.gz" >> batchfile
+          echo "put envfile.tar.gz tmp/envfile.tar.gz" >> batchfile
 
           sftp -i key.pem -b batchfile $USER@$HOST
 
       # TODO - add expand / contract pattern for database migration
       - name: Run deployment script
         run: |
-          ssh -i key.pem $USER@$HOST "./deploy.sh \
-            'ADAPTED_STRENGTH_BASE_PRICE_ID=${{ secrets.ADAPTED_STRENGTH_BASE_PRICE_ID }}' \
-            'ADAPTED_STRENGTH_GENERAL_PRICE_ID=${{ secrets.ADAPTED_STRENGTH_GENERAL_PRICE_ID }}' \
-            'ADAPTED_STRENGTH_EMAIL=${{ secrets.ADAPTED_STRENGTH_EMAIL }}' \
-            'ADAPTED_STRENGTH_PASSWORD=${{ secrets.ADAPTED_STRENGTH_PASSWORD }}' \
-            'ADAPTED_STRENGTH_GENERAL_PRICE_ID=${{ secrets.ADAPTED_STRENGTH_GENERAL_PRICE_ID }}' \
-            'ADAPTED_STRENGTH_SPECIFIC_PRICE_ID=${{ secrets.ADAPTED_STRENGTH_SPECIFIC_PRICE_ID }}' \ 
-            'ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET=${{ secrets.ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET }}' \
-            'ADAPTED_STRENGTH_STRIPE_SECRET_KEY=${{ secrets.ADAPTED_STRENGTH_STRIPE_SECRET_KEY }}' \ 
-            'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' \
-            'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-            & exit"
+          ssh -i key.pem $USER@$HOST "./deploy.sh"
 
   
