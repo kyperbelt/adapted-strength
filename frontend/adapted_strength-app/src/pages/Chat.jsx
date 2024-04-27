@@ -1,201 +1,243 @@
-import {useCallback, useEffect, useState} from "react";
-import ReactPlayer from "react-player";
-import SockJS from 'sockjs-client';
-import {Stomp} from '@stomp/stompjs'
+import {useState, useEffect} from "react";
+import SockJS from "sockjs-client";
+import {Stomp} from "@stomp/stompjs";
 import {UserApi} from "../api/UserApi";
 import {ChatApi} from "../api/ChatApi";
 import {HttpStatus} from "../api/ApiUtils";
-import {on} from "ws";
 
+// Solution: Add a reference to a coach from the <user_table_name> to another user that is a coach
+const COACH = {
+    "firstName": "Alex",
+    "lastName": "Palting",
+    "email": "admin@email.com"
+};
 
-function RightMessage({...props})
-{
+function Message({userInfo, chatInfo}) {
+    const date = new Date(chatInfo.timeStamp);
+    const dateFormat = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
     return (
-        <div className="flex justify-end">
-            <div className="bg-custom-red rounded-lg p-2 max-w-xs">
-                {props.children}
-            </div>
-        </div>
-    );
-}
-
-function LeftMessage({...props})
-{
-    return (
-        <div className="flex">
-            <div className="bg-gray-500 rounded-lg p-2 max-w-xs">
-                {props.children}
-            </div>
-        </div>
+        userInfo.email === chatInfo.senderId ?
+            <>
+                <div className="flex justify-end">
+                    <div className="flex flex-col w-full gap-0.5 max-w-[170px]">
+                        <div className="flex items-center space-x-2">
+                        <span
+                            className="mt-2 text-sm font-semibold text-gray-900">{`${userInfo.firstName} ${userInfo.lastName}`}</span>
+                            <span className="mt-2 text-sm font-normal text-gray-500">{dateFormat}</span>
+                        </div>
+                        <div
+                            className="flex flex-col p-2 border-gray-200 bg-custom-red rounded-xl">
+                            <p className="text-sm font-normal text-white break-words">{chatInfo.content}</p>
+                        </div>
+                    </div>
+                </div>
+            </>
+            :
+            <>
+                <div className="flex">
+                    <div className="flex flex-col w-full gap-0.5 max-w-[170px]">
+                        <div className="flex items-center space-x-2">
+                        <span
+                            className="mt-2 text-sm font-semibold text-gray-900">{`${COACH.firstName} ${COACH.lastName}`}</span>
+                            <span className="mt-2 text-sm font-normal text-gray-500">{dateFormat}</span>
+                        </div>
+                        <div
+                            className="flex flex-col p-2 border-gray-200 bg-gray-100 rounded-xl">
+                            <p className="text-sm font-normal text-gray-900 break-words">{chatInfo.content}</p>
+                        </div>
+                    </div>
+                </div>
+            </>
     )
 }
 
-async function onMessageReceived(payload){
-    console.log('Message received', payload);
-}
+let stompClient = null;
 
-function GetChat({senderId, receiverId})
-{
-    const [data, setData] = useState(null);
-    const fetchApi = () => {
-        ChatApi.getChat(receiverId, senderId)
-            .then(response => {
-                if(response.status == HttpStatus.OK)
-                {
-                    setData(response.data);
-                    console.log(`Message here: ${JSON.stringify(response)}`);
-                }
-                throw new Error(`${response}`);
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-    };
+export default function Chat() {
+    const [userInfo, setUserInfo] = useState(null);
+    const [chatInfo, setChatInfo] = useState(null);
+    const [userMessage, setUserMessage] = useState({
+        "senderId": "",
+        "recipientId": "",
+        "content": "",
+        "timeStamp": ""
+    });
+    const [userVideo, setUserVideo] = useState("");
 
     useEffect(() => {
-        fetchApi();
+        try {
+            UserApi.getProfileInformation()
+                .then(userResponse => {
+                    if (userResponse.status === HttpStatus.OK) {
+                        setUserInfo(userResponse.data);
+                        //first async call return value is parameter for next one
+                        return userResponse.data;
+                    }
+                    throw Error(`Unable to get User Profile Information\nHTTP Status: ${userResponse.status}`);
+                })
+                .then((fetchedResponse) => {
+                    ChatApi.getChat(fetchedResponse.email, COACH.email)
+                        .then(chatResponse => {
+                            if (chatResponse.status === HttpStatus.OK) {
+                                setChatInfo(chatResponse.data);
+                            } else {
+                                throw Error(`Unable to get Chat Messages\nHTTP Status: ${chatResponse.status}`)
+                            }
+                        })
+                });
+        } catch (e) {
+            console.log(e);
+        }
     }, []);
 
-    return (
-        <div>
-            <div>data: {JSON.stringify(data)}</div>
-            <div>
-                <button onClick={fetchApi}>manual fetch</button>
-            </div>
-        </div>
-    )
-}
 
-
-export default function Chat()
-{
-    const [message, setMessage] = useState("");
-    const [videoFilePath, setVideoFilePath] = useState("");
-    const [videoName, setVideoName] = useState("");
-    const [messageList, setMessageList] = useState([]);
-    const [userData, setUserData] = useState(null);
-    let stompClient = null;
-
-    useEffect(() => {
-        UserApi.getProfileInformation()
-            .then(response => {
-                setUserData(response.data);
-                console.log(`Inside Effect: ${userData}`);
-            })
-            .catch(e => {
-                console.log(e);
-            })
-    }, [])
-
-    useEffect(() => {
-        if(userData !== null)
-        {
-            ChatApi.getChat("two@email.com", userData.email).then(function (response) {
-                setMessageList(response.data)
-            })
-        }
-    }, [])
-
-    const test = () => {
-        registerUser();
-        onConnected();
-    }
-
-    // const addToList = () => {
-    //     let tempList = list;
-    //
-    //     // if(videoFilePath != "")
-    //     // {
-    //     //     tempList.push(<ReactPlayer url={videoFilePath} controls={true} width="100%" height="100%"/>)
-    //     // }
-    //
-    //     if(msg != "")
-    //     {
-    //         tempList.push(msg);
-    //     }
-    //
-    //     setList(tempList);
-    //     setMsg("");
-    //     // setVideoFilePath("");
-    // }
-
-    const handleMessage = event => {
-        setMessage(event.target.value)
-    }
-
-    const handleVideoUpload = event => {
-        setVideoFilePath(URL.createObjectURL(event.target.files[0]))
-        setVideoName(event.target.files[0].name)
-    }
+    if (!userInfo) return (<>Loading</>);
 
     const registerUser = () => {
-        let Sock = new SockJS('http://localhost:8080/ws');
-        stompClient = Stomp.over(Sock);
-        console.log(`Is error here!? ${stompClient}`);
+        const socket = new SockJS("http://localhost:8080/ws");
+        stompClient = Stomp.over(socket);
         stompClient.connect({}, onConnected, onError);
-    }
-
-    const onError = (error) => {
-        console.log(`What is the error!!! ${error}`);
-    }
+    };
 
     const onConnected = () => {
-        stompClient.subscribe(`/user/${userData.email}/queue/messages`, onMessageReceived);
-        stompClient.send("/app/chatUser.addUser",{}, JSON.stringify({email: userData.email, fullName: `${userData.firstName} ${userData.lastName}`}));
+        stompClient.subscribe(`/user/${userInfo.email}/queue/messages`, onMessageReceived);
+        stompClient.send("/app/chatUser.addUser", {}, JSON.stringify({
+            email: userInfo.email,
+            fullName: `${userInfo.firstName} ${userInfo.lastName}`
+        }));
+    };
 
-        console.log(`Stomp Client: ${stompClient}`);
-    }
+    const onError = (e) => {
+        console.log(e);
+    };
 
-    const sendMessage = () => {
-        console.log(`What is going on!? ${stompClient}`);
-        if (stompClient)
-        {
-            const chatMessage = {
-                senderId: userData.email,
-                recipientId: "admin@email.com",
-                content: message,
-                timeStamp: new Date(),
-            };
+    const onMessageReceived = (payload) => {
+        const data = JSON.parse(new TextDecoder().decode(payload._binaryBody));
 
+        const receivedMessage = {
+            "senderId": data.senderId,
+            "recipientId": data.recipientId,
+            "content": data.content,
+            "timeStamp": new Date(data.timeStamp)
+        };
 
+        setChatInfo([...chatInfo, receivedMessage]);
+    };
 
-            setMessage("");
+    registerUser();
+
+    const generateChatMap = (messages) => {
+        let currentDateFormat;
+        let list;
+        const map = new Map();
+
+        messages.forEach((message) => {
+            let messageDate = new Date(message.timeStamp);
+            let messageDateFormat = messageDate.toLocaleDateString("en-US", {
+                "month": "2-digit",
+                "day": "2-digit",
+                "year": "numeric"
+            })
+
+            if (currentDateFormat !== messageDateFormat) {
+                list = [];
+                map.set(messageDateFormat, list);
+                currentDateFormat = messageDateFormat;
+                list.push(message);
+            } else {
+                list.push(message);
+            }
+        })
+
+        return map;
+    };
+
+    const ChatList = ({messages}) => {
+        const chatMap = generateChatMap(messages);
+        const chatList = [];
+
+        for (let key of chatMap.keys()) {
+            let dateFormat = new Date(key).toLocaleDateString("en-US", {
+                "weekday": "short",
+                "month": "short",
+                "day": "numeric"
+            })
+
+            chatList.push(<div className="flex justify-center text-sm font-normal text-gray-500 pb-2">{dateFormat}</div>);
+
+            for (let message of chatMap.get(key)) {
+                chatList.push(<Message userInfo={userInfo} chatInfo={message}/>);
+            }
+
         }
+
+
+        return (<ul>
+                {chatList}
+            </ul>
+        );
+    };
+
+    const handleUserMessage = (e) => {
+        setUserMessage({
+            "senderId": userInfo.email,
+            "recipientId": COACH.email,
+            "content": e.target.value,
+            "timeStamp": new Date()
+        });
+    };
+
+    const handleUserVideo = (e) => {
+        setUserVideo(e.target.files[0].name);
     }
 
+    const sendUserMessage = () => {
+        if (userMessage.content !== "") {
+            setChatInfo([...chatInfo, userMessage]);
+            stompClient.send("/app/processMessage", {}, JSON.stringify(userMessage));
+            setUserMessage({
+                ...userMessage,
+                "content": "",
+                "timeStamp": ""
+            });
+            setUserVideo("");
+        }
+    };
 
     return (
-        <div className="bg-white m-2 rounded-lg p-2">
-            <div className="font-semibold bg-custom-gray p-2">
-                Chatting with Alex
+        <div className="flex flex-col">
+            <div id="chat-title" className="mx-2 mt-2 flex justify-center border border-gray-200 p-2 rounded-t-xl bg-gray-100 text-gray-900 font-semibold">
+                Chatting with {`${COACH.firstName} ${COACH.lastName}`}
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
-                <div className="flex flex-col space-y-2" id="a">
-                    <ul>
-                        {
-                            messageList.length > 0 && messageList.map((data) => data.senderId == userData.email ?
-                                <RightMessage>{data.content}</RightMessage> : <LeftMessage>{data.content}</LeftMessage>)
-                        }
-                    </ul>
-
+            <div id="chat-message" className="mx-2 p-4 bg-white border-x border-gray-200 h-[67vh] overflow-y-auto">
+                {userInfo && chatInfo ? <ChatList messages={chatInfo}/> : "Loading..."}
+            </div>
+            <div id="chat-controls" className="mx-2 mb-2 absolute bottom-0 inset-x-0 border border-gray-200 p-4 rounded-b-xl bg-gray-100">
+                <div className="border mb-4 p-2 w-full bg-white text-gray-900 rounded-xl break-words">
+                    {userVideo === "" ? "No files selected." : userVideo}
                 </div>
-            </div>
-            {/*<div>{videoName}</div>*/}
-            {
-                userData !== null && <GetChat senderId={userData.email} receiverId={"two@email.com"}/>
-            }
-            <button onClick={test}>Connect Work Please :(</button>
-            <div className="bg-custom-gray p-4 flex items-center">
-                <input type="file" id="file-input" className="hidden" onChange={handleVideoUpload}/>
-                <label htmlFor="file-input"
-                       className="w-7 h-7 rounded-full bg-custom-red flex justify-center mr-2">+</label>
-                <input type="text" placeholder="Type your message..."
-                       className="flex-1 border rounded-full px-4 py-2 focus:outline-none" onChange={handleMessage}
-                       value={message}/>
-                <button className="rounded-full bg-custom-red block p-2 ml-2 hover:bg-custom-dark-red"
-                        onClick={sendMessage}>Send
-                </button>
+                <div className="flex w-full items-center">
+                    <input type="file" id="file-input" className="hidden" onChange={handleUserVideo}/>
+                    <label htmlFor="file-input" className="h-8 w-8 rounded-full bg-custom-red mr-2 hover:bg-custom-dark-red cursor-pointer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 p-1.5">
+                            <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H7.5M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V9.75V12V19C19 20.1046 18.1046 21 17 21H16.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 21L12 13M12 13L14.5 15.5M12 13L9.5 15.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </label>
+                    <input type="text" placeholder="Type your message..." className="flex-1 rounded-full px-4 py-2 border border-gray-200 focus:outline-none" value={userMessage.content} onChange={handleUserMessage}/>
+                    <button className="h-8 w-8 rounded-full ml-2 bg-custom-red hover:bg-custom-dark-red" onClick={sendUserMessage}>
+                        <svg className="fill-current fill-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 7V17M12 7L16 11M12 7L8 11" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     );
+
+
 }

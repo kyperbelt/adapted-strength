@@ -2,7 +2,6 @@
 Module: App.js
 Team: TeraBITE
 */
-import './App.css';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { lazy, Suspense, useState } from 'react';
 import Layout from "./pages/Layout";
@@ -21,7 +20,6 @@ import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
-import PlayGround from "./pages/test/PlayGround";
 import Tab from "./components/TabComponents/Tab.jsx";
 // import firebase utils
 import { fetchToken } from './firebase';
@@ -74,8 +72,6 @@ function App() {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-link-sent" element={<ResetLinkSent />} />
             <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="chat-test" element={<ChatTest />} />
-            <Route path="playground" element={<PlayGround />} />
 
             <Route path="edit-profile" element={<Suspense fallback="...">
               <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
@@ -104,13 +100,14 @@ function App() {
             <Route path="memberships" element={<Memberships />} />
             <Route path="leaderboard" element={<Leaderboard />} />
             <Route path='video-library' element={<VideoLibrary />} />
-            <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
             <Route path="*" element={<NotFound />} />
 
             /* ROUTES FOR CHAT PAGES */
             //--------------------------------------------------
+            <Route path="chat" element={<Chat />} />
             <Route path="manageChats" element={<ManageChats />} />
+            <Route path="chat-test" element={<ChatTest />} />
             //--------------------------------------------------
 
 

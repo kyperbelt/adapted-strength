@@ -33,7 +33,7 @@ export default function NavBar() {
 
 
   return (
-    <div className={'sticky top-0 w-full bg-primary z-20'}>
+    <div id="navigation" className="sticky top-0 w-full bg-default z-20">
       <div className={`right-0 bottom-0 left-0 bg-black opacity-50  ${hamburgerOpen ? 'flex' : 'hidden'}`} onClick={toggleHammy} />
       <nav className="border-0">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -66,7 +66,6 @@ export default function NavBar() {
                   </svg>
                 </div>
               </NavItem>
-              <NavItem to="/playground" onClick={toggleHammy}>Play Ground</NavItem>
             </ul>
           </div>
         </div>

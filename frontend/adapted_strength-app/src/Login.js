@@ -5,7 +5,6 @@ Team: TeraBITE
 */
 import logo from './logo.png';
 import icon from './ladyIcon.png'
-import './App.css';
 import NavBar from './components/navBar';
 
 function App() {

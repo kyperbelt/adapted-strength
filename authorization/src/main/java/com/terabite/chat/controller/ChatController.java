@@ -51,7 +51,7 @@ public class ChatController {
         message.setHasBeenRead(false);
         Message savedMessage=messageService.save(message);
         
-        ChatNotification chatNotification = new ChatNotification(savedMessage.getId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent(), savedMessage.getTimeStamp());
+        ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent(), savedMessage.getTimeStamp());
         //front end will be subscribing to bob/queue/message where bob is the user
         if(savedMessage.getRecipientId()!= null){
             messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages", chatNotification);
