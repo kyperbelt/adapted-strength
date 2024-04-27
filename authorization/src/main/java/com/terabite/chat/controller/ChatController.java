@@ -59,12 +59,14 @@ public class ChatController {
     }
  
     @GetMapping("/v1/chat/messages/{senderId}/{recipientId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<List<Message>> findChatMessages(@PathVariable("senderId") String senderId, @PathVariable("recipientId") String recipientId){
         return ResponseEntity.ok(messageService.findChatMessages(senderId, recipientId));
     }
 
     @MessageMapping("/chatUser.addUser")
     //this is a queue that the front end will need to subscribe to
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     @SendTo("/chatUser/topic")
     public ChatUser addChatUser(@Payload ChatUser chatUser){
         chatUserService.saveChatUser(chatUser);       // this is where chat user role is assigned
@@ -73,12 +75,13 @@ public class ChatController {
 
     // This function gets clients, admins can only get users
     @PostMapping("/v1/chat/clientChatUsers")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findClientChatUsers(chatUser);
     }
     // This function gets coaches
     @PostMapping("/v1/chat/coachChatUsers")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<List<ChatUser>> findCoachChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findCoachChatUsers(chatUser);
     }
@@ -86,27 +89,32 @@ public class ChatController {
 
     //TODO: for testing purposes only, we should not keep this
     @GetMapping("/v1/chat/messages")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<List<Message>> getMessages() {
         return ResponseEntity.ok(messageService.getAllMessages());
     }
 
     //TODO: for testing purposes only, we should not keep this
     @GetMapping("/v1/chat/chatRooms")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<List<ChatRoom>> getChatRooms() {
         return ResponseEntity.ok(chatRoomService.getAllChatRooms());
     }
 
     @PostMapping("/v1/chat/message/setMessageRead/{messageId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> setMessageReadById(@PathVariable("messageId") long id){
         return messageService.setMessageReadById(id);
     }
 
     @GetMapping("/v1/chat/message/getUnreadForUser/{senderId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> getUnreadMessagesForUser(@PathVariable("senderId") String senderId) {
         return messageService.getUnreadForUser(senderId);
     }
 
     @PostMapping("/v1/chat/message/markAsReadBySender/{senderId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?>  markMessagesAsReadBySender(@PathVariable("senderId") String senderId) {
         return messageService.markMessagesAsReadBySender(senderId);
     }

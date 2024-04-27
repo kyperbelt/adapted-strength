@@ -4,6 +4,7 @@ import com.terabite.movement.model.Movement;
 import com.terabite.movement.repository.MovementRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class MovementController {
     }
 
     @GetMapping("/movements")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<List<Movement>> getMovements(@RequestParam(required = false) String title)
     {
         List<Movement> movements = new ArrayList<Movement>();
@@ -42,6 +44,7 @@ public class MovementController {
     }
 
     @GetMapping("/movements/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<Movement> getMovementById(@PathVariable("id") long id)
     {
         Movement movement = movementRepository.findById(id);
@@ -53,6 +56,7 @@ public class MovementController {
     }
 
     @PostMapping("/movements")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Movement> createMovement(@RequestBody final Movement movement) {
         movementRepository.save(movement);
@@ -60,6 +64,7 @@ public class MovementController {
     }
 
     @PutMapping("/movements/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<Movement> updateMovement(@PathVariable("id") long id, @RequestBody Movement movement)
     {
         Movement foundMovement = movementRepository.findById(id);
@@ -78,6 +83,7 @@ public class MovementController {
 
 
     @DeleteMapping("/movements/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<HttpStatus> deleteMovementById(@PathVariable("id") long id)
     {
         movementRepository.deleteById((int) id);
@@ -86,6 +92,7 @@ public class MovementController {
 
     // TODO: Do we need to delete all movements?
     @DeleteMapping("/movements")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<Movement> deleteAllMovements()
     {
         // TODO

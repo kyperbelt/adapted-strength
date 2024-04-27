@@ -7,6 +7,7 @@ import com.stripe.exception.StripeException;
 import com.terabite.payment.service.PaymentService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +26,19 @@ public class PaymentController {
 
 
     @PostMapping("/cancel_subscription")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> cancelSubscriptionById(@RequestBody String subscriptionId) throws StripeException {
         return paymentService.cancelSubscriptionById(subscriptionId);
     }
     
     @PostMapping("/create_checkout_session")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> createCheckoutSession(String priceId) throws StripeException{
         return paymentService.createCheckoutSession(priceId);
     }
 
     @GetMapping("/session_status?session_id={checkoutSessionId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> retrieveCheckoutSessionStatus(@PathVariable("checkoutSessionId") String checkoutSessionId) throws StripeException {
         return paymentService.retrieveCheckoutSessionStatus(checkoutSessionId);
     }
