@@ -14,6 +14,7 @@ jobs:
     env:
       HOST: ${{ secrets.AWS_INSTANCE_URL }}
       USER: ${{ secrets.AWS_INSTANCE_USER }}
+      SSH_KEY: "${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}"
 
     # outputs:
     #   # jar: ${{ steps.out_jar.outputs.JAR }}
@@ -40,7 +41,10 @@ jobs:
           ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME_17_X64
           cd ..
           rm ./authorization/build/libs/*plain.jar
-          tar -czf app.tar.gz authorization/build/libs/*.jar authorization/build/resources/main/application.properties authorization/compose.yaml
+          mv authorization/build/libs/*.jar .
+          mv authorization/build/resources/main/application.properties .
+          mv authorization/compose.yaml .
+          tar -czf app.tar.gz *.jar application.properties compose.yaml
 
       # - name: Remove plain jar
       #   run: |
@@ -70,7 +74,7 @@ jobs:
       - name: Set up ssh
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_PRIVATE_DEPLOY_KEY }}" > key.pem
+          echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
