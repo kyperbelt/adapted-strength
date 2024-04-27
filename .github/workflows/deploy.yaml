@@ -90,8 +90,8 @@ jobs:
           sftp -i key.pem -b batchfile $USER@$HOST
 
       # TODO - add expand / contract pattern for database migration
-      # - name: Run deployment script
-      #   run: |
-      #     ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
+      - name: Run deployment script
+        run: |
+          ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
 
   
