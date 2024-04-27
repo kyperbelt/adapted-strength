@@ -1,6 +1,7 @@
 // TermsOfService.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { PrimaryButton } from '../components/Button';
 
 function TermsOfService() {
     const [accepted, setAccepted] = useState(false);
@@ -48,13 +49,13 @@ function TermsOfService() {
                 />
                 <label htmlFor="acceptTerms" className="text-sm">I accept the Terms of Service</label>
             </div>
-            <button
+            <PrimaryButton
                 onClick={handleSubmit}
-                className={`px-4 py-2 rounded text-white ${accepted ? 'bg-primary' : 'bg-gray-300'}`}
+                className={`px-4 py-2 rounded text-white ${accepted ? 'bg-accent' : 'bg-gray-300'}`}
                 disabled={!accepted}
             >
                 Proceed
-            </button>
+            </PrimaryButton>
         </div>
     );
 }
