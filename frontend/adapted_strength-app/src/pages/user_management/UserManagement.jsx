@@ -251,6 +251,7 @@ function UserDashboard({ selectedUser, programs }) {
     setAvailablePrograms(available);
   }, [programs, assignedPrograms]);
 
+  console.log("SelectedPRogram: ", selectedProgram);
   const handleAssignProgram = async (startWeek, startDate) => {
     // Function to call API to assign the program
     const programming = await UserApi.addProgramming(
@@ -268,7 +269,7 @@ function UserDashboard({ selectedUser, programs }) {
 
     const updatedAssignedPrograms = [
       ...assignedPrograms,
-      { ...selectedProgram, startWeek, startDate },
+      { ...programming, name: selectedProgram.name },
     ];
     setAssignedPrograms(updatedAssignedPrograms);
     // TODO: add a modal here
