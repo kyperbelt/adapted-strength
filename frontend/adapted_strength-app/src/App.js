@@ -24,7 +24,7 @@ import Tab from "./components/TabComponents/Tab.jsx";
 // import firebase utils
 import { fetchToken } from './firebase';
 
-import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
+// import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
 /*
@@ -49,6 +49,8 @@ import ChatTest from './pages/test_pages/ChatTest';
 
 // TODO: Check this out guys, this is a lazy loaded component
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
+const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
+const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
 
 // import footer from '../footer'
 
@@ -59,66 +61,77 @@ function App() {
 
   return (
     <div id="app" className="flex-1 flex flex-col">
-    {
-      <BrowserRouter className="">
-        <Routes className="">
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            {/* Add more routes here the same way as above */}
-            {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
 
-            {/* When no route available we go to not found */}
-            {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-link-sent" element={<ResetLinkSent />} />
-            <Route path="reset-password" element={<ResetPassword />} />
+      {
+        <BrowserRouter className="">
+          <Routes className="">
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              {/* Add more routes here the same way as above */}
+              {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
 
-            <Route path="edit-profile" element={<Suspense fallback="...">
-              <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
-                <EditProfile />
-              </RouteGuard>
-            </Suspense>} />
+              {/* When no route available we go to not found */}
+              {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+              <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route path="reset-link-sent" element={<ResetLinkSent />} />
+              <Route path="reset-password" element={<ResetPassword />} />
+              <Route path="chat-test" element={<ChatTest />} />
 
-            <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
-            <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
-            <Route path="about" element={<About />} />
-            <Route path="sign-up" element={<SignUp />} />
-            <Route path="sign-up-additional" element={<SignUpAdditional />} />
+              <Route path="edit-profile" element={
+                <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                  <Suspense fallback="...">
+                    <EditProfile />
+                  </Suspense>
+                </RouteGuard>
+              } />
 
-            <Route path="/program-management/:programId?/:blockId?/:weekId?/:dayId?" element={<ProgramManagement />} />
+              <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
+              <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
+              <Route path="about" element={<About />} />
+              <Route path="sign-up" element={<SignUp />} />
+              <Route path="sign-up-additional" element={<SignUpAdditional />} />
+
+              <Route path="user-management/:email?" element={<UserManagement/>} />
+              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+
+                  <Suspense fallback="...">
+                <ProgramManagement />
+                </Suspense>
+              </RouteGuard>} />
+
 
             /* ROUTES FOR PROGRAM PAGES */
-            //--------------------------------------------------
-            <Route path="bodybuild" element={<BodyBuild />} />
+              //--------------------------------------------------
+              <Route path="bodybuild" element={<BodyBuild />} />
             // <Route path="power-lifting" element={<Power />} />
             // <Route path="oly-lifting" element={<Oly />} />
             // <Route path="general-program" element={<General />} />
             //--------------------------------------------------
-
-            <Route path="terms-of-service" element={<TermsOfService />} />
-            <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
-            <Route path="memberships" element={<Memberships />} />
-            <Route path="leaderboard" element={<Leaderboard />} />
-            <Route path='video-library' element={<VideoLibrary />} />
-            <Route path="consultations" element={<Booking />} />
-            <Route path="*" element={<NotFound />} />
+             <Route path="terms-of-service" element={<TermsOfService />} />
+              <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
+              <Route path="memberships" element={<Memberships />} />
+              <Route path="leaderboard" element={<Leaderboard />} />
+              <Route path='video-library' element={<VideoLibrary />} />
+              <Route path="chat" element={<Chat />} />
+              <Route path="consultations" element={<Booking />} />
+              <Route path="*" element={<NotFound />} />
 
             /* ROUTES FOR CHAT PAGES */
-            //--------------------------------------------------
-            <Route path="chat" element={<Chat />} />
-            <Route path="manageChats" element={<ManageChats />} />
-            <Route path="chat-test" element={<ChatTest />} />
+              //--------------------------------------------------
+              <Route path="manageChats" element={<ManageChats />} />
+
             //--------------------------------------------------
 
 
-            /* Route for notifications & announcements tabs */
-            //-------------------------------------------------
-            <Route path="notifications" element={<Tab />} />
+              /* Route for notifications & announcements tabs */
+              //-------------------------------------------------
+              <Route path="notifications" element={<Tab />} />
             //-------------------------------------------------          </Route>
-        </Routes>
-      </BrowserRouter>
+            
+          </Routes>
+        </BrowserRouter>
       }
-    </div>
+    </div >
   );
 }
 

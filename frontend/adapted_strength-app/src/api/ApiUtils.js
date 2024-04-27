@@ -4,6 +4,7 @@
 
 // When developing use the following URL
 const BASE_API_URL = 'http://localhost:8080';
+// const BASE_API_URL = "http://10.0.0.63:8080"; // CASEY's host. Do NOT fkn forget to remove this
 
 export const AUTH_TOKEN_NAME = "adapted-strength_auth-token";
 
@@ -117,8 +118,13 @@ export class ApiUtils {
 function promiseWrapper(promise) {
   return promise.then(response => {
     return response.json().then(body => {
+      const status_code = response.status;
+      if (status_code  == HttpStatus.UNAUTHORIZED || status_code == HttpStatus.FORBIDDEN) {
+        ApiUtils.removeAuthToken();
+      }
+
       return {
-        status: response.status,
+        status: status_code,
         data: body,
       }
     })

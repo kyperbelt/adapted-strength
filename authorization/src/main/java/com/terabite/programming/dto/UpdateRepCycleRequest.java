@@ -5,9 +5,9 @@ import java.util.Optional;
 /**
  * CreateRepCycleRequest
  *
-    long repCycleId;
+    long id;
 
-    String name;
+    String repCycleName;
 
     String equipment;
 

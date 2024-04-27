@@ -2,8 +2,11 @@
 Module: Layout.jsx
 Team: TeraBITE
 */
-import { Outlet, Link} from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import NavBar from "../components/navBar";
+import { useLocation } from "react-router-dom";
+import { AuthApi } from "../api/AuthApi";
+
 
 export default function Layout() { 
 
@@ -14,7 +17,8 @@ export default function Layout() {
             {/*add footer here*/}
         </div>
     );
+
 }
-            // <footer className="bg-primary text-secondary p-4">
-            //     <p>Footer</p>
-            // </footer>
+// <footer className="bg-primary text-secondary p-4">
+//     <p>Footer</p>
+// </footer>
