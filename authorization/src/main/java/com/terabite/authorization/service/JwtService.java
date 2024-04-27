@@ -27,11 +27,11 @@ public class JwtService {
     // In milliseconds | probably should be in config FIXME
     private static final long DEFAULT_JWT_EXPIRATION = 1000 * 60 * 60 * 24;
 
-    private static Logger log = LoggerFactory.getLogger(JwtService.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
     private final Key SECRET;
     private long expiration = DEFAULT_JWT_EXPIRATION;
     // Cache type is always a key-value pair. Using placeholder boolean for now
-    private Cache<String, Boolean> tokenBlacklist;
+    private final Cache<String, Boolean> tokenBlacklist;
 //    public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
 //        this(jwtSecret, DEFAULT_JWT_EXPIRATION);
 //    }
@@ -58,10 +58,10 @@ public class JwtService {
         return createToken(claims, loginDetails.getUsername());
     }
 
-    @Deprecated
     /**
      * Generates a jwt token with only the username and no valid claims.
      */
+    @Deprecated
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userName);
@@ -98,7 +98,7 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         if (!claims.containsKey("roles")) {
             log.error("No roles found in token");
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         return claims.get("roles", List.class);
     }
@@ -122,7 +122,7 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
 
         if (!claims.containsKey("roles")) {
-            log.error("hasRole: No roles found in token for user: %s", username.get());
+            log.error("hasRole: No roles found in token for user: {}", username.get());
             return false;
         }
 
@@ -133,7 +133,7 @@ public class JwtService {
             }
         }
 
-        log.warn("hasRole: User <%s> does not have role: %s", username.get(), role);
+        log.warn("hasRole: User <{}> does not have role: {}", username.get(), role);
         return false;
 
     }
@@ -149,7 +149,7 @@ public class JwtService {
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException
                  | IllegalArgumentException e) {
             log.error(String.format("Error parsing token: %s", e.getMessage()));
-            e.printStackTrace();
+//            e.printStackTrace();
             // Don't think this ever gets thrown - see JwtAuthFilter
             throw new JwtValidationException(e.getMessage());
         }
