@@ -92,6 +92,6 @@ jobs:
       # TODO - add expand / contract pattern for database migration
       - name: Run deployment script
         run: |
-          ssh -i "~/.ssh/key.pem" $CONN "./deploy.sh & exit"
+          ssh -i "~/.ssh/key.pem" $USER@$HOST "./deploy.sh & exit"
 
   
