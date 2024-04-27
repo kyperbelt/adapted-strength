@@ -9,6 +9,9 @@ public interface DeadliftService {
 
     void deleteDeadliftEntry(Long id);
 
+    List<Deadlift> getTop10MaleAthletes();
+    List<Deadlift> getTop10FemaleAthletes();
+
     List<Deadlift> getTop10FemaleAthletesByWeightClass(String weightClass);
 
     List<Deadlift> getTop10MaleAthletesByWeightClass(String weightClass);

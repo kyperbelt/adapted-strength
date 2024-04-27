@@ -29,12 +29,22 @@ public class BenchServiceImpl implements BenchService {
     }
 
     @Override
+    public List<Bench> getTop10MaleAthletes() {
+        return benchRepository.findTop10ByGenderOrderByWeightDesc('M');
+    }
+
+    @Override
+    public List<Bench> getTop10FemaleAthletes() {
+        return benchRepository.findTop10ByGenderOrderByWeightDesc('W');
+    }
+
+    @Override
     public List<Bench> getTop10MaleAthletesByWeightClass(String weightClass) {
         return benchRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'M');
     }
 
     @Override
     public List<Bench> getTop10FemaleAthletesByWeightClass(String weightClass) {
-        return benchRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'F');
+        return benchRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'W');
     }
 }

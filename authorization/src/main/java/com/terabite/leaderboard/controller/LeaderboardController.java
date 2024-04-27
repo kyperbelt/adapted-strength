@@ -28,6 +28,7 @@ public class LeaderboardController {
     @Autowired
     private CleanJerkService cleanJerkService;
 
+    /********************************* Post Mappings for adding records *********************************/
     @PostMapping("/olympic")
     public ResponseEntity<Olympic> addOlympicEntry(@RequestBody Olympic olympic) {
         Olympic savedOlympic = olympicService.addOlympicEntry(olympic);
@@ -70,6 +71,7 @@ public class LeaderboardController {
         return new ResponseEntity<>(savedCleanJerk, HttpStatus.CREATED);
     }
 
+    /********************************* Delete Mappings for deleting records *********************************/
     @DeleteMapping("/olympic/{id}")
     public ResponseEntity<Void> deleteOlympicEntry(@PathVariable Long id) {
         olympicService.deleteOlympicEntry(id);
@@ -112,6 +114,7 @@ public class LeaderboardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /********************************* Get Mappings for retrieving records *********************************/
     @GetMapping("/olympic/top10male")
     public ResponseEntity<List<Olympic>> getTop10MaleAthletesByWeightClass(@RequestParam String weightClass) {
         List<Olympic> topMaleAthletes = olympicService.getTop10MaleAthletesByWeightClass(weightClass);
@@ -136,55 +139,105 @@ public class LeaderboardController {
     }
 
     @GetMapping("/squat/top10male")
+    public ResponseEntity<List<Squat>> getTop10MaleSquat() {
+        List<Squat> topMaleAthletes = squatService.getTop10MaleAthletes();
+        return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/squat/top10female")
+    public ResponseEntity<List<Squat>> getTop10FemaleSquat() {
+        List<Squat> topFemaleAthletes = squatService.getTop10FemaleAthletes();
+        return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/squat/top10malebyweight")
     public ResponseEntity<List<Squat>> getTop10MaleSquatByWeightClass(@RequestParam String weightClass) {
         List<Squat> topMaleAthletes = squatService.getTop10MaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
     }
-    @GetMapping("/squat/top10female")
+    @GetMapping("/squat/top10femalebyweight")
     public ResponseEntity<List<Squat>> getTop10FemaleSquatByWeightClass(@RequestParam String weightClass) {
         List<Squat> topFemaleAthletes = squatService.getTop10FemaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
     }
 
     @GetMapping("/bench/top10male")
+    public ResponseEntity<List<Bench>> getTop10MaleBench() {
+        List<Bench> topMaleAthletes = benchService.getTop10MaleAthletes();
+        return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/bench/top10female")
+    public ResponseEntity<List<Bench>> getTop10FemaleBench() {
+        List<Bench> topFemaleAthletes = benchService.getTop10FemaleAthletes();
+        return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/bench/top10malebyweight")
     public ResponseEntity<List<Bench>> getTop10MaleBenchByWeightClass(@RequestParam String weightClass) {
         List<Bench> topMaleAthletes = benchService.getTop10MaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
     }
-    @GetMapping("/bench/top10female")
+    @GetMapping("/bench/top10femalebyweight")
     public ResponseEntity<List<Bench>> getTop10FemaleBenchByWeightClass(@RequestParam String weightClass) {
         List<Bench> topFemaleAthletes = benchService.getTop10FemaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
     }
 
     @GetMapping("/deadlift/top10male")
+    public ResponseEntity<List<Deadlift>> getTop10MaleDeadlift() {
+        List<Deadlift> topMaleAthletes = deadliftService.getTop10MaleAthletes();
+        return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/deadlift/top10female")
+    public ResponseEntity<List<Deadlift>> getTop10FemaleDeadlift() {
+        List<Deadlift> topFemaleAthletes = deadliftService.getTop10FemaleAthletes();
+        return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/deadlift/top10malebyweight")
     public ResponseEntity<List<Deadlift>> getTop10MaleDeadliftByWeightClass(@RequestParam String weightClass) {
         List<Deadlift> topMaleAthletes = deadliftService.getTop10MaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
     }
-    @GetMapping("/deadlift/top10female")
+    @GetMapping("/deadlift/top10femalebyweight")
     public ResponseEntity<List<Deadlift>> getTop10FemaleDeadliftByWeightClass(@RequestParam String weightClass) {
         List<Deadlift> topFemaleAthletes = deadliftService.getTop10FemaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
     }
 
     @GetMapping("/snatch/top10male")
+    public ResponseEntity<List<Snatch>> getTop10MaleSnatch() {
+        List<Snatch> topMaleAthletes = snatchService.getTop10MaleAthletes();
+        return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/snatch/top10female")
+    public ResponseEntity<List<Snatch>> getTop10FemaleSnatch() {
+        List<Snatch> topFemaleAthletes = snatchService.getTop10FemaleAthletes();
+        return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/snatch/top10malebyweight")
     public ResponseEntity<List<Snatch>> getTop10MaleSnatchByWeightClass(@RequestParam String weightClass) {
         List<Snatch> topMaleAthletes = snatchService.getTop10MaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
     }
-    @GetMapping("/snatch/top10female")
+    @GetMapping("/snatch/top10femalebyweight")
     public ResponseEntity<List<Snatch>> getTop10FemaleSnatchByWeightClass(@RequestParam String weightClass) {
         List<Snatch> topFemaleAthletes = snatchService.getTop10FemaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
     }
 
     @GetMapping("/cleanjerk/top10male")
+    public ResponseEntity<List<CleanJerk>> getTop10MaleCleanJerk() {
+        List<CleanJerk> topMaleAthletes = cleanJerkService.getTop10MaleAthletes();
+        return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/cleanjerk/top10female")
+    public ResponseEntity<List<CleanJerk>> getTop10FemaleCleanJerk() {
+        List<CleanJerk> topFemaleAthletes = cleanJerkService.getTop10FemaleAthletes();
+        return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);
+    }
+    @GetMapping("/cleanjerk/top10malebyweight")
     public ResponseEntity<List<CleanJerk>> getTop10MaleCleanJerkyWeightClass(@RequestParam String weightClass) {
         List<CleanJerk> topMaleAthletes = cleanJerkService.getTop10MaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topMaleAthletes, HttpStatus.OK);
     }
-    @GetMapping("/cleanjerk/top10female")
+    @GetMapping("/cleanjerk/top10femalebyweight")
     public ResponseEntity<List<CleanJerk>> getTop10FemaleCleanJerkByWeightClass(@RequestParam String weightClass) {
         List<CleanJerk> topFemaleAthletes = cleanJerkService.getTop10FemaleAthletesByWeightClass(weightClass);
         return new ResponseEntity<>(topFemaleAthletes, HttpStatus.OK);

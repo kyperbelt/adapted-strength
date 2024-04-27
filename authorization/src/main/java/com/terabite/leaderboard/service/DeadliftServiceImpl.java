@@ -30,13 +30,23 @@ public class DeadliftServiceImpl implements DeadliftService {
     }
 
     @Override
+    public List<Deadlift> getTop10MaleAthletes() {
+        return deadliftRepository.findTop10ByGenderOrderByWeightDesc('M');
+    }
+
+    @Override
+    public List<Deadlift> getTop10FemaleAthletes() {
+        return deadliftRepository.findTop10ByGenderOrderByWeightDesc('W');
+    }
+
+    @Override
     public List<Deadlift> getTop10MaleAthletesByWeightClass(String weightClass) {
         return deadliftRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'M');
     }
 
     @Override
     public List<Deadlift> getTop10FemaleAthletesByWeightClass(String weightClass) {
-        return deadliftRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'F');
+        return deadliftRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'W');
     }
 }
 

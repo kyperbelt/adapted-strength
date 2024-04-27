@@ -1,5 +1,6 @@
 package com.terabite.leaderboard.service;
 
+import com.terabite.leaderboard.model.Snatch;
 import com.terabite.leaderboard.model.Squat;
 import com.terabite.leaderboard.repository.SquatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,22 @@ public class SquatServiceImpl implements SquatService {
     }
 
     @Override
+    public List<Squat> getTop10MaleAthletes() {
+        return squatRepository.findTop10ByGenderOrderByWeightDesc('M');
+    }
+
+    @Override
+    public List<Squat> getTop10FemaleAthletes() {
+        return squatRepository.findTop10ByGenderOrderByWeightDesc('W');
+    }
+
+    @Override
     public List<Squat> getTop10MaleAthletesByWeightClass(String weightClass) {
         return squatRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'M');
     }
 
     @Override
     public List<Squat> getTop10FemaleAthletesByWeightClass(String weightClass) {
-        return squatRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'F');
+        return squatRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'W');
     }
 }

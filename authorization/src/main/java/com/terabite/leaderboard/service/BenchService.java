@@ -7,6 +7,8 @@ import java.util.List;
 public interface BenchService {
     Bench addBenchEntry(Bench bench);
     void deleteBenchEntry(Long id);
+    List<Bench> getTop10MaleAthletes();
+    List<Bench> getTop10FemaleAthletes();
     List<Bench> getTop10FemaleAthletesByWeightClass(String weightClass);
     List<Bench> getTop10MaleAthletesByWeightClass(String weightClass);
 }

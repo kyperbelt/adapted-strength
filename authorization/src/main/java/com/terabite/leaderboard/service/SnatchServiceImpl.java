@@ -1,5 +1,6 @@
 package com.terabite.leaderboard.service;
 
+import com.terabite.leaderboard.model.Deadlift;
 import com.terabite.leaderboard.model.Snatch;
 import com.terabite.leaderboard.repository.SnatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,22 @@ public class SnatchServiceImpl implements SnatchService {
     }
 
     @Override
+    public List<Snatch> getTop10MaleAthletes() {
+        return snatchRepository.findTop10ByGenderOrderByWeightDesc('M');
+    }
+
+    @Override
+    public List<Snatch> getTop10FemaleAthletes() {
+        return snatchRepository.findTop10ByGenderOrderByWeightDesc('W');
+    }
+
+    @Override
     public List<Snatch> getTop10MaleAthletesByWeightClass(String weightClass) {
         return snatchRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'M');
     }
 
     @Override
     public List<Snatch> getTop10FemaleAthletesByWeightClass(String weightClass) {
-        return snatchRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'F');
+        return snatchRepository.findTop10ByWeightClassAndGenderOrderByWeightDesc(weightClass, 'W');
     }
 }
