@@ -25,12 +25,16 @@ import com.terabite.programming.service.DayService;
 import com.terabite.programming.service.ProgramService;
 import com.terabite.programming.service.RepCycleService;
 import com.terabite.programming.service.WeekService;
+import com.terabite.user.UserApi;
+import com.terabite.user.model.UserProgramming;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -49,11 +53,13 @@ public class ProgrammingControler {
     private final DayService dayService;
     private final WeekService weekService;
     private final ProgramService programService;
+    private final UserApi userApi;
 
-    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService){
+    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService, UserApi userApi){
         this.repCycleService=repCycleService;
         this.dayService=dayService;
         this.weekService=weekService;
+        this.userApi=userApi;
         this.programService=programService;
     }
 
@@ -309,6 +315,16 @@ public class ProgrammingControler {
             return repCycleService.createNewRepCycle(repCycle);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(repCycleId)));
+    }
+
+
+    @GetMapping("/user_programs/{programId}")
+    public ResponseEntity<?> getAllUsersForProgram(@PathVariable long programId) {
+        List<UserProgramming> userProgrammings = userApi.getAllUsersForProgram(programId);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("programId", programId);
+        payload.put("users", userProgrammings.stream().map(programming -> programming.getUserInfo().getEmail()).toList());
+        return ResponseEntity.ok(payload);
     }
 
 }

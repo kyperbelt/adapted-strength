@@ -5,7 +5,6 @@ import WeekDashboard from "./WeekDashboard";
 import DayDashboard from "./DayDashboard";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
-
 // PROGRAM FORMAT for local web state
 // id: program_id++,
 // name: name,
@@ -13,9 +12,8 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 // selected: false,
 // blocks: []
 export default function ProgramMamagement() {
-
   const location = useLocation();
-  // get path variables 
+  // get path variables
   const { programId, weekId, dayId } = useParams();
   let breadcrumbPreload = [];
   if (programId) {
@@ -41,16 +39,20 @@ export default function ProgramMamagement() {
       breadcrumbPreload.push(dayId);
     }
     setBreadcrumb(breadcrumbPreload);
-    console.log("breadcrumbPreload", breadcrumbPreload);
+    // console.log("breadcrumbPreload", breadcrumbPreload);
   }, [location]);
-
-
 
   return (
     <BlankPageContainer id="program-management">
-      {breadcrumb.length <= 0 && <ProgramDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
-      {breadcrumb.length == 1 && <WeekDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
-      {breadcrumb.length == 2 && <DayDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />}
+      {breadcrumb.length <= 0 && (
+        <ProgramDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />
+      )}
+      {breadcrumb.length == 1 && (
+        <WeekDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />
+      )}
+      {breadcrumb.length == 2 && (
+        <DayDashboard breadCrumbState={[breadcrumb, setBreadcrumb]} />
+      )}
     </BlankPageContainer>
   );
 }

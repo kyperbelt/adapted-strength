@@ -1,5 +1,6 @@
 package com.terabite.user.service;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,16 +35,24 @@ public class UserProgrammingService {
         this.commentRepository = commentRepository;
     }
 
-    public ResponseEntity<?> addProgramming(String userEmail, long programId, int startWeek) {
+    public ResponseEntity<?> addProgramming(String userEmail, long programId, int startWeek, long startDateEpoch) {
         Optional<UserInformation> user = userRepository.findByEmail(userEmail);
+
         if (user.isEmpty()) {
             return new ResponseEntity<>(Payload.of("User not found"), HttpStatus.NOT_FOUND);
         }
 
-        // get todays date 
+        // make sure that programming is not already assigned to user
+        List<UserProgramming> userProgrammings = userProgrammingRepository.findByUserInfoEmail(userEmail);
+        for (UserProgramming up : userProgrammings) {
+            if (up.getAssignedProgramId() == programId) {
+                return new ResponseEntity<>(Payload.of("User already has this programming"), HttpStatus.BAD_REQUEST);
+            }
+        }
 
-        final Date startDate = new Date();
-        
+
+        // use startDateEpoch to create a Date object
+        Date startDate= new Date(startDateEpoch);
 
         UserProgramming userProgramming = new UserProgramming();
         userProgramming.setAssignedProgramId(programId);

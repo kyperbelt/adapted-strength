@@ -205,8 +205,8 @@ public class UserController {
     @PostMapping("/programming")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> addProgramming(@RequestParam("email") String email,
-            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek) {
-        return userProgrammingService.addProgramming(email, programId, startWeek);
+            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek, @RequestParam("startDate") Long startDate) {
+        return userProgrammingService.addProgramming(email, programId, startWeek, startDate);
     }
 
     @DeleteMapping("/programming/{upid}/remove")

@@ -90,7 +90,11 @@ export class AuthApi {
     const promise = ApiUtils.apiGet(`auth/has_role/${role}`);
 
     await promise.then((response) => {
-
+      if (response.status === HttpStatus.OK) {
+        console.log("User has role: ", role);
+        return true;
+      }
+      return false; 
     });
   }
 
