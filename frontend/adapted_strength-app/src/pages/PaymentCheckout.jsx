@@ -32,7 +32,7 @@ const Checkout = ({plan}) => {
   );
 };
 
-const PLANS = ["base", "general", "specific"];
+const PLANS = ["base", "specific"];
 
 function getAvailablePlans(){
   // TODO: HOOK to backend to get all available plans

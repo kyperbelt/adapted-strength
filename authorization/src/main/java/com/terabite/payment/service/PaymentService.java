@@ -171,7 +171,7 @@ public class PaymentService {
             )
             .build();
         subscription.update(params);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(Payload.of("Subscription updated"), HttpStatus.OK);
     }
 
     public ResponseEntity<?> getActiveSubscriptionStatus(String email) throws StripeException {

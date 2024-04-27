@@ -2,7 +2,7 @@
 Module: Profile.jsx
 Team: TeraBITE
 */
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Outlet, Link, useNavigate , useLocation} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UserApi } from "../api/UserApi";
 import { AuthApi } from "../api/AuthApi";
@@ -68,8 +68,10 @@ export default function Profile() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [profileInfo, setProfileInfo] = useState([]);
+    const location = useLocation();
 
     useEffect(() => {
+        console.log("CALLED FETCHING OF USER INFO"); 
         setIsLoading(true);
         UserApi.getProfileInformation()
             .then((response) => {
@@ -96,7 +98,7 @@ export default function Profile() {
                 //TODO: User was unable to get profile information, 
                 //     redirect to login page or display error message
             });
-    }, []);
+    }, [location]);
 
     if (isLoading) {
         return <div>{"Loading..."}</div>

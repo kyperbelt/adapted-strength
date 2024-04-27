@@ -40,7 +40,7 @@ import General from './pages/program_pages/General.jsx';
 
 import Booking from './pages/Booking.jsx';
 import RouteGuard from "./util/RouteGuard";
-import Profile from './pages/Profile';
+
 import { AuthApi } from './api/AuthApi';
 
 import TermsOfService from './pages/TermsOfService.jsx';
@@ -49,6 +49,7 @@ import VideoLibrary from './pages/VideoLibrary.jsx';
 import ChatTest from './pages/test_pages/ChatTest';
 
 // TODO: Check this out guys, this is a lazy loaded component
+const Profile = lazy(() => import('./pages/Profile.jsx'));
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 
@@ -82,7 +83,12 @@ function App() {
               </RouteGuard>
             </Suspense>} />
 
-            <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
+            <Route path="profile" element={<Suspense fallback="...">
+              <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                <Profile />
+              </RouteGuard>
+            </Suspense>} />
+            {/* <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} /> */}
             <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
             <Route path="about" element={<About />} />
             <Route path="sign-up" element={<SignUp />} />
