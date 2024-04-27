@@ -34,6 +34,9 @@ public class Powerlifting {
     @JsonAlias("total")
     private double total;
 
+    public Powerlifting (){
+    }
+
     public Long getId() {
         return id;
     }

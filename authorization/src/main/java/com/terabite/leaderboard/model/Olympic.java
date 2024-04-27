@@ -16,6 +16,9 @@ public class Olympic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonAlias("name")
+    private String name;
+
     @JsonAlias("weight_class")
     private String weightClass;
 
@@ -31,9 +34,14 @@ public class Olympic {
     @JsonAlias("total")
     private double total;
 
+    public Olympic() {
+    }
+
     public Long getId() {
         return id;
     }
+    public String getName() {return name;}
+    public void setName() {this.name = name;}
 
     public String getWeightClass() {
         return weightClass;
