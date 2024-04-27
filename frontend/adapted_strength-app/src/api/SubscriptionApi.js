@@ -28,4 +28,14 @@ export class SubscriptionApi {
         throw new Error("Failed to change sub tier with code: ", r.status);
       })
   }
+
+  static cancelSub(){
+    return ApiUtils.apiPost(`payments/cancel_subscription`)
+    .then((r) =>{
+      if (r.status === HttpStatus.OK) {
+        return true;
+      }
+      throw new Error("Failed to cancel subscription");
+    })
+  }
 }

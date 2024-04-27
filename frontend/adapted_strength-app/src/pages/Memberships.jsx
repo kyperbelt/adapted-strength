@@ -245,11 +245,14 @@ function ChangeSubscription({ tier, nav }) {
 }
 
 function NoSubscription({ tier, nav }) {
+  const [loadingBase, setLoadingBase] = useState(false);
+  const [loadingSpecific, setLoadingSpecific] = useState(false);
+
   return (
     <PageContainer1>
-      <div className="bg-secondary p-6 w-full flex flex-col items-center justify-center">
-        <CardBack className="p-6" classNameCard="mb-6">
-          <div className="font-bold text-lg">
+      <div className="bg-secondary xl:p-6 w-full flex flex-col items-center justify-center">
+        <CardBack className="p-6 flex" classNameCard="mb-6 flex">
+          <div className="font-bold xl:text-lg text-md">
             Adapted Strength (A.S.) Memberships
           </div>
           <h3>
@@ -265,8 +268,8 @@ function NoSubscription({ tier, nav }) {
           </h3>
           <h3>Day-Passes are $29.99 afterwards!</h3>
         </CardBack>
-
-        <div className="flex flex-col xl:flex-row max-w-screen-xl xl:space-x-6 w-5/6 content-center rounded-md">
+        
+        <div className="flex flex-col xl:flex-row max-w-screen-xl space-y-6 xl:space-y-0 xl:space-x-6 w-11/12 xl:w-5/6 content-center rounded-md">
           <SubCard
             name="Base client"
             cost="99.99"

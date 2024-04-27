@@ -55,7 +55,6 @@ public class PaymentService {
             return new ResponseEntity<>(Payload.of("Customer does not have a subscription"), HttpStatus.BAD_REQUEST);
         }
         
-        System.out.println(subscriptionId);
         // get the subscription
         Subscription resource = Subscription.retrieve(subscriptionId);
 
@@ -68,7 +67,7 @@ public class PaymentService {
         // call stripe to update subscription
         resource.update(params);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(Payload.of("Subscription Cancelled"), HttpStatus.OK);
     }
 
 
