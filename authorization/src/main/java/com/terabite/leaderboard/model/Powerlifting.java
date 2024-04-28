@@ -44,13 +44,13 @@ public class Powerlifting {
         return id;
     }
     public String getName() {return name;}
-    public void setName() {this.name = weightClass;}
+    public void setName(String name) {this.name = name;}
 
     public String getWeightClass() {
         return weightClass;
     }
 
-    public void setWeightClass() {
+    public void setWeightClass(String weightClass) {
         this.weightClass = weightClass;
     }
 
@@ -58,7 +58,7 @@ public class Powerlifting {
         return gender;
     }
 
-    public void setGender() {
+    public void setGender(char gender) {
         this.gender = gender;
     }
 
@@ -66,7 +66,7 @@ public class Powerlifting {
         return squat;
     }
 
-    public void setSquat() {
+    public void setSquat(double squat) {
         this.squat = squat;
     }
 
@@ -74,7 +74,7 @@ public class Powerlifting {
         return bench;
     }
 
-    public void setBench() {
+    public void setBench(double bench) {
         this.bench = bench;
     }
 
@@ -82,7 +82,7 @@ public class Powerlifting {
         return deadlift;
     }
 
-    public void setDeadlift() {
+    public void setDeadlift(double deadlift) {
         this.deadlift = deadlift;
     }
 
