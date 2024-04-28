@@ -79,7 +79,7 @@ jobs:
           echo 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' >> envfile
           echo 'MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}' >> envfile
           echo 'MYSQL_HOST=${{ secrets.MYSQL_HOST }}' >> envfile
-          echo 'MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}' >> envfile
+          echo 'MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"' >> envfile
           echo 'MYSQL_ROOT_USER=${{ secrets.MYSQL_ROOT_USER }}' >> envfile
           
       - name: Build image
