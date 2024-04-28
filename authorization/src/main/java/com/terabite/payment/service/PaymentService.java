@@ -168,6 +168,7 @@ public class PaymentService {
                 .setPrice(priceId)
                 .build()
             )
+            .setCancelAtPeriodEnd(false)
             .build();
         subscription.update(params);
         return new ResponseEntity<>(Payload.of("Subscription updated"), HttpStatus.OK);

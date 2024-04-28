@@ -23,8 +23,6 @@ function AdaptedStrengthLogo() {
 
 export default function Memberships() {
   const nav = useNavigate();
-
-  // const [userInfo, setUserInfo] = useState(null);
   const [tier, setTier] = useState(null);
   const isLoggedIn = useRef(AuthApi.isLoggedIn());
 
@@ -93,7 +91,6 @@ function ChangeSubscription({ tier, nav }) {
             <StateGuard state={() => tier !== "BASE_CLIENT"}>
               <PrimaryButton
                 onClick={async () => {
-                  // await SubscriptionApi.changeSubTier({plan: "base"});
                   setLoadingBase(true);
                   await SubscriptionApi.changeSubTier({ plan: "base" }).then(
                     (_) => {
@@ -104,8 +101,6 @@ function ChangeSubscription({ tier, nav }) {
                       }, 300);
                     }
                   );
-
-                  // nav("/profile");
                 }}
               >
                 {!loadingBase ? (
@@ -245,9 +240,6 @@ function ChangeSubscription({ tier, nav }) {
 }
 
 function NoSubscription({ tier, nav }) {
-  const [loadingBase, setLoadingBase] = useState(false);
-  const [loadingSpecific, setLoadingSpecific] = useState(false);
-
   return (
     <PageContainer1>
       <div className="bg-secondary xl:p-6 w-full flex flex-col items-center justify-center">
@@ -328,7 +320,6 @@ function SubCard({
   name,
   description,
   benefits = [],
-  notes = [],
   children,
 }) {
   return (

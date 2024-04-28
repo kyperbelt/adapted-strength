@@ -8,6 +8,8 @@ import { AuthApi } from "../api/AuthApi";
 import { PrimaryButton, SecondaryButton } from "../components/Button";
 import { startTransition } from "react";
 import { SubscriptionApi } from "../api/SubscriptionApi";
+import { BasicModalDialogue } from "../components/Dialog";
+import StateGuard from "../util/StateGuard";
 
 function AdaptedStrengthLogo() {
   return (
@@ -30,7 +32,7 @@ function SubscriptionField({ tier }) {
       subscriptionLabel = "Specific Client";
       break;
     default:
-      subscriptionLabel = "Unknown";
+      subscriptionLabel = "Not Subscribed";
   }
   return <div className="subscription-tier">{subscriptionLabel}</div>;
 }
@@ -48,11 +50,17 @@ export default function Profile() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [profileInfo, setProfileInfo] = useState([]);
-  const [showConfirmation, setShowConfrimation] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleCancelSubscription = async () => {
     await SubscriptionApi.cancelSub();
-    setShowConfrimation(false);
+    setShowConfirmation(false);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   useEffect(() => {
@@ -90,7 +98,8 @@ export default function Profile() {
   }
   const formattedCellPhone = formatPhoneNumber(profileInfo.cellPhone);
   const formattedHomePhone = formatPhoneNumber(profileInfo.homePhone);
-
+  const tier = profileInfo.subscriptionTier;
+  console.log(profileInfo);
   return (
     <div>
       <style>{`
@@ -204,24 +213,49 @@ export default function Profile() {
         >
           Edit Profile
         </PrimaryButton>
-        <SecondaryButton onClick={() => setShowConfrimation(true)}>
-          <>Cancel Subscription</>
-        </SecondaryButton>
+
+        <StateGuard state={() => tier !== "NO_SUBSCRIPTION"}>
+          <SecondaryButton onClick={() => setShowConfirmation(true)}>
+            <>Cancel Subscription</>
+          </SecondaryButton>
+        </StateGuard>
 
         {showConfirmation && (
-          <div className = "modal">
-            <div className = "modal-content">
-              <p>Are you sure you want to unsubscribe? You will retain access to your benefits until the end of the current billing cycle</p>
-              <div className = "modal-buttons">
-                <SecondaryButton onClick={() => {
-                  handleCancelSubscription();
-                  setShowConfrimation(false);
-                }}
-                >Yes</SecondaryButton>
-                <SecondaryButton onClick={() => setShowConfrimation(false)}>No</SecondaryButton>
-              </div>
+          <BasicModalDialogue
+            title="Confirm Unsubscribe"
+            onCloseDialog={() => setShowConfirmation(false)}
+          >
+            <p>
+              Are you sure you want to unsubscribe? Please note that you'll
+              continue to enjoy your benefits until the end of the current
+              billing cycle. Changes to your account will take effect after the
+              cycle concludes.
+            </p>
+            <div className="flex justify-end">
+              <SecondaryButton onClick={() => handleCancelSubscription()}>
+                <>Yes</>
+              </SecondaryButton>
+              <PrimaryButton onClick={() => setShowConfirmation(false)}>
+                <>No</>
+              </PrimaryButton>
             </div>
-          </div>
+          </BasicModalDialogue>
+        )}
+        {showModal && (
+          <BasicModalDialogue
+            title="Subscription Cancelled"
+            onCloseDialog={handleCloseModal}
+          >
+            <p>
+              Subscription successfully cancelled! You will not see a change in
+              your account until the end of the current billing cycle.
+            </p>
+            <div className="flex justify-end">
+              <PrimaryButton onClick={() => handleCloseModal()}>
+                <>Close</>
+              </PrimaryButton>
+            </div>
+          </BasicModalDialogue>
         )}
       </div>
       <Footer />
