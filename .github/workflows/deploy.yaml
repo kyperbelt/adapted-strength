@@ -45,7 +45,7 @@ jobs:
           service = os.getenv('SERVICE')
           with open(f'{service}/build.gradle', 'r') as f:
               if l := re.findall('version.*=.*', f.read() ):
-                  version = l[0].split('=')[1]
+                  version = l[0].split('=')[1].strip()
               
           with open(os.getenv('GITHUB_OUTPUT'), 'a') as out:
               out.write(f'JAR={service}-{version}.jar')      
@@ -54,7 +54,51 @@ jobs:
         run: |
             echo ${{ steps.jar_name.outputs.JAR }}
 
+      - name: Build jar
+        run: |
+          cd authorization
+          ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME_17_X64
+          cd ..
+          rm ./authorization/build/libs/*plain.jar
+          mv authorization/build/libs/${{ steps.jar_name.outputs.JAR }} .
+          mv authorization/build/resources/main/application.properties .
 
+      - name: Build envfile
+        run: |
+          echo ADAPTED_STRENGTH_BASE_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_BASE_PRICE_ID }}' >> envfile
+          echo ADAPTED_STRENGTH_GENERAL_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_GENERAL_PRICE_ID }}' >> envfile
+          echo ADAPTED_STRENGTH_EMAIL='${{ secrets.ADAPTED_STRENGTH_EMAIL }}' >> envfile
+          echo ADAPTED_STRENGTH_PASSWORD='${{ secrets.ADAPTED_STRENGTH_PASSWORD }}' >> envfile
+          echo ADAPTED_STRENGTH_GENERAL_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_GENERAL_PRICE_ID }}' >> envfile
+          echo ADAPTED_STRENGTH_SPECIFIC_PRICE_ID='${{ secrets.ADAPTED_STRENGTH_SPECIFIC_PRICE_ID }}' >> envfile
+          echo ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET='${{ secrets.ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET }}' >> envfile
+          echo ADAPTED_STRENGTH_STRIPE_SECRET_KEY='${{ secrets.ADAPTED_STRENGTH_STRIPE_SECRET_KEY }}' >> envfile
+          echo AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' >> envfile
+          echo AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' >> envfile
+  
+      - name: Build image
+        run: |
+            docker build -f "$SERVICE/dockerfile" --build-arg jar_path=${{ steps.jar_name.outputs.JAR }} --output type=tar,dest=app.tar
+
+      - name: Set up ssh
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > key.pem
+          chmod 600 key.pem
+          ssh-keyscan $HOST >> ~/.ssh/known_hosts
+
+      - name: Set up known hosts file
+        run: |
+          ssh-keyscan $HOST >> ~/.ssh/known_hosts
+
+      - name: Copy build files to instance
+        run: |
+          # echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
+          echo "put app.tar tmp/app.tar" >> batchfile
+          # echo "put envfile.tar.gz tmp/envfile.tar.gz" >> batchfile
+
+          sftp -i key.pem -b batchfile $USER@$HOST
+      
       # - name: Build and compress jar
       #   run: |
       #     cd authorization
@@ -106,7 +150,7 @@ jobs:
       #     echo ADAPTED_STRENGTH_STRIPE_SECRET_KEY='${{ secrets.ADAPTED_STRENGTH_STRIPE_SECRET_KEY }}' >> envfile
       #     echo AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}' >> envfile
       #     echo AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}' >> envfile
-      #     tar -czf envfile.tar.gz envfile
+      #     # tar -czf envfile.tar.gz envfile
 
 
       # - name: Set up ssh

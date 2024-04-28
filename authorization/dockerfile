@@ -1,2 +1,13 @@
 # FROM amazoncorretto:17-alpine-jdk
-FROM openjdk:17-jdk-alpine
+FROM openjdk:17-jdk-alpine as app
+ARG jar_path
+
+EXPOSE 8080
+WORKDIR /app
+COPY envfile /app/.env
+COPY ${jar_path} /app/app.jar 
+COPY entrypoint.sh /app/entrypoint.sh 
+COPY application.properties /app/application.properties
+
+CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT [ "entrypoint.sh" ]
