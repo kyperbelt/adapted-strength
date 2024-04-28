@@ -48,7 +48,8 @@ jobs:
                   version = l[0].split('=')[1].strip()
               
           with open(os.getenv('GITHUB_OUTPUT'), 'a') as out:
-              out.write(f'JAR={service}-{version}.jar')      
+              out.write(f'JAR={service}-{version}.jar')
+              out.write(f'VER={version})
 
       - name: Print output
         run: |
@@ -79,7 +80,15 @@ jobs:
   
       - name: Build image
         run: |
-            docker build -f "$SERVICE/dockerfile" --build-arg jar_path=${{ steps.jar_name.outputs.JAR }} --output type=tar,dest=app.tar .
+            docker build -f "$SERVICE/dockerfile" \
+            --build-arg jar_path=${{ steps.jar_name.outputs.JAR }} \
+            --output type=tar,dest=app.tar \
+            -t "$service:${{ steps.jar_name.outputs.VER }}" \
+            .
+
+      - name: Save image
+        run: |
+            docker save -o app.tar
 
       - name: Set up ssh
         run: |
