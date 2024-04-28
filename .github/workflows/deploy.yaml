@@ -83,7 +83,7 @@ jobs:
             docker build -f "$SERVICE/dockerfile" \
             --build-arg jar_path=${{ steps.jar_name.outputs.JAR }} \
             --output type=tar,dest=app.tar \
-            -t "$service:${{ steps.jar_name.outputs.VER }}" \
+            -t "$SERVICE:${{ steps.jar_name.outputs.VER }}" \
             .
 
       - name: Save image
