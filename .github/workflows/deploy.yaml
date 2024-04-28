@@ -45,7 +45,7 @@ jobs:
           service = os.getenv('SERVICE')
           with open(f'{service}/build.gradle', 'r') as f:
               if l := re.findall('version.*=.*', f.read() ):
-                  version = l[0].split('=')[1].strip()
+                  version = l[0].split('=')[1].strip().strip("'")
               
           with open(os.getenv('GITHUB_OUTPUT'), 'a') as out:
               out.write(f'JAR={service}-{version}.jar\n')
