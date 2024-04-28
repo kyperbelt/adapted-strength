@@ -62,7 +62,7 @@ jobs:
           rm ./$SERVICE/build/libs/*plain.jar
           mv $SERVICE/build/libs/${{ steps.jar_name.outputs.JAR }} .
           mv $SERVICE/build/resources/main/application.properties .
-          mv $SERVICE.entrypoint.sh .
+          mv $SERVICE/entrypoint.sh .
 
       - name: Build envfile
         run: |
