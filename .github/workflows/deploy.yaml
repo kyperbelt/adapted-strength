@@ -82,7 +82,7 @@ jobs:
         run: |
             docker build -f "$SERVICE/dockerfile" \
             --build-arg jar_path=${{ steps.jar_name.outputs.JAR }} \
-            --output type=tar,dest=app.tar \
+            # --output type=tar,dest=app.tar \
             -t "$SERVICE:${{ steps.jar_name.outputs.VER }}" \
             .
       
