@@ -85,10 +85,14 @@ jobs:
             --output type=tar,dest=app.tar \
             -t "$SERVICE:${{ steps.jar_name.outputs.VER }}" \
             .
-
-      - name: Save image
+      
+      - name: List images
         run: |
-            docker save -o app.tar $SERVICE:${{ steps.jar_name.outputs.VER }}
+            docker image ls
+
+      # - name: Save image
+      #   run: |
+      #       docker save -o app.tar $SERVICE:${{ steps.jar_name.outputs.VER }}
 
       - name: Set up ssh
         run: |
