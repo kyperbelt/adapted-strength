@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs'
 import {UserApi} from "../api/UserApi";
 import {ChatApi} from "../api/ChatApi";
+import {ApiUtils} from "../api/ApiUtils";
 
 
 function RightMessage({...props})
@@ -98,7 +99,7 @@ export default function Chat()
     }
 
     const registerUser = () => {
-        let Sock = new SockJS(`http://localhost:8080/ws?jwtToken=${AapiUtils.getAuthToken()}`);
+        let Sock = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`);
         stompClient = Stomp.over(Sock);
         stompClient.connect({}, onConnected, onError);
     }
