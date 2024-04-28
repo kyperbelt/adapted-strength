@@ -49,7 +49,7 @@ jobs:
               
           with open(os.getenv('GITHUB_OUTPUT'), 'a') as out:
               out.write(f'JAR={service}-{version}.jar')
-              out.write(f'VER={version})
+              out.write(f'VER={version}')
 
       - name: Print output
         run: |
