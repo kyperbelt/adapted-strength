@@ -98,7 +98,7 @@ export default function Chat()
     }
 
     const registerUser = () => {
-        let Sock = new SockJS('http://localhost:8080/ws');
+        let Sock = new SockJS(`http://localhost:8080/ws?jwtToken=${AapiUtils.getAuthToken()}`);
         stompClient = Stomp.over(Sock);
         stompClient.connect({}, onConnected, onError);
     }
