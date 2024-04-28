@@ -59,9 +59,10 @@ jobs:
           cd authorization
           ./gradlew build -Dorg.gradle.java.home=$JAVA_HOME_17_X64
           cd ..
-          rm ./authorization/build/libs/*plain.jar
-          mv authorization/build/libs/${{ steps.jar_name.outputs.JAR }} .
-          mv authorization/build/resources/main/application.properties .
+          rm ./$SERVICE/build/libs/*plain.jar
+          mv $SERVICE/build/libs/${{ steps.jar_name.outputs.JAR }} .
+          mv $SERVICE/build/resources/main/application.properties .
+          mv $SERVICE.entrypoint.sh .
 
       - name: Build envfile
         run: |
