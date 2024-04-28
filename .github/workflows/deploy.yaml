@@ -83,6 +83,7 @@ jobs:
             docker build -f "$SERVICE/dockerfile" \
             --build-arg jar_path=${{ steps.jar_name.outputs.JAR }} \
             -t "$SERVICE:${{ steps.jar_name.outputs.VER }}" \
+            -t "$SERVICE:latest"
             .
       
       - name: List images
