@@ -47,6 +47,7 @@ public class SecurityConfig {
                 "/auth/signup",
                 "/auth/get_token",
                 "/user/validate_user_data",
+                "/content/**",
         };
 
         private final JwtAuthFilter jwtAuthFilter;
