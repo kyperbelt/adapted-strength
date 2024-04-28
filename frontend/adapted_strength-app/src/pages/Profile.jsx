@@ -86,6 +86,7 @@ export default function Profile() {
                 console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
                 setIsLoading(false);
                 navigate("/login");
+                AuthApi.logout();
 
             });
     }, []);

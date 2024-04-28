@@ -116,6 +116,7 @@ export class ApiUtils {
  * // { status: 200, data: { ... } }
  */
 function promiseWrapper(promise) {
+
   return promise.then(response => {
     return response.json().then(body => {
       const status_code = response.status;
@@ -129,7 +130,14 @@ function promiseWrapper(promise) {
         data: body,
       }
     })
-  })
+  }).catch(err => {
+    if (err.message == 'Failed to fetch') {
+      return {
+        status: HttpStatus.SERVICE_UNAVAILABLE,
+        data: { message: 'Service Unavailable' },
+      }
+    }
+  });
 }
 
 
