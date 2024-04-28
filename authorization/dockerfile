@@ -4,7 +4,7 @@ ARG jar_path
 
 EXPOSE 8080
 WORKDIR /app
-COPY envfile /app/.env
+COPY --chmod=444 envfile /app/.env
 COPY ${jar_path} /app/app.jar 
 COPY --chmod=111 entrypoint.sh /app/entrypoint.sh 
 COPY application.properties /app/application.properties
