@@ -1,0 +1,2 @@
+# FROM amazoncorretto:17-alpine-jdk
+FROM openjdk:17-jdk-alpine
