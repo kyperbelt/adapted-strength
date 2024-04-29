@@ -56,7 +56,23 @@ const weightClasses = {
     Men: [55, 61, 67, 73, 81, 89, 96, 102, 109, '109+'],
     Women: [45, 49, 55, 59, 64, 71, 76, 81, 87, '87+'],
   },
-  Powerlifting: {
+  Snatch: {
+    Men: [55, 61, 67, 73, 81, 89, 96, 102, 109, '109+'],
+    Women: [45, 49, 55, 59, 64, 71, 76, 81, 87, '87+'],
+  },
+  CleanJerk: {
+    Men: [55, 61, 67, 73, 81, 89, 96, 102, 109, '109+'],
+    Women: [45, 49, 55, 59, 64, 71, 76, 81, 87, '87+'],
+  },
+  Squat: {
+    Men: [52, 56, 60, 67.5, 75, 82.5, 90, 100, 110, 125, 140, '140+'],
+    Women: [44, 48, 52, 56, 60, 67.5, 75, 82.5, 90, 100, '100+'],
+  },
+  Bench: {
+    Men: [52, 56, 60, 67.5, 75, 82.5, 90, 100, 110, 125, 140, '140+'],
+    Women: [44, 48, 52, 56, 60, 67.5, 75, 82.5, 90, 100, '100+'],
+  },
+  Deadlift: {
     Men: [52, 56, 60, 67.5, 75, 82.5, 90, 100, 110, 125, 140, '140+'],
     Women: [44, 48, 52, 56, 60, 67.5, 75, 82.5, 90, 100, '100+'],
   },
@@ -67,8 +83,9 @@ export default function Leaderboard() {
   const [selectedGender, setSelectedGender] = useState(null);
   const [selectedWeightClass, setSelectedWeightClass] = useState(null);
   const [addCategory, setAddCategory] = useState(null);
-  const [addGender, setAddGender] = useState(null);
-  const [addWeightClass, setAddWeightClass] = useState(null);
+  const [name, setName] = useState("");
+  const [addGender, setAddGender] = useState(null); // Need to delete this
+  const [addWeightClass, setAddWeightClass] = useState(null); // Can delete this
   const [snatchValue, setSnatchValue] = useState(0.0);
   const [cleanJerkValue, setCleanJerkValue] = useState(0.0);
   const [squatValue, setSquatValue] = useState(0.0);
@@ -155,7 +172,7 @@ export default function Leaderboard() {
   const handleSubmit = () => {
     const record = {
       weightClass: addWeightClass,
-      gender: addGender.charAt(0), // Assuming 'F' or 'M' for gender
+      gender: addGender.charAt(0), // Assuming 'W' or 'M' for gender
       total: totalValue,
     };
   
@@ -192,13 +209,6 @@ export default function Leaderboard() {
         })
         .catch(error => console.error('Error adding record:', error));
     }
-  };
-  
-
-  // Function to handle additional dropdown menu change
-  const handleAdditionalDropdownChange = (value) => {
-    // Logic to handle change in the additional dropdown menu
-    console.log('Selected value in additional dropdown:', value);
   };
 
   if (!addRecords && AuthApi.hasRole('ROLE_ADMIN')) {
@@ -298,12 +308,149 @@ export default function Leaderboard() {
           })
           .catch(error => console.error('Error fetching top Powerlifting female athletes:', error));
       }
+    } else if (selectedCategory === 'Squat') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top male squats for weight class:', selectedWeightClass);
+        UserApi.getTop10MaleSquatByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top male squat records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top male squat records: ', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top female squats for weight class:', selectedWeightClass);
+        UserApi.getTop10FemaleSquatByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top female squat records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top female squat records: ', error));
+      }
+    } else if (selectedCategory === 'Bench') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top male bench records for weight class:', selectedWeightClass);
+        UserApi.getTop10MaleBenchByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top male bench records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top male bench records: ', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top female bench records for weight class:', selectedWeightClass);
+        UserApi.getTop10FemaleBenchByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top female bench records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top female bench records: ', error));
+      }
+    } else if (selectedCategory === 'Deadlift') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top male deadlift records for weight class:', selectedWeightClass);
+        UserApi.getTop10MaleDeadliftByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top male deadlift records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top male deadlift records: ', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top female deadlift records for weight class:', selectedWeightClass);
+        UserApi.getTop10FemaleDeadliftByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top female deadlift records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top female deadlift records: ', error));
+      }
+    } else if (selectedCategory === 'Snatch') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top male snatch records for weight class:', selectedWeightClass);
+        UserApi.getTop10MaleSnatchByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top male snatch records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top male snatch records: ', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top female snatch records for weight class:', selectedWeightClass);
+        UserApi.getTop10FemaleSnatchByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top female snatch records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top female snatch records: ', error));
+      }
+    } else if (selectedCategory === 'CleanJerk') {
+      if (selectedGender === 'Men') {
+        console.log('Calling API to get top male clean & jerk records for weight class:', selectedWeightClass);
+        UserApi.getTop10MaleCleanJerkByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top male clean & jerk records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top male clean & jerk records: ', error));
+      } else if (selectedGender === 'Women') {
+        console.log('Calling API to get top female clean & jerk records for weight class:', selectedWeightClass);
+        UserApi.getTop10FemaleCleanJerkByWeightClass(selectedWeightClass)
+          .then(response => {
+            console.log('Top female clean & jerk records:', response);
+            // Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+              setTopAthletes(response.data);
+            } else {
+              setTopAthletes([])
+            }
+          })
+          .catch(error => console.error('Error fetching top female clean & jerk records: ', error));
+      }
     }
   }, [selectedWeightClass, selectedCategory, selectedGender]);
-  
-  
 
-  
 
 return (
   <div className="h-full my-0 content-center w-full top-[100px]">
@@ -329,6 +476,11 @@ return (
           <option value="">Select category</option>
           <option value="Olympic">Olympic</option>
           <option value="Powerlifting">Powerlifting</option>
+          <option value="Squat">Squat</option>
+          <option value="Bench">Bench</option>
+          <option value="Deadlift">Deadlift</option>
+          <option value="Snatch">Snatch</option>
+          <option value="CleanJerk">Clean & Jerk</option>
         </select>
       </div>
       {selectedCategory && (
@@ -370,42 +522,48 @@ return (
         <thead>
           <tr>
             <th style={getColumnStyle()}>Rank</th>
-            <th style={getColumnStyle()}>Gender</th>
-            <th style={getColumnStyle()}>Weight Class</th>
+            <th style={getColumnStyle()}>Name</th>
             {selectedCategory === 'Powerlifting' ? (
               <>
                 <th style={getColumnStyle()}>Squat</th>
                 <th style={getColumnStyle()}>Bench</th>
                 <th style={getColumnStyle()}>Deadlift</th>
+                <th style={getColumnStyle()}>Total</th>
               </>
-            ) : (
+            ) : selectedCategory === 'Olympic' ? (
               <>
                 <th style={getColumnStyle()}>Snatch</th>
                 <th style={getColumnStyle()}>Clean & Jerk</th>
+                <th style={getColumnStyle()}>Total</th>
               </>
+            ) : (
+              <th style={getColumnStyle()}>Weight</th>
             )}
-            <th style={getColumnStyle()}>Total</th>
           </tr>
         </thead>
         <tbody>
           {topAthletes.map((athlete, index) => (
             <tr key={index} style={getRowStyle(index)}>
               <td>{index + 1}</td>
-              <td>{athlete.gender}</td>
-              <td>{adjustWeightClass(athlete.weightClass)}</td>
-              {selectedCategory === 'Powerlifting' ? (
+              <td>{athlete.name}</td>
+              {selectedCategory === 'Powerlifting' && (
                 <>
                   <td>{athlete.squat}</td>
                   <td>{athlete.bench}</td>
                   <td>{athlete.deadlift}</td>
+                  <td>{athlete.total}</td>
                 </>
-              ) : (
+              )}
+              {selectedCategory === 'Olympic' && (
                 <>
                   <td>{athlete.snatch}</td>
                   <td>{athlete.cleanJerk}</td>
+                  <td>{athlete.total}</td>
                 </>
               )}
-              <td>{athlete.total}</td>
+              {selectedCategory !== 'Powerlifting' && selectedCategory !== 'Olympic' && (
+                <td>{athlete.weight}</td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -465,7 +623,7 @@ return (
           </div>
         )}
 
-        {/* Input boxes for discipline based on category */}
+        {/* Input boxes for discipline based on category to ADD RECORD */}
         {addCategory === 'Olympic' && (
           <div className="mb-4">
             <label htmlFor="snatchInput">Snatch:</label>
@@ -546,7 +704,7 @@ return (
       </div>
     )}
 
-    {/* Submit button */}
+    {/* Submit button for Adding Record */}
     {addCategory && addGender && addWeightClass && (
       <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleSubmit}>Add Record</button>
     )}

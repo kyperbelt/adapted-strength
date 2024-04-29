@@ -189,4 +189,114 @@ static updateSubscription({subscriptionTier }) {
     const promise = ApiUtils.apiGet(`leaderboard/powerlifting/top10female?weightClass=${weightClass}`);
     return promise;
   }
+
+  static addSquatEntry(squat) {
+    const promise = ApiUtils.apiPost('leaderboard/squat', squat);
+    return promise;
+  }
+
+  static addBenchEntry(bench) {
+    const promise = ApiUtils.apiPost('leaderboard/bench', bench);
+    return promise;
+  }
+
+  static addDeadliftEntry(deadlift) {
+    const promise = ApiUtils.apiPost('leaderboard/deadlift', deadlift);
+    return promise;
+  }
+
+  static deleteSquatEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/squat/${id}`);
+    return promise;
+  }
+
+  static deleteBenchEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/bench/${id}`);
+    return promise;
+  }
+
+  static deleteDeadliftEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/deadlift/${id}`);
+    return promise;
+  }
+
+  static getTop10MaleSquat() {
+    const promise = ApiUtils.apiGet('leaderboard/squat/top10male');
+    return promise;
+  }
+
+  static getTop10FemaleSquat() {
+    const promise = ApiUtils.apiGet('leaderboard/squat/top10female');
+    return promise;
+  }
+
+  static getTop10MaleSquatByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/squat/top10malebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10FemaleSquatByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/squat/top10femalebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10MaleBench() {
+    const promise = ApiUtils.apiGet('leaderboard/bench/top10male');
+    return promise;
+  }
+
+  static getTop10FemaleBench() {
+    const promise = ApiUtils.apiGet('leaderboard/bench/top10female');
+    return promise;
+  }
+
+  static getTop10MaleBenchByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/bench/top10malebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10FemaleBenchByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/bench/top10femalebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10MaleDeadlift() {
+    const promise = ApiUtils.apiGet('leaderboard/deadlift/top10male');
+    return promise;
+  }
+
+  static getTop10FemaleDeadlift() {
+    const promise = ApiUtils.apiGet('leaderboard/deadlift/top10female');
+    return promise;
+  }
+
+  static getTop10MaleDeadliftByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/deadlift/top10malebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10FemaleDeadliftByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/deadlift/top10femalebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10MaleSnatchByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/snatch/top10malebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10FemaleSnatchByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/snatch/top10femalebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10MaleCleanJerkByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/cleanjerk/top10malebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10FemaleCleanJerkByWeightClass(weightClass) {
+    const promise = ApiUtils.apiGet(`leaderboard/cleanjerk/top10femalebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
 }
