@@ -138,17 +138,11 @@ public class RepCycle
         this.workoutOrder = workoutOrder;
     }
 
-<<<<<<< HEAD
     // builder pattern
-=======
-    // builder pattern 
->>>>>>> program_management_redo
     public RepCycle withRepCycleId(long id) {
         this.repCycleId = id;
         return this;
     }
-<<<<<<< HEAD
-=======
 
     public RepCycle withName(String name) {
         this.name = name;
@@ -194,7 +188,6 @@ public class RepCycle
         this.movementId = movementId;
         return this;
     }
->>>>>>> program_management_redo
 
     public RepCycle withName(String name) {
         this.name = name;
