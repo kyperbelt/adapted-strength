@@ -145,6 +145,16 @@ export default function Leaderboard() {
         deleteApiCall = UserApi.deleteOlympicEntry(idToDelete);
       } else if (selectedCategory === "Powerlifting") {
         deleteApiCall = UserApi.deletePowerliftingEntry(idToDelete);
+      } else if (selectedCategory === "Squat") {
+        deleteApiCall = UserApi.deleteSquatEntry(idToDelete);
+      } else if (selectedCategory === "Bench") {
+        deleteApiCall = UserApi.deleteBenchEntry(idToDelete);
+      } else if (selectedCategory === "Deadlift") {
+        deleteApiCall = UserApi.deleteDeadliftEntry(idToDelete);
+      } else if (selectedCategory === "Snatch") {
+        deleteApiCall = UserApi.deleteSnatchEntry(idToDelete);
+      } else if (selectedCategory === "CleanJerk") {
+        deleteApiCall = UserApi.deleteCleanJerkEntry(idToDelete);
       }
 
       if (deleteApiCall) {
