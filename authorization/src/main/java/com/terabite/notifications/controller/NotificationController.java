@@ -1,24 +1,18 @@
 package com.terabite.notifications.controller;
 
-import com.terabite.GlobalConfiguration;
-import com.terabite.authorization.AuthorizationApi;
+import com.terabite.common.dto.Payload;
+import com.terabite.common.dto.PayloadType;
 import com.terabite.notifications.model.NotificationRequest;
 import com.terabite.notifications.model.NotificationResponse;
 import com.terabite.notifications.model.TokenInformation;
 import com.terabite.notifications.repository.NotificationRepository;
 import com.terabite.notifications.service.NotfService;
-import com.terabite.user.model.UserInformation;
-import com.terabite.user.repository.UserRepository;
-import com.terabite.user.service.SubscriptionService;
-import com.terabite.user.service.UnsubscribeService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,26 +45,26 @@ public class NotificationController {
     }
 
     @PostMapping("/add_token")
-    public ResponseEntity<String> createTokenInformation(
+    public ResponseEntity<Payload> createTokenInformation(
             @RequestBody final TokenInformation tokenInformation,
             HttpServletRequest request) {
         System.out.println(tokenInformation.getToken());
 
         final Optional<TokenInformation> tokenInformationOption = notificationRepository
                 .findByToken(tokenInformation.getToken());
-
+System.out.println(tokenInformationOption);
         if (tokenInformationOption.isPresent()) {
             log.error("Token already exists for this user");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to add token, already exists.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Payload.of(PayloadType.MESSAGE, "Unable to add token, already exists."));
         }
 
         notificationRepository.save(tokenInformation);
 
-        return ResponseEntity.ok("Token added successfully");
+        return ResponseEntity.ok(Payload.of(PayloadType.MESSAGE, "Token added successfully"));
     }
 
     @GetMapping("/get_tokens")
-    public ResponseEntity<UserInformation> getTokens(HttpServletRequest request) {
+    public ResponseEntity<TokenInformation> getTokens(HttpServletRequest request) {
         return new ResponseEntity(notificationRepository.findAll(), HttpStatus.ACCEPTED);
     }
 }

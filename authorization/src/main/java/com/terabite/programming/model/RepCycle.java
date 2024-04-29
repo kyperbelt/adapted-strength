@@ -37,9 +37,12 @@ public class RepCycle
     @JsonAlias("coach_notes")
     private String coachNotes;
 
+    @JsonAlias("workout_order")
+    private String workoutOrder;
+
     private long movementId;
 
-    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, long movementId){
+    public RepCycle(String name, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, String workoutOrder, long movementId){
         this.name=name;
         this.equipment=equipment;
         this.numSets=numSets;
@@ -47,6 +50,7 @@ public class RepCycle
         this.weight=weight;
         this.restTime=restTime;
         this.coachNotes=coachNotes;
+        this.workoutOrder = workoutOrder;
         this.movementId=movementId;
     }
 
@@ -124,5 +128,80 @@ public class RepCycle
 
     public void setMovementId(long movementId) {
         this.movementId = movementId;
+    }
+
+    public String getWorkoutOrder() {
+        return workoutOrder;
+    }
+
+    public void setWorkoutOrder(String workoutOrder) {
+        this.workoutOrder = workoutOrder;
+    }
+
+    // builder pattern
+    public RepCycle withRepCycleId(long id) {
+        this.repCycleId = id;
+        return this;
+    }
+
+    public RepCycle withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public RepCycle withEquipment(String equipment) {
+        this.equipment = equipment;
+        return this;
+    }
+
+    public RepCycle withNumSets(String numSets) {
+        this.numSets = numSets;
+        return this;
+    }
+
+    public RepCycle withNumReps(String numReps) {
+        this.numReps = numReps;
+        return this;
+    }
+
+    public RepCycle withWeight(String weight) {
+        this.weight = weight;
+        return this;
+    }
+
+    public RepCycle withRestTime(String restTime) {
+        this.restTime = restTime;
+        return this;
+    }
+
+    public RepCycle withCoachNotes(String coachNotes) {
+        this.coachNotes = coachNotes;
+        return this;
+    }
+
+    public RepCycle withWorkoutOrder(String workoutOrder) {
+        this.workoutOrder = workoutOrder;
+        return this;
+    }
+
+    public RepCycle withMovementId(long movementId) {
+        this.movementId = movementId;
+        return this;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RepCycle{" +
+                "repCycleId=" + repCycleId +
+                ", name='" + name + '\'' +
+                ", equipment='" + equipment + '\'' +
+                ", numSets='" + numSets + '\'' +
+                ", numReps='" + numReps + '\'' +
+                ", weight='" + weight + '\'' +
+                ", restTime='" + restTime + '\'' +
+                ", coachNotes='" + coachNotes + '\'' +
+                ", movementId=" + movementId +
+                '}';
     }
 }

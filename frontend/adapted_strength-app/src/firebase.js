@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { ApiUtils } from './api/ApiUtils';
 
 var firebaseConfig = {
   apiKey: "AIzaSyAG3977Tuc-xmpVzr7wG62xG7qXVm8Rz4c",
@@ -17,9 +18,11 @@ const messaging = getMessaging(firebaseApp);
 export const fetchToken = (setTokenFound) => {
   return getToken(messaging, { vapidKey: 'BHTVCP1P6sX7OcJFYLG3Y1rSO6LeD367aIGtR8pZt9F2IGkDm3mPisCwUyyL7n5dqlWliG6bqA-Qm_6d6JYc9po' }).then((currentToken) => {
     if (currentToken) {
+
       console.log('current token for client: ', currentToken);
       setTokenFound(true);
       // Track the token -> client mapping, by sending to backend server
+      ApiUtils.apiPost('notifications/add_token', {token: currentToken});
       // show on the UI that permission is secured
     } else {
       console.log('No registration token available. Request permission to generate one.');

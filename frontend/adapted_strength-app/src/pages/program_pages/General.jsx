@@ -1,5 +1,9 @@
+/*
+Module: General.jsx
+*/
 import React, { useEffect, useState } from "react";
 import { CardBack } from "../../components/Card";
+import { ProgrammingApi } from "../../api/ProgrammingApi";
 
 export default function General() {
     const [showPrograms, setShowPrograms] = useState({
@@ -8,17 +12,15 @@ export default function General() {
         threeDay: false
     });
     const [workouts, setWorkout] = useState([]);
-    const adptdsURL = 'https://localhost:8080/v1/programming/week/all_weeks';
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(adptdsURL);
-            const jsonData = await response.json();
-            setWorkout(jsonData);
-        };
-        fetchData();
-
-    }, []);
+    const adptdsURL = 'http://10.0.0.63:8080/v1/programming/day/all_days';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjYXNleXRlc3RAZW1haWwuY29tIiwiaWF0IjoxNzEzMTM3MjM2LCJleHAiOjE3MTMyMjM2MzZ9.CWb3uwhCV-OiDlurgRTOpn14eDkxpiIpJmoZ3GnmuF0Y--kP4L_FbV18sy3jx5W1SRoRuTFIol-pATcwwqhd5g';
+    // const fetchData = async () => {
+    //     const response = await fetch(adptdsURL);
+    //     const jsonData = await response.json();
+    //     setWorkout(jsonData);
+    // };
+    // fetchData();
+    // }, []);
 
     const [fiveDayProgram, setFiveDayProgram] = useState(Array(5).fill(false));
     const [fourDayProgram, setFourDayProgram] = useState(Array(4).fill(false));
@@ -31,6 +33,45 @@ export default function General() {
         }));
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(adptdsURL, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const jsonData = await response.json();
+                setShowPrograms(jsonData);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const [programs, setPrograms] = useState([]);
+
+    // useEffect(() => {
+    //     const fetchPrograms = async () => {
+    //         try {
+    //             const response = await ProgrammingApi.getAllPrograms();
+    //             setPrograms(response);
+    //         } catch (error) {
+    //             console.error("Error fetching programs: ", error);
+    //         }
+    //     };
+    //     fetchPrograms();
+    // }, []);
+
+    const fetchProgram = async (programId) => {
+        try {
+            const response = await ProgrammingApi.getProgram(programId);
+        } catch (error) {
+            console.error("Error fetching program: ", error);
+        }
+    };
     const toggleDay = (program, index) => {
         switch (program) {
             case "fiveDay":
@@ -58,7 +99,6 @@ export default function General() {
 
         const alphabet = 'ABCDEFGHIJ';
 
-
         return (
             <table className="w-full text-left mt-4">
                 <tbody className="rounded-full text-[#161A1D]">
@@ -66,32 +106,13 @@ export default function General() {
                         <tr key={index}>
                             {/* LET "Order" AND "Exercise" CHANGE! 
                         This is hard coded for UI purposes */}
-                            <div>
-                                {workouts.map((week) => (
-                                    <div key={week.weekId}>
-                                        {week.name}
-
-                                        {week.days.map((day) => (
-                                            <div key={day.dayId}>
-                                                {day.name}
-
-                                                {day.repCycles.map((repCycle) => (
-                                                    <div key={repCycle.repCycleId}>
-                                                        {repCycle.name}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
                                 {alphabet[index]}
                             </th>
                             <th scope="col" className="px-1.5 py-1 border-solid border-2 border-black bg-gray-300">
-                                Movement {day.movement}
+                                Movement
                                 <td scope="col" className="px-1.5 text-xs bg-gray-200">
-                                    Equipment
+
                                 </td>
                                 <td scope="col" className="px-3 text-xs bg-gray-100">
                                     Sets
@@ -132,11 +153,10 @@ export default function General() {
         );
     };
 
-
     return (
         <div className="w-full h-full flex flex-col bottom-20">
             <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-                YOUR PROGRAM: General Strength!
+                Welcome to your program!
             </p>
             <CardBack>
                 <h1 className="font-bold uppercase">

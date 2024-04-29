@@ -1,8 +1,11 @@
-export default function LabeledInputField({ type, placeholder, className, id, name, required, pattern, defaultValue}) {
+export default function LabeledInputField({ type, placeholder, className, id, name, required, pattern, defaultValue, ...props}) {
     return (
-        <div className={`flex flex-col ${className}`} >
-            <input type={type} id={id} name={name} placeholder=" " defaultValue={defaultValue} required={required} pattern={pattern} className="peer w-full rounded-md py-2.5 px-4 border text-sm outline-gray-500" />
-            <label htmlFor={id} className="transition-all peer-placeholder-shown:ml-4  peer-focus:ml-2 rounded-2xl pt-1 pl-1  peer-placeholder-shown:mt-2 ml-2 peer-focus:-mt-3 absolute -mt-3 bg-slate-100  text-left peer-placeholder-shown:text-slate-400 peer-focus:text-slate-800 text-slate-800 text-sm">{placeholder}</label>
-        </div >
+        <div className="relative">
+            <input type={type} id={id} name={id} className={`block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-primary rounded-lg border-2 border-primary-dark appearance-none focus:outline-none focus:ring-0 focus:border-secondary-light peer ${className}`} placeholder=" " 
+                pattern={pattern} required={required} defaultValue={defaultValue} {...props}/>
+            <label htmlFor={id} className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-secondary-dark peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">{placeholder}</label>
+        </div>
     );
+
+
 }

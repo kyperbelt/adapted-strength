@@ -15,16 +15,18 @@ import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional.jsx';
 import Memberships from './pages/Memberships.jsx'
+import Leaderboard from './pages/Leaderboard.jsx';
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
 import Tab from "./components/TabComponents/Tab.jsx";
+import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
 import { fetchToken } from './firebase';
 
-import ProgramManagement from './pages/ProgramManagement.jsx';
+import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
 /*
@@ -58,7 +60,8 @@ function App() {
 
 
   return (
-    <div className="App h-full my-0">
+    <div id="app" className="flex-1 flex flex-col">
+    {
       <BrowserRouter className="">
         <Routes className="">
           <Route path="/" element={<Layout />}>
@@ -98,6 +101,7 @@ function App() {
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
             <Route path="memberships" element={<Memberships />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path='video-library' element={<VideoLibrary />} />
             <Route path="chat" element={<Chat />} />
             <Route path="consultations" element={<Booking />} />
@@ -112,9 +116,12 @@ function App() {
             /* Route for notifications & announcements tabs */
             //-------------------------------------------------
             <Route path="notifications" element={<Tab />} />
-            //-------------------------------------------------          </Route>
+            <Route path='send_notifications' element = {<SendNotifications />} />
+            //-------------------------------------------------         
+          </Route>
         </Routes>
       </BrowserRouter>
+      }
     </div>
   );
 }
