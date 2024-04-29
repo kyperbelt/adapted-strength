@@ -31,11 +31,11 @@ export default function General() {
 
   useEffect(() => {
     UserApi.getUserProgramming()
-    .then((data) => {
-      const p = data;
-      setUserProgram(p);
-    });
-}, []);
+      .then((data) => {
+        const p = data;
+        setUserProgram(p);
+      });
+  }, []);
 
 
   if (!program) {
@@ -115,46 +115,47 @@ export default function General() {
 
 function RepCycle({ repCycle }) {
   return (
-    <tr key={repCycle.repCycleId} className="text-center">
-      <td className="justify-center items-center px-1.5 border-solid border-2 border-black bg-gray-300 w-1/12 font-bold">
+    <tr key={repCycle.repCycleId} className="text-center m-auto">
+      <td className="m-auto px-1.5 border-solid border-2 border-black bg-gray-300 w-1/12 font-bold">
         {repCycle.workoutOrder}
       </td>
-      <th scope="col" className="px-1.5 py-1 mb-2 border-solid border-2 border-black bg-gray-300 w-screen">
-        {repCycle.name}
-        <td scope="col" className="px-1.5 text-xs bg-gray-200">
-          Equipment
-        </td>
-        <td scope="col" className="px-1.5 text-xs bg-gray-100">
-          Sets
-        </td>
-        <td scope="col" className="px-1.5 text-xs bg-gray-200">
-          Reps/Time
-        </td>
-        <td scope="col" className="px-1.5 text-xs bg-gray-100">
-          % / RPE
-        </td>
-        <td scope="col" className="p-1.5 text-xs bg-gray-200">
-          Rest
-        </td>
-        <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
-          <tr key={repCycle.repCycleId}>
-            <td className="border text-center px-1.5 py-2">
-              {repCycle.equipment}
-            </td>
-            <td className="border text-center px-1.5 py-2">
-              {repCycle.numSets}
-            </td>
-            <td className="border text-center px-1.5 py-2">
-              {repCycle.numReps}
-            </td>
-            <td className="border text-center px-1.5 py-2">
-              {repCycle.weight}
-            </td>
-            <td className="border text-center px-1.5 py-2">
-              {repCycle.restTime}
-            </td>
-          </tr>
-        </tbody>
+
+      <th scope="col" className="px-5 m-auto border-solid border-2 border-black bg-gray-300 w-screen">
+          {repCycle.name}
+          <td scope="col" className="px-1 text-xs bg-gray-200">
+            Equipment
+          </td>
+          <td scope="col" className="px-1 text-xs bg-gray-100">
+            Sets
+          </td>
+          <td scope="col" className="px-1 text-xs bg-gray-200">
+            Reps/Time
+          </td>
+          <td scope="col" className="px-1 text-xs bg-gray-100">
+            % / RPE
+          </td>
+          <td scope="col" className="p-1.5 text-xs bg-gray-200">
+            Rest
+          </td>
+          <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
+            <tr key={repCycle.repCycleId}>
+              <td className="border text-center px-1.5 py-2">
+                {repCycle.equipment}
+              </td>
+              <td className="border text-center px-1.5 py-2">
+                {repCycle.numSets}
+              </td>
+              <td className="border text-center px-1.5 py-2">
+                {repCycle.numReps}
+              </td>
+              <td className="border text-center px-1.5 py-2">
+                {repCycle.weight}
+              </td>
+              <td className="border text-center px-1.5 py-2">
+                {repCycle.restTime}
+              </td>
+            </tr>
+          </tbody>
       </th>
     </tr>
   );
