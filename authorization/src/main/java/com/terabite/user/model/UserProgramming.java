@@ -3,7 +3,6 @@ package com.terabite.user.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -23,8 +22,6 @@ public class UserProgramming implements Serializable {
     // @JsonAlias("user_info")
     @JsonIgnore
     private UserInformation userInfo;
-
-    @JoinTable(name = "user_workout_comments_table")
 
     @JoinTable(name = "user_workout_comments_table")
     @ManyToMany
@@ -56,25 +53,8 @@ public class UserProgramming implements Serializable {
     }
     
 
-    @JsonAlias("assigned_program_id")
-    private long assignedProgramId;
-
-    private Date startDate;
-
-    private int currentWeek;
-
-
-
     public Long getId() {
         return userProgrammingId;
-    }
-
-    public void setAssignedProgramId(long assignedProgramId) {
-        this.assignedProgramId = assignedProgramId;
-    }
-
-    public long getAssignedProgramId() {
-        return assignedProgramId;
     }
 
     public void setAssignedProgramId(long assignedProgramId) {
@@ -111,6 +91,5 @@ public class UserProgramming implements Serializable {
 
     public void setUserInfo(UserInformation userInfo) {
         this.userInfo = userInfo;
-    }
     }
 }

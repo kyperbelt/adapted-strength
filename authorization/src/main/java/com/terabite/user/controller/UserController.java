@@ -30,9 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -200,9 +198,6 @@ public class UserController {
         if (userdetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
         }
-        if (userdetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
-        }
         return userProgrammingService.getUserPrograms(userdetails.getUsername());
     }
 
@@ -224,33 +219,12 @@ public class UserController {
     public ResponseEntity<?> removeProgramming(@PathVariable("upid") long userProgrammingId) {
         return userProgrammingService.removeProgramming(userProgrammingId);
     }
-    @GetMapping("/programming/user/{email}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
-    public ResponseEntity<?> getUserProgramming(@PathVariable("email") String email) {
-        return userProgrammingService.getUserPrograms(email);
-    }
-
-    @PostMapping("/programming")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
-    public ResponseEntity<?> addProgramming(@RequestParam("email") String email, @RequestParam("programId") long programId) {
-        return userProgrammingService.addProgramming(email, programId);
-    }
-
-    @DeleteMapping("/programming/{upid}/remove")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
-    public ResponseEntity<?> removeProgramming(@PathVariable("upid") long userProgrammingId) {
-        return userProgrammingService.removeProgramming(userProgrammingId);
-    }
-
 
     @PostMapping("/programming/{upid}/comment")
     public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,
             @RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails) {
         // return new ResponseEntity<>("Endpoint to add comment",
         // HttpStatus.NOT_IMPLEMENTED);
-
-    public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,@RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails){
-        // return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
 
         return userProgrammingService.addComment(userProgrammingId, comment);
     }
@@ -260,8 +234,6 @@ public class UserController {
             @RequestParam("comment") String comment) {
         // return new ResponseEntity<>("Endpoint to edit / update comment",
         // HttpStatus.NOT_IMPLEMENTED);
-    public ResponseEntity<?> updateComment(@PathVariable("cid") long commentId, @RequestParam("comment") String comment){
-        // return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
         return userProgrammingService.updateComment(commentId, comment);
     }
 
