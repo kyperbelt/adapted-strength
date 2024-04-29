@@ -115,48 +115,53 @@ export default function General() {
 
 function RepCycle({ repCycle }) {
   return (
-    <tr key={repCycle.repCycleId} className="text-center m-auto">
-      <td className="m-auto px-1.5 border-solid border-2 border-black bg-gray-300 w-1/12 font-bold">
-        {repCycle.workoutOrder}
-      </td>
-
-      <th scope="col" className="px-5 m-auto border-solid border-2 border-black bg-gray-300 w-screen">
-          {repCycle.name}
-          <td scope="col" className="px-1 text-xs bg-gray-200">
-            Equipment
-          </td>
-          <td scope="col" className="px-1 text-xs bg-gray-100">
-            Sets
-          </td>
-          <td scope="col" className="px-1 text-xs bg-gray-200">
-            Reps/Time
-          </td>
-          <td scope="col" className="px-1 text-xs bg-gray-100">
-            % / RPE
-          </td>
-          <td scope="col" className="p-1.5 text-xs bg-gray-200">
-            Rest
-          </td>
-          <tbody className="text-s rounded-full text-[#161A1D] bg-gray-100">
-            <tr key={repCycle.repCycleId}>
-              <td className="border text-center px-1.5 py-2">
+  <tr key={repCycle.repCycleId} className="text-center m-auto">
+    <td className="m-auto px-2 border-solid border-2 border-black bg-gray-300 w-auto font-bold">
+      {repCycle.workoutOrder}
+    </td>
+    <th scope="col" className="p-1.5 w-full border-solid border-2 border-black bg-gray-300">
+      {repCycle.name}
+      <div className="flex justify-center">
+        <table className="w-full">
+          <tbody>
+            <tr>
+              <td scope="col" className="px-1 w-auto text-xs bg-gray-200 text-center">
+                Equipment
+              </td>
+              <td scope="col" className="px-1 w-auto text-xs bg-gray-100 text-center">
+                Sets
+              </td>
+              <td scope="col" className="px-1 w-auto text-xs bg-gray-200 text-center">
+                Reps/Time
+              </td>
+              <td scope="col" className="px-1 w-auto text-xs bg-gray-100 text-center">
+                % / RPE
+              </td>
+              <td scope="col" className="p-1.5 w-auto text-xs bg-gray-200 text-center">
+                Rest
+              </td>
+            </tr>
+            <tr key={repCycle.repCycleId} className="text-s text-[#161A1D] bg-gray-100">
+              <td className="border text-center bg-gray-200 px-1.5 py-2">
                 {repCycle.equipment}
               </td>
               <td className="border text-center px-1.5 py-2">
                 {repCycle.numSets}
               </td>
-              <td className="border text-center px-1.5 py-2">
+              <td className="border text-center bg-gray-200 px-1.5 py-2">
                 {repCycle.numReps}
               </td>
               <td className="border text-center px-1.5 py-2">
                 {repCycle.weight}
               </td>
-              <td className="border text-center px-1.5 py-2">
+              <td className="border text-center bg-gray-200 px-1.5 py-2">
                 {repCycle.restTime}
               </td>
             </tr>
           </tbody>
-      </th>
-    </tr>
-  );
+        </table>
+      </div>
+    </th>
+  </tr>
+);
 }
