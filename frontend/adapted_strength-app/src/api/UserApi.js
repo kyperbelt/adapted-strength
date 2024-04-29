@@ -205,6 +205,16 @@ static updateSubscription({subscriptionTier }) {
     return promise;
   }
 
+  static addCleanJerkEntry(cleanjerk) {
+    const promise = ApiUtils.apiPost('leaderboard/cleanjerk', cleanjerk);
+    return promise;
+  }
+
+  static addSnatchEntry(snatch) {
+    const promise = ApiUtils.apiPost('leaderboard/snatch', snatch);
+    return promise;
+  }
+
   static deleteSquatEntry(id) {
     const promise = ApiUtils.apiDelete(`leaderboard/squat/${id}`);
     return promise;

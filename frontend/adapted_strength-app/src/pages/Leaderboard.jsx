@@ -35,6 +35,7 @@ const getRowStyle = (index) => {
 };
 
 const weightClasses = {
+  // 101, 88, 141, 110
   Olympic: {
     Men: [55, 61, 67, 73, 81, 89, 96, 102, 109, '109+'],
     Women: [45, 49, 55, 59, 64, 71, 76, 81, 87, '87+'],
@@ -647,7 +648,7 @@ return (
                   <th style={getColumnStyle()}>Total</th>
                 </>
               ) : (
-                <th style={getColumnStyle()}>Weight</th>
+                <th style={getColumnStyle()}>Kg</th>
               )}
             </tr>
           </thead>
@@ -696,7 +697,7 @@ return (
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Squat</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -704,7 +705,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -730,7 +735,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -756,7 +765,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -782,7 +795,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -808,7 +825,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -834,7 +855,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -860,7 +885,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -886,7 +915,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -912,7 +945,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
@@ -938,7 +975,11 @@ return (
               <tr key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
-                <td>{athlete.weightClass}</td>
+                <td>
+                  {['101', '88', '141', '110'].includes(athlete.weightClass)
+                    ? `${parseInt(athlete.weightClass) - 1}+`
+                    : athlete.weightClass}
+                </td>
                 <td>{athlete.weight}</td>
               </tr>
             ))}
