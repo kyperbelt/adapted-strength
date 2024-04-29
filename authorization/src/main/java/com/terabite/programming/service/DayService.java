@@ -19,7 +19,6 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class DayService {
     private static final Logger log = LoggerFactory.getLogger(DayService.class);
-    private static final Logger log = LoggerFactory.getLogger(DayService.class);
     DayRepository dayRepository;
 
     public DayService(DayRepository dayRepository){
