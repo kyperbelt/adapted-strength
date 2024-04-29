@@ -220,6 +220,16 @@ static updateSubscription({subscriptionTier }) {
     return promise;
   }
 
+  static deleteSnatchEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/snatch/${id}`);
+    return promise;
+  }
+
+  static deleteCleanJerkEntry(id) {
+    const promise = ApiUtils.apiDelete(`leaderboard/cleanjerk/${id}`);
+    return promise;
+  }
+
   static getTop10MaleSquat() {
     const promise = ApiUtils.apiGet('leaderboard/squat/top10male');
     return promise;
