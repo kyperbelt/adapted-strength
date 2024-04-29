@@ -558,41 +558,43 @@ export default function Leaderboard() {
 
 
 return (
-  <div className="h-full my-0 content-center w-full top-[100px]">
+  <div >
     <br />
     <div className="h-56 bg-header-background1">
       <AdaptedStrengthLogo />
     </div>
     <br />
     <div>
-      <p className="font-bold text-lg">Adapted Strength (A.S.) All Time Records</p>
-      <br />
+    <h1 className="font-bold text-xl"><u>Adapted Strength (A.S.) Leaderboard</u></h1>
+     
+     <p className="font-bold ">Search Records Here</p>
+      
     </div>
     
     {/* Dropdown menus */}
-    <div className="flex flex-col">
-      <div className="mb-4">
-        <label htmlFor="category">Category:</label>
-        <select
-          id="category"
-          onChange={(e) => handleCategoryChange(e.target.value)}
-          value={selectedCategory}
-        >
-          <option value="">Select category</option>
-          <option value="Olympic">Olympic</option>
-          <option value="Powerlifting">Powerlifting</option>
-          <option value="Squat">Squat</option>
-          <option value="Bench">Bench</option>
-          <option value="Deadlift">Deadlift</option>
-          <option value="Snatch">Snatch</option>
-          <option value="CleanJerk">Clean & Jerk</option>
-        </select>
-      </div>
+    <div className="p-4">
+      <label htmlFor="category" className="block">Category:</label>
+      <select
+        id="category"
+        className="block w-full border border-gray-300 rounded-md p-2"
+        onChange={(e) => handleCategoryChange(e.target.value)}
+        value={selectedCategory}
+      >
+        <option value="">Select category</option>
+        <option value="Olympic">Olympic</option>
+        <option value="Powerlifting">Powerlifting</option>
+        <option value="Squat">Squat</option>
+        <option value="Bench">Bench</option>
+        <option value="Deadlift">Deadlift</option>
+        <option value="Snatch">Snatch</option>
+        <option value="CleanJerk">Clean & Jerk</option>
+      </select>
       {selectedCategory && (
-        <div className="mb-4">
-          <label htmlFor="gender">Gender:</label>
+        <div className="mt-4">
+          <label htmlFor="gender" className="block">Gender:</label>
           <select
             id="gender"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => handleGenderChange(e.target.value)}
             value={selectedGender}
           >
@@ -603,10 +605,11 @@ return (
         </div>
       )}
       {selectedCategory && selectedGender && (
-        <div className="mb-4">
-          <label htmlFor="weightClass">Weight Class:</label>
+        <div className="mt-4">
+          <label htmlFor="weightClass" className="block">Weight Class:</label>
           <select
             id="weightClass"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => handleWeightClassChange(e.target.value)}
             value={selectedWeightClass}
           >
@@ -622,71 +625,78 @@ return (
     </div>
 
     {/* Display top athletes in a table */}
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th style={getColumnStyle()}>Rank</th>
-            <th style={getColumnStyle()}>Name</th>
-            {selectedCategory === 'Powerlifting' ? (
-              <>
-                <th style={getColumnStyle()}>Squat</th>
-                <th style={getColumnStyle()}>Bench</th>
-                <th style={getColumnStyle()}>Deadlift</th>
-                <th style={getColumnStyle()}>Total</th>
-              </>
-            ) : selectedCategory === 'Olympic' ? (
-              <>
-                <th style={getColumnStyle()}>Snatch</th>
-                <th style={getColumnStyle()}>Clean & Jerk</th>
-                <th style={getColumnStyle()}>Total</th>
-              </>
-            ) : (
-              <th style={getColumnStyle()}>Weight</th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {topAthletes.map((athlete, index) => (
-            <tr key={index} style={getRowStyle(index)}>
-              <td>{index + 1}</td>
-              <td>{athlete.name}</td>
-              {selectedCategory === 'Powerlifting' && (
+    {topAthletes && topAthletes.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+   
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              {selectedCategory === 'Powerlifting' ? (
                 <>
-                  <td>{athlete.squat}</td>
-                  <td>{athlete.bench}</td>
-                  <td>{athlete.deadlift}</td>
-                  <td>{athlete.total}</td>
+                  <th style={getColumnStyle()}>Squat</th>
+                  <th style={getColumnStyle()}>Bench</th>
+                  <th style={getColumnStyle()}>Deadlift</th>
+                  <th style={getColumnStyle()}>Total</th>
                 </>
-              )}
-              {selectedCategory === 'Olympic' && (
+              ) : selectedCategory === 'Olympic' ? (
                 <>
-                  <td>{athlete.snatch}</td>
-                  <td>{athlete.cleanJerk}</td>
-                  <td>{athlete.total}</td>
+                  <th style={getColumnStyle()}>Snatch</th>
+                  <th style={getColumnStyle()}>Clean & Jerk</th>
+                  <th style={getColumnStyle()}>Total</th>
                 </>
-              )}
-              {selectedCategory !== 'Powerlifting' && selectedCategory !== 'Olympic' && (
-                <td>{athlete.weight}</td>
+              ) : (
+                <th style={getColumnStyle()}>Weight</th>
               )}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {topAthletes.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                {selectedCategory === 'Powerlifting' && (
+                  <>
+                    <td>{athlete.squat}</td>
+                    <td>{athlete.bench}</td>
+                    <td>{athlete.deadlift}</td>
+                    <td>{athlete.total}</td>
+                  </>
+                )}
+                {selectedCategory === 'Olympic' && (
+                  <>
+                    <td>{athlete.snatch}</td>
+                    <td>{athlete.cleanJerk}</td>
+                    <td>{athlete.total}</td>
+                  </>
+                )}
+                {selectedCategory !== 'Powerlifting' && selectedCategory !== 'Olympic' && (
+                  <td>{athlete.weight}</td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
     <br></br>
+    <hr className = 'border = black'></hr>
+    <div>
+      <h1 className="font-bold text-xl"><u>All Gym Records</u></h1> 
+    </div>
 
-    {/* Display top athletes in a table */}
+    {/* Display all gym records in a table */}
     {topMaleSquat && topMaleSquat.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Male Squat</caption>
+        <caption className="text-center font-bold">Top Male Squat</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Squat</th>
             </tr>
           </thead>
           <tbody>
@@ -700,18 +710,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topFemaleSquat && topFemaleSquat.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Female Squat</caption>
+        <caption className="text-center font-bold">Top Female Squat</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -725,18 +736,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topMaleBench && topMaleBench.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Male Bench</caption>
+        <caption className="text-center font-bold">Top Male Bench</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -750,18 +762,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topFemaleBench && topFemaleBench.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Female Bench</caption>
+        <caption className="text-center font-bold">Top Female Bench</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -775,18 +788,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topMaleDeadlift && topMaleDeadlift.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top MaleDeadlift</caption>
+        <caption className="text-center font-bold">Top MaleDeadlift</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -800,18 +814,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topFemaleDeadlift && topFemaleDeadlift.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Female Deadlift</caption>
+        <caption className="text-center font-bold">Top Female Deadlift</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -825,18 +840,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topMaleSnatch && topMaleSnatch.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Male Snatch</caption>
+        <caption className="text-center font-bold">Top Male Snatch</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -850,18 +866,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topFemaleSnatch && topFemaleSnatch.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Female Snatch</caption>
+        <caption className="text-center font-bold">Top Female Snatch</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -875,18 +892,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topMaleCleanJerk && topMaleCleanJerk.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Male Clean & Jerk</caption>
+        <caption className="text-center font-bold">Top Male Clean & Jerk</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -900,18 +918,19 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
     {topFemaleCleanJerk && topFemaleCleanJerk.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold mb-2">Top Female Clean & Jerk</caption>
+        <caption className="text-center font-bold">Top Female Clean & Jerk</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
               <th style={getColumnStyle()}>Name</th>
               <th style={getColumnStyle()}>Weight Class</th>
-              <th style={getColumnStyle()}>Weight Lifted</th>
+              <th style={getColumnStyle()}>Kg</th>
             </tr>
           </thead>
           <tbody>
@@ -925,6 +944,7 @@ return (
             ))}
           </tbody>
         </table>
+        <br></br>
       </div>
     )}
 
@@ -937,11 +957,12 @@ return (
 
     {/* Additional dropdown menu for adding records */}
     {addRecords && (
-      <div className="flex flex-col">
+      <div className="flex flex-col p-4">
         <div className="mb-4">
-          <label htmlFor="addRecordsCategory">Category:</label>
+          <label htmlFor="addRecordsCategory" className="block">Category:</label>
           <select
             id="addRecordsCategory"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => setAddCategory(e.target.value)}
             value={addCategory}
           >
@@ -957,9 +978,10 @@ return (
         </div>
         {addCategory && (
           <div className="mb-4">
-            <label htmlFor="addRecordsGender">Gender:</label>
+            <label htmlFor="addRecordsGender" className="block">Gender:</label>
             <select
               id="addRecordsGender"
+              className="block w-full border border-gray-300 rounded-md p-2"
               onChange={(e) => setAddGender(e.target.value)}
               value={addGender}
             >
@@ -971,9 +993,10 @@ return (
         )}
         {addCategory && addGender && (
           <div className="mb-4">
-            <label htmlFor="addRecordsWeightClass">Weight Class:</label>
+            <label htmlFor="addRecordsWeightClass" className="block">Weight Class:</label>
             <select
               id="addRecordsWeightClass"
+              className="block w-full border border-gray-300 rounded-md p-2"
               onChange={(e) => setAddWeightClass(e.target.value)}
               value={addWeightClass}
             >
@@ -988,12 +1011,13 @@ return (
           
         )}
 
-        {/* Input box for Name */}
+      {/* Input box for Name */}
       <div className="mb-4">
-        <label htmlFor="nameInput">Name:</label>
+        <label htmlFor="nameInput" className="block">Name:</label>
         <input
           type="text"
           id="nameInput"
+          className="block w-full border border-gray-300 rounded-md p-2"
           onChange={(e) => setName(e.target.value)}
           value={name}
         />
@@ -1003,28 +1027,31 @@ return (
         {addCategory === 'Olympic' && (
         <>
           <div className="mb-4">
-            <label htmlFor="snatchInput">Snatch:</label>
+            <label htmlFor="snatchInput" className="block">Snatch:</label>
             <input
               type="number"
               id="snatchInput"
+              className="block w-full border border-gray-300 rounded-md p-2"
               onChange={(e) => setSnatchValue(e.target.value)}
               value={snatchValue}
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="cleanJerkInput">Clean & Jerk:</label>
+            <label htmlFor="cleanJerkInput" className="block">Clean & Jerk:</label>
             <input
               type="number"
               id="cleanJerkInput"
+              className="block w-full border border-gray-300 rounded-md p-2"
               onChange={(e) => setCleanJerkValue(e.target.value)}
               value={cleanJerkValue}
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="totalInput">Total:</label>
+            <label htmlFor="totalInput" className="block">Total:</label>
             <input
               type="number"
               id="totalInput"
+              className="block w-full border border-gray-300 rounded-md p-2"
               onChange={(e) => setTotalValue(e.target.value)}
               value={totalValue}
             />
@@ -1034,37 +1061,41 @@ return (
       {addCategory === 'Powerlifting' && (
       <>
         <div className="mb-4">
-          <label htmlFor="squatInput">Squat:</label>
+          <label htmlFor="squatInput" className="block">Squat:</label>
           <input
             type="number"
             id="squatInput"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => setSquatValue(e.target.value)}
             value={squatValue}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="benchInput">Bench:</label>
+          <label htmlFor="benchInput" className="block">Bench:</label>
           <input
             type="number"
             id="benchInput"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => setBenchValue(e.target.value)}
             value={benchValue}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="deadliftInput">Deadlift:</label>
+          <label htmlFor="deadliftInput" className="block">Deadlift:</label>
           <input
             type="number"
             id="deadliftInput"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => setDeadliftValue(e.target.value)}
             value={deadliftValue}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="totalInput">Total:</label>
+          <label htmlFor="totalInput" className="block">Total:</label>
           <input
             type="number"
             id="totalInput"
+            className="block w-full border border-gray-300 rounded-md p-2"
             onChange={(e) => setTotalValue(e.target.value)}
             value={totalValue}
           />
@@ -1073,10 +1104,11 @@ return (
     )}
     {(addCategory === 'Squat' || addCategory === 'Bench' || addCategory === 'Deadlift' || addCategory === 'Snatch' || addCategory === 'CleanJerk') && (
       <div className="mb-4">
-        <label htmlFor="weightInput">Weight:</label>
+        <label htmlFor="weightInput" className="block">Weight:</label>
         <input
           type="number"
           id="weightInput"
+          className="block w-full border border-gray-300 rounded-md p-2"
           onChange={(e) => setWeight(e.target.value)}
           value={weight}
         />
@@ -1102,10 +1134,11 @@ return (
     {addRecords && topAthletes && topAthletes.length > 0 && (
       <div className="flex flex-col">
         <div className="mb-4">
-          <label htmlFor="deleteRank">Rank Number to Delete:</label>
+          <label htmlFor="deleteRank" className="block">Rank Number to Delete:</label>
           <input
             type="number"
             id="deleteRank"
+            className="block w-full border border-gray-300 rounded-md p-2"
             value={deleteRank}
             onChange={(e) => setDeleteRank(e.target.value)}
           />
