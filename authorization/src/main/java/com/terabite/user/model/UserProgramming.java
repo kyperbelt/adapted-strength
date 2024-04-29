@@ -2,18 +2,11 @@ package com.terabite.user.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
-<<<<<<< HEAD
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.terabite.programming.model.Program;
-=======
 import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
->>>>>>> main
 
 @Entity
 @Table(name = "user_programming_mapping")
@@ -26,19 +19,6 @@ public class UserProgramming implements Serializable {
     private Long userProgrammingId;
 
     @ManyToOne
-<<<<<<< HEAD
-    @JsonAlias("user_info")
-    private UserInformation userInfo;
-    
-    @ManyToOne
-    private Program program;
-
-    @JoinTable(
-        name = "user_workout_comments_table")
-    @ManyToMany
-    private List<ProgrammingComment> comments;
-
-=======
     // @JsonAlias("user_info")
     @JsonIgnore
     private UserInformation userInfo;
@@ -73,20 +53,10 @@ public class UserProgramming implements Serializable {
     }
     
 
->>>>>>> main
     public Long getId() {
         return userProgrammingId;
     }
 
-<<<<<<< HEAD
-    public UserInformation getUserInfo() {
-        return userInfo;
-    }
-    
-    public Program getProgram() {
-        return program;
-    }
-=======
     public void setAssignedProgramId(long assignedProgramId) {
         this.assignedProgramId = assignedProgramId;
     }
@@ -98,7 +68,6 @@ public class UserProgramming implements Serializable {
     public UserInformation getUserInfo() {
         return userInfo;
     }
->>>>>>> main
 
     public Long getUserProgrammingId() {
         return userProgrammingId;
@@ -123,11 +92,4 @@ public class UserProgramming implements Serializable {
     public void setUserInfo(UserInformation userInfo) {
         this.userInfo = userInfo;
     }
-<<<<<<< HEAD
-    
-    public void setProgram(Program program) {
-        this.program = program;
-    }   
-=======
->>>>>>> main
 }

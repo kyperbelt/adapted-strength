@@ -23,18 +23,12 @@ public class Program {
     @JoinColumn
     private List<Week> weeks;
 
-<<<<<<< HEAD
-    public Program(String name, List<Week> weeks){
-        this.name=name;
-        this.weeks=weeks;
-=======
     @OneToOne(mappedBy = "program", cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
     private ProgramDescription description;
 
     public Program(String name, List<Week> weeks) {
         this.name = name;
         this.weeks = weeks;
->>>>>>> main
     }
 
     public Program() {

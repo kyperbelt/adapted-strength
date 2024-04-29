@@ -24,8 +24,6 @@ import java.util.Optional;
     String workoutOrder;
 
     long movementId;
-<<<<<<< HEAD
-=======
 
 <p>
 payload: 
@@ -42,7 +40,6 @@ payload:
 }
 <p>
  
->>>>>>> main
  */
 public record CreateRepCycleRequest(String repCycleName, String equipment, String numSets, String numReps, String weight, String restTime, String coachNotes, String workoutOrder, long movementId) {
         

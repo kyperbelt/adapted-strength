@@ -2,11 +2,8 @@ package com.terabite.programming.service;
 
 import java.util.List;
 
-<<<<<<< HEAD
-=======
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
->>>>>>> main
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,19 +33,12 @@ public class WeekService {
 
     public ResponseEntity<?> updateWeek(UpdateWeekRequest updateRequest, List<Day> days){
         if(weekRepository.findById(updateRequest.id()).isEmpty()){
-<<<<<<< HEAD
-=======
             log.error("Week {} not found", updateRequest.id()); 
->>>>>>> main
             return new ResponseEntity<>(Payload.of(String.valueOf(updateRequest.id())), HttpStatus.NOT_FOUND);        }
         else{
             Week week = weekRepository.findOneByWeekId(updateRequest.id());
             week.setName(updateRequest.weekName());
             week.setDays(days);
-<<<<<<< HEAD
-
-=======
->>>>>>> main
             weekRepository.save(week);
             return new ResponseEntity<>(week, HttpStatus.OK);
         }

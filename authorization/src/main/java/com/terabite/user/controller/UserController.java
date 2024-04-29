@@ -195,20 +195,9 @@ public class UserController {
 
     @GetMapping("/programming")
     public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
-<<<<<<< HEAD
-        
-        // TODO - is this needed - Josh?
-        // Auth check
-        // final Optional<String> email = authorizationApi.getEmailFromToken(userdetails.getUsername());
-        // if(email.isEmpty()){
-        //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        // }
-        
-=======
         if (userdetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
         }
->>>>>>> main
         return userProgrammingService.getUserPrograms(userdetails.getUsername());
     }
 
@@ -218,17 +207,6 @@ public class UserController {
         return userProgrammingService.getUserPrograms(email);
     }
 
-<<<<<<< HEAD
-    @PostMapping("/programming/{upid}/comment")
-    public ResponseEntity<?> addComment(@RequestParam("upid") long userProgrammingId, HttpServletRequest request, @RequestParam("comment") String comment){
-        // return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
-        return userProgrammingService.addComment(userProgrammingId, comment);
-    } 
-
-    @PutMapping("/programming/comment/{cid}")
-    public ResponseEntity<?> updateComment(@RequestParam("cid") long commentId, @RequestParam("comment") String comment){
-        // return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
-=======
     @PostMapping("/programming")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> addProgramming(@RequestParam("email") String email,
@@ -256,7 +234,6 @@ public class UserController {
             @RequestParam("comment") String comment) {
         // return new ResponseEntity<>("Endpoint to edit / update comment",
         // HttpStatus.NOT_IMPLEMENTED);
->>>>>>> main
         return userProgrammingService.updateComment(commentId, comment);
     }
 

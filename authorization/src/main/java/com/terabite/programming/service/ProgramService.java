@@ -1,10 +1,7 @@
 package com.terabite.programming.service;
 
 import java.util.List;
-<<<<<<< HEAD
-=======
 import java.util.Optional;
->>>>>>> main
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +10,7 @@ import org.springframework.stereotype.Service;
 import com.terabite.common.dto.Payload;
 import com.terabite.programming.dto.UpdateProgramRequest;
 import com.terabite.programming.model.Program;
-<<<<<<< HEAD
-=======
 import com.terabite.programming.model.ProgramDescription;
->>>>>>> main
 import com.terabite.programming.model.Week;
 import com.terabite.programming.repository.ProgramRepository;
 
@@ -33,18 +27,6 @@ public class ProgramService {
     public ResponseEntity<?> createNewProgram(Program program) {
         programRepository.save(program);
         return new ResponseEntity<>(program, HttpStatus.OK);
-<<<<<<< HEAD
-    }
-
-    public ResponseEntity<?> updateProgram(UpdateProgramRequest request, List<Week> weeks) {
-        if(programRepository.findById(request.id()).isEmpty()){
-            return new ResponseEntity<>(Payload.of(String.valueOf(request.id())), HttpStatus.NOT_FOUND);
-        }
-        else{
-            Program program = programRepository.findOneByProgramId(request.id());
-            program.setName(request.programName());
-            program.setWeeks(weeks);
-=======
     }
     
     public Optional<Program> getProgramById(long id){
@@ -61,7 +43,6 @@ public class ProgramService {
             program.setName(request.programName());
             program.setWeeks(weeks);
             program.getDescription().setBody(request.programDescription());
->>>>>>> main
             programRepository.save(program);
             return new ResponseEntity<>(program, HttpStatus.OK);
         }
@@ -73,11 +54,7 @@ public class ProgramService {
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{
-<<<<<<< HEAD
-            return new ResponseEntity<>(programRepository.findOneByProgramId(program.getProgramId()), HttpStatus.OK);
-=======
             return new ResponseEntity<>(programOptional.get(), HttpStatus.OK);
->>>>>>> main
         }
     }
 
@@ -91,11 +68,7 @@ public class ProgramService {
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
         }
         else{
-<<<<<<< HEAD
-            programRepository.delete(program);
-=======
             programRepository.delete(programOptional.get());
->>>>>>> main
             return new ResponseEntity<>(program, HttpStatus.OK);
         }
     }

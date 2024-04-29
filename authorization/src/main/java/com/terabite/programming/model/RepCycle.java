@@ -190,8 +190,6 @@ public class RepCycle
     }
 
 
-<<<<<<< HEAD
-=======
     public RepCycle duplicate(){
         return new RepCycle()
             .withName(this.getName())
@@ -205,7 +203,6 @@ public class RepCycle
             .withMovementId(this.getMovementId());
     }
 
->>>>>>> main
     @Override
     public String toString() {
         return "RepCycle{" +

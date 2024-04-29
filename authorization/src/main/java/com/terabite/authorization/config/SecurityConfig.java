@@ -97,11 +97,7 @@ public class SecurityConfig {
                                                                                 route))
                                                                 .permitAll();
                                         }
-<<<<<<< HEAD
-                                        authorizeHttpRequests.anyRequest().permitAll();
-=======
                                         authorizeHttpRequests.anyRequest().authenticated();
->>>>>>> main
                                 }).sessionManagement((sessionManagement) -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authenticationProvider(authProvider)
