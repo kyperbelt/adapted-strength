@@ -1,6 +1,5 @@
 package com.terabite.user.controller;
 
-
 import java.util.Optional;
 import java.util.Set;
 import com.stripe.exception.StripeException;
@@ -9,9 +8,11 @@ import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.payment.model.Customer;
 import com.terabite.payment.service.CustomerService;
+import com.terabite.user.model.HealthQuestionare;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.HealthQuestionareService;
 import com.terabite.user.service.SubscriptionService;
 // import com.terabite.user.service.UserProgrammingService;
 
@@ -28,7 +29,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,6 +60,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
     private final UnsubscribeService unsubscribeService;
+    private final HealthQuestionareService healthQuestionareService;
 
     private final AuthorizationApi authorizationApi;
     private final UserProgrammingService userProgrammingService;
@@ -70,10 +74,13 @@ public class UserController {
     public UserController(
             UserProgrammingService userProgrammingService,
             SubscriptionService subscriptionService,
-            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi, CustomerService customerService,
+            HealthQuestionareService healthQuestionareService,
+            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
+            CustomerService customerService,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
         this.subscriptionService = subscriptionService;
+        this.healthQuestionareService = healthQuestionareService;
         this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
@@ -81,6 +88,39 @@ public class UserController {
         this.userProgrammingService = userProgrammingService;
         this.jwtService = jwtService;
         this.customerService = customerService;
+    }
+
+    @GetMapping("/get/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getUserInformation(@PathVariable("email") String email) {
+        Optional<UserInformation> userInformation = userRepository.findByEmail(email);
+
+        if (userInformation.isEmpty()) {
+            log.error("UserInformation for " + email + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("User not found"));
+        }
+
+        return ResponseEntity.ok(userInformation);
+    }
+
+    @GetMapping("/get")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getAllUserInformation() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    @DeleteMapping("/delete/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteUserInformation(@PathVariable("email") String email) {
+        Optional<UserInformation> userInformation = userRepository.findByEmail(email);
+
+        if (userInformation.isEmpty()) {
+            log.error("UserInformation for " + email + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of("User not found"));
+        }
+
+        userRepository.delete(userInformation.get());
+        return ResponseEntity.ok(Payload.of("User deleted successfully"));
     }
 
     @PostMapping("/create")
@@ -93,13 +133,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userInformation);
         }
 
-        //Create stripe customer with user email
+        // Create stripe customer with user email
         Customer customer;
-        try{
+        try {
             customer = customerService.createNewCustomer(userInformation);
             userInformation.setCustomer(customer);
-        }
-        catch(StripeException e){
+        } catch (StripeException e) {
             e.printStackTrace();
         }
 
@@ -156,6 +195,7 @@ public class UserController {
 
     @GetMapping("/programming")
     public ResponseEntity<?> getUserProgramming(@AuthenticationPrincipal UserDetails userdetails) {
+<<<<<<< HEAD
         
         // TODO - is this needed - Josh?
         // Auth check
@@ -164,10 +204,21 @@ public class UserController {
         //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         // }
         
+=======
+        if (userdetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Payload.of("Unauthorized"));
+        }
+>>>>>>> main
         return userProgrammingService.getUserPrograms(userdetails.getUsername());
     }
 
+    @GetMapping("/programming/user/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getUserProgramming(@PathVariable("email") String email) {
+        return userProgrammingService.getUserPrograms(email);
+    }
 
+<<<<<<< HEAD
     @PostMapping("/programming/{upid}/comment")
     public ResponseEntity<?> addComment(@RequestParam("upid") long userProgrammingId, HttpServletRequest request, @RequestParam("comment") String comment){
         // return new ResponseEntity<>("Endpoint to add comment", HttpStatus.NOT_IMPLEMENTED);
@@ -177,6 +228,35 @@ public class UserController {
     @PutMapping("/programming/comment/{cid}")
     public ResponseEntity<?> updateComment(@RequestParam("cid") long commentId, @RequestParam("comment") String comment){
         // return new ResponseEntity<>("Endpoint to edit / update comment", HttpStatus.NOT_IMPLEMENTED);
+=======
+    @PostMapping("/programming")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> addProgramming(@RequestParam("email") String email,
+            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek, @RequestParam("startDate") Long startDate) {
+        return userProgrammingService.addProgramming(email, programId, startWeek, startDate);
+    }
+
+    @DeleteMapping("/programming/{upid}/remove")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> removeProgramming(@PathVariable("upid") long userProgrammingId) {
+        return userProgrammingService.removeProgramming(userProgrammingId);
+    }
+
+    @PostMapping("/programming/{upid}/comment")
+    public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,
+            @RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails) {
+        // return new ResponseEntity<>("Endpoint to add comment",
+        // HttpStatus.NOT_IMPLEMENTED);
+
+        return userProgrammingService.addComment(userProgrammingId, comment);
+    }
+
+    @PutMapping("/programming/comment/{cid}")
+    public ResponseEntity<?> updateComment(@PathVariable("cid") long commentId,
+            @RequestParam("comment") String comment) {
+        // return new ResponseEntity<>("Endpoint to edit / update comment",
+        // HttpStatus.NOT_IMPLEMENTED);
+>>>>>>> main
         return userProgrammingService.updateComment(commentId, comment);
     }
 
@@ -208,6 +288,23 @@ public class UserController {
 
         return ResponseEntity.ok(Payload.of("User information is valid"));
 
+    }
+
+    @GetMapping("/health_questionare/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getHealthQuestionare(@PathVariable("email") String email) {
+        return healthQuestionareService.getHealthQuestionareByEmail(email);
+    }
+
+    @PostMapping("/health_questionare")
+    public ResponseEntity<?> createHealthQuestionare(@RequestBody HealthQuestionare healthQuestionare) {
+        return healthQuestionareService.createHealthQuestionare(healthQuestionare);
+    }
+
+    @GetMapping("/health_questionare")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getAllHealthQuestionares() {
+        return ResponseEntity.ok(healthQuestionareService.getAllHealthQuestionares());
     }
 
     private static boolean validateUserInfo(UserInformation userInfo) {

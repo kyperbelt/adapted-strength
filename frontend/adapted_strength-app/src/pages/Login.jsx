@@ -139,7 +139,7 @@ export default function Login() {
                 Login with Google
                 <GoogleLogo className="ml-2" />
             </button>
-            <p className="relative mx-0 text-white top-4 px-8 text-center bottom-4">
+            <p className="relative mx-0 text-white px-3 text-center bottom-4">
                 Dont have an account?
                 <a
                     href="./sign-up"

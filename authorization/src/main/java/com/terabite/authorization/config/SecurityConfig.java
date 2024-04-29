@@ -28,7 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
         private static final String VERSION_PREFIX = "v1";
-        private static final String[] AUTHENTICATED_ROUTES = {
+        /*private static final String[] AUTHENTICATED_ROUTES = {
                         // "/auth/**",
                         "/auth/logout",
                         "/user/create",
@@ -37,6 +37,18 @@ public class SecurityConfig {
                         "/user/unsubscribe",
                         "/chat/**",
                         "/programming/**",
+        };*/
+        // These routes are open to anyone.
+        private static final String [] PUBLIC_ROUTES = {
+                "/auth/validate_credentials",
+                "/auth/login",
+                "/auth/forgot_password",
+                "/auth/reset_password",
+                "/auth/signup",
+                "/auth/get_token",
+                "/user/validate_user_data",
+                "/content/**",
+                "/webhook/"
         };
 
         private final JwtAuthFilter jwtAuthFilter;
@@ -79,13 +91,17 @@ public class SecurityConfig {
                                                         .dispatcherTypeMatchers(DispatcherType.ERROR,
                                                                         DispatcherType.FORWARD)
                                                         .permitAll();
-                                        for (String route : AUTHENTICATED_ROUTES) {
+                                        for (String route : PUBLIC_ROUTES) {
                                                 authorizeHttpRequests
                                                                 .requestMatchers(String.format("/%s%s", VERSION_PREFIX,
                                                                                 route))
-                                                                .authenticated();
+                                                                .permitAll();
                                         }
+<<<<<<< HEAD
                                         authorizeHttpRequests.anyRequest().permitAll();
+=======
+                                        authorizeHttpRequests.anyRequest().authenticated();
+>>>>>>> main
                                 }).sessionManagement((sessionManagement) -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authenticationProvider(authProvider)

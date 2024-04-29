@@ -2,10 +2,18 @@ package com.terabite.user.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+<<<<<<< HEAD
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.terabite.programming.model.Program;
+=======
+import java.util.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+>>>>>>> main
 
 @Entity
 @Table(name = "user_programming_mapping")
@@ -18,6 +26,7 @@ public class UserProgramming implements Serializable {
     private Long userProgrammingId;
 
     @ManyToOne
+<<<<<<< HEAD
     @JsonAlias("user_info")
     private UserInformation userInfo;
     
@@ -29,10 +38,47 @@ public class UserProgramming implements Serializable {
     @ManyToMany
     private List<ProgrammingComment> comments;
 
+=======
+    // @JsonAlias("user_info")
+    @JsonIgnore
+    private UserInformation userInfo;
+
+    @JoinTable(name = "user_workout_comments_table")
+    @ManyToMany
+    private List<ProgrammingComment> comments;
+
+    @JsonAlias("assigned_program_id")
+    private long assignedProgramId;
+
+    private Date startDate;
+
+
+    private int startWeek;
+
+    public int getStartWeek() {
+        return startWeek;
+    }
+
+    public void setStartWeek(int startWeek) {
+        this.startWeek = startWeek;
+    }
+
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+    
+
+>>>>>>> main
     public Long getId() {
         return userProgrammingId;
     }
 
+<<<<<<< HEAD
     public UserInformation getUserInfo() {
         return userInfo;
     }
@@ -40,6 +86,19 @@ public class UserProgramming implements Serializable {
     public Program getProgram() {
         return program;
     }
+=======
+    public void setAssignedProgramId(long assignedProgramId) {
+        this.assignedProgramId = assignedProgramId;
+    }
+
+    public long getAssignedProgramId() {
+        return assignedProgramId;
+    }
+
+    public UserInformation getUserInfo() {
+        return userInfo;
+    }
+>>>>>>> main
 
     public Long getUserProgrammingId() {
         return userProgrammingId;
@@ -64,8 +123,11 @@ public class UserProgramming implements Serializable {
     public void setUserInfo(UserInformation userInfo) {
         this.userInfo = userInfo;
     }
+<<<<<<< HEAD
     
     public void setProgram(Program program) {
         this.program = program;
     }   
+=======
+>>>>>>> main
 }

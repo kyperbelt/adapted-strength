@@ -1,73 +1,68 @@
-/*
-Module: Profile.jsx
-Team: TeraBITE
-*/
-import { Outlet, Link, useNavigate } from "react-router-dom";
+
 import { useEffect, useState } from "react";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { UserApi } from "../api/UserApi";
-import { AuthApi } from "../api/AuthApi";
-
-
-import icon from '../assets/ladyIcon.png'
 import { HttpStatus } from "../api/ApiUtils";
-import PageContainer1, { BlankPageContainer } from "../components/PageContainer";
+import Footer from "../components/footer";
+import logo from "../assets/logo.png";
+import { AuthApi } from "../api/AuthApi";
+import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { startTransition } from "react";
+import { SubscriptionApi } from "../api/SubscriptionApi";
+import { BasicModalDialogue } from "../components/Dialog";
+import StateGuard from "../util/StateGuard";
 
-function FNameField() {
-    return (<input type="fname" defaultValue="First Name" id="fname" name="fname" required className="w-4/5 border-b-4 p-0" />);
-}
-function LNameField() {
-    return (<input type="lname" defaultValue="Last Name" id="lname" name="lname" required className="w-4/5 border-b-4 p-0" />);
-}
-
-function DropDownMenu() {
-    return (
-        <div className="text-center border-b-4 p-1">
-            <label for="shirt-select">Shirt Size: </label>
-            <select name="shirt" id="shirt-select">
-                <option value="">--Select Size--</option>
-                <option value="XXS">XXS</option>
-                <option value="XS">XS</option>
-                <option value="S">Small</option>
-                <option value="M">Medium</option>
-                <option value="L">Large</option>
-                <option value="XL">XL</option>
-                <option value="2XL">2XL</option>
-                <option value="3XL">3XL</option>
-            </select>
-        </div>
-    );
+function AdaptedStrengthLogo() {
+  return (
+    <div className="logo-container">
+      <img src={logo} alt="Adapted Strength Logo" className="logo" />
+    </div>
+  );
 }
 
-function SxField() {
-    return (<input type="sex" defaultValue="Sex" id="sex" name="sex" required className="w-4/5 border-b-4 p-0" />);
+function SubscriptionField({ tier }) {
+  let subscriptionLabel;
+  switch (tier) {
+    case "BASE_CLIENT":
+      subscriptionLabel = "Base Client";
+      break;
+    case "GENERAL_CLIENT":
+      subscriptionLabel = "General Client";
+      break;
+    case "SPECIFIC_CLIENT":
+      subscriptionLabel = "Specific Client";
+      break;
+    default:
+      subscriptionLabel = "Not Subscribed";
+  }
+  return <div className="subscription-tier">{subscriptionLabel}</div>;
 }
 
-function AddrField() {
-    return (<input type="address" placeholder="Address" id="address" name="address" required className="w-4/5 border-b-4 p-0" />);
-}
-function CityField() {
-    return (<input type="city" placeholder="City" id="city" name="city" required className="w-4/5 border-b-4 p-0" />);
-}
-
-function StateField() {
-    return (<input type="state" placeholder="State" id="state" name="state" required className="w-4/5 border-b-4 p-0" />);
-}
-function ZipField() {
-    return (<input type="zip" placeholder="Zip Code" id="zip" name="zip" required className="w-4/5 border-b-4 p-0" />);
-}
-function PhoneField() {
-    return (<input type="phoneNum" placeholder="Phone Number" id="phoneNum" name="phoneNum" required className="w-4/5 border-b-4 p-0" />);
-}
-
-function SubscriptionField({ ...props }) {
-    return (<div> Subscription Tier : {props.tier}</div>)
-
+function formatPhoneNumber(phoneNumber) {
+  const cleaned = ("" + phoneNumber).replace(/\D/g, "");
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return "(" + match[1] + ") " + match[2] + "-" + match[3];
+  }
+  return null;
 }
 
 export default function Profile() {
-    const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
-    const [profileInfo, setProfileInfo] = useState([]);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [profileInfo, setProfileInfo] = useState([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCancelSubscription = async () => {
+    await SubscriptionApi.cancelSub();
+    setShowConfirmation(false);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
     useEffect(() => {
         setIsLoading(true);
@@ -77,86 +72,186 @@ export default function Profile() {
                     setProfileInfo(response.data);
                     setIsLoading(false);
                     console.log(response.data)
-                } else if (response.status === HttpStatus.UNAUTHORIZED) { // unauthorized
-                    // TODO: same as error, redirect to login page or display error message
-                    console.error(`ERROR HAPPENED: ${JSON.stringify(response.data)}`);
-                    if (response.data.all.includes("ROLE_TERMS_ACCEPTED")) {
-                        console.log("User has not accepted terms and conditions");
-                        AuthApi.logout();
-                        navigate("/login");
-
-                    } else if (response.data.all.includes("ROLE_ACCOUNT_SETUP")) {
-                        console.log("User has not setup account");
-                        navigate("/logout");
-                    }
+                }else{
+                    AuthApi.logout();
+                    throw new Error("Error getting profile information");
                 }
+
             }).catch((error) => {
                 console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
                 setIsLoading(false);
-                //TODO: User was unable to get profile information, 
-                //     redirect to login page or display error message
+                navigate("/login");
+                AuthApi.logout();
+
             });
     }, []);
 
-    if (isLoading) {
-        return <div>{"Loading..."}</div>
-    }
+  if (isLoading) {
+    return <div>{"Loading..."}</div>;
+  }
+  const formattedCellPhone = formatPhoneNumber(profileInfo.cellPhone);
+  const formattedHomePhone = formatPhoneNumber(profileInfo.homePhone);
+  const tier = profileInfo.subscriptionTier;
+  console.log(profileInfo);
+  return (
+    <div>
+      <style>{`
+                .header {
+                    background-color: rgba(255, 10, 30, 0.5);
+                    padding: 20px 0;
+                    text-align: center;
+                }
+                
+                .logo-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
 
-    return (
-        <BlankPageContainer>
-            <div className="w-full h-full flex flex-col bottom-20">
-                <p className="bg-[#161A1D] text-white bottom-3 px-0 pt-8 pb-8">
-                    Your Profile:
-                </p>
+                    margin-bottom: 20px;
+                }
+                
+                .logo {
+                    width: 400px;
+                }
+                
+                .profile-container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                
+                .page-title {
+                    font-size: 24px;
+                    font-weight: bold;
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                
+                .grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    grid-gap: 20px;
+                }
+                
+                .profile-item {
+                    background-color: #f9f9f9;
+                    padding: 10px;
+                    border-radius: 5px;
+                }
+                
+                .label {
+                    font-weight: bold;
+                }
+                
+                .value {
+                    margin-top: 5px;
+                }
+                
+            `}</style>
+      <div className="header">
+        <AdaptedStrengthLogo />
+      </div>
+      <div className="profile-container">
+        <h1 className="page-title">User Profile</h1>
+        <div className="grid">
+          <div className="profile-item">
+            <h2 className="label">First Name:</h2>
+            <p className="value">{profileInfo.firstName}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Last Name:</h2>
+            <p className="value">{profileInfo.lastName}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Subscription Tier:</h2>
+            <SubscriptionField tier={profileInfo.subscriptionTier} />
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Date of Birth:</h2>
+            <p className="value">{profileInfo.dateOfBirth}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Sex:</h2>
+            <p className="value">{profileInfo.sex}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Shirt Size:</h2>
+            <p className="value">{profileInfo.shirtSize}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Cell Phone:</h2>
+            <p className="value">{formattedCellPhone}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Home Phone:</h2>
+            <p className="value">{formattedHomePhone}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">Email:</h2>
+            <p className="value">{profileInfo.email}</p>
+          </div>
+          <div className="profile-item">
+            <h2 className="label">How Did You Hear:</h2>
+            <p className="value">{profileInfo.howDidYouHear}</p>
+          </div>
+          {/* Add more fields as needed */}
+        </div>
+        <br></br>
+        <PrimaryButton
+          onClick={async () => {
+            startTransition(() => {
+              navigate("/edit-profile");
+            });
+          }}
+        >
+          Edit Profile
+        </PrimaryButton>
 
-                <div className="bg-[#161A1D] grid place-content-center boarder-2">
-                    <img src={icon} alt="Adapted Strength Logo" className="h-20 w-20" />
-                </div>
-                <p className="bg-[#161A1D] text-white bottom-20">
-                    Hugh Jay
-                </p>
-                <p className="bg-[#161A1D] text-white bottom-20  px-0 pb-8 mb-4">
-                    hugh.jay@gmail.com
-                </p>
-                <Link to="/edit-profile" className="bg-[#161A1D] text-white bottom-20  px-0 pb-8 mb-4">
-                    Edit Profile
-                </Link>
-                <div className="w-full flex flex-col items-center px-0 ">
-                    <FNameField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <LNameField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <DropDownMenu />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <SxField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <AddrField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <AddrField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <CityField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <StateField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <ZipField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <PhoneField />
-                </div>
-                <div className="w-full flex flex-col items-center px-0 pt-4">
-                    <SubscriptionField tier={profileInfo.subscriptionTier} />
-                </div>
+        <StateGuard state={() => tier !== "NO_SUBSCRIPTION"}>
+          <SecondaryButton onClick={() => setShowConfirmation(true)}>
+            <>Cancel Subscription</>
+          </SecondaryButton>
+        </StateGuard>
 
-            </div >
-        </BlankPageContainer>
-    );
-    // <SubscriptionField tier={profileInfo.subscriptionTier}/>
+        {showConfirmation && (
+          <BasicModalDialogue
+            title="Confirm Unsubscribe"
+            onCloseDialog={() => setShowConfirmation(false)}
+          >
+            <p>
+              Are you sure you want to unsubscribe? Please note that you'll
+              continue to enjoy your benefits until the end of the current
+              billing cycle. Changes to your account will take effect after the
+              cycle concludes.
+            </p>
+            <div className="flex justify-end">
+              <SecondaryButton onClick={() => handleCancelSubscription()}>
+                <>Yes</>
+              </SecondaryButton>
+              <PrimaryButton onClick={() => setShowConfirmation(false)}>
+                <>No</>
+              </PrimaryButton>
+            </div>
+          </BasicModalDialogue>
+        )}
+        {showModal && (
+          <BasicModalDialogue
+            title="Subscription Cancelled"
+            onCloseDialog={handleCloseModal}
+          >
+            <p>
+              Subscription successfully cancelled! You will not see a change in
+              your account until the end of the current billing cycle.
+            </p>
+            <div className="flex justify-end">
+              <PrimaryButton onClick={() => handleCloseModal()}>
+                <>Close</>
+              </PrimaryButton>
+            </div>
+          </BasicModalDialogue>
+        )}
+      </div>
+      <Footer />
+    </div>
+  );
 }

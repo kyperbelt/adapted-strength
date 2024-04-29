@@ -13,6 +13,10 @@ import com.terabite.user.service.SubscriptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+<<<<<<< HEAD
+=======
+import org.springframework.security.access.prepost.PreAuthorize;
+>>>>>>> main
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +42,10 @@ public class RepCycleNoteController {
      * @return list of all rep-cycle notes
      */
     @GetMapping("/notes")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> getNotes() {
         List<RepCycleNote> notes = noteRepository.findAll();
 
@@ -50,6 +58,10 @@ public class RepCycleNoteController {
     }
 
     @GetMapping("/{id}")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> getNoteById(@PathVariable int id) {
         RepCycleNote note = noteRepository.findById(id).orElse(null);
         if (note == null) {
@@ -59,6 +71,10 @@ public class RepCycleNoteController {
     }
 
     @GetMapping("/user/{id}")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> getNotesByUserId(@PathVariable int id) {
         List<RepCycleNote> notes = noteRepository.findRepCycleNotesByUser_Id(id).orElse(null);
 
@@ -84,6 +100,10 @@ public class RepCycleNoteController {
     }
 
     @GetMapping("/rep_cycle/{id}")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> getNotesByRepCycleId(@PathVariable long id) {
         List<RepCycleNote> notes = noteRepository.findRepCycleNotesByRepCycle_RepCycleId(id).orElse(null);
 
@@ -97,6 +117,10 @@ public class RepCycleNoteController {
      * @return the ResponseEntity with the newly created and saved RepCycleNote
      */
     @PostMapping("/notes")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> createNote(@RequestBody RepCycleNoteRequest noteRequest) {
         log.info(noteRequest.toString());
         RepCycleNote note = new RepCycleNote();
@@ -127,6 +151,10 @@ public class RepCycleNoteController {
      * @return the ResponseEntity containing the updated RepCycleNote
      */
     @PutMapping("/notes")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> updateNote(@RequestBody RepCycleNote note) {
         noteRepository.save(note);
         return ResponseEntity.ok(new RepCycleNoteResponse(note));
@@ -139,6 +167,10 @@ public class RepCycleNoteController {
      * @return the ResponseEntity with a 200 OK status
      */
     @DeleteMapping("/{id}")
+<<<<<<< HEAD
+=======
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+>>>>>>> main
     public ResponseEntity<?> deleteNote(@PathVariable int id) {
 
         try {

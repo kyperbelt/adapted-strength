@@ -4,10 +4,11 @@ Team: TeraBITE
 */
 import { useEffect, useState } from "react";
 import { UserApi } from "../api/UserApi";
-import PageContainer1 from "../components/PageContainer";
+import PageContainer1, {PageContainer2} from "../components/PageContainer";
 import LabeledInputField from "../components/forms/LabeledInputField";
 import SubmitButton from '../components/forms/SubmitButton';
 import { HttpStatus } from "../api/ApiUtils";
+import {PrimaryButton} from '../components/Button';
 
 
 export default function EditProfile() {
@@ -73,12 +74,12 @@ function EditProfileContent({ info }) {
 
     return (
 
-        <PageContainer1>
+        <PageContainer2>
 
             <div className="relative bottom-20">
                 <h1 className="relative mx-0 text-center text-2xl bottom-4 font-outline-2 sm:mt-5">Edit Profile</h1>
                 <div className="flex w-full justify-center" >
-                    <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs space-y-4">
+                    <form onSubmit={onSubmit} className="p-0 w-full flex flex-col items-center bg-primary shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs space-y-4">
                         <LabeledInputField type="text" id="fname" name="fname" required={true} placeholder="First Name" defaultValue={fname} />
                         <LabeledInputField className="" type="text" id="lname" name="lname" required={true} placeholder="Last Name" defaultValue={lname} />
                         <LabeledInputField className="" type="text" id="address1" name="address1" required={true} placeholder="Address" defaultValue={address1} />
@@ -87,11 +88,11 @@ function EditProfileContent({ info }) {
                         <LabeledInputField className="" type="number" id="zip" name="zip" required={true} placeholder="Zip" defaultValue={zip} />
                         <LabeledInputField className="" type="tel" id="cell_phone" name="phone" required={true} placeholder="Phone Number" pattern="([0-9]{3}-[0-9]{2}-[0-9]{3}|[0-9]{10})" defaultValue={phone} />
                         <div className="flex justify-center w-full relative top-14">
-                            <SubmitButton text="Save" onClick={console.log("clicked")} />
+                            <PrimaryButton  className="border-primary border-8 text-primary px-3 py-1" onClick={console.log("clicked")} >Save</PrimaryButton>
                         </div>
                     </form>
                 </div>
 
             </div>
-        </PageContainer1>);
+        </PageContainer2>);
 }

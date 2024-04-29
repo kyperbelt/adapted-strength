@@ -38,7 +38,7 @@ public class VideoController {
     }
 
     @PostMapping("/upload/coach")
-    @PreAuthorize("hasAuthority('ROLE_COACH')")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> uploadCoachVideo(@AuthenticationPrincipal UserDetails userDetails, 
         @JsonAlias({"file", "video", "video_file"}) MultipartFile video, 
         @JsonAlias({"name", "video_name"}) String name){
@@ -52,7 +52,7 @@ public class VideoController {
     }
 
     @GetMapping("/download/coach")
-    @PreAuthorize("hasAuthority('ROLE_COACH')")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> downloadCoachVideo(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String name) {
         return videoService.downloadVideo(name, S3Bucket.COACH, userDetails.getUsername() ); 
     }
@@ -64,7 +64,7 @@ public class VideoController {
     }
 
     @DeleteMapping("/delete/coach")
-    @PreAuthorize("hasAuthority('ROLE_COACH')")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> deleteCoachVideo(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String name) {
         return videoService.deleteVideo(name, S3Bucket.COACH); 
     }

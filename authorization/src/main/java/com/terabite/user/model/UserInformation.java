@@ -43,7 +43,7 @@ public class UserInformation implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    @Pattern(regexp = "^[MF]$")
+    @Pattern(regexp = "^[MFN]$")
     @Column(columnDefinition = "char")
     private String sex;
 
@@ -61,11 +61,11 @@ public class UserInformation implements Serializable {
     private Customer customer;
 
     @JsonAlias("cell_phone")
-    @Pattern(regexp = "^[0-9]{10}$")
+    @Pattern(regexp = "^1?[-.\\s]?((\\([0-9]{3}\\))|[0-9]{3})[-.\\s]?[0-9]{3}[-.\\s]?[0-9]{4}$")
     private String cellPhone;
 
     @JsonAlias("home_phone")
-    @Pattern(regexp = "^[0-9]{10}$")
+    @Pattern(regexp = "^1?[-.\\s]?((\\([0-9]{3}\\))|[0-9]{3})[-.\\s]?[0-9]{3}[-.\\s]?[0-9]{4}$")
     private String homePhone;
 
     @OneToOne(cascade = CascadeType.ALL)
