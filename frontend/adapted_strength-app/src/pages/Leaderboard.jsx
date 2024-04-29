@@ -12,23 +12,6 @@ function AdaptedStrengthLogo() {
   );
 }
 
-function adjustWeightClass(weightClass) {
-  console.log("Original weight class:", weightClass); // Debugging
-  
-  // Convert weightClass to a string for substring check
-  const weightString = weightClass.toString();
-
-  // Check if the weight class contains specific substrings
-  if (weightString.includes('101') || weightString.includes('88') || weightString.includes('140') || weightString.includes('110')) {
-    // If any of the substrings are found, subtract one
-    const adjustedWeightClass = weightClass - 1;
-    console.log("Adjusted weight class:", adjustedWeightClass); // Debugging
-    return adjustedWeightClass + '+';
-  } else {
-    return weightClass;
-  }
-}
-
 
  // Function to generate CSS for table columns
  const getColumnStyle = () => {
@@ -101,6 +84,64 @@ export default function Leaderboard() {
   const [addRecords, setAddRecords] = useState(true);
   const [deleteRank, setDeleteRank] = useState("");
   const [idToDelete, setIdToDelete] = useState(null);
+  const [topMaleSquat, setTopMaleSquat] = useState([]);
+  const [topFemaleSquat, setTopFemaleSquat] = useState([]);
+  const [topMaleBench, setTopMaleBench] = useState([]);
+  const [topFemaleBench, setTopFemaleBench] = useState([]);
+  const [topMaleDeadlift, setTopMaleDeadlift] = useState([]);
+  const [topFemaleDeadlift, setTopFemaleDeadlift] = useState([]);
+  const [topMaleSnatch, setTopMaleSnatch] = useState([]);
+  const [topFemaleSnatch, setTopFemaleSnatch] = useState([]);
+  const [topMaleCleanJerk, setTopMaleCleanJerk] = useState([]);
+  const [topFemaleCleanJerk, setTopFemaleCleanJerk] = useState([]);
+
+  useEffect(() => {
+    async function fetchTopAthletes() {
+        const maleSquatResponse = await UserApi.getTop10MaleSquat();
+        console.log("Male Squat Response:", maleSquatResponse.data);
+        setTopMaleSquat(maleSquatResponse.data);
+
+        const femaleSquatResponse = await UserApi.getTop10FemaleSquat();
+        console.log("Female Squat Response:", femaleSquatResponse.data);
+        setTopFemaleSquat(femaleSquatResponse.data);
+
+        const maleBenchResponse = await UserApi.getTop10MaleBench();
+        console.log("Male Bench Response:", maleBenchResponse.data);
+        setTopMaleBench(maleBenchResponse.data);
+
+        const femaleBenchResponse = await UserApi.getTop10FemaleBench();
+        console.log("Female Bench Response:", femaleBenchResponse.data);
+        setTopFemaleBench(femaleBenchResponse.data);
+
+        const maleDeadliftResponse = await UserApi.getTop10MaleDeadlift();
+        console.log("Male Deadlift Response:", maleDeadliftResponse.data);
+        setTopMaleDeadlift(maleDeadliftResponse.data);
+
+        const femaleDeadliftResponse = await UserApi.getTop10FemaleDeadlift();
+        console.log("Female Deadlift Response:", femaleDeadliftResponse.data);
+        setTopFemaleDeadlift(femaleDeadliftResponse.data);
+
+        const maleSnatchResponse = await UserApi.getTop10MaleSnatch();
+        console.log("Male Snatch Response:", maleSnatchResponse.data);
+        setTopMaleSnatch(maleSnatchResponse.data);
+
+        const femaleSnatchResponse = await UserApi.getTop10FemaleSnatch();
+        console.log("Female Snatch Response:", femaleSnatchResponse.data);
+        setTopFemaleSnatch(femaleSnatchResponse.data);
+
+        const maleCleanJerkResponse = await UserApi.getTop10MaleCleanJerk();
+        console.log("Male Clean & Jerk Response:", maleCleanJerkResponse.data);
+        setTopMaleCleanJerk(maleCleanJerkResponse.data);
+
+        const femaleCleanJerkResponse = await UserApi.getTop10FemaleCleanJerk();
+        console.log("Female Clean & Jerk Response:", femaleCleanJerkResponse.data);
+        setTopFemaleCleanJerk(femaleCleanJerkResponse.data);
+      }
+
+      fetchTopAthletes();
+  }, []);
+
+
 
   const calculateTotal = () => {
     let total = 0;
@@ -515,6 +556,7 @@ export default function Leaderboard() {
   }, [selectedWeightClass, selectedCategory, selectedGender]);
 
 
+
 return (
   <div className="h-full my-0 content-center w-full top-[100px]">
     <br />
@@ -632,6 +674,260 @@ return (
         </tbody>
       </table>
     </div>
+    <br></br>
+
+    {/* Display top athletes in a table */}
+    {topMaleSquat && topMaleSquat.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Male Squat</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topMaleSquat.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topFemaleSquat && topFemaleSquat.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Female Squat</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topFemaleSquat.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topMaleBench && topMaleBench.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Male Bench</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topMaleBench.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topFemaleBench && topFemaleBench.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Female Bench</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topFemaleBench.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topMaleDeadlift && topMaleDeadlift.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top MaleDeadlift</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topMaleDeadlift.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topFemaleDeadlift && topFemaleDeadlift.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Female Deadlift</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topFemaleDeadlift.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topMaleSnatch && topMaleSnatch.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Male Snatch</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topMaleSnatch.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topFemaleSnatch && topFemaleSnatch.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Female Snatch</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topFemaleSnatch.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topMaleCleanJerk && topMaleCleanJerk.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Male Clean & Jerk</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topMaleCleanJerk.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    {topFemaleCleanJerk && topFemaleCleanJerk.length > 0 && (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+        <caption className="text-center font-bold mb-2">Top Female Clean & Jerk</caption>
+          <thead>
+            <tr>
+              <th style={getColumnStyle()}>Rank</th>
+              <th style={getColumnStyle()}>Name</th>
+              <th style={getColumnStyle()}>Weight Class</th>
+              <th style={getColumnStyle()}>Weight Lifted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topFemaleCleanJerk.map((athlete, index) => (
+              <tr key={index} style={getRowStyle(index)}>
+                <td>{index + 1}</td>
+                <td>{athlete.name}</td>
+                <td>{athlete.weightClass}</td>
+                <td>{athlete.weight}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+
 
     <br></br>
 
@@ -789,6 +1085,7 @@ return (
       </div>
     )}
 
+
     {/* Submit button for Adding Record */}
     {addCategory && addGender && addWeightClass && (
       <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleSubmit}>Add Record</button>
@@ -819,7 +1116,7 @@ return (
     {addRecords && topAthletes && topAthletes.length > 0 && (
       <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleDeleteRecord}>Confirm Delete</button>
     )}
-
+  
     <br />
     <Footer />
   </div>

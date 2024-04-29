@@ -280,6 +280,16 @@ static updateSubscription({subscriptionTier }) {
     return promise;
   }
 
+  static getTop10MaleSnatch() {
+    const promise = ApiUtils.apiGet('leaderboard/snatch/top10male');
+    return promise;
+  }
+
+  static getTop10FemaleSnatch() {
+    const promise = ApiUtils.apiGet('leaderboard/snatch/top10female');
+    return promise;
+  }
+
   static getTop10MaleSnatchByWeightClass(weightClass) {
     const promise = ApiUtils.apiGet(`leaderboard/snatch/top10malebyweight?weightClass=${weightClass}`);
     return promise;
@@ -287,6 +297,16 @@ static updateSubscription({subscriptionTier }) {
 
   static getTop10FemaleSnatchByWeightClass(weightClass) {
     const promise = ApiUtils.apiGet(`leaderboard/snatch/top10femalebyweight?weightClass=${weightClass}`);
+    return promise;
+  }
+
+  static getTop10MaleCleanJerk() {
+    const promise = ApiUtils.apiGet('leaderboard/cleanjerk/top10male');
+    return promise;
+  }
+
+  static getTop10FemaleCleanJerk() {
+    const promise = ApiUtils.apiGet('leaderboard/cleanjerk/top10female');
     return promise;
   }
 
