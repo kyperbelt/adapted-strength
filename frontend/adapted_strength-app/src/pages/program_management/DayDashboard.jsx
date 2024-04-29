@@ -211,6 +211,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
         };
 
 
+        // <SearchBar />
         return (selectedWeek &&
                 <div className="flex flex-col px-6">
 
@@ -220,21 +221,20 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                         ]} />
                         <CardBack className="">
                                 <div className="flex flex-col sm:flex-row mt-2">
-                                        <SearchBar />
                                         <PrimaryButton
                                                 className="sm:ml-auto w-32"
                                                 onClick={onAddDay}>
                                                 Add Day
                                         </PrimaryButton>
                                 </div>
-                                <StyledCheckboxTable headers={["Name", "Description"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
+                                <StyledCheckboxTable headers={["Name", "Rep Cycles"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
                                         {days.map((day) => (
                                                 <>
                                                         <CustomTableRow
                                                                 key={day.dayId}
                                                                 data={[
                                                                         day.name,
-                                                                        day.description,
+                                                                        day.repCycles.length,
                                                                 ]}
                                                                 onOptionClick={(option) => {
                                                                         if (option === 'Delete') {
@@ -260,7 +260,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                                                 }}
                                                         />
 
-                                                        {day.open && <RepCycleContainer day={day} />}
+                                                        {day.open && <RepCycleContainer day={day} dayState={[days, setDays]} />}
                                                 </>
                                         ))}
                                 </StyledCheckboxTable>
@@ -333,7 +333,7 @@ function EditDayDialog({ dayId, dayState, className, ...props }) {
 }
 
 
-function RepCycleContainer({ day }) {
+function RepCycleContainer({ day, dayState }) {
 
         const [mode, setMode] = useState("create");
         const [selectedRepCycle, setSelectedRepCycle] = useState(null);
@@ -367,7 +367,7 @@ function RepCycleContainer({ day }) {
                                                 <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
                                         </svg> Add RepCycle
                                 </button>
-                                <RepCycleForm day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} onClose={() => {
+                                <RepCycleForm day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} dayState={dayState} onClose={() => {
                                         setMode("create");
                                 }} />
                         </td>
@@ -475,9 +475,10 @@ function RepCycleItem({ className, title, value }) {
 
 }
 
-function RepCycleForm({ day, mode, repCycle, repCycleState, onClose }) {
+function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState }) {
 
         const dayId = day.dayId;
+        const [days, setDays] = dayState;
         const title = mode === "create" ? "Create RepCycle" : "Edit RepCycle";
         const buttonText = mode === "create" ? "Create" : "Save";
         const [repCycles, setRepCycles] = repCycleState;
@@ -516,10 +517,10 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose }) {
 
                 if (mode === "create") {
                         // create the rep cycle
-                        console.log("Creating rep cycle: ", data);
                         const createCycleResponse = await ProgrammingApi.createCycle({ cycleName: data.repCycleName, equipment: data.equipment, numSets: data.numSets, numReps: data.numReps, weight: data.weight, restTime: data.restTime, coachNotes: data.coachNotes, workoutOrder: data.workoutOrder, movementId: data.movementId }).then((r) => {
                                 if (r.status === HttpStatus.OK) {
                                         cycle = r.data;
+                                        console.log("rep cycle Created: ", r.data);
                                         // update day with new rep cycle
                                         const repCycleIds = [...day.repCycles.map((cycle) => cycle.repCycleId), r.data.repCycleId];
                                         const updateDayPayload = {
@@ -539,6 +540,21 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose }) {
                         if (createCycleResponse.status === HttpStatus.OK) {
                                 console.log("Rep cycle created: ", createCycleResponse.data);
                                 setRepCycles([...repCycles, cycle]);
+                                // update day with new rep cycle
+                                const newDay = {
+                                        ...day,
+                                        repCycles: [...day.repCycles, cycle]
+                                };
+                                const newDays = days.map((d) => {
+                                        if (d.dayId === day.dayId) {
+                                                return newDay;
+                                        } else {
+                                                return d;
+                                        }
+                                });
+
+                                setDays(newDays);
+
                         }
 
                         onCloseHere();

@@ -4,9 +4,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.programming.model.Program;
+import com.terabite.programming.model.ProgramDescription;
 import com.terabite.programming.model.ProgramDescription;
 import com.terabite.programming.model.RepCycle;
 <<<<<<< HEAD
@@ -14,6 +16,7 @@ import com.google.api.client.util.Lists;
 import com.terabite.common.dto.Payload;
 =======
 >>>>>>> program_management_redo
+import com.terabite.common.dto.Payload;
 import com.terabite.programming.dto.CreateDayRequest;
 import com.terabite.programming.dto.CreateProgramRequest;
 import com.terabite.programming.dto.CreateRepCycleRequest;
@@ -28,11 +31,14 @@ import com.terabite.programming.service.DayService;
 import com.terabite.programming.service.ProgramService;
 import com.terabite.programming.service.RepCycleService;
 import com.terabite.programming.service.WeekService;
+import com.terabite.user.UserApi;
+import com.terabite.user.model.UserProgramming;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.HashMap;
 import java.util.List;
 <<<<<<< HEAD
 import java.util.Optional;
@@ -43,7 +49,14 @@ import org.springframework.http.HttpStatus;
 =======
 
 >>>>>>> program_management_redo
+import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 
 @RestController
@@ -51,16 +64,20 @@ import org.springframework.http.ResponseEntity;
 public class ProgrammingControler {
 
     private static final Logger log = LoggerFactory.getLogger(ProgrammingControler.class);
+
+    private static final Logger log = LoggerFactory.getLogger(ProgrammingControler.class);
     
     private final RepCycleService repCycleService;
     private final DayService dayService;
     private final WeekService weekService;
     private final ProgramService programService;
+    private final UserApi userApi;
 
-    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService){
+    public ProgrammingControler(RepCycleService repCycleService, DayService dayService, WeekService weekService, ProgramService programService, UserApi userApi){
         this.repCycleService=repCycleService;
         this.dayService=dayService;
         this.weekService=weekService;
+        this.userApi=userApi;
         this.programService=programService;
     }
 
@@ -75,10 +92,15 @@ public class ProgrammingControler {
     public ResponseEntity<?> postProgram(@RequestBody CreateProgramRequest request) {
         Program program = new Program(request.programName(), List.of());
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+    public ResponseEntity<?> createProgram(@RequestBody CreateProgramRequest request) {
+        Program program = new Program(request.programName(), Lists.newArrayList());
+        program.setDescription(new ProgramDescription(request.programDescription()));
         return programService.createNewProgram(program);
     }
 
     @PutMapping("/program")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
 <<<<<<< HEAD
         List<Week> weeks = Lists.newArrayList();
@@ -94,6 +116,11 @@ public class ProgrammingControler {
             Week week = new Week();
             week.setWeekId(weekId);
 >>>>>>> program_management_redo
+            final Week week = weekService.getWeekById(weekId);
+            if (week == null) {
+                log.error("Week with id {} not found", weekId);
+                continue;
+            }
             weeks.add(week);
         }
 
@@ -102,6 +129,8 @@ public class ProgrammingControler {
 
     @GetMapping("/program/{id}")
 <<<<<<< HEAD
+    public ResponseEntity<?> getProgram(@PathVariable int id) {
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> getProgram(@PathVariable int id) {
         Program program = new Program("name", Lists.newArrayList());
 =======
@@ -114,12 +143,15 @@ public class ProgrammingControler {
     }
 
     @GetMapping("/all_programs")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> getAllPrograms() {
         return programService.getAllPrograms();
     }
 
     @DeleteMapping("/program/{id}")
 <<<<<<< HEAD
+    public ResponseEntity<?> deleteProgram(@PathVariable int id){
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> deleteProgram(@PathVariable int id){
         Program program = new Program("name", Lists.newArrayList());
 =======
@@ -141,6 +173,7 @@ public class ProgrammingControler {
      <p>
      */
     @PostMapping("/week")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> createWeek(@RequestBody CreateWeekRequest request) {
 <<<<<<< HEAD
         Week week = new Week(request.weekName(), Lists.newArrayList());
@@ -162,6 +195,7 @@ public class ProgrammingControler {
         <p>
     */
     @PutMapping("/week")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
         
 <<<<<<< HEAD
@@ -176,10 +210,17 @@ public class ProgrammingControler {
             }
 =======
         List<Day> days = List.of();
+        log.info("Day ids: {}", request.dayIds());
         for (int dayId : request.dayIds()) {
             Day day = new Day();
             day.setDayId(dayId);
 >>>>>>> program_management_redo
+            final Day day = dayService.getDayById(dayId);
+            log.info("Day: {}", day);
+            if (day == null) {
+                log.error("Day with id {} not found", dayId);
+                continue;
+            }
             days.add(day);
         }
         return weekService.updateWeek(request, days);
@@ -193,13 +234,30 @@ public class ProgrammingControler {
     public ResponseEntity<?> getWeek(@RequestParam long id) {
         Week week = new Week("name", List.of());
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+    public ResponseEntity<?> getWeek(@PathVariable long id) {
+        Week week = new Week("name", Lists.newArrayList());
         week.setWeekId(id);
         return weekService.getWeek(week);
     }
 
     @GetMapping("/week/all_weeks")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> getAllWeeks() {
         return weekService.getAllWeeks();
+    }
+
+    @GetMapping("/week/all_weeks/{programId}")
+    public ResponseEntity<?> getAllWeeksByProgramId(@PathVariable long programId) {
+        List<Week> weeks = Lists.newArrayList();
+
+        Optional<Program> programOptional = programService.getProgramById(programId);
+
+        if(programOptional.isPresent()){
+            weeks = programOptional.get().getWeeks();
+        }
+        return ResponseEntity.ok(weeks);
+
     }
 
     @GetMapping("/week/all_weeks/{programId}")
@@ -221,6 +279,7 @@ public class ProgrammingControler {
 =======
     public ResponseEntity<?> deleteWeek(@RequestParam long id){
 >>>>>>> program_management_redo
+    public ResponseEntity<?> deleteWeek(@PathVariable long id){
         Week week = weekService.getWeekById(id);
 
         return weekService.deleteWeekByName(week);
@@ -229,6 +288,7 @@ public class ProgrammingControler {
 
     //Day endpoints
     @PostMapping("/day")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> createDay(@RequestBody CreateDayRequest request) {
 <<<<<<< HEAD
         Day day = new Day(request.dayName(), Lists.newArrayList());
@@ -240,6 +300,7 @@ public class ProgrammingControler {
     }
 
     @PutMapping("/day")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> updateDay(@RequestBody UpdateDayRequest request) {
 
 <<<<<<< HEAD
@@ -256,6 +317,11 @@ public class ProgrammingControler {
             RepCycle repCycle = new RepCycle();
             repCycle.setRepCycleId(repCycleId);
 >>>>>>> program_management_redo
+            RepCycle repCycle = repCycleService.getRepCycleById(repCycleId);
+            if (repCycle == null) {
+                log.error("RepCycle with id {} not found", repCycleId);
+                continue;
+            }
             repCycles.add(repCycle);
         }
         return dayService.updateDay(request, repCycles);
@@ -269,10 +335,14 @@ public class ProgrammingControler {
     public ResponseEntity<?> getDay(@RequestParam long id) {
         Day day = new Day("name", List.of());
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+    public ResponseEntity<?> getDay(@PathVariable long id) {
+        Day day = new Day("name", Lists.newArrayList());
         return dayService.getDay(day);
     }
 
     @GetMapping("/day/all_days")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> getAllDays() {
         return dayService.getAllDays();
     }
@@ -286,6 +356,10 @@ public class ProgrammingControler {
     public ResponseEntity<?> deleteDay(@RequestParam long id){
         Day day = new Day("name", List.of());
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+    public ResponseEntity<?> deleteDay(@PathVariable long id){
+        Day day = new Day("name", Lists.newArrayList());
+        day.setDayId(id);
         return dayService.deleteDay(day);
     }
 
@@ -297,6 +371,8 @@ public class ProgrammingControler {
 =======
     public ResponseEntity<?> postRepCycle(@RequestBody CreateRepCycleRequest request) {
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+    public ResponseEntity<?> createRepCycle(@RequestBody CreateRepCycleRequest request) {
         RepCycle repCycle = new RepCycle().withName(request.repCycleName())
                                         // .withDescription(request.repCycleDescription())
                                         .withNumReps(request.numReps())
@@ -317,6 +393,8 @@ public class ProgrammingControler {
 =======
     public ResponseEntity<?> putRepCycle(@RequestBody UpdateRepCycleRequest repCycle) {
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+    public ResponseEntity<?> updateRepCycle(@RequestBody UpdateRepCycleRequest repCycle) {
         RepCycle updatedRepCycle = new RepCycle()
                                         .withRepCycleId(repCycle.id())
                                         .withName(repCycle.repCycleName().orElse(null))
@@ -338,21 +416,21 @@ public class ProgrammingControler {
 =======
     public ResponseEntity<?> getRepCycle(@RequestParam long id) {
 >>>>>>> program_management_redo
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+    public ResponseEntity<?> getRepCycle(@PathVariable long id) {
         RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.getRepCycle(repCycle);
     }
 
     @GetMapping("/rep_cycle/all_rep_cycles")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> getAllRepCycles() {
         return repCycleService.getAllRepCycles();
     }
 
     @DeleteMapping("/rep_cycle/{id}")
-<<<<<<< HEAD
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> deleteRepCycle(@PathVariable long id){
-=======
-    public ResponseEntity<?> deleteRepCycle(@RequestParam long id){
->>>>>>> program_management_redo
         RepCycle repCycle = new RepCycle().withRepCycleId(id);
         return repCycleService.deleteRepCycle(repCycle);
     }
@@ -395,6 +473,16 @@ public class ProgrammingControler {
             return repCycleService.createNewRepCycle(repCycle);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(repCycleId)));
+    }
+
+
+    @GetMapping("/user_programs/{programId}")
+    public ResponseEntity<?> getAllUsersForProgram(@PathVariable long programId) {
+        List<UserProgramming> userProgrammings = userApi.getAllUsersForProgram(programId);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("programId", programId);
+        payload.put("users", userProgrammings.stream().map(programming -> programming.getUserInfo().getEmail()).toList());
+        return ResponseEntity.ok(payload);
     }
 
 }

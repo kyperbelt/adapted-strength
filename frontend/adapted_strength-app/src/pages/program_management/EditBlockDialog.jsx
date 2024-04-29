@@ -25,7 +25,6 @@ export default function EditBlockDIalog({ blockId, blockState, className, ...pro
                 const name = document.getElementById("edit_week_name_field").value;
                 const description = "";
                 // const description = document.getElementById("edit_week_description")?.value || block.description;
-                const block = blocks.find((block) => block.weekId === blockId);
 
                 const newBlocks = blocks.map((block) => {
                         if (block.weekId === blockId) {

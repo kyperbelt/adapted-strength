@@ -28,7 +28,7 @@ public class EmergencyContact {
     private String lastName;
 
     @NotNull
-    @Pattern(regexp = "^[0-9]{10}$")
+    @Pattern(regexp = "^1?[-.\\s]?((\\([0-9]{3}\\))|[0-9]{3})[-.\\s]?[0-9]{3}[-.\\s]?[0-9]{4}$")
     @JsonAlias("phone_number")
     private String phoneNumber;
 

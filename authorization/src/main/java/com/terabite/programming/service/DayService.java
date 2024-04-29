@@ -22,6 +22,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class DayService {
     private static final Logger log = LoggerFactory.getLogger(DayService.class);
+    private static final Logger log = LoggerFactory.getLogger(DayService.class);
     DayRepository dayRepository;
 
     public DayService(DayRepository dayRepository){
@@ -60,9 +61,11 @@ public class DayService {
     public ResponseEntity<?> getDay(Day day) {
         if(dayRepository.findById(day.getDayId()).isEmpty()){
             log.error("Day {} not found", day.getDayId());
+            log.error("Day {} not found", day.getDayId());
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }
         else{
+            return new ResponseEntity<>(dayRepository.findOneByDayId(day.getDayId()), HttpStatus.OK);
             return new ResponseEntity<>(dayRepository.findOneByDayId(day.getDayId()), HttpStatus.OK);
         }
     }
@@ -74,10 +77,12 @@ public class DayService {
     public ResponseEntity<?> deleteDay(Day day) {
         if(dayRepository.findById(day.getDayId()).isEmpty()){
             log.error("Day {} not found", day.getDayId());
+            log.error("Day {} not found", day.getDayId());
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }
         else{
             dayRepository.delete(day);
+            return new ResponseEntity<>(day, HttpStatus.OK);
             return new ResponseEntity<>(day, HttpStatus.OK);
         }
     }

@@ -54,11 +54,12 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> updateProgram(UpdateProgramRequest request, List<Week> weeks) {
-        if(programRepository.findById(request.id()).isEmpty()){
-            return new ResponseEntity<>(Payload.of(String.valueOf(request.id())), HttpStatus.NOT_FOUND);
+        Optional<Program> programOptional = programRepository.findById(request.programId());
+        if(programOptional.isEmpty()){
+            return new ResponseEntity<>(Payload.of(String.valueOf(request.programId())), HttpStatus.NOT_FOUND);
         }
         else{
-            Program program = programRepository.findOneByProgramId(request.id());
+            Program program = programOptional.get();
             program.setName(request.programName());
             program.setWeeks(weeks);
 >>>>>>> program_management_redo
@@ -68,6 +69,8 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> getProgram(Program program) {
+        Optional<Program> programOptional = programRepository.findById(program.getProgramId());
+        if(programOptional.isEmpty()){
         Optional<Program> programOptional = programRepository.findById(program.getProgramId());
         if(programOptional.isEmpty()){
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);
@@ -86,6 +89,8 @@ public class ProgramService {
     }
 
     public ResponseEntity<?> deleteProgram(Program program) {
+        Optional<Program> programOptional = programRepository.findById(program.getProgramId());
+        if(programOptional.isEmpty()){
         Optional<Program> programOptional = programRepository.findById(program.getProgramId());
         if(programOptional.isEmpty()){
             return new ResponseEntity<>(program, HttpStatus.NOT_FOUND);

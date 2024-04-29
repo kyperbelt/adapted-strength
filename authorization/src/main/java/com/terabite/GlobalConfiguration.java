@@ -16,6 +16,7 @@ import com.terabite.programming.repository.ProgramRepository;
 import com.terabite.programming.repository.RepCycleRepository;
 import com.terabite.programming.repository.WeekRepository;
 import com.terabite.user.UserApi;
+import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
 
 @Configuration
@@ -100,11 +101,9 @@ public class GlobalConfiguration {
 	}
 
 	@Bean
-	public UserApi userApi(final UserRepository userRepository) {
-		// FOr now we will just return a new instance of the UserApi class.
-		// later we might want to set this up some better way. I am still new to
-		// spring boot and I am not sure if this is the best approach.
-		return new UserApi(userRepository);
+	public UserApi userApi(final UserRepository userRepository, final UserProgrammingRepository userProgrammingRepository) {
+		// SAME AS AUTHAPI above
+		return new UserApi(userRepository, userProgrammingRepository);
 	}
 
 	@Bean(name = BEAN_NAME_AUTH_COOKIE_NAME)

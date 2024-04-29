@@ -2,8 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { PrimaryButton } from '../components/Button';
+import { WebAdminApi } from '../api/WebAdminApi';
+
+const showdown = window.showdown;
 
 function TermsOfService() {
+    const converter = new showdown.Converter();
+    const [termsOfService, setTermsOfService] = useState(null);
     const [accepted, setAccepted] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -14,9 +19,18 @@ function TermsOfService() {
             //        we want to check if the state is in storage or not
             navigate('/sign-up', {});
         }
+
+        WebAdminApi.getContent({ resource: 'terms-of-service' }).then((data) => {
+            setTermsOfService(data);
+            console.log(data);
+        }).catch((error) => {
+            console.error('Error getting terms of service:', error);
+            setTermsOfService({ content: 'Error getting terms of service' });
+        });
     }, []);
 
     console.log(location);
+
 
     const handleAcceptanceChange = (event) => {
         setAccepted(event.target.checked);
@@ -35,8 +49,7 @@ function TermsOfService() {
             <h1 className="text-2xl font-bold text-center mb-4">Terms of Service</h1>
             <div className="mb-4">
                 {/* Terms of Service content here */}
-                <p>Welcome to Adapted Strength! Please read our Terms of Service carefully.</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta voluptates facilis nulla vel dolores enim alias voluptatum iusto iure excepturi dicta sapiente quis recusandae quisquam omnis, labore ullam, incidunt nihil.</p>
+                {termsOfService && <div dangerouslySetInnerHTML={{ __html: converter.makeHtml(termsOfService.content) }} />}
                 {/* ... */}
             </div>
             <div className="flex items-center mb-4">

@@ -31,9 +31,12 @@ public class Program {
         this.name = name;
         this.weeks = weeks;
 =======
-    public Program(String name, List<Week> weeks){
-        this.name=name;
-        this.weeks=weeks;
+    @OneToOne(mappedBy = "program", cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
+    private ProgramDescription description;
+
+    public Program(String name, List<Week> weeks) {
+        this.name = name;
+        this.weeks = weeks;
 >>>>>>> program_management_redo
     }
 
