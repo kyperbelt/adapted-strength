@@ -44,22 +44,12 @@ public class ChatUserService {
 
     public ResponseEntity<List<ChatUser>>  findClientChatUsers(ChatUser chatUser){
         List<ChatUser> chatUsers = chatUserRepository.findAllByUserType(UserType.CLIENT);
-        if (chatUsers.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        else{
-            return new ResponseEntity<>(chatUsers, HttpStatus.ACCEPTED);
-        }
+        return new ResponseEntity<>(chatUsers, HttpStatus.OK);
     }
 
     public ResponseEntity<List<ChatUser>> findCoachChatUsers(ChatUser chatUser){
         List<ChatUser> chatUsers = chatUserRepository.findAllByUserType(UserType.COACH);
-        if (chatUsers.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        else{
-            return new ResponseEntity<>(chatUsers, HttpStatus.ACCEPTED);
-        }
+        return new ResponseEntity<>(chatUsers, HttpStatus.OK);
     }
 
 }

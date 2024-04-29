@@ -63,35 +63,27 @@ export default function Profile() {
     setShowModal(false);
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-    UserApi.getProfileInformation()
-      .then((response) => {
-        if (response.status === HttpStatus.OK) {
-          setProfileInfo(response.data);
-          setIsLoading(false);
-          console.log(response.data);
-        } else if (response.status === HttpStatus.UNAUTHORIZED) {
-          // unauthorized
-          // TODO: same as error, redirect to login page or display error message
-          console.error(`ERROR HAPPENED: ${JSON.stringify(response.data)}`);
-          if (response.data.all.includes("ROLE_TERMS_ACCEPTED")) {
-            console.log("User has not accepted terms and conditions");
-            AuthApi.logout();
-            navigate("/login");
-          } else if (response.data.all.includes("ROLE_ACCOUNT_SETUP")) {
-            console.log("User has not setup account");
-            navigate("/logout");
-          }
-        }
-      })
-      .catch((error) => {
-        console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
-        setIsLoading(false);
-        //TODO: User was unable to get profile information,
-        //     redirect to login page or display error message
-      });
-  }, []);
+    useEffect(() => {
+        setIsLoading(true);
+        UserApi.getProfileInformation()
+            .then((response) => {
+                if (response.status === HttpStatus.OK) {
+                    setProfileInfo(response.data);
+                    setIsLoading(false);
+                    console.log(response.data)
+                }else{
+                    AuthApi.logout();
+                    throw new Error("Error getting profile information");
+                }
+
+            }).catch((error) => {
+                console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
+                setIsLoading(false);
+                navigate("/login");
+                AuthApi.logout();
+
+            });
+    }, []);
 
   if (isLoading) {
     return <div>{"Loading..."}</div>;

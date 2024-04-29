@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class PaymentController {
 
 
     @PostMapping("/cancel_subscription")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> cancelSubscriptionById(@AuthenticationPrincipal UserDetails userDetails) throws StripeException {
         return paymentService.cancelSubscriptionById(userDetails.getUsername());
     }
@@ -44,6 +46,7 @@ public class PaymentController {
     }
 
     @PostMapping("/change_subscription_level/{subLevel}")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> changeSubscriptionLevel(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subLevel") String subLevel) throws StripeException{
         if(userDetails!= null && subLevel != null){
             return paymentService.changeSubscriptionLevel(userDetails.getUsername(), subLevel);

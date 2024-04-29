@@ -27,7 +27,7 @@ public class Address {
     private String state;
 
     @NotNull
-    @Pattern(regexp = "^[0-9]{5}$")
+    @Pattern(regexp = "^[0-9]{5}(?:-[0-9]{4})?$")
     private String zipcode;
 
     public long getId() {

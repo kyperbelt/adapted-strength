@@ -1,10 +1,13 @@
 package com.terabite.user;
 
+import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.authorization.model.Login;
 import com.terabite.common.Roles;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.user.model.UserInformation;
+import com.terabite.user.model.UserProgramming;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +41,11 @@ public class UserApi {
     private static final Logger log = LoggerFactory.getLogger(UserApi.class);
 
     private final UserRepository userRepository;
+    private final UserProgrammingRepository userProgrammingRepository;
 
-    public UserApi(UserRepository userRepository) {
+    public UserApi(UserRepository userRepository, UserProgrammingRepository userProgrammingRepository) {
         this.userRepository = userRepository;
+        this.userProgrammingRepository = userProgrammingRepository;
     }
 
     /**
@@ -55,6 +60,17 @@ public class UserApi {
     public void createUserInformationForEmail(String username) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
+
+    /**
+     * Return all userProgrammings for the given Program ID
+     *
+     * @param programId the ID of the program to get all users for
+     * @return a list of all userProgrammings for the given program ID
+     */
+    public List<UserProgramming> getAllUsersForProgram(long programId) {
+        return userProgrammingRepository.findByAssignedProgramId(programId);
+    }
+    
 
     /**
      * Subscription roles are an important subset of authorization roles that are
@@ -120,4 +136,5 @@ public class UserApi {
         }
         return rolesList.stream().map(Roles::name).toList();
     }
+
 }
