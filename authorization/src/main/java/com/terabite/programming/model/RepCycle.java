@@ -189,51 +189,6 @@ public class RepCycle
         return this;
     }
 
-    public RepCycle withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public RepCycle withEquipment(String equipment) {
-        this.equipment = equipment;
-        return this;
-    }
-
-    public RepCycle withNumSets(String numSets) {
-        this.numSets = numSets;
-        return this;
-    }
-
-    public RepCycle withNumReps(String numReps) {
-        this.numReps = numReps;
-        return this;
-    }
-
-    public RepCycle withWeight(String weight) {
-        this.weight = weight;
-        return this;
-    }
-
-    public RepCycle withRestTime(String restTime) {
-        this.restTime = restTime;
-        return this;
-    }
-
-    public RepCycle withCoachNotes(String coachNotes) {
-        this.coachNotes = coachNotes;
-        return this;
-    }
-
-    public RepCycle withWorkoutOrder(String workoutOrder) {
-        this.workoutOrder = workoutOrder;
-        return this;
-    }
-
-    public RepCycle withMovementId(long movementId) {
-        this.movementId = movementId;
-        return this;
-    }
-
 
     public RepCycle duplicate(){
         return new RepCycle()
