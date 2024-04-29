@@ -17,10 +17,10 @@ const navigation = [
   { component: <> About Us</>, to: "/about", selected: false },
   { component: <> Manage Programs</>, to: "/program-management", selected: false, state: () => AuthApi.isLoggedIn() && (AuthApi.hasRole("ROLE_COACH") || AuthApi.hasRole("ROLE_ADMIN")) },
   { component: <> Profile</>, to: "/profile", selected: false, state: () => AuthApi.isLoggedIn() },
-  { component: <> Your Program</>, to: "/user-program", selected: false, state: () => AuthApi.isLoggedIn() },
+  { component: <> My Program</>, to: "/user-program", selected: false, state: () => AuthApi.isLoggedIn() },
   { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
   { component: <> Sign Up</>, to: "/sign-up", selected: false, state: () => !AuthApi.isLoggedIn() },
-  { component: <> Notifications</>, to: "/notifications", selected: false, state: () => !AuthApi.isLoggedIn()  },
+  { component: <> Notifications</>, to: "/notifications", selected: false },
   { component: <> Logout</>, to: "/", selected: false, state: () => AuthApi.isLoggedIn(), onClick: async () => await AuthApi.logout() },
 ];
 
@@ -49,20 +49,6 @@ export default function NavBar() {
       }
     }
   }, [loc.pathname]);
-
-  const toggleHammy = (e) => {
-    console.log("toggleHammy:", e.target.id);
-    // list of "nav_item" elements in nav_items emlement
-    if (e.target.id === "nav-item") {
-      const text = e.target.textContent;
-      const items = navItems.map((item) => {
-        item.selected = item.text === text;
-        return item;
-      });
-      setNavItems(items);
-    }
-
-  const [navItems, setNavItems] = useState(navigation);
 
   const toggleHammy = (e) => {
     console.log("toggleHammy:", e.target.id);
@@ -116,9 +102,6 @@ export default function NavBar() {
             <span
               className="self-center text-2xl font-semibold whitespace-nowrap " /*TODO add text here and remove text from image logo*/
             ></span>
-          <Link to="/" onClick={()=>{setNavItems(navigation)}} className="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src={Logo} className="w-48 mt-3 " alt="Adapted Strength Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap " /*TODO add text here and remove text from image logo*/></span>
           </Link>
           <button
             onClick={toggleHammy}
@@ -167,13 +150,6 @@ export default function NavBar() {
                   >
                     {item.component}
                   </NavItem>
-                );
-              })}
-          <div className={`${hamburgerOpen ? '' : 'hidden'} w-full md:block md:w-auto`} id="navbar-default">
-            <ul id="nav_items" className="font-medium flex flex-col p-4 md:p-0 mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
-              {navItems.map((item, index) => {
-                return (
-                  <NavItem className={`${item.selected ? "md:bg-transparent bg-primary-dark md:text-accent " : ""}`} key={index} to={item.to} onClick={toggleHammy}>{item.text}</NavItem>
                 );
               })}
             </ul>
