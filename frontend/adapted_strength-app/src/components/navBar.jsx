@@ -15,7 +15,16 @@ const navigation = [
   { component: <> Book Consultation</>, to: "/consultations", selected: false },
   { component: <span>Login</span>, to: "/login", selected: false, state: () => !AuthApi.isLoggedIn() },
   { component: <> About Us</>, to: "/about", selected: false },
-  { component: <> Manage Programs</>, to: "/program-management", selected: false, state: () => AuthApi.isLoggedIn() && (AuthApi.hasRole("ROLE_COACH") || AuthApi.hasRole("ROLE_ADMIN")) },
+  {
+    component: <> Manage Programs</>, to: "/program-management", selected: false, state: () => {
+      return (Promise.resolve(AuthApi.isLoggedIn()).then((res) => {
+        if (res) {
+          return AuthApi.hasRole("ROLE_ADMIN");
+        }
+        return false;
+      }));
+    }
+  },
   { component: <> Profile</>, to: "/profile", selected: false, state: () => AuthApi.isLoggedIn() },
   { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
   { component: <> Sign Up</>, to: "/sign-up", selected: false, state: () => !AuthApi.isLoggedIn() },
@@ -34,7 +43,7 @@ export default function NavBar() {
   //check if the url contains one of the navigation items "to" values and if it does, set that item to selected
   useEffect(() => {
     for (let i = 0; i < navigation.length; i++) {
-      if (!(i!== 0 && navigation[i].to==="/") && loc.pathname.includes(navigation[i].to)) {
+      if (!(i !== 0 && navigation[i].to === "/") && loc.pathname.includes(navigation[i].to)) {
         const items = navItems.map((item) => {
           item.selected = item.to === navigation[i].to;
           return item;
