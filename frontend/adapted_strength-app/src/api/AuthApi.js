@@ -18,6 +18,7 @@ export class AuthApi {
 
   static logout() {
     const promise = ApiUtils.apiPost('auth/logout');
+    ApiUtils.removeAuthToken();
     return promise;
   }
 
@@ -87,6 +88,11 @@ export class AuthApi {
    *
   */
   static async hasRole(role) {
+    const loggedIn = await AuthApi.isLoggedIn();
+    if (!loggedIn) {
+      return false;
+    }
+
     const promise = ApiUtils.apiGet(`auth/has_role/${role}`);
 
     await promise.then((response) => {
@@ -95,6 +101,9 @@ export class AuthApi {
         return true;
       }
       return false; 
+    }).catch((error) => {
+      console.log(`Error checking if user has role: ${JSON.stringify(error)}`);
+      return false;
     });
   }
 

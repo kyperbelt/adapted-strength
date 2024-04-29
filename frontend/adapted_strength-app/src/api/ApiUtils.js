@@ -87,7 +87,7 @@ export class ApiUtils {
       ...options,
     }));
   }
-  
+
 
   static setAuthToken(token) {
     localStorage.setItem(AUTH_TOKEN_NAME, token);
@@ -116,11 +116,13 @@ export class ApiUtils {
  * // { status: 200, data: { ... } }
  */
 function promiseWrapper(promise) {
+
   return promise.then(response => {
     return response.json().then(body => {
       const status_code = response.status;
-      if (status_code  == HttpStatus.UNAUTHORIZED || status_code == HttpStatus.FORBIDDEN) {
+      if (status_code == HttpStatus.UNAUTHORIZED || status_code == HttpStatus.FORBIDDEN) {
         ApiUtils.removeAuthToken();
+        // TODO: Redirect to login page
       }
 
       return {
@@ -128,7 +130,14 @@ function promiseWrapper(promise) {
         data: body,
       }
     })
-  })
+  }).catch(err => {
+    if (err.message == 'Failed to fetch') {
+      return {
+        status: HttpStatus.SERVICE_UNAVAILABLE,
+        data: { message: 'Service Unavailable' },
+      }
+    }
+  });
 }
 
 
@@ -192,221 +201,221 @@ export const HttpStatus = {
    * 103 - Early Hints
    */
   EARLY_HINTS: 103,
-/**
-  * 200 - OK
-  */
+  /**
+    * 200 - OK
+    */
   OK: 200,
-/**
-  * 201 - Created
-  */
+  /**
+    * 201 - Created
+    */
   CREATED: 201,
-/**
-  * 202 - Accepted
-  */
+  /**
+    * 202 - Accepted
+    */
   ACCEPTED: 202,
-/**
-  * 203 - Non Authoritative Information
-  */
+  /**
+    * 203 - Non Authoritative Information
+    */
   NON_AUTHORITATIVE_INFORMATION: 203,
-/**
-  * 204 - No Content
-  */
+  /**
+    * 204 - No Content
+    */
   NO_CONTENT: 204,
-/**
-  * 205 - Reset Content
-  */
+  /**
+    * 205 - Reset Content
+    */
   RESET_CONTENT: 205,
-/**
-  * 206 - Partial Content
-  */
+  /**
+    * 206 - Partial Content
+    */
   PARTIAL_CONTENT: 206,
-/**
-  * 207 - Multi-Status
-  */
+  /**
+    * 207 - Multi-Status
+    */
   MULTI_STATUS: 207,
-/**
-  * 300 - Multiple Choices
-  */
+  /**
+    * 300 - Multiple Choices
+    */
   MULTIPLE_CHOICES: 300,
-/**
-  * 301 - Moved Permanently
-  */
+  /**
+    * 301 - Moved Permanently
+    */
   MOVED_PERMANENTLY: 301,
-/**
-  * 302 - Found (Previously "Moved temporarily")
-  */
+  /**
+    * 302 - Found (Previously "Moved temporarily")
+    */
   FOUND: 302,
-/**
-  * 303 - See Other
-  */
+  /**
+    * 303 - See Other
+    */
   SEE_OTHER: 303,
-/**
-  * 304 - Not Modified
-  */
+  /**
+    * 304 - Not Modified
+    */
   NOT_MODIFIED: 304,
-/**
-  * 305 - Use Proxy
-  */
+  /**
+    * 305 - Use Proxy
+    */
   USE_PROXY: 305,
-/**
-  * 307 - Temporary Redirect
-  */
+  /**
+    * 307 - Temporary Redirect
+    */
   TEMPORARY_REDIRECT: 307,
-/**
-  * 308 - Permanent Redirect
-  */
+  /**
+    * 308 - Permanent Redirect
+    */
   PERMANENT_REDIRECT: 308,
-/**
-  * 400 - Bad Request
-  */
+  /**
+    * 400 - Bad Request
+    */
   BAD_REQUEST: 400,
-/**
-  * 401 - Unauthorized
-  */
+  /**
+    * 401 - Unauthorized
+    */
   UNAUTHORIZED: 401,
-/**
-  * 402 - Payment Required
-  */
+  /**
+    * 402 - Payment Required
+    */
   PAYMENT_REQUIRED: 402,
-/**
-  * 403 - Forbidden
-  */
+  /**
+    * 403 - Forbidden
+    */
   FORBIDDEN: 403,
-/**
-  * 404 - Not Found
-  */
+  /**
+    * 404 - Not Found
+    */
   NOT_FOUND: 404,
-/**
-  * 405 - Method Not Allowed
-  */
+  /**
+    * 405 - Method Not Allowed
+    */
   METHOD_NOT_ALLOWED: 405,
-/**
-  * 406 - Not Acceptable
-  */
+  /**
+    * 406 - Not Acceptable
+    */
   NOT_ACCEPTABLE: 406,
-/**
-  * 407 - Proxy Authentication Required
-  */
+  /**
+    * 407 - Proxy Authentication Required
+    */
   PROXY_AUTHENTICATION_REQUIRED: 407,
-/**
-  * 408 - Request Timeout
-  */
+  /**
+    * 408 - Request Timeout
+    */
   REQUEST_TIMEOUT: 408,
-/**
-  * 409 - Conflict
-  */
+  /**
+    * 409 - Conflict
+    */
   CONFLICT: 409,
-/**
-  * 410 - Gone
-  */
+  /**
+    * 410 - Gone
+    */
   GONE: 410,
-/**
-  * 411 - Length Required
-  */
+  /**
+    * 411 - Length Required
+    */
   LENGTH_REQUIRED: 411,
-/**
-  * 412 - Precondition Failed
-  */
+  /**
+    * 412 - Precondition Failed
+    */
   PRECONDITION_FAILED: 412,
-/**
-  * 413 - Request Entity Too Large
-  */
+  /**
+    * 413 - Request Entity Too Large
+    */
   REQUEST_TOO_LONG: 413,
-/**
-  * 414 - Request-URI Too Long
-  */
+  /**
+    * 414 - Request-URI Too Long
+    */
   REQUEST_URI_TOO_LONG: 414,
-/**
-  * 415 - Unsupported Media Type
-  */
+  /**
+    * 415 - Unsupported Media Type
+    */
   UNSUPPORTED_MEDIA_TYPE: 415,
-/**
-  * 416 - Requested Range Not Satisfiable
-  */
+  /**
+    * 416 - Requested Range Not Satisfiable
+    */
   REQUESTED_RANGE_NOT_SATISFIABLE: 416,
-/**
-  * 417 - Expectation Failed
-  */
+  /**
+    * 417 - Expectation Failed
+    */
   EXPECTATION_FAILED: 417,
-/**
- * 418 - I'm a teapot
- */
+  /**
+   * 418 - I'm a teapot
+   */
   IM_A_TEAPOT: 418,
-/**
-  * 419 - Insufficient Space on Resource
-  */
+  /**
+    * 419 - Insufficient Space on Resource
+    */
   INSUFFICIENT_SPACE_ON_RESOURCE: 419,
-/**
-  * 420 - Method Failure
-  */
+  /**
+    * 420 - Method Failure
+    */
   METHOD_FAILURE: 420,
-/**
-  * 421 - Misdirected Request
-  */
+  /**
+    * 421 - Misdirected Request
+    */
   MISDIRECTED_REQUEST: 421,
-/**
-  * 422 - Unprocessable Entity
-  */
+  /**
+    * 422 - Unprocessable Entity
+    */
   UNPROCESSABLE_ENTITY: 422,
-/**
-  * 423 - Locked
-  */
+  /**
+    * 423 - Locked
+    */
   LOCKED: 423,
-/**
-  * 424 - Failed Dependency
-  */
+  /**
+    * 424 - Failed Dependency
+    */
   FAILED_DEPENDENCY: 424,
-/**
-  * 426 - Upgrade Required
-  */
+  /**
+    * 426 - Upgrade Required
+    */
   UPGRADE_REQUIRED: 426,
-/**
-  * 428 - Precondition Required
-  */
+  /**
+    * 428 - Precondition Required
+    */
   PRECONDITION_REQUIRED: 428,
-/**
-  * 429 - Too Many Requests
-  */
+  /**
+    * 429 - Too Many Requests
+    */
   TOO_MANY_REQUESTS: 429,
-/**
-  * 431 - Request Header Fields Too Large
-  */
+  /**
+    * 431 - Request Header Fields Too Large
+    */
   REQUEST_HEADER_FIELDS_TOO_LARGE: 431,
-/**
-  * 451 - Unavailable For Legal Reasons
-  */
+  /**
+    * 451 - Unavailable For Legal Reasons
+    */
   UNAVAILABLE_FOR_LEGAL_REASONS: 451,
-/**
-  * 500 - Internal Server Error
-  */
+  /**
+    * 500 - Internal Server Error
+    */
   INTERNAL_SERVER_ERROR: 500,
-/**
-  * 501 - Not Implemented
-  */
+  /**
+    * 501 - Not Implemented
+    */
   NOT_IMPLEMENTED: 501,
-/**
-  * 502 - Bad Gateway
-  */
+  /**
+    * 502 - Bad Gateway
+    */
   BAD_GATEWAY: 502,
-/**
-  * 503 - Service Unavailable
-  */
+  /**
+    * 503 - Service Unavailable
+    */
   SERVICE_UNAVAILABLE: 503,
-/**
-  * 504 - Gateway Timeout
-  */
+  /**
+    * 504 - Gateway Timeout
+    */
   GATEWAY_TIMEOUT: 504,
-/**
-  * 505 - HTTP Version Not Supported
-  */
+  /**
+    * 505 - HTTP Version Not Supported
+    */
   HTTP_VERSION_NOT_SUPPORTED: 505,
-/**
-  * 507 - Insufficient Storage
-  */
+  /**
+    * 507 - Insufficient Storage
+    */
   INSUFFICIENT_STORAGE: 507,
-/**
-  * 511 - Network Authentication Required
-  */
+  /**
+    * 511 - Network Authentication Required
+    */
   NETWORK_AUTHENTICATION_REQUIRED: 511,
 }
 

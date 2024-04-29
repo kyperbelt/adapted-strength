@@ -52,6 +52,7 @@ import ChatTest from './pages/test_pages/ChatTest';
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
 const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
+const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
 
 // import footer from '../footer'
 
@@ -91,13 +92,21 @@ function App() {
               <Route path="sign-up" element={<SignUp />} />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-              <Route path="user-management/:email?" element={<UserManagement/>} />
-              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
-
-                  <Suspense fallback="...">
-                <ProgramManagement />
+              <Route path="user-management/:email?" element={<UserManagement />} />
+              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={
+                <Suspense fallback="...">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <ProgramManagement />
+                  </RouteGuard>
                 </Suspense>
-              </RouteGuard>} />
+              } />
+              <Route path="/web-admin" element={
+                <Suspense fallback="...">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <WebAdmin />
+                  </RouteGuard>
+                </Suspense>
+              } />
 
             /* ROUTES FOR PROGRAM PAGES */
               //--------------------------------------------------
@@ -126,7 +135,7 @@ function App() {
               //-------------------------------------------------
               <Route path="notifications" element={<Tab />} />
             //-------------------------------------------------          </Route>
-            
+
           </Routes>
         </BrowserRouter>
       }
