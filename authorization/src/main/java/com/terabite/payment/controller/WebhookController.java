@@ -21,15 +21,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public class WebhookController {
     private WebhookService webhookService;
 
-    public WebhookController(WebhookService webhookService){
-        this.webhookService=webhookService;
+    public WebhookController(WebhookService webhookService) {
+        this.webhookService = webhookService;
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public HttpStatus handleWebhookEvent(@RequestBody String payload, @RequestHeader Map<String, String> header) {
-        return webhookService.handleWebhookEvent(payload, header);
+    public HttpStatus handleWebhookEvent(@RequestBody String payload,
+            @RequestHeader("Stripe-Signature") Map<String, String> stripeSignature) {
+
+        return webhookService.handleWebhookEvent(payload, stripeSignature);
     }
-    
-    
+
 }

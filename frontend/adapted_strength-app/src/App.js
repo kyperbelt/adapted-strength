@@ -40,7 +40,7 @@ import General from './pages/program_pages/General.jsx';
 
 import Booking from './pages/Booking.jsx';
 import RouteGuard from "./util/RouteGuard";
-import Profile from './pages/Profile';
+
 import { AuthApi } from './api/AuthApi';
 
 import TermsOfService from './pages/TermsOfService.jsx';
@@ -49,10 +49,12 @@ import VideoLibrary from './pages/VideoLibrary.jsx';
 import ChatTest from './pages/test_pages/ChatTest';
 
 // TODO: Check this out guys, this is a lazy loaded component
+const Profile = lazy(() => import('./pages/Profile.jsx'));
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
 const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
+const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 
 // import footer from '../footer'
 
@@ -86,7 +88,12 @@ function App() {
                 </RouteGuard>
               } />
 
-              <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
+              <Route path="profile" element={<Suspense fallback="...">
+              <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                <Profile />
+              </RouteGuard>
+            </Suspense>} />
+            {/* <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} /> */}
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
               <Route path="about" element={<About />} />
               <Route path="sign-up" element={<SignUp />} />
@@ -124,6 +131,9 @@ function App() {
               <Route path="chat" element={<Chat />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
+            <Route path="payment-checkout/:plan?" element={
+                <RouteGuard state = {()=>AuthApi.isLoggedIn()} routeTo="/login"> <PaymentCheckout /> </RouteGuard>
+            } />
 
             /* ROUTES FOR CHAT PAGES */
               //--------------------------------------------------
