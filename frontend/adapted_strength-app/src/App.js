@@ -32,9 +32,6 @@ import { fetchToken } from './firebase';
 IMPORTS FOR PROGRAM PAGES
 */
 //--------------------------------------------------
-import BodyBuild from './pages/program_pages/BodyBuild.jsx';
-import Oly from './pages/program_pages/Oly.jsx';
-import Power from './pages/program_pages/Power.jsx';
 import General from './pages/program_pages/UserProgram.jsx';
 //--------------------------------------------------
 
