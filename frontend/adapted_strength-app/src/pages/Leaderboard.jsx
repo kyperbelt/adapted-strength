@@ -1165,7 +1165,6 @@ return (
     )}
     
     <br></br>
-    <br></br>
 
     <div>
       <p className="font-bold">Delete Records Here</p>

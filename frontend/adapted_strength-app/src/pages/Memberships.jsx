@@ -94,7 +94,7 @@ export default function Memberships() {
     }
 
     return (
-        <div className="h-full my-0 content-center w-full top-[100px]">
+        <div>
             <div className="h-56 bg-header-background1">
                 <AdaptedStrengthLogo />
             </div>
@@ -102,7 +102,7 @@ export default function Memberships() {
             <br></br>
             
 
-            <div className='container mx-auto w-2/6 content-center text-center px-2 bg-blue-200 text-black rounded-md'>
+            <div className='container mx-auto w-3/4 content-center text-center px-2 bg-blue-200 text-black rounded-md'>
                     <h2 className='font-bold'>YOUR SUBSCRIPTION TIER</h2>
                     <p><SubscriptionField tier={selectedTier} /></p>
 
