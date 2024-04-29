@@ -6,12 +6,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.stripe.exception.StripeException;
 import com.terabite.payment.service.PaymentService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+
+
 
 
 
@@ -27,20 +31,39 @@ public class PaymentController {
 
     @PostMapping("/cancel_subscription")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
-    public ResponseEntity<?> cancelSubscriptionById(@RequestBody String subscriptionId) throws StripeException {
-        return paymentService.cancelSubscriptionById(subscriptionId);
+    public ResponseEntity<?> cancelSubscriptionById(@AuthenticationPrincipal UserDetails userDetails) throws StripeException {
+        return paymentService.cancelSubscriptionById(userDetails.getUsername());
     }
     
-    @PostMapping("/create_checkout_session")
-    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
-    public ResponseEntity<?> createCheckoutSession(String priceId) throws StripeException{
-        return paymentService.createCheckoutSession(priceId);
+    @PostMapping("/create_checkout_session/{subLevel}")
+    public ResponseEntity<?> createCheckoutSession(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subLevel") String subLevel) throws StripeException{
+        if(userDetails!=null){
+            return paymentService.createCheckoutSession(userDetails.getUsername(), subLevel);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/session_status?session_id={checkoutSessionId}")
+    @PostMapping("/change_subscription_level/{subLevel}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
-    public ResponseEntity<?> retrieveCheckoutSessionStatus(@PathVariable("checkoutSessionId") String checkoutSessionId) throws StripeException {
-        return paymentService.retrieveCheckoutSessionStatus(checkoutSessionId);
+    public ResponseEntity<?> changeSubscriptionLevel(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("subLevel") String subLevel) throws StripeException{
+        if(userDetails!= null && subLevel != null){
+            return paymentService.changeSubscriptionLevel(userDetails.getUsername(), subLevel);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-    
+
+    //returns true if user has an active subscription, false otherwise
+    @GetMapping("/getActiveSubscriptionStatus")
+    public ResponseEntity<?> getActiveSubscriptionStatus(@AuthenticationPrincipal UserDetails userDetails) throws StripeException{
+        if(userDetails !=null){
+            return paymentService.getActiveSubscriptionStatus(userDetails.getUsername());
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

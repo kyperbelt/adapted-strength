@@ -48,6 +48,7 @@ public class SecurityConfig {
                 "/auth/get_token",
                 "/user/validate_user_data",
                 "/content/**",
+                "/webhook/"
         };
 
         private final JwtAuthFilter jwtAuthFilter;

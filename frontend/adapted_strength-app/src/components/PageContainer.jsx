@@ -9,7 +9,7 @@ function AdaptedStrengthLogo() {
 
 export default function PageContainer1({ children }) {
     return (
-        <div className="grow content-center flex flex-col w-full">
+        <div className="grow content-center flex flex-col w-full overflow-x-hidden">
             <div className="h-44 md:h-56 bg-header-background1 flex-none">
                 <AdaptedStrengthLogo />
             </div>
