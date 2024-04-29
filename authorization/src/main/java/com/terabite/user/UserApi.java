@@ -121,6 +121,7 @@ public class UserApi {
             return List.of();
         }
 
+
         final Roles role = roleOption.get();
         List<Roles> rolesList = new ArrayList<>();
         switch (role) {

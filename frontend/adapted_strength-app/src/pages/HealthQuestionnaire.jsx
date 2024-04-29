@@ -1,6 +1,7 @@
 // HealthQuestionnaire.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import {PrimaryButton} from '../components/Button';
 
 function HealthQuestionnaire() {
     const navigate = useNavigate();
@@ -29,11 +30,12 @@ function HealthQuestionnaire() {
         console.log(formData);
 
         const data = {
+            email: state.email,
             age: formData.get('age'),
             weight: formData.get('weight'),
             height: formData.get('height'),
             fitnessGoals: formData.get('fitnessGoals'),
-            healthConcerns: formData.get('healthConcerns'),
+            medicalConcerns: formData.get('healthConcerns'),
             exerciseFrequency: formData.get('exerciseFrequency'),
         };
 
@@ -53,23 +55,23 @@ function HealthQuestionnaire() {
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded shadow-md">
                 <div>
                     <label htmlFor="age" className="block text-lg font-medium text-gray-700">Age</label>
-                    <input type="number" id="age" name="age" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                    <input type="number" id="age" required name="age" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <div>
                     <label htmlFor="weight" className="block text-lg font-medium text-gray-700">Weight (kg)</label>
-                    <input type="number" id="weight" name="weight" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                    <input type="number" required id="weight" name="weight" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <div>
                     <label htmlFor="height" className="block text-lg font-medium text-gray-700">Height (cm)</label>
-                    <input type="number" id="height" name="height" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                    <input type="number" id="height" required name="height" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <div>
                     <label htmlFor="fitnessGoals" className="block text-lg font-medium text-gray-700">Fitness Goals</label>
-                    <textarea id="fitnessGoals" name="fitnessGoals" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                    <textarea id="fitnessGoals" requried name="fitnessGoals" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <div>
                     <label htmlFor="healthConcerns" className="block text-lg font-medium text-gray-700">Health Concerns</label>
-                    <textarea id="healthConcerns" name="healthConcerns" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                    <textarea id="healthConcerns" requried name="healthConcerns" onChange={handleChange} className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
                 </div>
                 <div>
                     <label htmlFor="exerciseFrequency" className="block text-lg font-medium text-gray-700">Exercise Frequency</label>
@@ -81,7 +83,9 @@ function HealthQuestionnaire() {
                         <option value="5+ times a week">5+ times a week</option>
                     </select>
                 </div>
-                <button type="submit" className="w-full bg-blue-500 text-white p-3 rounded-md font-medium hover:bg-blue-600">Submit Questionnaire</button>
+                <PrimaryButton type="submit" className="w-full xl:w-fit" >
+                    Submit Questionare
+                </PrimaryButton>
             </form>
         </div>
     );

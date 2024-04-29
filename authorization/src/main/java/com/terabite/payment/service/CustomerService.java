@@ -23,9 +23,6 @@ public class CustomerService {
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
     private String baseClientPriceId;
 
-    @Value("${ADAPTED_STRENGTH_GENERAL_PRICE_ID}")
-    private String generalClientPriceId;
-
     @Value("${ADAPTED_STRENGTH_SPECIFIC_PRICE_ID}")
     private String specificClientPriceId;
 
@@ -102,11 +99,8 @@ public class CustomerService {
                         if(priceId == baseClientPriceId){
                             return 1;
                         }
-                        else if (priceId == generalClientPriceId){
-                            return 2;
-                        }
                         else if (priceId == specificClientPriceId){
-                            return 3;
+                            return 2;
                         }
                         else{
                             return -1;  //price id does not match one of the three tiers offered. Not sure how this could happen

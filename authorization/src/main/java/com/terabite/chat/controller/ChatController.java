@@ -75,8 +75,8 @@ public class ChatController {
 
     // This function gets clients, admins can only get users
     @PostMapping("/v1/chat/clientChatUsers")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_COACH')")
-    public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> findClientChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findClientChatUsers(chatUser);
     }
     // This function gets coaches

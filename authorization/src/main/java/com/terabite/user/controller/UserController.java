@@ -8,9 +8,11 @@ import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.payment.model.Customer;
 import com.terabite.payment.service.CustomerService;
+import com.terabite.user.model.HealthQuestionare;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.HealthQuestionareService;
 import com.terabite.user.service.SubscriptionService;
 // import com.terabite.user.service.UserProgrammingService;
 
@@ -58,6 +60,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final SubscriptionService subscriptionService;
     private final UnsubscribeService unsubscribeService;
+    private final HealthQuestionareService healthQuestionareService;
 
     private final AuthorizationApi authorizationApi;
     private final UserProgrammingService userProgrammingService;
@@ -71,11 +74,13 @@ public class UserController {
     public UserController(
             UserProgrammingService userProgrammingService,
             SubscriptionService subscriptionService,
+            HealthQuestionareService healthQuestionareService,
             UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
             CustomerService customerService,
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
         this.subscriptionService = subscriptionService;
+        this.healthQuestionareService = healthQuestionareService;
         this.unsubscribeService = unsubscribeService;
         this.authorizationApi = authorizationApi;
         this.authCookieName = authCookieName;
@@ -260,6 +265,23 @@ public class UserController {
 
         return ResponseEntity.ok(Payload.of("User information is valid"));
 
+    }
+
+    @GetMapping("/health_questionare/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getHealthQuestionare(@PathVariable("email") String email) {
+        return healthQuestionareService.getHealthQuestionareByEmail(email);
+    }
+
+    @PostMapping("/health_questionare")
+    public ResponseEntity<?> createHealthQuestionare(@RequestBody HealthQuestionare healthQuestionare) {
+        return healthQuestionareService.createHealthQuestionare(healthQuestionare);
+    }
+
+    @GetMapping("/health_questionare")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getAllHealthQuestionares() {
+        return ResponseEntity.ok(healthQuestionareService.getAllHealthQuestionares());
     }
 
     private static boolean validateUserInfo(UserInformation userInfo) {

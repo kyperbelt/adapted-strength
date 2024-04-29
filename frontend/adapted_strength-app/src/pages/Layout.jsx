@@ -34,7 +34,7 @@ export default function Layout() {
     <div id="layout" className="grow flex flex-col">
       <NavBar currentPage="" />
       <Outlet className="" />
-      <StateGuard state={() => !AuthApi.hasRole("ROLE_ADMIN")}>
+      <StateGuard state={() =>!AuthApi.hasRole("ROLE_ADMIN")}>
         <ChatButton messageNotification={false} />
       </StateGuard>
       {/*add footer here*/}
