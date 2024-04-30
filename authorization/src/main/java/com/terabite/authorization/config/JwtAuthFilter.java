@@ -1,4 +1,4 @@
-package com.terabite.authorization.config;
+    package com.terabite.authorization.config;
 
 import java.io.IOException;
 import java.util.Optional;

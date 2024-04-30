@@ -22,10 +22,10 @@ import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
 import Tab from "./components/TabComponents/Tab.jsx";
+import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
 import { fetchToken } from './firebase';
 
-// import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
 
 
 /*
@@ -89,11 +89,11 @@ function App() {
               } />
 
               <Route path="profile" element={<Suspense fallback="...">
-              <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
-                <Profile />
-              </RouteGuard>
-            </Suspense>} />
-            {/* <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} /> */}
+                <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                  <Profile />
+                </RouteGuard>
+              </Suspense>} />
+              {/* <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} /> */}
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
               <Route path="about" element={<About />} />
               <Route path="sign-up" element={<SignUp />} />
@@ -131,21 +131,22 @@ function App() {
               <Route path="chat" element={<Chat />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
-            <Route path="payment-checkout/:plan?" element={
-                <RouteGuard state = {()=>AuthApi.isLoggedIn()} routeTo="/login"> <PaymentCheckout /> </RouteGuard>
-            } />
+              <Route path="payment-checkout/:plan?" element={
+                <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <PaymentCheckout /> </RouteGuard>
+              } />
 
             /* ROUTES FOR CHAT PAGES */
               //--------------------------------------------------
               <Route path="manageChats" element={<ManageChats />} />
             //--------------------------------------------------
+              //--------------------------------------------------
 
 
               /* Route for notifications & announcements tabs */
               //-------------------------------------------------
               <Route path="notifications" element={<Tab />} />
-            //-------------------------------------------------          </Route>
-
+              <Route path='send_notifications' element={<SendNotifications />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       }

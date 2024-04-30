@@ -47,7 +47,7 @@ function TermsOfService() {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold text-center mb-4">Terms of Service</h1>
-            <div className="mb-4">
+            <div className="mb-4 prose">
                 {/* Terms of Service content here */}
                 {termsOfService && <div dangerouslySetInnerHTML={{ __html: converter.makeHtml(termsOfService.content) }} />}
                 {/* ... */}

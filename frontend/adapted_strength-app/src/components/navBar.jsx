@@ -20,7 +20,9 @@ const navigation = [
   { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
   { component: <> Sign Up</>, to: "/sign-up", selected: false, state: () => !AuthApi.isLoggedIn() },
   { component: <> Notifications</>, to: "/notifications", selected: false },
+  { component: <>SendNotifications</>, to: "/send_notifications", selected: false },
   { component: <> Logout</>, to: "/", selected: false, state: () => AuthApi.isLoggedIn(), onClick: async () => await AuthApi.logout() },
+
 ];
 
 export default function NavBar() {

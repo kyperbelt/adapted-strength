@@ -1,13 +1,11 @@
 package com.terabite.leaderboard.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "olympic")
@@ -35,11 +33,15 @@ public class Olympic {
         return id;
     }
 
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
     public String getWeightClass() {
         return weightClass;
     }
 
-    public void setWeightClass() {
+    public void setWeightClass(final String weightClass) {
         this.weightClass = weightClass;
     }
 
@@ -47,7 +49,7 @@ public class Olympic {
         return gender;
     }
 
-    public void setGender() {
+    public void setGender(final char gender) {
         this.gender = gender;
     }
 
@@ -55,7 +57,7 @@ public class Olympic {
         return snatch;
     }
 
-    public void setSnatch() {
+    public void setSnatch( final double snatch) {
         this.snatch = snatch;
     }
 
@@ -63,7 +65,7 @@ public class Olympic {
         return cleanJerk;
     }
 
-    public void setCleanJerk() {
+    public void setCleanJerk( final double cleanJerk) {
         this.cleanJerk = cleanJerk;
     }
 
