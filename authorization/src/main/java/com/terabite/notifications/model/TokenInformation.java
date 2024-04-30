@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 @Table(name = "notifications_token")
 public class TokenInformation implements Serializable {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Id
     @NotBlank
     @JsonAlias("token")
+    @Column(unique=true)
     private String token;
 
     @JsonAlias("create_date")
