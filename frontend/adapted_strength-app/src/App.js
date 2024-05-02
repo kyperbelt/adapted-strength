@@ -26,8 +26,6 @@ import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
 import { fetchToken } from './firebase';
 
-
-
 /*
 IMPORTS FOR PROGRAM PAGES
 */
@@ -50,6 +48,7 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
 const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
+const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 
 // import footer from '../footer'
 
