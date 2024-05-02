@@ -17,10 +17,13 @@ const navigation = [
   { component: <> About Us</>, to: "/about", selected: false },
   { component: <> Manage Programs</>, to: "/program-management", selected: false, state: () => AuthApi.isLoggedIn() && (AuthApi.hasRole("ROLE_COACH") || AuthApi.hasRole("ROLE_ADMIN")) },
   { component: <> Profile</>, to: "/profile", selected: false, state: () => AuthApi.isLoggedIn() },
+  { component: <> My Program</>, to: "/user-program", selected: false, state: () => AuthApi.isLoggedIn() },
   { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
   { component: <> Sign Up</>, to: "/sign-up", selected: false, state: () => !AuthApi.isLoggedIn() },
   { component: <> Notifications</>, to: "/notifications", selected: false },
+  { component: <>SendNotifications</>, to: "/send_notifications", selected: false },
   { component: <> Logout</>, to: "/", selected: false, state: () => AuthApi.isLoggedIn(), onClick: async () => await AuthApi.logout() },
+
 ];
 
 export default function NavBar() {
