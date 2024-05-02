@@ -17,7 +17,7 @@ let message = null;
 
 
 function connectUser(nickname, fullname, event) {
-  const socket = new SockJS('http://localhost:8080/ws');
+  const socket = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`);
   stompClient = Stomp.over(socket);
   stompClient.connect({}, onConnected, onError)
   event.preventDefault();
@@ -222,7 +222,7 @@ function CoachChat() {
     nickname = "admin@email.com"
     fullname = "Alex Palting"
 
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
   };

@@ -68,7 +68,7 @@ export class ChatApi {
 
         static getChatUsersStomp (coach) {
             return new Promise((resolve, reject) => {
-              const socket = new SockJS('http://localhost:8080/v1/chat/ws');
+              const socket = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`);
               const stompClient = Stomp.over(socket);
               
               stompClient.connect({}, () => {

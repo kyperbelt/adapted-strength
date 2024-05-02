@@ -52,6 +52,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 .filter(h -> h.startsWith("Bearer "))
                 .map(h -> h.substring(7));
 
+        log.info(request.getRequestURI());
+
+        // here we check if token exists if it does not then we want to ccyheck query paramters
+        //
+        // if query pareter called jwtToken exits then parse that into the token optional,
+
+        if (!token.isPresent()) {
+            log.info("Token not found in header, checking query parameters");
+            token = Optional.ofNullable(request.getParameter("jwtToken"));
+        }
+
         Optional<String> email = Optional.empty();
 
         // Token validity checks

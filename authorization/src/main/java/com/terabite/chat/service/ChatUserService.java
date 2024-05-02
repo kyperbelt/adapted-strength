@@ -1,5 +1,6 @@
 package com.terabite.chat.service;
 
+import com.terabite.common.Roles;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,44 +23,46 @@ public class ChatUserService {
     }
 
     
-    public void saveChatUser(ChatUser chatUser){
-        if(chatUser!= null){
-            chatUser.setUserType(UserType.CLIENT);
+    public void saveChatUser(ChatUser chatUser)
+    {
+        if (chatUser == null)
+        {
+            return;
 
-            if(chatUser.getEmail()!= null){
-                Login login = loginRepository.findById(chatUser.getEmail()).orElse(null);
-
-                if(login != null){
-                    List <String> roles = login.getRoles();
-                    for (int i = 0; i< roles.size(); i++){
-                        if(roles.get(i).contains("ROLE_ADMIN")  || roles.get(i).contains("ROLE_COACH") ){
-                            chatUser.setUserType(UserType.COACH);
-                        }
-                    }
-                }
-            }
-            chatUserRepository.save(chatUser);
         }
+
+        Login login = loginRepository.findById(chatUser.getEmail()).orElse(null);
+
+        if (login == null)
+        {
+            return;
+        }
+
+        for (String role : login.getRoles())
+        {
+            if (role.equals("ROLE_ADMIN") || role.equals("ROLE_COACH"))
+            {
+                chatUser.setUserType(UserType.CLIENT);
+                break;
+            }
+            else if (role.equals("ROLE_BASE_CLIENT") || role.equals("ROLE_GENERAL_CLIENT") || role.equals("ROLE_SPECIFIC_CLIENT"))
+            {
+                chatUser.setUserType(UserType.COACH);
+                break;
+            }
+        }
+
+        chatUserRepository.save(chatUser);
     }
 
     public ResponseEntity<List<ChatUser>>  findClientChatUsers(ChatUser chatUser){
         List<ChatUser> chatUsers = chatUserRepository.findAllByUserType(UserType.CLIENT);
-        if (chatUsers.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        else{
-            return new ResponseEntity<>(chatUsers, HttpStatus.ACCEPTED);
-        }
+        return new ResponseEntity<>(chatUsers, HttpStatus.OK);
     }
 
     public ResponseEntity<List<ChatUser>> findCoachChatUsers(ChatUser chatUser){
         List<ChatUser> chatUsers = chatUserRepository.findAllByUserType(UserType.COACH);
-        if (chatUsers.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        else{
-            return new ResponseEntity<>(chatUsers, HttpStatus.ACCEPTED);
-        }
+        return new ResponseEntity<>(chatUsers, HttpStatus.OK);
     }
 
 }

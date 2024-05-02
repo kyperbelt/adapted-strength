@@ -18,6 +18,7 @@ const navigation = [
   { text: "About Us", to: "/about", selected: false },
   { text: "Manage Programs", to: "/program-management", selected: false },
   { text: "Profile", to: "/profile", selected: false },
+  { text: "Chat", to: "/chat", selected: false },
   { text: "Leaderboard", to: "/leaderboard", selected: false },
   { text: "Sign Up", to: "/sign-up", selected: false },
   { text: "Notifications", to: "/notifications", selected: false },

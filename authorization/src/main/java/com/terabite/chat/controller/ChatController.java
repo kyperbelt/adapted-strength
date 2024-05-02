@@ -1,5 +1,6 @@
 package com.terabite.chat.controller;
 
+import com.terabite.authorization.config.JwtAuthFilter;
 import com.terabite.chat.model.ChatRoom;
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.Message;
@@ -38,6 +39,8 @@ public class ChatController {
     private final MessageService messageService;
     private final ChatUserService chatUserService;
     private final ChatRoomService chatRoomService;
+
+    private static Logger log = LoggerFactory.getLogger(ChatController.class);
     
     public ChatController(MessageService messageService, SimpMessagingTemplate messagingTemplate, ChatUserService chatUserService, ChatRoomService chatRoomService){
         this.messageService=messageService;
@@ -66,17 +69,19 @@ public class ChatController {
 
     @MessageMapping("/chatUser.addUser")
     //this is a queue that the front end will need to subscribe to
-    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+//    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     @SendTo("/chatUser/topic")
-    public ChatUser addChatUser(@Payload ChatUser chatUser){
+    public ChatUser addChatUser(@Payload ChatUser chatUser)
+    {
+        log.info("Is the /chatUser.addUser being called?");
         chatUserService.saveChatUser(chatUser);       // this is where chat user role is assigned
         return chatUser;
     }
 
     // This function gets clients, admins can only get users
     @PostMapping("/v1/chat/clientChatUsers")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_COACH')")
-    public ResponseEntity<List<ChatUser>> findClientChatUsers(@RequestBody ChatUser chatUser) {
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> findClientChatUsers(@RequestBody ChatUser chatUser) {
         return chatUserService.findClientChatUsers(chatUser);
     }
     // This function gets coaches
