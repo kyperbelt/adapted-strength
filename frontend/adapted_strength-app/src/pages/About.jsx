@@ -64,7 +64,6 @@ const About = () => {
 
                 <ContactForm />
             </div>
-            <Footer />
         </div>
     );
 };

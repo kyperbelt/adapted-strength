@@ -7,6 +7,7 @@ import NavBar from "../components/navBar";
 import { useLocation } from "react-router-dom";
 import StateGuard from "../util/StateGuard";
 import { AuthApi } from "../api/AuthApi";
+import Footer from "../components/footer";
 
 function ChatButton({ ...props }) {
   const messageNotification = props.messageNotification;
@@ -37,7 +38,7 @@ export default function Layout() {
       <StateGuard state={() =>!AuthApi.hasRole("ROLE_ADMIN")}>
         <ChatButton messageNotification={false} />
       </StateGuard>
-      {/*add footer here*/}
+      <Footer />
     </div>
   );
 }

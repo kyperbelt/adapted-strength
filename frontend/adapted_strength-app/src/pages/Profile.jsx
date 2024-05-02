@@ -261,7 +261,6 @@ export default function Profile() {
           </BasicModalDialogue>
         )}
       </div>
-      <Footer />
     </div>
   );
 }
