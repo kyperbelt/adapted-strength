@@ -1,16 +1,20 @@
 package com.terabite.chat.service;
 
+import java.util.Date;
+
 public class ChatNotification {
     private String chatId;
     private String senderId;
     private String recipientId;
     private String content;
+    private Date timeStamp;
 
-    public ChatNotification(String chatId, String senderId, String recipientId, String content){
+    public ChatNotification(String chatId, String senderId, String recipientId, String content, Date timeStamp){
         this.chatId=chatId;
         this.senderId=senderId;
         this.recipientId=recipientId;
         this.content=content;
+        this.timeStamp=timeStamp;
     }
 
     public String getChatId() {
@@ -41,5 +45,11 @@ public class ChatNotification {
         this.content = content;
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
 
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }

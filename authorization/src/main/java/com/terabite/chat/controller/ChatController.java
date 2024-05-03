@@ -54,7 +54,7 @@ public class ChatController {
         message.setHasBeenRead(false);
         Message savedMessage=messageService.save(message);
         
-        ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
+        ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent(), savedMessage.getTimeStamp());
         //front end will be subscribing to bob/queue/message where bob is the user
         if(savedMessage.getRecipientId()!= null){
             messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages", chatNotification);
@@ -69,11 +69,11 @@ public class ChatController {
 
     @MessageMapping("/chatUser.addUser")
     //this is a queue that the front end will need to subscribe to
-//    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     @SendTo("/chatUser/topic")
     public ChatUser addChatUser(@Payload ChatUser chatUser)
     {
-        log.info("Is the /chatUser.addUser being called?");
+//        log.info("Is the /chatUser.addUser being called?");
         chatUserService.saveChatUser(chatUser);       // this is where chat user role is assigned
         return chatUser;
     }

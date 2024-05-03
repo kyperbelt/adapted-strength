@@ -25,34 +25,23 @@ public class ChatUserService {
     
     public void saveChatUser(ChatUser chatUser)
     {
-        if (chatUser == null)
-        {
-            return;
+        if(chatUser!= null){
+            chatUser.setUserType(UserType.CLIENT);
 
-        }
+            if(chatUser.getEmail()!= null){
+                Login login = loginRepository.findById(chatUser.getEmail()).orElse(null);
 
-        Login login = loginRepository.findById(chatUser.getEmail()).orElse(null);
-
-        if (login == null)
-        {
-            return;
-        }
-
-        for (String role : login.getRoles())
-        {
-            if (role.equals("ROLE_ADMIN") || role.equals("ROLE_COACH"))
-            {
-                chatUser.setUserType(UserType.CLIENT);
-                break;
+                if(login != null){
+                    List <String> roles = login.getRoles();
+                    for (int i = 0; i< roles.size(); i++){
+                        if(roles.get(i).contains("ROLE_ADMIN")  || roles.get(i).contains("ROLE_COACH") ){
+                            chatUser.setUserType(UserType.COACH);
+                        }
+                    }
+                }
             }
-            else if (role.equals("ROLE_BASE_CLIENT") || role.equals("ROLE_GENERAL_CLIENT") || role.equals("ROLE_SPECIFIC_CLIENT"))
-            {
-                chatUser.setUserType(UserType.COACH);
-                break;
-            }
+            chatUserRepository.save(chatUser);
         }
-
-        chatUserRepository.save(chatUser);
     }
 
     public ResponseEntity<List<ChatUser>>  findClientChatUsers(ChatUser chatUser){
