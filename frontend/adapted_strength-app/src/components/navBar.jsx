@@ -13,17 +13,78 @@ import Logo from "../assets/logo.png";
 const navigation = [
   { component: <> Home</>, to: "/", selected: true },
   { component: <> Book Consultation</>, to: "/consultations", selected: false },
-  { component: <span>Login</span>, to: "/login", selected: false, state: () => !AuthApi.isLoggedIn() },
+  {
+    component: <span>Login</span>,
+    to: "/login",
+    selected: false,
+    state: () => !AuthApi.isLoggedIn(),
+  },
   { component: <> About Us</>, to: "/about", selected: false },
-  { component: <> Manage Programs</>, to: "/program-management", selected: false, state: () => AuthApi.isLoggedIn() && (AuthApi.hasRole("ROLE_COACH") || AuthApi.hasRole("ROLE_ADMIN")) },
-  { component: <> Profile</>, to: "/profile", selected: false, state: () => AuthApi.isLoggedIn() },
-  { component: <> My Program</>, to: "/user-program", selected: false, state: () => AuthApi.isLoggedIn() },
+  {
+    component: <> Manage Programs</>,
+    to: "/program-management",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+            (await AuthApi.hasRole("ROLE_COACH")) ||
+            (await AuthApi.hasRole("ROLE_ADMIN"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    },
+  },
+  {
+    component: <> Profile</>,
+    to: "/profile",
+    selected: false,
+    state: () => AuthApi.isLoggedIn(),
+  },
+  {
+    component: <> My Program</>,
+    to: "/user-program",
+    selected: false,
+    state: () => AuthApi.isLoggedIn(),
+  },
   { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
-  { component: <> Sign Up</>, to: "/sign-up", selected: false, state: () => !AuthApi.isLoggedIn() },
-  { component: <> Notifications</>, to: "/notifications", selected: false },
-  { component: <>SendNotifications</>, to: "/send_notifications", selected: false },
-  { component: <> Logout</>, to: "/", selected: false, state: () => AuthApi.isLoggedIn(), onClick: async () => await AuthApi.logout() },
-
+  {
+    component: <> Sign Up</>,
+    to: "/sign-up",
+    selected: false,
+    state: () => !AuthApi.isLoggedIn(),
+  },
+  {
+    component: <> Notifications</>,
+    to: "/notifications",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      })
+    }
+  },
+  {
+    component: <>SendNotifications</>,
+    to: "/send_notifications",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole = await AuthApi.hasRole("ROLE_ADMIN");
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    },
+  },
 ];
 
 export default function NavBar() {
@@ -37,7 +98,10 @@ export default function NavBar() {
   //check if the url contains one of the navigation items "to" values and if it does, set that item to selected
   useEffect(() => {
     for (let i = 0; i < navigation.length; i++) {
-      if (!(i!== 0 && navigation[i].to==="/") && loc.pathname.includes(navigation[i].to)) {
+      if (
+        !(i !== 0 && navigation[i].to === "/") &&
+        loc.pathname.includes(navigation[i].to)
+      ) {
         const items = navItems.map((item) => {
           item.selected = item.to === navigation[i].to;
           return item;
@@ -47,10 +111,9 @@ export default function NavBar() {
         if (loggedIn != AuthApi.isLoggedIn()) {
           setLoggedIn(AuthApi.isLoggedIn());
         }
-        console.log("navItems:", navItems);
       }
     }
-  }, [loc.pathname]);
+  }, [loc.pathname, loggedIn]);
 
   const toggleHammy = (e) => {
     console.log("toggleHammy:", e.target.id);
@@ -147,13 +210,19 @@ export default function NavBar() {
                       }`}
                     key={index}
                     to={item.to}
-                    onClick={() => { closeHammy(); item.onClick && item.onClick(); }}
+                    onClick={() => {
+                      closeHammy();
+                      item.onClick && item.onClick();
+                    }}
                     state={item.state}
                   >
                     {item.component}
                   </NavItem>
                 );
               })}
+              <NavItem to="/" selected={false} state={AuthApi.isLoggedIn} onClick={async () => { await AuthApi.logout(); setLoggedIn(AuthApi.isLoggedIn()); }}>
+                Logout
+              </NavItem>
             </ul>
           </div>
         </div>
@@ -187,7 +256,14 @@ function BellIcon() {
 // </div>
 function NavItem({ to, children, onClick, state, className }) {
   return (
-    <StateGuard state={state ?? (() => { return true; })}>
+    <StateGuard
+      state={
+        state ??
+        (() => {
+          return true;
+        })
+      }
+    >
       <li>
         <Link
           id="nav-item"

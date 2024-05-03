@@ -56,8 +56,7 @@ const CalendlyBooking = () => {
 
         <PageContainer2>
             <h3 className="relative text-center text-2xl bottom-12">Book your consultation below!</h3>
-            <div className="bg-primary px-3 py-3 grow flex flex-col text-center min-h-screen">
-                <div className="calendly-inline-widget" data-auto-load="false"></div>
+            <div className="bg-primary px-3 flex-1 flex flex-col text-center min-h-[850px]">
                 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js">
                 </script>
                 <iframe
@@ -65,7 +64,7 @@ const CalendlyBooking = () => {
                     width="100%"
                     height="100%"
                     title="Calendly scheduling link"
-                    className='rounded-2xl grow'
+                    className='rounded-2xl grow min-h-fit'
                 ></iframe>
             </div>
         </PageContainer2>)
