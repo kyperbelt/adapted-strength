@@ -131,7 +131,7 @@ export default function NavBar() {
           </button>
           <div
             className={`${hamburgerOpen ? "" : "hidden"
-              } w-full md:block md:w-auto`}
+              } w-full animate-slideLeft md:block md:w-auto`}
             id="navbar-default"
           >
             <ul
