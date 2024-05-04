@@ -105,16 +105,16 @@ jobs:
           chmod 600 key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
-      - name: Get EC2 hostname
-        id: get-host
-        run: |
-            echo "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname)" >> $GITHUB_OUTPUT
+      # - name: Get EC2 hostname
+      #   id: get-host
+      #   run: |
+      #       echo "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname)" >> $GITHUB_OUTPUT
 
       - name: Inject backend host on frontend
-        env:
-          HOSTNAME: ::addmask::${{ steps.get-host.outputs.HOSTNAME }}
+        # env:
+        #   HOSTNAME: ::addmask::${{ steps.get-host.outputs.HOSTNAME }}
         run: |
-          sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = '$HOSTNAME:${{ secrets.BACKEND_PORT }}';/" frontend/adapted_strength-app/src/api/ApiUtils.js
+          sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = '${{ secrets.INTERNAL_IP }}';/" frontend/adapted_strength-app/src/api/ApiUtils.js
 
       - name: Build frontend
         env:
