@@ -108,7 +108,7 @@ jobs:
       - name: Get EC2 hostname
         id: get-host
         run: |
-            echo "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname) >> $GITHUB_OUTPUT"
+            echo "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname)" >> $GITHUB_OUTPUT
 
       - name: Inject backend host on frontend
         env:
