@@ -6,30 +6,23 @@ import {ChatApi} from "../api/ChatApi";
 import {ApiUtils} from "../api/ApiUtils";
 import {HttpStatus} from "../api/ApiUtils";
 
-// Solution: Add a reference to a coach from the <user_table_name> to another user that is a coach
-const COACH = {
-    "firstName": "Alex",
-    "lastName": "Palting",
-    "email": "admin@email.com"
-};
-
-function MessageConstructor({userInfo, chatInfo}) {
+function MessageConstructor({senderInfo, recipientInfo, chatInfo}) {
     const date = new Date(chatInfo.timeStamp);
     const dateFormat = date.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit"
     });
     let messagePosition = "flex";
-    let messageFullName = `${userInfo.firstName} ${userInfo.lastName}`;
+    let messageFullName = `${senderInfo.firstName} ${senderInfo.lastName}`;
     let messageBackground = "flex flex-col p-2 border-gray-200 rounded-xl";
     let messageText = "text-sm font-normal break-words"; // text-white || text-gray-900
 
-    if (userInfo.email === chatInfo.senderId) {
+    if (senderInfo.email === chatInfo.senderId) {
         messagePosition += " justify-end";
         messageBackground += " bg-custom-red";
         messageText += " text-white";
     } else {
-        messageFullName = `${COACH.firstName} ${COACH.lastName}`;
+        messageFullName = recipientInfo.fullName;
         messageBackground += " bg-gray-200";
         messageText += " text-gray-900";
     }
@@ -56,7 +49,8 @@ function MessageConstructor({userInfo, chatInfo}) {
 let stompClient = null;
 
 export default function Chat() {
-    const [userInfo, setUserInfo] = useState(null);
+    const [senderInfo, setSenderInfo] = useState(null);
+    const [recipientInfo, setRecipientInfo] = useState(null);
     const [chatInfo, setChatInfo] = useState(null);
     const [userMessage, setUserMessage] = useState({
         "senderId": "",
@@ -65,44 +59,56 @@ export default function Chat() {
         "timeStamp": ""
     });
     const [userVideo, setUserVideo] = useState("");
-    let container = "flex flex-col h-[calc(100vh-104px)]";
+    const [chatCSS, setChatCSS] = useState("flex flex-col h-screen")
 
     useEffect(() => {
         const loadData = () => {
             UserApi.getProfileInformation()
-                .then(userResponse => {
-                    if (userResponse.status === HttpStatus.OK) {
-                        return userResponse.data;
+                .then(senderResponse => {
+                    if (senderResponse.status === HttpStatus.OK) {
+                        return senderResponse.data;
                     } else {
-                        throw new Error(`Error occurred when fetching user profile information\nHTTP Status: ${userResponse.status}`);
+                        throw new Error(`Error occurred when fetching user profile information\nHTTP Status: ${senderResponse.status}`);
                     }
                 })
-                .then(userData => {
-                    setUserInfo(userData);
-                    return ChatApi.getChat(userData.email, COACH.email)
-                        .then(senderResponse => {
-                            if (senderResponse.status === HttpStatus.OK) {
-                                return {userData, senderData: senderResponse.data};
-                            } else {
-                                throw new Error(`Error occurred when fetching sender's chat information\nHTTP Status: ${senderResponse.status}`);
-                            }
-                        })
-                })
-                .then(({userData, senderData}) => {
-                    return ChatApi.getChat(COACH.email, userData.email)
+                .then(senderData => {
+                    return ChatApi.getCoaches({})
                         .then(recipientResponse => {
-                            if (recipientResponse.status == HttpStatus.OK) {
-                                return {senderData, recipientData: recipientResponse.data};
+                            if (recipientResponse.status === HttpStatus.OK) {
+                                return {senderData, recipientData: recipientResponse.data[0]};
                             } else {
-                                throw new Error(`Error occurred when fetching recipient's chat information\nHTTP Status: ${recipientResponse.status}`)
+                                throw new Error(`Error occurred when fetching a list of coaches\nHTTP Status: ${recipientResponse.status}`)
                             }
                         })
                 })
                 .then(({senderData, recipientData}) => {
+                    return ChatApi.getChat(senderData.email, recipientData.email)
+                        .then(senderChatResponse => {
+                            if (senderChatResponse.status === HttpStatus.OK) {
+                                return {senderData, recipientData, senderChatData: senderChatResponse.data}
+                            } else {
+                                throw new Error(`Error occurred when fetching sender's chat information\nHTTP Status: ${senderChatResponse.status}`);
+                            }
+                        })
+                })
+                .then(({senderData, recipientData, senderChatData}) => {
+                    return ChatApi.getChat(recipientData.email, senderData.email)
+                        .then(recipientChatResponse => {
+                            if (recipientChatResponse.status === HttpStatus.OK) {
+                                return {senderData, recipientData, senderChatData, recipientChatData: recipientChatResponse.data}
+                            } else {
+                                throw new Error(`Error occurred when fetching recipient's chat information\nHTTP Status: ${recipientChatResponse.status}`)
+                            }
+                        })
+                })
+                .then(({senderData, recipientData, senderChatData, recipientChatData}) => {
+                    setSenderInfo(senderData);
+                    setRecipientInfo(recipientData);
+
                     //TODO: investigate whether the time complexity of concat to an empty array from a populated array is affected
                     //e.g. let a = [], let b = [1,2], a.concat(b) --> does this change the reference of the head or are all the elements being copied
                     //issue is O(1) compared to O(n)
-                    setChatInfo(senderData.concat(recipientData).sort((a, b) => a.timeStamp > b.timeStamp));
+                    setChatInfo(senderChatData.concat(recipientChatData).sort((a, b) => a.timeStamp > b.timeStamp));
                 })
                 .catch(e => {
                     console.error(e);
@@ -119,13 +125,13 @@ export default function Chat() {
     };
 
     const onConnected = () => {
-        stompClient.subscribe(`/user/${userInfo.email}/queue/messages`, onMessageReceived);
+        stompClient.subscribe(`/user/${senderInfo.email}/queue/messages`, onMessageReceived);
         // stompClient.send("/app/chatUser.addUser", {
         //     //TODO: investigate if this is getting sent
         //     Authorization: `Bearer ${ApiUtils.getAuthToken()}`
         // }, JSON.stringify({
-        //     email: userInfo.email,
-        //     fullName: `${userInfo.firstName} ${userInfo.lastName}`
+        //     email: senderInfo.email,
+        //     fullName: `${senderInfo.firstName} ${senderInfo.lastName}`
         // }))
     };
 
@@ -146,11 +152,21 @@ export default function Chat() {
         setChatInfo(prevChatInfo => [...prevChatInfo, receivedMessage]);
     };
 
-    if (!(userInfo && chatInfo))
+    if (!(senderInfo && recipientInfo && chatInfo))
         return <div>Fetching APIs...</div>
 
     if (!stompClient) {
         registerUser();
+    }
+
+    if (chatCSS === "flex flex-col h-screen") {
+        let navigationBar = document.getElementById("navigation-bar").getBoundingClientRect()
+
+        if (!navigationBar) {
+            return <div>Loading...</div>
+        }
+
+        setChatCSS(prevChatCSS => prevChatCSS.substring(0, prevChatCSS.length - "screen".length) + `[calc(100vh-${navigationBar.height}px)]`);
     }
 
     const generateChatMap = (messages) => {
@@ -199,7 +215,7 @@ export default function Chat() {
 
             for (let message of chatMap.get(key)) {
                 chatList.push(<li key={message.id}>
-                    <MessageConstructor userInfo={userInfo} chatInfo={message}/>
+                    <MessageConstructor senderInfo={senderInfo} recipientInfo={recipientInfo} chatInfo={message}/>
                 </li>);
             }
 
@@ -213,8 +229,8 @@ export default function Chat() {
 
     const handleUserMessage = (e) => {
         setUserMessage({
-            "senderId": userInfo.email,
-            "recipientId": COACH.email,
+            "senderId": senderInfo.email,
+            "recipientId": recipientInfo.email,
             "content": e.target.value,
             "timeStamp": new Date()
         });
@@ -239,9 +255,9 @@ export default function Chat() {
     };
 
     return (
-        <div className={container}>
+        <div className={chatCSS}>
             <div id="chat-title" className="mx-2 mt-2 flex justify-center border border-gray-200 p-2 rounded-t-xl bg-gray-200 text-gray-900 font-semibold">
-                Chatting with {`${COACH.firstName} ${COACH.lastName}`}
+                Chatting with {recipientInfo.fullName}
             </div>
             <div id="chat-message" className="mx-2 p-4 bg-white border-x border-gray-200 overflow-auto flex-grow">
                 <ChatList messages={chatInfo}/>

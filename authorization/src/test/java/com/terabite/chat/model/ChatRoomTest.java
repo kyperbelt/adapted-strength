@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChatRoomTest {
     @Test
-    public void testSettersAndGetters () {
+    public void validateChatRoom () {
         ChatRoom chatRoom = new ChatRoom();
 
         chatRoom.setChatRoomId("hello@email.com_world@email.com");

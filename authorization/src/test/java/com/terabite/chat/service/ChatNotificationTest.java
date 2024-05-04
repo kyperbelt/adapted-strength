@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ChatNotificationTest
 {
     @Test
-    public void testSettersAndGetters() {
+    public void validNotification() {
         ChatNotification chatNotification = new ChatNotification();
 
         chatNotification.setChatId("one@email.com_two@email.com");

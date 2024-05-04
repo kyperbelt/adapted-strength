@@ -3,6 +3,7 @@ package com.terabite.chat;
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.UserType;
 import com.terabite.chat.repository.ChatUserRepository;
+import com.terabite.chat.service.ChatUserService;
 
 /**
  * ChatApi
@@ -16,6 +17,7 @@ public class ChatApi {
     }
 
     public void createUser(String email, String fullName, String userType) {
+
         UserType type = UserType.valueOf(userType);
 
         ChatUser user = new ChatUser();
@@ -24,7 +26,6 @@ public class ChatApi {
         user.setUserType(type);
 
         chatUserRepository.save(user);
-
     }
 
     

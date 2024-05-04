@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MessageTest {
     @Test
-    public void testSettersAndGetters() {
+    public void validateMessage() {
         Message message = new Message();
 
         message.setId(1l);

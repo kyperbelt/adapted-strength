@@ -21,6 +21,7 @@ import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
+import AdminChat from "./pages/AdminChat"
 import Tab from "./components/TabComponents/Tab.jsx";
 import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
@@ -135,6 +136,7 @@ function App() {
               <Route path="leaderboard" element={<Leaderboard />} />
               // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="chat" element={<Chat />} />
+              <Route path="admin-chat" element={<AdminChat />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
               <Route path="payment-checkout/:plan?" element={

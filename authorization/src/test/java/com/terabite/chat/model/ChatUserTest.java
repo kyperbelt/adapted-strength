@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChatUserTest {
     @Test
-    public void testGettersAndSetters()
+    public void validateChatUser()
     {
         ChatUser chatUser = new ChatUser();
 
