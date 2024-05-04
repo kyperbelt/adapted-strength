@@ -108,11 +108,13 @@ jobs:
       - name: Get EC2 hostname
         id: get-host
         run: |
-            export "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname)"
+            echo "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname) >> $GITHUB_OUTPUT"
 
       - name: Inject backend host on frontend
+        env:
+          HOSTNAME: ${{ steps.get-host.outputs.HOSTNAME }}
         run: |
-          sed -i 's/const BASE_API_URL.*=.*/const BASE_API_URL = $HOSTNAME/' frontend/adapted_strength-app/src/api/ApiUtils.js
+          sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = $HOSTNAME/" frontend/adapted_strength-app/src/api/ApiUtils.js
           
       - name: Build frontend
         run: |
