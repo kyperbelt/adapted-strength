@@ -46,7 +46,9 @@ public class SecurityConfig {
                 "/auth/reset_password",
                 "/auth/signup",
                 "/auth/get_token",
-                "/user/validate_user_data"
+                "/user/validate_user_data",
+                "/content/**",
+                "/webhook/"
         };
 
         private final JwtAuthFilter jwtAuthFilter;

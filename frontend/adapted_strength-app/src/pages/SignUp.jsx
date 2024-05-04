@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
-import PageContainer1 from '../components/PageContainer';
+import PageContainer1, {PageContainer2} from '../components/PageContainer';
 import { AuthApi } from '../api/AuthApi';
 import { HttpStatus } from '../api/ApiUtils';
+import LabeledInputField from '../components/forms/LabeledInputField';
+import { PrimaryButton } from '../components/Button';
 
 const ErrorType = {
     PasswordsMustMatch: "Passwords must match.",
@@ -38,18 +40,18 @@ function validatePassword(password) {
 
 
 function EmailField() {
-    return (<input type="email" placeholder="Email Address" id="email" name="email" required />);
+    return (<LabeledInputField type="email" placeholder="Email Address" id="email" name="email" required />);
 }
 function PasswordField() {
-    return (<input type="text" placeholder="Password" id="password" name="password" pattern={"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#!%*?&])[A-Za-z\\d@$!#%*?&]{8,255}$"}
+    return (<LabeledInputField type="text" placeholder="Password" id="password" name="password" pattern={"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#!%*?&])[A-Za-z\\d@$!#%*?&]{8,255}$"}
         title="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character. It should be between 8 and 255 characters long."
     /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required />);
 }
 function PasswordConfirmationField() {
-    return (<input type="text" placeholder="Re-Enter Password" id="password_conf" name="password_confirmation" /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required />);
+    return (<LabeledInputField type="text" placeholder="Re-Enter Password" id="password_conf" name="password_confirmation" /*onchange="validatePasswordMatch()" // TODO: ADAPTEDS-89*/ required />);
 }
 function SubmitButton() {
-    return (<button type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >Next</button>);
+    return (<PrimaryButton type="submit" className="border-primary border-8 rounded-full px-3 py-1 "  >Next</PrimaryButton>);
 }
 
 
@@ -100,11 +102,11 @@ export default function SignUp() {
         setError(ErrorType.NoError);
     };
     return (
-        <PageContainer1>
+        <PageContainer2>
             <div className="relative bottom-20">
                 <h1 className="relative mx-0 text-center text-2xl bottom-4">Sign Up</h1>
                 <div className="flex w-full justify-center" >
-                    <form onSubmit={onSubmit} id="sign-up" className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
+                    <form onSubmit={onSubmit} id="sign-up" className="p-0 w-full flex flex-col items-center bg-primary shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
                         <div className="w-3/5 flex flex-col items-center px-0 ">
                             <ErrorMessage msg={error} show={error !== ErrorType.NoError} />
                         </div>
@@ -123,6 +125,6 @@ export default function SignUp() {
                     </form>
                 </div>
             </div>
-        </PageContainer1>
+        </PageContainer2>
     );
 }

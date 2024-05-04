@@ -94,6 +94,8 @@ public class AuthorizationController {
             if (loginDetails != null) {
                 log.info(" User {} does not have role {}", loginDetails.getUsername(), role);
                 log.info(" User roles are {}", loginDetails.getRoles());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("User does not have role " + role,
+                        "Forbidden"));
             }else{
                 log.info("User details are null becasue user is not logged in, probably");
             }

@@ -22,20 +22,15 @@ import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
 import Tab from "./components/TabComponents/Tab.jsx";
+import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
 import { fetchToken } from './firebase';
-
-// import ProgramManagement from './pages/program_management/ProgramManagement.jsx';
-
 
 /*
 IMPORTS FOR PROGRAM PAGES
 */
 //--------------------------------------------------
-import BodyBuild from './pages/program_pages/BodyBuild.jsx';
-import Oly from './pages/program_pages/Oly.jsx';
-import Power from './pages/program_pages/Power.jsx';
-import General from './pages/program_pages/General.jsx';
+import General from './pages/program_pages/UserProgram.jsx';
 //--------------------------------------------------
 
 import Booking from './pages/Booking.jsx';
@@ -52,6 +47,9 @@ import ChatTest from './pages/test_pages/ChatTest';
 const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
 const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
+const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
+const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
+const MovementLibrary = lazy(() => import('./pages/MovementLibrary.jsx'));
 
 // import footer from '../footer'
 
@@ -85,48 +83,76 @@ function App() {
                 </RouteGuard>
               } />
 
+
               <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} />
+
+              <Route path="profile" element={<Suspense fallback="...">
+                <RouteGuard state={AuthApi.isLoggedIn} routeTo="/login">
+                  <Profile />
+                </RouteGuard>
+              </Suspense>} />
+              {/* <Route path="profile" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <Profile /></RouteGuard>} /> */}
+
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
               <Route path="about" element={<About />} />
               <Route path="sign-up" element={<SignUp />} />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-              <Route path="user-management/:email?" element={<UserManagement/>} />
-              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={<RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
-
-                  <Suspense fallback="...">
-                <ProgramManagement />
+              <Route path="user-management/:email?" element={<UserManagement />} />
+              <Route path="/program-management/:programId?/:weekId?/:dayId?" element={
+                <Suspense fallback="...">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <ProgramManagement />
+                  </RouteGuard>
                 </Suspense>
-              </RouteGuard>} />
+              } />
+              <Route path="/web-admin" element={
+                <Suspense fallback="...">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <WebAdmin />
+                  </RouteGuard>
+                </Suspense>
+              } />
+              <Route path="/movement-library/:movementId?" element={
+                <Suspense fallback="...">
+                  { /*TODO: check if we want to allow for all users*/}
+                  <RouteGuard state={() => true} routeTo="/login">
+                    <MovementLibrary/>
+                  </RouteGuard>
+                </Suspense>
+              } />
+          
 
             /* ROUTES FOR PROGRAM PAGES */
               //--------------------------------------------------
-              <Route path="bodybuild" element={<BodyBuild />} />
-            // <Route path="power-lifting" element={<Power />} />
-            // <Route path="oly-lifting" element={<Oly />} />
-            // <Route path="general-program" element={<General />} />
+
+            // <Route path="user-program" element={<General />} />
             //--------------------------------------------------
 
               <Route path="terms-of-service" element={<TermsOfService />} />
               <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
               <Route path="memberships" element={<Memberships />} />
               <Route path="leaderboard" element={<Leaderboard />} />
-              <Route path='video-library' element={<VideoLibrary />} />
+              // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="chat" element={<Chat />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="payment-checkout/:plan?" element={
+                <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <PaymentCheckout /> </RouteGuard>
+              } />
 
             /* ROUTES FOR CHAT PAGES */
               //--------------------------------------------------
               <Route path="manageChats" element={<ManageChats />} />
             //--------------------------------------------------
+              //--------------------------------------------------
 
 
               /* Route for notifications & announcements tabs */
               //-------------------------------------------------
               <Route path="notifications" element={<Tab />} />
-            //-------------------------------------------------          </Route>
-            
+              <Route path='send_notifications' element={<SendNotifications />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       }

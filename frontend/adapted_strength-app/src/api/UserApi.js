@@ -102,6 +102,14 @@ export class UserApi {
     return promise;
   }
 
+  static submitHealthQuestionnaire(healthQuestionnaire) {
+    const promise = ApiUtils.apiPost(
+      "user/health_questionare",
+      healthQuestionnaire
+    );
+    return promise;
+  }
+
   /**
    * @param {Object} information
    * @returns {Promise<Response>} Promise<Response>
@@ -208,7 +216,12 @@ export class UserApi {
 
   // get user programming for self
   static getUserProgramming() {
-    const promise = ApiUtils.apiGet("user/programming");
+    const promise = ApiUtils.apiGet("user/programming").then((response) => {
+      if (response.status === HttpStatus.OK) {
+        return response.data;
+      }
+      throw new Error(`Failed to get programming: ${response.status}`);
+    });
     return promise;
   }
 

@@ -19,7 +19,7 @@ The project aims to take existing processes necessary to run the business that r
 #### ERD
 ![](https://drive.google.com/uc?export=view&id=1QwXzT-TkcJQOkByXfeiu-PY5kpEQLR5n)
 
-### Cumulitive Flow Diagram
+#### Cumulitive Flow Diagram
 ![](https://drive.google.com/uc?export=view&id=1HQV8A90qm86nlSK1Er60i-4AGOZCSX9I)
 
 ## Features

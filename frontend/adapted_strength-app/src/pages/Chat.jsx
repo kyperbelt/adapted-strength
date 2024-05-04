@@ -51,7 +51,7 @@ function MessageConstructor({userInfo, chatInfo}) {
             </div>
         </>
     )
-};
+}
 
 let stompClient = null;
 

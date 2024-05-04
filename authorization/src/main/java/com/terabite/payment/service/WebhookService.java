@@ -2,6 +2,7 @@ package com.terabite.payment.service;
 
 import java.util.Map;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.SubscriptionService;
+import com.terabite.user.service.UnsubscribeService;
 
 @Service
 public class WebhookService {
@@ -34,22 +37,25 @@ public class WebhookService {
     @Value("${ADAPTED_STRENGTH_BASE_PRICE_ID}")
     private String baseClientPriceId;
 
-    @Value("${ADAPTED_STRENGTH_GENERAL_PRICE_ID}")
-    private String generalClientPriceId;
-
     @Value("${ADAPTED_STRENGTH_SPECIFIC_PRICE_ID}")
     private String specificClientPriceId;
 
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private LoginRepository loginRepository;
+    private final LoginRepository loginRepository;
 
-    public WebhookService(CustomerRepository customerRepository, UserRepository userRepository, LoginRepository loginRepository){
+    private final UnsubscribeService unsubscribeService;
+
+    private final SubscriptionService subscriptionService;
+
+    public WebhookService(CustomerRepository customerRepository, UserRepository userRepository, LoginRepository loginRepository, UnsubscribeService unsubscribeService, SubscriptionService subscriptionService){
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
         this.loginRepository = loginRepository;
+        this.unsubscribeService = unsubscribeService;
+        this.subscriptionService = subscriptionService;
     }
 
     public HttpStatus handleWebhookEvent(String payload, Map<String, String> header){
@@ -82,17 +88,17 @@ public class WebhookService {
             //
         }
 
-        if (event.getType() == "customer.subscription.created"){
+        if (event.getType().equals("customer.subscription.created") ){
             Subscription subscription = (Subscription) stripeObject;
             handleCustomerSubscriptionCreated(subscription);
         }
 
-        else if (event.getType() == "customer.subscription.deleted"){
+        else if (event.getType().equals("customer.subscription.deleted")){
             Subscription subscription = (Subscription) stripeObject;
             handleCustomerSubscriptionDeleted(subscription);
         }
 
-        else if (event.getType() == "customer.subscription.updated"){
+        else if (event.getType().equals("customer.subscription.updated")){
             Subscription subscription = (Subscription) stripeObject;
             handleCustomerSubscriptionUpdated(subscription);
         }
@@ -103,7 +109,9 @@ public class WebhookService {
 
     // handle the event
 
-    // When a subscription is created all we need to do is associate the subscriptionId with the user in our database
+    // When a subscription is created we need to associate the subscriptionId with the user in our database
+    // TODO: If that user already has a subscription we need to cancel that subscription and update 
+    // or update the priceId might work
     public void handleCustomerSubscriptionCreated(Subscription subscription){
         String customerId = subscription.getCustomer();
         com.terabite.payment.model.Customer customer;
@@ -121,17 +129,13 @@ public class WebhookService {
         UserInformation userInformation = getUserBySubscription(subscription);
         
         if (userInformation != null){
-            userInformation.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
-            userRepository.save(userInformation);
+            // userInformation.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
+            // userRepository.save(userInformation);
 
             Login login = getLoginByUserInformation(userInformation);
             if(login != null){
-                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.NO_SUBSCRIPTION);
-                UserApi.ResetSubscriptionRoles(login);
-                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
-                loginRepository.save(login);
+                unsubscribeService.unsubscribe(login.getEmail());
             }
-            
         }
     }
 
@@ -149,57 +153,45 @@ public class WebhookService {
             Subscription updates can mean many things, so we have to check the status of the subscription before we change anything.
             First case will be statuses that would result in losing access to content.
         */
-        if (subscription.getStatus() == "canceled" 
-            || subscription.getStatus() == "paused"                   // paused can only happen when a free trial ends which is not currently a feature but may be later
-            || subscription.getStatus() == "unpaid"){                 
+        if (subscription.getStatus().equals("canceled")
+            || subscription.getStatus().equals("paused")    // paused can only happen when a free trial ends which is not currently a feature but may be later
+            || subscription.getStatus().equals("unpaid")){                 
                 userInformation.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
                 userInformation.cancelExpirationDate();
-
-                UserApi.ResetSubscriptionRoles(login);
-                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.NO_SUBSCRIPTION);
-                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
-
                 userRepository.save(userInformation);
-                loginRepository.save(login);
+
+                UserApi.ResetSubscriptionRoles(login); 
+                // loginRepository.save(login);
 
         }
 
 
-        // This block will assign the new subscriptionStatus of active subs based on their paymentId
-        // PaymentId
-        else if (subscription.getStatus() == "active"){
-            UserApi.ResetSubscriptionRoles(login);
+        // This block will assign the new subscriptionStatus of active subs based on their priceId
+        else if (subscription.getStatus().equals("active")){
+
+            // sets the expiration date in the userInformation table
             java.util.Date time=new java.util.Date((long)subscription.getCurrentPeriodEnd()*1000);
             userInformation.setExpirationDate(time);
 
-            if(subscription.getItems().getData().get(6).getPrice().getId() == baseClientPriceId){
-                userInformation.setSubscriptionTier(SubscriptionStatus.BASE_CLIENT);
-                
+            // priceId determines subscription level. 
+            String priceId = subscription.getItems().getData().get(0).getPrice().getId();
+
+            if(priceId.equals(baseClientPriceId)){      
                 SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.BASE_CLIENT);
-                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
+                subscriptionService.subscribe(subscribeRequest, userInformation.getEmail());
             }
-            else if(subscription.getItems().getData().get(6).getPrice().getId() == generalClientPriceId){
-                userInformation.setSubscriptionTier(SubscriptionStatus.GENERAL_CLIENT);
 
-                SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.GENERAL_CLIENT);
-                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
-            }
-            else if(subscription.getItems().getData().get(6).getPrice().getId() == specificClientPriceId){
-                userInformation.setSubscriptionTier(SubscriptionStatus.SPECIFIC_CLIENT);
-
+            else if(priceId.equals(specificClientPriceId)){
                 SubscribeRequest subscribeRequest = new SubscribeRequest(SubscriptionStatus.SPECIFIC_CLIENT);
-                login.setRoles(UserApi.getAdditiveRolesFromSubscribeRequest(subscribeRequest));
+                subscriptionService.subscribe(subscribeRequest, userInformation.getEmail());
             }
-
             userRepository.save(userInformation);
-            loginRepository.save(login);
         }
     }
 
 
     public UserInformation getUserBySubscription(Subscription subscription){
         String customerId = subscription.getCustomer();
-        
         // this should never happen, I don't think subscriptions can not have a customer
         if (customerId == null){
             return null;
