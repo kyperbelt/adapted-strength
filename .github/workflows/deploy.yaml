@@ -114,7 +114,7 @@ jobs:
         env:
           HOSTNAME: ${{ steps.get-host.outputs.HOSTNAME }}
         run: |
-          sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = $HOSTNAME/" frontend/adapted_strength-app/src/api/ApiUtils.js
+          sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = $HOSTNAME;/" frontend/adapted_strength-app/src/api/ApiUtils.js
           
       - name: Build frontend
         run: |
