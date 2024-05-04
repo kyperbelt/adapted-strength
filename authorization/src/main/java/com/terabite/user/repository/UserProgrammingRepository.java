@@ -18,6 +18,8 @@ public interface UserProgrammingRepository extends JpaRepository<UserProgramming
     // List<Program> findByUserId(Long userId);
     List<UserProgramming> findByUserInfoEmail(String email);
     List<ProgrammingComment> findProgrammingCommentsById(Long id);
+    // find all programmings that contain a specific assignedProgramId 
+    List<UserProgramming> findByAssignedProgramId(Long id);
     Program findProgramById(Long id);
     UserInformation findUserInfoById(Long id);
     

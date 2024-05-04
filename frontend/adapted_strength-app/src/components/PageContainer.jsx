@@ -9,7 +9,7 @@ function AdaptedStrengthLogo() {
 
 export default function PageContainer1({ children }) {
     return (
-        <div className="grow content-center flex flex-col w-full">
+        <div className="grow content-center flex flex-col w-full overflow-x-hidden">
             <div className="h-44 md:h-56 bg-header-background1 flex-none">
                 <AdaptedStrengthLogo />
             </div>
@@ -40,9 +40,9 @@ export function BlankPageContainer1({ children }) {
 
 export function PageContainer2({ ...props }) {
     return (
-        <div className="h-full my-0 content-center w-full top-[100px]">
-            <div className="mt-56 bg-[#161A1D] h-full">
-                <div className="relative -top-10">
+        <div className="mt-48 grow content-center flex flex-col w-full">
+            <div className="bg-secondary flex grow flex-row content-center justify-center">
+                <div className="flex-1 flex flex-col max-w-screen-xl">
                     {props.children}
                 </div>
             </div>

@@ -1,4 +1,4 @@
-package com.terabite.authorization.config;
+    package com.terabite.authorization.config;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -53,6 +53,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 .map(h -> h.substring(7));
 
         Optional<String> email = Optional.empty();
+
+        // here we check if token exists if it does not then we want to ccyheck query paramters 
+        //
+        // if query pareter called jwtToken exits then parse that into the token optional, 
+
+        if (!token.isPresent()) {
+            log.info("Token not found in header, checking query parameters");
+            token = Optional.ofNullable(request.getParameter("jwtToken"));
+        }
 
         // Token validity checks
         if (token.isPresent() && !token.get().isBlank() && !token.get().equals("null")){

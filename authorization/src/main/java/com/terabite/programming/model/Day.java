@@ -1,5 +1,6 @@
 package com.terabite.programming.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -64,5 +65,21 @@ public class Day
 
     public void setRepCycles(List<RepCycle> repCycles){
         this.repCycles=repCycles;
+    }
+
+    public Day duplicate(){
+        final Day newDay = new Day();
+        newDay.setName(String.format("%s", this.getName()));
+        List<RepCycle> newRepCycles = new ArrayList<>();
+        for(RepCycle repCycle : this.getRepCycles()){
+            newRepCycles.add(repCycle.duplicate());
+        }
+        newDay.setRepCycles(newRepCycles);
+        return newDay;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Day [id=%d, name=%s, repCycles=%s]", dayId, name, repCycles);
     }
 }

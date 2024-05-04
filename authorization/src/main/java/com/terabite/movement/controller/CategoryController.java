@@ -6,6 +6,7 @@ import com.terabite.movement.repository.CategoryRepository;
 import com.terabite.movement.repository.MovementRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class CategoryController
     }
 
     @GetMapping("/movements/{movement_id}/categories")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<List<Category>> getALlCategoriesByMovementId(@PathVariable("movement_id") long id) {
         Movement foundMovement = movementRepository.findById(id);
         if (foundMovement == null) {
@@ -52,6 +54,7 @@ public class CategoryController
     }
 
     @PostMapping("/movements/{movement_id}/categories")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<Category> addCategory(@PathVariable("movement_id") long id, @RequestBody Category category)
     {
         Movement foundMovement = movementRepository.findById(id);

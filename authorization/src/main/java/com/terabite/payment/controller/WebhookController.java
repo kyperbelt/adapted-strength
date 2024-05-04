@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -20,14 +21,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public class WebhookController {
     private WebhookService webhookService;
 
-    public WebhookController(WebhookService webhookService){
-        this.webhookService=webhookService;
+    public WebhookController(WebhookService webhookService) {
+        this.webhookService = webhookService;
     }
 
     @PostMapping("/")
-    public HttpStatus handleWebhookEvent(@RequestBody String payload, @RequestHeader Map<String, String> header) {
-        return webhookService.handleWebhookEvent(payload, header);
+    public HttpStatus handleWebhookEvent(@RequestBody String payload,
+            @RequestHeader("Stripe-Signature") Map<String, String> stripeSignature) {
+
+        return webhookService.handleWebhookEvent(payload, stripeSignature);
     }
-    
-    
+
 }
