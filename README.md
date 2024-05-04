@@ -97,12 +97,6 @@ export ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET=<stripe endpoint secret here>
         And then Run `./gradlew bootRun`
     2. Move into the frontend folder in your original terminal and run `npm install && npm start`
 
-## Team Tenets
-1. 
-2. 
-3. 
-4. 
-5. 
 
 ## Onboarding Resources
 
