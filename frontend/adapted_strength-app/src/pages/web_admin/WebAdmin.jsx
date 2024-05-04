@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { VideoApi } from "../../api/VideoApi";
 import { IconButton } from "../../components/Button";
 import { TrashIcon, PencilIcon } from "../../components/Icons";
+import FrontPageSection from "./FrontPageSection";
 
 const showdown = window.showdown;
 
@@ -76,13 +77,6 @@ export default function WebAdmin() {
   );
 }
 
-function FrontPageSection({ content }) {
-  return (
-    <div>
-      <h2>Front Page</h2>
-    </div>
-  );
-}
 
 function MovementLibrarySection() {
   const [movements, setMovements] = useState([]);
@@ -204,12 +198,13 @@ function MovementLibrarySection() {
             className="flex items-center justify-between p-4 border-b"
           >
             <div className="flex flex-row space-x-3">
+              <div className="w-10">{movement.id}</div>
               <h3 className="font-bold">{movement.title + ":"}</h3>
               <p className="truncate text-ellipsis max-w-96">
                 {movement.description}
               </p>
-              <a href={movement.link} target="_blank" rel="noopener noreferrer">
-                Link
+              <a className="text-accent hover:text-accent-light" href={movement.link} target="_blank" rel="noopener noreferrer">
+                [Youtube]
               </a>
             </div>
             <div>

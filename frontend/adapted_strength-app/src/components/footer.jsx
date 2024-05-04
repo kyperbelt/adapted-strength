@@ -3,7 +3,7 @@ import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
 
 
-export default function Footer(){
+export default function Footer() {
     const onClick = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -21,8 +21,10 @@ export default function Footer(){
                         <ul className="space-y-2">
                             <li>
                                 <Link to="/about"
-                                    className="text-sm hover:text-custom-red transition-colors">
+                                    className="text-sm hover:text-custom-red transition-colors"
+
                                     onClick={onClick}
+                                >
                                     About Us
                                 </Link>
                             </li>
