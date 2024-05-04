@@ -47,12 +47,17 @@ public class NotificationController {
 
         @PostMapping("/add_token")
         public ResponseEntity<Payload> createTokenInformation(
-                        @RequestBody final TokenInformation tokenInformation,
-                        HttpServletRequest request) {
+                        @RequestBody final TokenInformation tokenInformation) {
+                if (tokenInformation.getToken() == null) {
+                        log.error("Token is null");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                        .body(Payload.of(PayloadType.MESSAGE, "Token cannot be null"));
+                }
+
                 System.out.println(tokenInformation.getToken());
 
                 final Optional<TokenInformation> tokenInformationOption = notificationRepository
-                                .findByToken(tokenInformation.getToken());
+                                .findById(tokenInformation.getId());
 
                 System.out.println(tokenInformationOption);
                 if (tokenInformationOption.isPresent()) {
