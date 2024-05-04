@@ -58,7 +58,6 @@ let stompClient = null;
 export default function Chat() {
     const [userInfo, setUserInfo] = useState(null);
     const [chatInfo, setChatInfo] = useState(null);
-    const [sorted, setSorted] = useState(false);
     const [userMessage, setUserMessage] = useState({
         "senderId": "",
         "recipientId": "",
@@ -66,7 +65,7 @@ export default function Chat() {
         "timeStamp": ""
     });
     const [userVideo, setUserVideo] = useState("");
-    let container = "flex flex-col h-screen";
+    let container = "flex flex-col h-[calc(100vh-104px)]";
 
     useEffect(() => {
         const loadData = () => {
@@ -121,13 +120,13 @@ export default function Chat() {
 
     const onConnected = () => {
         stompClient.subscribe(`/user/${userInfo.email}/queue/messages`, onMessageReceived);
-        stompClient.send("/app/chatUser.addUser", {
-            //TODO: investigate if this is getting sent
-            Authorization:`Bearer ${ApiUtils.getAuthToken()}`
-        }, JSON.stringify({
-            email: userInfo.email,
-            fullName: `${userInfo.firstName} ${userInfo.lastName}`
-        }))
+        // stompClient.send("/app/chatUser.addUser", {
+        //     //TODO: investigate if this is getting sent
+        //     Authorization: `Bearer ${ApiUtils.getAuthToken()}`
+        // }, JSON.stringify({
+        //     email: userInfo.email,
+        //     fullName: `${userInfo.firstName} ${userInfo.lastName}`
+        // }))
     };
 
     const onError = (e) => {
@@ -153,8 +152,6 @@ export default function Chat() {
     if (!stompClient) {
         registerUser();
     }
-
-
 
     const generateChatMap = (messages) => {
         let currentDateFormat;
@@ -207,8 +204,6 @@ export default function Chat() {
             }
 
         }
-
-        console.log(chatList);
 
         return (<ul>
                 {chatList}

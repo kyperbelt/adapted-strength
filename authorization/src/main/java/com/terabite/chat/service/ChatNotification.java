@@ -9,6 +9,10 @@ public class ChatNotification {
     private String content;
     private Date timeStamp;
 
+    public ChatNotification() {
+
+    }
+
     public ChatNotification(String chatId, String senderId, String recipientId, String content, Date timeStamp){
         this.chatId=chatId;
         this.senderId=senderId;

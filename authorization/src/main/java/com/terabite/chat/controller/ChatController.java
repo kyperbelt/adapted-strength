@@ -73,7 +73,6 @@ public class ChatController {
     @SendTo("/chatUser/topic")
     public ChatUser addChatUser(@Payload ChatUser chatUser)
     {
-//        log.info("Is the /chatUser.addUser being called?");
         chatUserService.saveChatUser(chatUser);       // this is where chat user role is assigned
         return chatUser;
     }
