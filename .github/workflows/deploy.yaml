@@ -112,7 +112,7 @@ jobs:
 
       - name: Inject backend host on frontend
         env:
-          HOSTNAME: ::${{ steps.get-host.outputs.HOSTNAME }}
+          HOSTNAME: ::addmask::${{ steps.get-host.outputs.HOSTNAME }}
         run: |
           sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = '$HOSTNAME:${{ secrets.BACKEND_PORT }}';/" frontend/adapted_strength-app/src/api/ApiUtils.js
 
