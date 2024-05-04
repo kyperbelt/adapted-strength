@@ -40,7 +40,7 @@ export function BlankPageContainer1({ children }) {
 
 export function PageContainer2({className,...props }) {
     return (
-        <div className="mt-48 grow content-center flex flex-col w-full">
+        <div className="mt-32 grow content-center flex flex-col w-full">
             <div className="bg-secondary flex grow flex-row content-center justify-center">
                 <div className={`${className} flex-1 flex flex-col max-w-screen-xl`}>
                     {props.children}

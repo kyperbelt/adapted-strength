@@ -2,7 +2,12 @@ import React from 'react';
 import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
 
-const Footer = () => {
+
+export default function Footer(){
+    const onClick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <footer className="flex-1 bg-custom-dark text-white p-6 w-full">
             <div className="max-w-screen-lg mx-auto flex flex-col items-center justify-between h-full md:flex-row">
@@ -15,7 +20,11 @@ const Footer = () => {
                         <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
                         <ul className="space-y-2">
                             <li>
-                                <Link to="/about" className="text-sm hover:text-custom-red transition-colors">About Us</Link>
+                                <Link to="/about"
+                                    className="text-sm hover:text-custom-red transition-colors">
+                                    onClick={onClick}
+                                    About Us
+                                </Link>
                             </li>
                             <li><a href="/contact" className="text-sm hover:text-custom-red transition-colors">Contact Us</a></li>
                             <li><a href="/terms" className="text-sm hover:text-custom-red transition-colors">Terms of Service</a></li>
@@ -34,6 +43,4 @@ const Footer = () => {
         </footer>
     );
 };
-
-export default Footer;
 

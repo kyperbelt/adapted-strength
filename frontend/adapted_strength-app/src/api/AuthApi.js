@@ -88,7 +88,9 @@ export class AuthApi {
   static hasRole(role) {
     const loggedIn = AuthApi.isLoggedIn();
     if (!loggedIn) {
-      return false;
+      return new Promise((resolve, reject) => {
+        resolve(false);
+      });
     }
 
     const promise = ApiUtils.apiGet(`auth/has_role/${role}`);

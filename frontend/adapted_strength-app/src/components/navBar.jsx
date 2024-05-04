@@ -13,13 +13,8 @@ import Logo from "../assets/logo.png";
 const navigation = [
   { component: <> Home</>, to: "/", selected: true },
   { component: <> Book Consultation</>, to: "/consultations", selected: false },
-  {
-    component: <span>Login</span>,
-    to: "/login",
-    selected: false,
-    state: () => !AuthApi.isLoggedIn(),
-  },
   { component: <> About Us</>, to: "/about", selected: false },
+  { component: <> Movement Library</>, to: "/movement-library", selected: false },
   {
     component: <> Manage Programs</>,
     to: "/program-management",
@@ -30,6 +25,21 @@ const navigation = [
           const hasRole =
             (await AuthApi.hasRole("ROLE_COACH")) ||
             (await AuthApi.hasRole("ROLE_ADMIN"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    },
+  },
+  {
+    component: <>WebAdmin</>,
+    to: "/web-admin",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole = await AuthApi.hasRole("ROLE_ADMIN");
           resolve(hasRole);
         } else {
           resolve(false);
@@ -50,6 +60,12 @@ const navigation = [
     state: () => AuthApi.isLoggedIn(),
   },
   { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
+  {
+    component: <span>Login</span>,
+    to: "/login",
+    selected: false,
+    state: () => !AuthApi.isLoggedIn(),
+  },
   {
     component: <> Sign Up</>,
     to: "/sign-up",
@@ -171,7 +187,7 @@ export default function NavBar() {
           <button
             onClick={toggleHammy}
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
             aria-controls="navbar-default"
             aria-expanded="false"
           >
@@ -194,18 +210,18 @@ export default function NavBar() {
           </button>
           <div
             className={`${hamburgerOpen ? "" : "hidden"
-              } w-full animate-slideLeft md:block md:w-auto`}
+              } w-full animate-slideLeft lg:block lg:w-auto`}
             id="navbar-default"
           >
             <ul
               id="nav_items"
-              className="font-medium flex flex-col p-4 md:p-0 mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white"
+              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:space-x-8 rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
             >
               {navItems.map((item, index) => {
                 return (
                   <NavItem
                     className={`${item.selected
-                      ? "md:bg-transparent bg-primary-dark md:text-accent "
+                      ? "lg:bg-transparent bg-primary-dark lg:text-accent "
                       : ""
                       }`}
                     key={index}
@@ -220,7 +236,11 @@ export default function NavBar() {
                   </NavItem>
                 );
               })}
-              <NavItem to="/" selected={false} state={AuthApi.isLoggedIn} onClick={async () => { await AuthApi.logout(); setLoggedIn(AuthApi.isLoggedIn()); }}>
+              <NavItem to="/" selected={false} state={AuthApi.isLoggedIn} onClick={async () => {
+                await AuthApi.logout();
+                closeHammy();
+                setLoggedIn(AuthApi.isLoggedIn());
+              }}>
                 Logout
               </NavItem>
             </ul>
@@ -249,7 +269,7 @@ function BellIcon() {
   );
 }
 
-// <div className="block md:hidden h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
+// <div className="block lg:hidden h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
 //   <div className={`w-6 h-0.5 bg-white mt-2 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></div>
 //   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'opacity-0' : ''}`} />
 //   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></div>
@@ -268,7 +288,7 @@ function NavItem({ to, children, onClick, state, className }) {
         <Link
           id="nav-item"
           to={to}
-          className={`${className} text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark md:hover:bg-transparent md:border-0 md:hover:text-accent md:p-0`}
+          className={`${className} text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark lg:hover:bg-transparent lg:border-0 lg:hover:text-accent lg:p-0`}
           onClick={onClick}
         >
           {children}

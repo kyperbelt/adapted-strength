@@ -101,7 +101,7 @@ function ProgramPuller({ program, currentWeek }) {
         }
       </p>
       <h1 className="font-bold text-center">
-      This week's program is not available to display!
+      This program is not available to you right now!
       </h1>
       </CardBack>
     )
