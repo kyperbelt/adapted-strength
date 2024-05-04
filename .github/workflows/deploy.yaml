@@ -117,6 +117,8 @@ jobs:
           sed -i "s/const BASE_API_URL.*=.*/const BASE_API_URL = '$HOSTNAME:${{ secrets.BACKEND_PORT }}';/" frontend/adapted_strength-app/src/api/ApiUtils.js
 
       - name: Build frontend
+        env:
+          CI: false
         run: |
           cd frontend/adapted_strength-app
           npm install
