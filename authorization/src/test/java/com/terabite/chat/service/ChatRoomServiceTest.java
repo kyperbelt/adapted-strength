@@ -28,32 +28,32 @@ class ChatRoomServiceTest {
 
     @Test
     void testGetChatRoomIdExistingRoom() {
-        String senderId = "123";
-        String recipientId = "456";
-        Optional<ChatRoom> chatRoom = Optional.of(new ChatRoom("123_456", senderId, recipientId));
+        String senderId = "123@email.com";
+        String recipientId = "456@email.com";
+        Optional<ChatRoom> chatRoom = Optional.of(new ChatRoom("123@email.com_456@email.com", senderId, recipientId));
         when(chatRoomRepository.findBySenderIdAndRecipientId(senderId, recipientId)).thenReturn(chatRoom);
 
         Optional<String> result = chatRoomService.getChatRoomId(senderId, recipientId, false);
         assertTrue(result.isPresent());
-        assertEquals("123_456", result.get());
+        assertEquals("123@email.com_456@email.com", result.get());
     }
 
     @Test
     void testGetChatRoomIdNoRoomAndCreateNewRoom() {
-        String senderId = "123";
-        String recipientId = "456";
+        String senderId = "123@email.com";
+        String recipientId = "456@email.com";
         when(chatRoomRepository.findBySenderIdAndRecipientId(senderId, recipientId)).thenReturn(Optional.empty());
 
         Optional<String> result = chatRoomService.getChatRoomId(senderId, recipientId, true);
         assertTrue(result.isPresent());
-        assertEquals("123_456", result.get());
+        assertEquals("123@email.com_456@email.com", result.get());
         verify(chatRoomRepository, times(2)).save(any(ChatRoom.class));
     }
 
     @Test
     void testGetChatRoomIdNoRoomAndNotCreate() {
-        String senderId = "123";
-        String recipientId = "456";
+        String senderId = "123@email.com";
+        String recipientId = "456@email.com";
         when(chatRoomRepository.findBySenderIdAndRecipientId(senderId, recipientId)).thenReturn(Optional.empty());
 
         Optional<String> result = chatRoomService.getChatRoomId(senderId, recipientId, false);
@@ -63,8 +63,8 @@ class ChatRoomServiceTest {
     @Test
     void testGetAllChatRooms() {
         List<ChatRoom> chatRooms = new ArrayList<>();
-        chatRooms.add(new ChatRoom("123_456", "123", "456"));
-        chatRooms.add(new ChatRoom("456_123", "456", "123"));
+        chatRooms.add(new ChatRoom("123@email.com_456@email.com", "123@email.com", "456@email.com"));
+        chatRooms.add(new ChatRoom("456@email.com_123@email.com", "456@email.com", "123@email.com"));
 
         when(chatRoomRepository.findAll()).thenReturn(chatRooms);
 
