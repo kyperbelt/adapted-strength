@@ -75,6 +75,7 @@ export default function Chat() {
                     return ChatApi.getCoaches({})
                         .then(recipientResponse => {
                             if (recipientResponse.status === HttpStatus.OK) {
+                                //TODO: assuming that there is only one coach "Alex Palting"
                                 return {senderData, recipientData: recipientResponse.data[0]};
                             } else {
                                 throw new Error(`Error occurred when fetching a list of coaches\nHTTP Status: ${recipientResponse.status}`)
@@ -108,6 +109,8 @@ export default function Chat() {
                     //TODO: investigate whether the time complexity of concat to an empty array from a populated array is affected
                     //e.g. let a = [], let b = [1,2], a.concat(b) --> does this change the reference of the head or are all the elements being copied
                     //issue is O(1) compared to O(n)
+
+                    //TODO: instead of using built in sort method from Javascript use merge sort; senderChatData and recipientChatData are already sorted
                     setChatInfo(senderChatData.concat(recipientChatData).sort((a, b) => a.timeStamp > b.timeStamp));
                 })
                 .catch(e => {

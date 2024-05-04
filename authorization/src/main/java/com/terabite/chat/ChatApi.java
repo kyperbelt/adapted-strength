@@ -3,7 +3,6 @@ package com.terabite.chat;
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.UserType;
 import com.terabite.chat.repository.ChatUserRepository;
-import com.terabite.chat.service.ChatUserService;
 
 /**
  * ChatApi

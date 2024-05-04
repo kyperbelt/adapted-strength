@@ -52,26 +52,22 @@ public class MessageService {
         
     }
 
-    public ResponseEntity<?> getUnreadForUser(String senderId){
+    public ResponseEntity<?> getUnreadForSender(String senderId){
         List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(senderId, false).orElse(null);
 
-        if (unreadMessages.isEmpty()) {
-            return new ResponseEntity<>(Payload.of("false"), HttpStatus.OK);
-        } 
-        else {
-            return new ResponseEntity<>(Payload.of("true"), HttpStatus.OK);
-        }
+        return ResponseEntity.ok(unreadMessages.size());
     }
 
-    public ResponseEntity<?> markMessagesAsReadBySender(String senderId){
-        List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(senderId, false).orElse(null);
+    public ResponseEntity<?> markMessagesAsReadBySender(String recipientId){
+        List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(recipientId, false).orElse(null);
 
-        for (Message message: unreadMessages){
-            message.setHasBeenRead(true);
-            messageRepository.save(message);
+        if (!unreadMessages.isEmpty()) {
+            for (Message message: unreadMessages){
+                message.setHasBeenRead(true);
+                messageRepository.save(message);
+            }
         }
-        return new ResponseEntity<>(HttpStatus.OK);
-        
-    }
 
+        return ResponseEntity.ok(unreadMessages.size());
+    }
 }

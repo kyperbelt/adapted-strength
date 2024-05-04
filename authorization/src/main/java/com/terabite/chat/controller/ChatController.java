@@ -111,15 +111,15 @@ public class ChatController {
         return messageService.setMessageReadById(id);
     }
 
-    @GetMapping("/v1/chat/message/getUnreadForUser/{senderId}")
+    @GetMapping("/v1/chat/message/getUnreadForSender/{recipientId}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
-    public ResponseEntity<?> getUnreadMessagesForUser(@PathVariable("senderId") String senderId) {
-        return messageService.getUnreadForUser(senderId);
+    public ResponseEntity<?> getUnreadMessagesForSender(@PathVariable("recipientId") String senderId) {
+        return messageService.getUnreadForSender(senderId);
     }
 
-    @PostMapping("/v1/chat/message/markAsReadBySender/{senderId}")
+    @PostMapping("/v1/chat/message/markAsReadBySender/{recipientId}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
-    public ResponseEntity<?>  markMessagesAsReadBySender(@PathVariable("senderId") String senderId) {
+    public ResponseEntity<?>  markMessagesAsReadBySender(@PathVariable("recipientId") String senderId) {
         return messageService.markMessagesAsReadBySender(senderId);
     }
 }
