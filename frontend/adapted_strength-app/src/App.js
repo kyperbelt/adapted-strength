@@ -26,8 +26,6 @@ import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
 import { fetchToken } from './firebase';
 
-
-
 /*
 IMPORTS FOR PROGRAM PAGES
 */
@@ -50,6 +48,8 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
 const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
+const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
+const MovementLibrary = lazy(() => import('./pages/MovementLibrary.jsx'));
 
 // import footer from '../footer'
 
@@ -113,6 +113,15 @@ function App() {
                   </RouteGuard>
                 </Suspense>
               } />
+              <Route path="/movement-library/:movementId?" element={
+                <Suspense fallback="...">
+                  { /*TODO: check if we want to allow for all users*/}
+                  <RouteGuard state={() => true} routeTo="/login">
+                    <MovementLibrary/>
+                  </RouteGuard>
+                </Suspense>
+              } />
+          
 
             /* ROUTES FOR PROGRAM PAGES */
               //--------------------------------------------------
@@ -124,7 +133,7 @@ function App() {
               <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
               <Route path="memberships" element={<Memberships />} />
               <Route path="leaderboard" element={<Leaderboard />} />
-              <Route path='video-library' element={<VideoLibrary />} />
+              // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="chat" element={<Chat />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
