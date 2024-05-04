@@ -105,18 +105,40 @@ jobs:
           chmod 600 key.pem
           ssh-keyscan $HOST >> ~/.ssh/known_hosts
 
-      - name: Set up known hosts file
+      - name: Get EC2 hostname
+        id: get-host
         run: |
-          ssh-keyscan $HOST >> ~/.ssh/known_hosts
+            echo "HOSTNAME=$(ssh -i key.pem $USER@$HOST hostname)" >> $GITHUB_OUTPUT
+
+      - name: Inject backend host on frontend
+        run: |
+          sed 's/const BASE_API_URL.*=.*/const BASE_API_URL = ${{ steps.get-host.outputs.HOSTNAME }}/' cd 
+  
+      - name: Build frontend
+        run: |
+          cd frontend/adapted_strength-app
+          npm install
+          npm run build
+          cd ../..
+          tar -czf web.tar.gz frontend/adapted_strength-app/build 
 
       - name: Copy build files to instance
         run: |
           # echo "put web.tar.gz tmp/web.tar.gz" >> batchfile
           echo "put app.tar tmp/app.tar" >> batchfile
-          # echo "put envfile.tar.gz tmp/envfile.tar.gz" >> batchfile
-
           sftp -i key.pem -b batchfile $USER@$HOST
       
+      - name: Deploy website
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_WEBSITE_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-west-1'   # optional: defaults to us-east-1
+          SOURCE_DIR: 'frontend/adapted_strength-app/build' 
+
       # - name: Build and compress jar
       #   run: |
       #     cd authorization
