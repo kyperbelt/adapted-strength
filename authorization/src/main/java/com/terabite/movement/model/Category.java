@@ -20,8 +20,6 @@ public class Category
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "categories")
     @JsonIgnore
-
-
     private Set<Movement> movements = new HashSet<>();
 
 

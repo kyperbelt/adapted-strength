@@ -1,6 +1,5 @@
 package com.terabite.movement.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 

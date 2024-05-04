@@ -12,7 +12,7 @@ export default function Home() {
         };
     }, []);
     return (
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex flex-col items-center min-h-screen">
             
             <header className="flex flex-col items-center justify-center xl:text-xl sm:text-sm text-xxl">
                 <img src={logo} className="px-3 py-6" alt="logo" />

@@ -11,6 +11,7 @@ import { startTransition } from "react";
 import { SubscriptionApi } from "../api/SubscriptionApi";
 import { BasicModalDialogue } from "../components/Dialog";
 import StateGuard from "../util/StateGuard";
+import { PencilIcon } from "../components/Icons";
 
 function AdaptedStrengthLogo() {
   return (
@@ -64,27 +65,27 @@ export default function Profile() {
     setShowModal(false);
   };
 
-    useEffect(() => {
-        setIsLoading(true);
-        UserApi.getProfileInformation()
-            .then((response) => {
-                if (response.status === HttpStatus.OK) {
-                    setProfileInfo(response.data);
-                    setIsLoading(false);
-                    console.log(response.data)
-                }else{
-                    AuthApi.logout();
-                    throw new Error("Error getting profile information");
-                }
+  useEffect(() => {
+    setIsLoading(true);
+    UserApi.getProfileInformation()
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          setProfileInfo(response.data);
+          setIsLoading(false);
+          console.log(response.data)
+        } else {
+          AuthApi.logout();
+          throw new Error("Error getting profile information");
+        }
 
-            }).catch((error) => {
-                console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
-                setIsLoading(false);
-                navigate("/login");
-                AuthApi.logout();
+      }).catch((error) => {
+        console.error(`ERROR HAPPENED: ${JSON.stringify(error)}`);
+        setIsLoading(false);
+        navigate("/login");
+        AuthApi.logout();
 
-            });
-    }, []);
+      });
+  }, []);
 
   if (isLoading) {
     return <div>{"Loading..."}</div>;
@@ -164,7 +165,16 @@ export default function Profile() {
           </div>
           <div className="profile-item">
             <h2 className="label">Subscription Tier:</h2>
-            <SubscriptionField tier={profileInfo.subscriptionTier} />
+            <div className="flex flex-row pr-2">
+              <SubscriptionField tier={profileInfo.subscriptionTier} />
+              <button className="text-accent ml-auto" onClick={() => {
+                navigate("/memberships");
+
+              }}>
+                <PencilIcon className="w-6 h-6" />
+              </button>
+            </div>
+
           </div>
           <div className="profile-item">
             <h2 className="label">Date of Birth:</h2>
@@ -251,7 +261,6 @@ export default function Profile() {
           </BasicModalDialogue>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

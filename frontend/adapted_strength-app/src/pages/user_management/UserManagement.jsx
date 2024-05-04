@@ -47,13 +47,13 @@ function getFilteredUsers(users, searchText) {
       user.subscription.toLowerCase().includes(searchText.toLowerCase()) ||
       user.email.toLowerCase().includes(searchText.toLowerCase()) ||
       levenshteinDistance(user.name.toLowerCase(), searchText.toLowerCase()) <
-        3 ||
+      3 ||
       levenshteinDistance(
         user.subscription.toLowerCase(),
         searchText.toLowerCase()
       ) < 3 ||
       levenshteinDistance(user.email.toLowerCase(), searchText.toLowerCase()) <
-        3
+      3
     );
   });
 }
@@ -336,10 +336,12 @@ function UserDashboard({ selectedUser, programs }) {
                 </td>
                 <td className="border px-4 py-2">{program.startWeek}</td>
                 <td className="border px-4 py-2">
-                  {ProgrammingApi.getCurrentWeek(
-                    program.startDate,
-                    program.startWeek
-                  )}
+                  {
+                    ProgrammingApi.getCurrentWeek(
+                      program.startDate,
+                      program.startWeek
+                    )
+                  }
                 </td>
                 <td className="border px-4 py-2 text-center">
                   <button

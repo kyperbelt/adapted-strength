@@ -23,7 +23,7 @@ export class ProgrammingApi {
       });
   }
 
-  static getProgram(programId) {
+  static async getProgram(programId) {
     return ApiUtils.apiGet(`programming/program/${programId}`)
       .then((r) => {
         if (r.status === HttpStatus.OK) {

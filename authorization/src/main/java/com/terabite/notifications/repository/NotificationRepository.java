@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface NotificationRepository extends JpaRepository<TokenInformation, String> {
 
         Optional<TokenInformation> findByToken(String token);
+        Optional<TokenInformation> findById(long id);
 }

@@ -1,0 +1,1 @@
+INSERT INTO login_roles VALUES('tonight@email.com', 'ROLE_ADMIN');

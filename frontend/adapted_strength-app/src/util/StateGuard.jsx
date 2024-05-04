@@ -13,8 +13,10 @@ export default function StateGuard({ state, children, alternate = null }) {
     const checkState = async () => {
       const result = state();
       if (result instanceof Promise) {
-        await result;
-        setIsResolved(true);
+        console.log("Result: ", result);
+        let value = await result;
+        console.log("Value: ", value);
+        setIsResolved(value);
       } else {
         setIsResolved(result);
       }
