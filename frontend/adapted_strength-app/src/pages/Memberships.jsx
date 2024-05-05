@@ -58,9 +58,9 @@ function ChangeSubscription({ tier, nav }) {
 
   return (
     <PageContainer1>
-      <div className="bg-secondary xl:p-6 w-full flex flex-col items-center justify-center">
+      <div className="bg-secondary md:p-6 w-full flex flex-col items-center justify-center">
         <CardBack className="p-6 flex" classNameCard="mb-6 flex">
-          <div className="font-bold xl:text-lg text-md">
+          <div className="font-bold md:text-lg text-md">
             Adapted Strength (A.S.) Memberships
           </div>
           <h3>
@@ -77,7 +77,7 @@ function ChangeSubscription({ tier, nav }) {
           <h3>Day-Passes are $29.99 afterwards!</h3>
         </CardBack>
 
-        <div className="flex flex-col xl:flex-row max-w-screen-xl space-y-6 xl:space-y-0 xl:space-x-6 w-11/12 xl:w-5/6 content-center rounded-md">
+        <div className="flex flex-col md:flex-row max-w-screen-xl space-y-6 md:space-y-0 md:space-x-6 w-11/12 md:w-5/6 content-center rounded-md items-center md:items-stretch justify-center">
           <SubCard
             name="Remote Client"
             cost="99.99"
@@ -109,7 +109,7 @@ function ChangeSubscription({ tier, nav }) {
                   <div role="status">
                     <svg
                       aria-hidden="true"
-                      className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+                      className="inline w-8 h-8 text-gray-200 animate-spi%"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -242,9 +242,9 @@ function ChangeSubscription({ tier, nav }) {
 function NoSubscription({ tier, nav }) {
   return (
     <PageContainer1>
-      <div className="bg-secondary xl:p-6 w-full flex flex-col items-center justify-center">
+      <div className="bg-secondary md:p-6 w-full flex flex-col items-center justify-center">
         <CardBack className="p-6 flex" classNameCard="mb-6 flex">
-          <div className="font-bold xl:text-lg text-md">
+          <div className="font-bold md:text-lg text-md">
             Adapted Strength (A.S.) Memberships
           </div>
           <h3>
@@ -261,7 +261,7 @@ function NoSubscription({ tier, nav }) {
           <h3>Day-Passes are $29.99 afterwards!</h3>
         </CardBack>
         
-        <div className="flex flex-col xl:flex-row max-w-screen-xl space-y-6 xl:space-y-0 xl:space-x-6 w-11/12 xl:w-5/6 content-center rounded-md">
+        <div className="flex flex-col md:flex-row max-w-screen-xl space-y-6 md:space-y-0 md:space-x-6 w-11/12 md:w-5/6 content-center rounded-md items-center md:items-stretch justify-center">
           <SubCard
             name="Base client"
             cost="99.99"
