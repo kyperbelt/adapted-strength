@@ -96,13 +96,13 @@ function ProgramPuller({ program, currentWeek }) {
     return (
       <CardBack>
         <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
-        Your Program: {
-          program.name
-        }
-      </p>
-      <h1 className="font-bold text-center">
-      This week's program is not available to display!
-      </h1>
+          Your Program: {
+            program.name
+          }
+        </p>
+        <h1 className="font-bold text-center">
+          This week's program is not available to display!
+        </h1>
       </CardBack>
     )
   }
