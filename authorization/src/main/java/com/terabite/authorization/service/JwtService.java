@@ -23,7 +23,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-
     // In milliseconds | probably should be in config FIXME
     private static final long DEFAULT_JWT_EXPIRATION = 1000 * 60 * 60 * 24;
 
@@ -32,12 +31,13 @@ public class JwtService {
     private long expiration = DEFAULT_JWT_EXPIRATION;
     // Cache type is always a key-value pair. Using placeholder boolean for now
     private Cache<String, Boolean> tokenBlacklist;
-//    public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret) {
-//        this(jwtSecret, DEFAULT_JWT_EXPIRATION);
-//    }
+    // public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final
+    // String jwtSecret) {
+    // this(jwtSecret, DEFAULT_JWT_EXPIRATION);
+    // }
 
     public JwtService(@Qualifier(GlobalConfiguration.BEAN_JWT_SECRET) final String jwtSecret,
-                      final long expiration) {
+            final long expiration) {
         this.SECRET = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         this.expiration = expiration;
         this.tokenBlacklist = CacheBuilder.newBuilder()
@@ -126,7 +126,8 @@ public class JwtService {
             return false;
         }
 
-        @SuppressWarnings("unchecked") final List<String> roles = new ArrayList<String>(claims.get("roles", ArrayList.class));
+        @SuppressWarnings("unchecked")
+        final List<String> roles = new ArrayList<String>(claims.get("roles", ArrayList.class));
         for (String r : roles) {
             if (r.equals(role)) {
                 return true;
@@ -147,7 +148,7 @@ public class JwtService {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException
-                 | IllegalArgumentException e) {
+                | IllegalArgumentException e) {
             log.error(String.format("Error parsing token: %s", e.getMessage()));
             e.printStackTrace();
             // Don't think this ever gets thrown - see JwtAuthFilter
@@ -156,14 +157,21 @@ public class JwtService {
     }
 
     public boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch (JwtValidationException e) {
+            if (e.getMessage().contains("JWT expired at")) {
+                return true;
+            }
+            return false;
+        }
     }
 
     // TODO: Figure out if spring gets used here (UserDetails) or manual
     // implementation
     public boolean validateToken(String token, UserDetails loginDetails) {
         final String username = extractUsername(token).orElse(null);
-        return (loginDetails.getUsername().equals(username) && !isTokenExpired(token));
+        return (!isTokenExpired(token) && loginDetails.getUsername().equals(username));
     }
 
     public void invalidateToken(String token) {
