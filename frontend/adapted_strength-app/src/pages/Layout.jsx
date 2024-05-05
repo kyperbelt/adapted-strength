@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import StateGuard from "../util/StateGuard";
 import { AuthApi } from "../api/AuthApi";
 import Footer from "../components/footer";
+import { HttpStatus } from "../api/ApiUtils";
 
 function ChatButton({ ...props }) {
   const messageNotification = props.messageNotification;
@@ -35,7 +36,14 @@ export default function Layout() {
     <div id="layout" className="grow flex flex-col">
       <NavBar currentPage="" />
       <Outlet className="" />
-      <StateGuard state={() =>!AuthApi.hasRole("ROLE_ADMIN")}>
+      <StateGuard state={() => {
+        return AuthApi.hasRole("ROLE_ADMIN").then((res) => {
+          if (res.status === HttpStatus.OK) {
+            return true;
+          }
+          return false;
+        });
+      }}>
         <ChatButton messageNotification={false} />
       </StateGuard>
       <Footer />
