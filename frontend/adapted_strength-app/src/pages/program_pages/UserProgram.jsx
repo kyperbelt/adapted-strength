@@ -284,6 +284,5 @@ function RepCycle({ repCycle }) {
         </BasicModalDialogue>
       }
     </tr>
-
   );
 }
