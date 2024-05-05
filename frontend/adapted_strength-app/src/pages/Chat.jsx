@@ -221,7 +221,6 @@ export default function Chat() {
                     <MessageConstructor senderInfo={senderInfo} recipientInfo={recipientInfo} chatInfo={message}/>
                 </li>);
             }
-
         }
 
         return (<ul>

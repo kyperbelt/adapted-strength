@@ -121,9 +121,7 @@ export class ChatApi {
     }
 
     static setMessagesToRead(receiverId) {
-        const endpoint = `chat/message/markAsReadBySender/${receiverId}`;
-
-        const promise = ApiUtils.apiPost(endpoint);
+        const promise = ApiUtils.apiPost(`chat/message/markAsReadBySender/${receiverId}`, {});
         return promise;
     }
 

@@ -1,7 +1,9 @@
 package com.terabite.chat.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +57,10 @@ public class MessageService {
     public ResponseEntity<?> getUnreadForSender(String senderId){
         List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(senderId, false).orElse(null);
 
-        return ResponseEntity.ok(unreadMessages.size());
+        Map<String, String> body = new HashMap<>();
+        body.put("unreadMessage", Integer.toString(unreadMessages.size()));
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     public ResponseEntity<?> markMessagesAsReadBySender(String recipientId){
@@ -68,6 +73,9 @@ public class MessageService {
             }
         }
 
-        return ResponseEntity.ok(unreadMessages.size());
+        Map<String, String> body = new HashMap<>();
+        body.put("unreadMessage", Integer.toString(unreadMessages.size()));
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }
