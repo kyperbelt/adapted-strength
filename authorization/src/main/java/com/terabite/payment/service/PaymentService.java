@@ -18,7 +18,6 @@ import com.terabite.payment.model.Customer;
 import com.terabite.payment.repository.CustomerRepository;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
-import com.terabite.user.service.SubscriptionService;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
