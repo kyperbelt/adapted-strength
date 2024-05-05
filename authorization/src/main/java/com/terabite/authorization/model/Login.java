@@ -1,6 +1,7 @@
 package com.terabite.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -23,8 +24,10 @@ public class Login {
     @NotBlank
     private String password;
 
-    @Column(name = "reset_password_token")
-    private String resetPasswordToken;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "forgot_password_token_id", referencedColumnName = "id")
+    private ForgotPasswordToken forgotPasswordToken;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
@@ -59,12 +62,12 @@ public class Login {
         this.password = password;
     }
 
-    public String getResetPasswordToken() {
-        return resetPasswordToken;
+    public ForgotPasswordToken getForgotPasswordToken() {
+        return forgotPasswordToken;
     }
 
-    public void setResetPasswordToken(String passwordResetToken) {
-        this.resetPasswordToken = passwordResetToken;
+    public void setResetPasswordToken(ForgotPasswordToken forgotPasswodToken) {
+        this.forgotPasswordToken = forgotPasswodToken;
     }
 
     public List<String> getRoles() {

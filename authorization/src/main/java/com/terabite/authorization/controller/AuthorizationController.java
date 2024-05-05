@@ -44,11 +44,11 @@ public class AuthorizationController {
 
     private final Logger log = LoggerFactory.getLogger(AuthorizationController.class);
 
-    public AuthorizationController(ForgotPasswordService forgotPasswordHelper, LoginService loginService,
+    public AuthorizationController(ForgotPasswordService forgotPasswordService, LoginService loginService,
             SignupService signupService,
             JwtService jwtService,
             LoginRepository loginRepository, PasswordEncoder passwordEncoder) {
-        this.forgotPasswordService = forgotPasswordHelper;
+        this.forgotPasswordService = forgotPasswordService;
         this.loginService = loginService;
         this.signupService = signupService;
         this.jwtService = jwtService;
@@ -94,6 +94,8 @@ public class AuthorizationController {
             if (loginDetails != null) {
                 log.info(" User {} does not have role {}", loginDetails.getUsername(), role);
                 log.info(" User roles are {}", loginDetails.getRoles());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("User does not have role " + role,
+                        "Forbidden"));
             }else{
                 log.info("User details are null becasue user is not logged in, probably");
             }

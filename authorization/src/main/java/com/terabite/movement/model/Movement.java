@@ -1,6 +1,5 @@
 package com.terabite.movement.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -75,5 +74,16 @@ public class Movement
     {
         this.categories.add(category);
         category.getMovements().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Movement{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", link='" + link + '\'' +
+                ", categories=" + categories +
+                '}';
     }
 }

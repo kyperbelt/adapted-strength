@@ -149,6 +149,8 @@ cmake-build-*/
 # File-based project format
 *.iws
 
+fcmnotification-14-firebase-adminsdk-yzh8u-5ac73ffbd5.json
+
 # IntelliJ
 out/
 

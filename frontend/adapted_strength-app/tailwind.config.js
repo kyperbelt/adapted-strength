@@ -14,7 +14,20 @@ module.exports = {
         'custom-dark-red': '#B23333',
         'custom-gray': '#EDF2F4',
         'custom-dark': '#161A1D',
-        'primary': '#dc2626',
+        primary: {
+          DEFAULT: "#FFFFFF", 
+          dark: "#b3b3b3",
+        },
+        secondary: {
+          dark: '#0f0f0f',
+          DEFAULT: '#161616',
+          light: '#5c5c5c'
+        },
+        accent: {
+          light: '#ff8080',
+          DEFAULT: '#FF4949',
+          dark: '#b33333'
+        }
       },
       keyframes: {
         fadeIn: {
@@ -37,6 +50,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }
 

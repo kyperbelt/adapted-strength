@@ -811,7 +811,7 @@ return (
     {topMaleDeadlift && topMaleDeadlift.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-        <caption className="text-center font-bold">Top MaleDeadlift</caption>
+        <caption className="text-center font-bold">Top Male Deadlift</caption>
           <thead>
             <tr>
               <th style={getColumnStyle()}>Rank</th>
@@ -1163,12 +1163,18 @@ return (
     {addCategory && addGender && addWeightClass && (
       <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleSubmit}>Add Record</button>
     )}
-    
+    <p style={{textAlign: 'center', fontStyle: 'italic'}}>Any record not confirmed with Alex will be removed.</p>
+    <br></br>
     <br></br>
 
     <div>
       <p className="font-bold">Delete Records Here</p>
     </div>
+    {topAthletes.length === 0 && (
+      <div>
+      <p>Must search for records first.</p>
+      </div>
+    )}
 
     {/* Input field and button for deletion */}
     {addRecords && topAthletes && topAthletes.length > 0 && (

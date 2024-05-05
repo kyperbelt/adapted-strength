@@ -1,5 +1,6 @@
 package com.terabite.programming.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -53,4 +54,21 @@ public class Week
     public void setDays(List<Day> days) {
         this.days = days;
     }
+
+    public Week duplicate(){
+        final Week week = new Week();
+        week.setName(String.format("%s", this.getName()));
+        List<Day> newDays = new ArrayList<>();
+        for(Day day : this.getDays()){
+            newDays.add(day.duplicate());
+        }
+        week.setDays(newDays);
+        return week;
+    }
+
+    @Override
+    public String toString() {
+        return "Week [id=" + weekId + ", name=" + name + ", days=" + days + "]";
+    }
 }
+
