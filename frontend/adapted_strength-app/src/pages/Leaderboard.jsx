@@ -565,19 +565,21 @@ return (
       <AdaptedStrengthLogo />
     </div>
     <br />
+    <br/>
+    <br/>
     <div>
-    <h1 className="font-bold text-xl"><u>Adapted Strength (A.S.) Leaderboard</u></h1>
+    <h1 className="font-bold text-xl text-center"><u>Adapted Strength (A.S.) Leaderboard</u></h1>
      
-     <p className="font-bold ">Search Records Here</p>
+     <p className="font-bold text-center">Search Records Here</p>
       
     </div>
     
     {/* Dropdown menus */}
     <div className="p-4">
-      <label htmlFor="category" className="block">Category:</label>
+      <label htmlFor="category" className="block text-center">Category:</label>
       <select
         id="category"
-        className="block w-full border border-gray-300 rounded-md p-2"
+        className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
         onChange={(e) => handleCategoryChange(e.target.value)}
         value={selectedCategory}
       >
@@ -592,10 +594,10 @@ return (
       </select>
       {selectedCategory && (
         <div className="mt-4">
-          <label htmlFor="gender" className="block">Gender:</label>
+          <label htmlFor="gender" className="block text-center">Gender:</label>
           <select
             id="gender"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => handleGenderChange(e.target.value)}
             value={selectedGender}
           >
@@ -607,10 +609,10 @@ return (
       )}
       {selectedCategory && selectedGender && (
         <div className="mt-4">
-          <label htmlFor="weightClass" className="block">Weight Class:</label>
+          <label htmlFor="weightClass" className="block text-center">Weight Class:</label>
           <select
             id="weightClass"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => handleWeightClassChange(e.target.value)}
             value={selectedWeightClass}
           >
@@ -629,51 +631,51 @@ return (
     {topAthletes && topAthletes.length > 0 && (
       <div className="overflow-x-auto">
         <table className="w-full">
-   
           <thead>
             <tr>
-              <th style={getColumnStyle()}>Rank</th>
-              <th style={getColumnStyle()}>Name</th>
+              <th className="px-4 py-2 text-center">Rank</th>
+              <th className="px-4 py-2 text-center">Name</th>
+              {/* Adjust padding and alignment based on your preference */}
               {selectedCategory === 'Powerlifting' ? (
                 <>
-                  <th style={getColumnStyle()}>Squat</th>
-                  <th style={getColumnStyle()}>Bench</th>
-                  <th style={getColumnStyle()}>Deadlift</th>
-                  <th style={getColumnStyle()}>Total</th>
+                  <th className="px-4 py-2 text-center">Squat</th>
+                  <th className="px-4 py-2 text-center">Bench</th>
+                  <th className="px-4 py-2 text-center">Deadlift</th>
+                  <th className="px-4 py-2 text-center">Total</th>
                 </>
               ) : selectedCategory === 'Olympic' ? (
                 <>
-                  <th style={getColumnStyle()}>Snatch</th>
-                  <th style={getColumnStyle()}>Clean & Jerk</th>
-                  <th style={getColumnStyle()}>Total</th>
+                  <th className="px-4 py-2 text-center">Snatch</th>
+                  <th className="px-4 py-2 text-center">Clean & Jerk</th>
+                  <th className="px-4 py-2 text-center">Total</th>
                 </>
               ) : (
-                <th style={getColumnStyle()}>Kg</th>
+                <th className="px-4 py-2 text-center">Kg</th>
               )}
             </tr>
           </thead>
           <tbody>
             {topAthletes.map((athlete, index) => (
               <tr key={index} style={getRowStyle(index)}>
-                <td>{index + 1}</td>
-                <td>{athlete.name}</td>
+                <td className="px-4 py-2 text-center">{index + 1}</td>
+                <td className="px-4 py-2 text-center">{athlete.name}</td>
                 {selectedCategory === 'Powerlifting' && (
                   <>
-                    <td>{athlete.squat}</td>
-                    <td>{athlete.bench}</td>
-                    <td>{athlete.deadlift}</td>
-                    <td>{athlete.total}</td>
+                    <td className="">{athlete.squat}</td>
+                    <td className="px-4 py-2 text-center">{athlete.bench}</td>
+                    <td className="px-4 py-2 text-center">{athlete.deadlift}</td>
+                    <td className="px-4 py-2 text-center">{athlete.total}</td>
                   </>
                 )}
                 {selectedCategory === 'Olympic' && (
                   <>
-                    <td>{athlete.snatch}</td>
-                    <td>{athlete.cleanJerk}</td>
-                    <td>{athlete.total}</td>
+                    <td className="px-4 py-2 text-center">{athlete.snatch}</td>
+                    <td className="px-4 py-2 text-center">{athlete.cleanJerk}</td>
+                    <td className="px-4 py-2 text-center">{athlete.total}</td>
                   </>
                 )}
                 {selectedCategory !== 'Powerlifting' && selectedCategory !== 'Olympic' && (
-                  <td>{athlete.weight}</td>
+                  <td className="px-4 py-2 text-center">{athlete.weight}</td>
                 )}
               </tr>
             ))}
@@ -681,6 +683,7 @@ return (
         </table>
       </div>
     )}
+
     <br></br>
     <hr className = 'border = black'></hr>
     <div>
@@ -702,7 +705,7 @@ return (
           </thead>
           <tbody>
             {topMaleSquat.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -732,7 +735,7 @@ return (
           </thead>
           <tbody>
             {topFemaleSquat.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -762,7 +765,7 @@ return (
           </thead>
           <tbody>
             {topMaleBench.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -792,7 +795,7 @@ return (
           </thead>
           <tbody>
             {topFemaleBench.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -822,7 +825,7 @@ return (
           </thead>
           <tbody>
             {topMaleDeadlift.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -852,7 +855,7 @@ return (
           </thead>
           <tbody>
             {topFemaleDeadlift.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -882,7 +885,7 @@ return (
           </thead>
           <tbody>
             {topMaleSnatch.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -912,7 +915,7 @@ return (
           </thead>
           <tbody>
             {topFemaleSnatch.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -942,7 +945,7 @@ return (
           </thead>
           <tbody>
             {topMaleCleanJerk.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -972,7 +975,7 @@ return (
           </thead>
           <tbody>
             {topFemaleCleanJerk.map((athlete, index) => (
-              <tr key={index} style={getRowStyle(index)}>
+              <tr className="px-4 py-2 text-center" key={index} style={getRowStyle(index)}>
                 <td>{index + 1}</td>
                 <td>{athlete.name}</td>
                 <td>
@@ -993,17 +996,17 @@ return (
     <br></br>
 
     <div>
-      <p className="font-bold">Add Records Here</p>
+      <p className="font-bold text-center">Add Records Here</p>
     </div>
 
     {/* Additional dropdown menu for adding records */}
     {addRecords && (
       <div className="flex flex-col p-4">
         <div className="mb-4">
-          <label htmlFor="addRecordsCategory" className="block">Category:</label>
+          <label htmlFor="addRecordsCategory" className="block text-center">Category:</label>
           <select
             id="addRecordsCategory"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => setAddCategory(e.target.value)}
             value={addCategory}
           >
@@ -1019,10 +1022,10 @@ return (
         </div>
         {addCategory && (
           <div className="mb-4">
-            <label htmlFor="addRecordsGender" className="block">Gender:</label>
+            <label htmlFor="addRecordsGender" className="block text-center">Gender:</label>
             <select
               id="addRecordsGender"
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
               onChange={(e) => setAddGender(e.target.value)}
               value={addGender}
             >
@@ -1034,10 +1037,10 @@ return (
         )}
         {addCategory && addGender && (
           <div className="mb-4">
-            <label htmlFor="addRecordsWeightClass" className="block">Weight Class:</label>
+            <label htmlFor="addRecordsWeightClass" className="block text-center">Weight Class:</label>
             <select
               id="addRecordsWeightClass"
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
               onChange={(e) => setAddWeightClass(e.target.value)}
               value={addWeightClass}
             >
@@ -1054,11 +1057,11 @@ return (
 
       {/* Input box for Name */}
       <div className="mb-4">
-        <label htmlFor="nameInput" className="block">Name:</label>
+        <label htmlFor="nameInput" className="block text-center">Name:</label>
         <input
           type="text"
           id="nameInput"
-          className="block w-full border border-gray-300 rounded-md p-2"
+          className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
           onChange={(e) => setName(e.target.value)}
           value={name}
         />
@@ -1068,31 +1071,31 @@ return (
         {addCategory === 'Olympic' && (
         <>
           <div className="mb-4">
-            <label htmlFor="snatchInput" className="block">Snatch:</label>
+            <label htmlFor="snatchInput" className="block text-center">Snatch:</label>
             <input
               type="number"
               id="snatchInput"
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
               onChange={(e) => setSnatchValue(e.target.value)}
               value={snatchValue}
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="cleanJerkInput" className="block">Clean & Jerk:</label>
+            <label htmlFor="cleanJerkInput" className="block text-center">Clean & Jerk:</label>
             <input
               type="number"
               id="cleanJerkInput"
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
               onChange={(e) => setCleanJerkValue(e.target.value)}
               value={cleanJerkValue}
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="totalInput" className="block">Total:</label>
+            <label htmlFor="totalInput" className="block text-center">Total:</label>
             <input
               type="number"
               id="totalInput"
-              className="block w-full border border-gray-300 rounded-md p-2"
+              className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
               onChange={(e) => setTotalValue(e.target.value)}
               value={totalValue}
             />
@@ -1102,41 +1105,41 @@ return (
       {addCategory === 'Powerlifting' && (
       <>
         <div className="mb-4">
-          <label htmlFor="squatInput" className="block">Squat:</label>
+          <label htmlFor="squatInput" className="block text-center">Squat:</label>
           <input
             type="number"
             id="squatInput"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => setSquatValue(e.target.value)}
             value={squatValue}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="benchInput" className="block">Bench:</label>
+          <label htmlFor="benchInput" className="block text-center">Bench:</label>
           <input
             type="number"
             id="benchInput"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => setBenchValue(e.target.value)}
             value={benchValue}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="deadliftInput" className="block">Deadlift:</label>
+          <label htmlFor="deadliftInput" className="block text-center">Deadlift:</label>
           <input
             type="number"
             id="deadliftInput"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => setDeadliftValue(e.target.value)}
             value={deadliftValue}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="totalInput" className="block">Total:</label>
+          <label htmlFor="totalInput" className="block text-center">Total:</label>
           <input
             type="number"
             id="totalInput"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             onChange={(e) => setTotalValue(e.target.value)}
             value={totalValue}
           />
@@ -1145,11 +1148,11 @@ return (
     )}
     {(addCategory === 'Squat' || addCategory === 'Bench' || addCategory === 'Deadlift' || addCategory === 'Snatch' || addCategory === 'CleanJerk') && (
       <div className="mb-4">
-        <label htmlFor="weightInput" className="block">Weight:</label>
+        <label htmlFor="weightInput" className="block text-center">Weight:</label>
         <input
           type="number"
           id="weightInput"
-          className="block w-full border border-gray-300 rounded-md p-2"
+          className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
           onChange={(e) => setWeight(e.target.value)}
           value={weight}
         />
@@ -1161,14 +1164,14 @@ return (
 
     {/* Submit button for Adding Record */}
     {addCategory && addGender && addWeightClass && (
-      <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleSubmit}>Add Record</button>
+      <button className="block mx-auto border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1" onClick={handleSubmit}>Add Record</button>
     )}
     <p style={{textAlign: 'center', fontStyle: 'italic'}}>Any record not confirmed with Alex will be removed.</p>
     <br></br>
     <br></br>
 
     <div>
-      <p className="font-bold">Delete Records Here</p>
+      <p className="font-bold text-center">Delete Records Here</p>
     </div>
     {topAthletes.length === 0 && (
       <div>
@@ -1180,11 +1183,11 @@ return (
     {addRecords && topAthletes && topAthletes.length > 0 && (
       <div className="flex flex-col">
         <div className="mb-4">
-          <label htmlFor="deleteRank" className="block">Rank Number to Delete:</label>
+          <label htmlFor="deleteRank" className="block text-center">Rank Number to Delete:</label>
           <input
             type="number"
             id="deleteRank"
-            className="block w-full border border-gray-300 rounded-md p-2"
+            className="block mx-auto w-3/4 md:w-2/4 lg:w-1/4 border border-gray-300 rounded-md p-2"
             value={deleteRank}
             onChange={(e) => setDeleteRank(e.target.value)}
           />
@@ -1193,7 +1196,7 @@ return (
     )}
 
     {addRecords && topAthletes && topAthletes.length > 0 && (
-      <button className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 " onClick={handleDeleteRecord}>Confirm Delete</button>
+      <button className="block mx-auto border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1" onClick={handleDeleteRecord}>Confirm Delete</button>
     )}
   
     <br />
