@@ -108,8 +108,28 @@ const navigation = [
     state: () => {
       return new Promise(async (resolve, reject) => {
         if (AuthApi.isLoggedIn()) {
-          const hasRole = await AuthApi.hasRole("ROLE_ADMIN");
-          resolve(!hasRole);
+          const hasRole =
+              (await AuthApi.hasRole("ROLE_BASE_CLIENT")) ||
+              (await AuthApi.hasRole("ROLE_GENERAL_CLIENT")) ||
+              (await AuthApi.hasRole("ROLE_SPECIFIC_CLIENT"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    }
+  },
+  {
+    component: <>Admin Chat</>,
+    to: "/admin-chat",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+              (await AuthApi.hasRole("ROLE_ADMIN")) ||
+              (await AuthApi.hasRole("ROLE_COACH"));
+          resolve(hasRole);
         } else {
           resolve(false);
         }
