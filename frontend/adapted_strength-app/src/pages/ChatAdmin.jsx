@@ -47,7 +47,7 @@ function MessageConstructor({senderInfo, recipientInfo, chatInfo}) {
     )
 }
 
-function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderMessage, setSenderMessage, senderVideo, setSenderVideo, updateUnread, setUpdateUnread}) {
+function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderMessage, setSenderMessage, senderVideo, setSenderVideo, updateRecipientsInfo}) {
     const [chatInfo, setChatInfo] = useState(null);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
                     return ChatApi.setMessagesToRead(recipientInfo.email)
                         .then(senderReadResponse => {
                             if (senderReadResponse.status === HttpStatus.OK) {
-                                return {senderChatData, recipientChatData, senderReadData: senderReadResponse.data};
+                                return {senderChatData, recipientChatData, senderReadData: parseInt(senderReadResponse.data)};
                             } else {
                                 throw new Error(`Error occurred when updating the recipient's read messages\nHTTP Status: ${senderReadResponse.status}`)
                             }
@@ -90,7 +90,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
 
                     sortedChatInfo.sort((a, b) => a.timeStamp - b.timeStamp);
                     setChatInfo(sortedChatInfo);
-                    setUpdateUnread(senderReadData);
+                    updateRecipientsInfo(recipientInfo.email, recipientInfo.unreadMessage + senderReadData);
                 })
                 .catch(e => {
                     console.error(e);
@@ -98,7 +98,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
         }
 
         loadData();
-    }, [])
+    }, [recipientInfo, updateRecipientsInfo])
 
     const registerUser = () => {
         const socket = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`)
@@ -116,6 +116,17 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
 
     const onMessageReceived = (payload) => {
         const data = JSON.parse(new TextDecoder().decode(payload._binaryBody));
+
+        ChatApi.setMessagesToRead(recipientInfo.email)
+            .then(senderReadResponse => {
+                if (senderReadResponse.status === HttpStatus.OK) {
+                } else {
+                    throw new Error(`Error occurred when updating the recipient's read messages\nHTTP Status: ${senderReadResponse.status}`)
+                }
+            })
+            .catch(e => {
+                console.error(e);
+            })
 
         const receivedMessage = {
             "senderId": data.senderId,
@@ -138,7 +149,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
             "content": e.target.value,
             "timeStamp": new Date()
         });
-    };
+    }
 
     const sendSenderMessage = () => {
         if (senderMessage.content !== "") {
@@ -150,9 +161,8 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
                 "content": "",
                 "timeStamp": ""
             });
-            setSenderVideo("");
         }
-    };
+    }
 
     const generateChatMap = (messages) => {
         let currentDateFormat;
@@ -219,6 +229,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
         registerUser();
     }
 
+
     return (
         <dialog open className={`fixed inset-0 z-50 bg-black bg-opacity-50 h-screen w-screen ${className}`}>
             <div className="flex flex-col h-screen">
@@ -272,7 +283,7 @@ export default function ChatAdmin() {
         email: "",
         fullName: "",
         userType: "",
-        unread: -1
+        unreadMessage: -1
     });
     const [modalVisibility, setModalVisibility] = useState("hidden");
     const [senderMessage, setSenderMessage] = useState({
@@ -282,7 +293,6 @@ export default function ChatAdmin() {
         "timeStamp": ""
     });
     const [senderVideo, setSenderVideo] = useState("");
-    const [updateUnread, setUpdateUnread] = useState(0);
 
     useEffect(() => {
         const loadData = () => {
@@ -307,7 +317,7 @@ export default function ChatAdmin() {
                         return ChatApi.getUnreadMessageForSender(recipientData.email)
                             .then(recipientUnreadResponse => {
                                 if (recipientUnreadResponse.status === HttpStatus.OK) {
-                                    recipientData.unread = recipientUnreadResponse.data.unreadMessage;
+                                    recipientData.unreadMessage = parseInt(recipientUnreadResponse.data.unreadMessage);
                                     return recipientData;
                                 } else {
                                     throw new Error(`Error occurred when fetching unread message for ${recipientData.email}\nHTTP Status: ${recipientUnreadResponse.status}`)
@@ -317,7 +327,7 @@ export default function ChatAdmin() {
                     return Promise.all(promises);
                 })
                 .then(recipientsData => {
-                    recipientsData.sort((a, b) => b.unread - a.unread || a.fullName.localeCompare(b.fullName));
+                    recipientsData.sort((a, b) => b.unreadMessage - a.unreadMessage || a.fullName.localeCompare(b.fullName));
                     setRecipientsInfo(recipientsData);
                 })
                 .catch(e => {
@@ -342,6 +352,15 @@ export default function ChatAdmin() {
         setChatCSS(prevChatCSS => prevChatCSS.substring(0, prevChatCSS.length - "screen".length) + `[calc(100vh-${navigationBar.height}px)]`);
     }
 
+    const updateRecipientsInfo = (email, newUnreadMessage) => {
+        const updatedRecipientsInfo = recipientsInfo.map(recipient =>
+            recipient.email === email ? {...recipient, unreadMessage: newUnreadMessage} : recipient
+        )
+
+        updatedRecipientsInfo.sort((a, b) => b.unreadMessage - a.unreadMessage || a.fullName.localeCompare(b.fullName));
+        setRecipientsInfo(updatedRecipientsInfo);
+    }
+
     const ButtonConstructor = ({recipientInfo}) => {
         return (
             <>
@@ -351,7 +370,7 @@ export default function ChatAdmin() {
                         setModalVisibility("");
                     }
                     } className="w-full mt-2 text-sm font-semibold text-gray-900 p-2 border-gray-200 rounded-xl bg-gray-200">{recipientInfo.fullName}</button>
-                    {recipientInfo.unread > 0 && (
+                    {recipientInfo.unreadMessage > 0 && (
                         <span className="absolute top-0 right-0">
                             <span className="relative inline-block rounded-full h-3 w-3 bg-lime-500">
                                 <span className="absolute animate-ping inline-block h-full w-full rounded-full bg-lime-400 opacity-75"></span>
@@ -365,7 +384,6 @@ export default function ChatAdmin() {
 
     const ButtonList = ({recipientsInfo}) => {
         const buttonList = [];
-
 
         //TODO: sort based on number of messages -> highest message [if same use alphabetical] -> notification first and rest are sorted alphabetically
         //idea create two arrays then combine together at end once sorted :)
@@ -404,7 +422,7 @@ export default function ChatAdmin() {
                             email: "",
                             fullName: "",
                             userType: "",
-                            unread: -1
+                            unreadMessage: -1
                         });
                         setSenderMessage({
                             "senderId": "",
@@ -420,8 +438,7 @@ export default function ChatAdmin() {
                     setSenderMessage={setSenderMessage}
                     senderVideo={senderVideo}
                     setSenderVideo={setSenderVideo}
-                    updateUnread={updateUnread}
-                    setUpdateUnread={setUpdateUnread}>
+                    updateRecipientsInfo={updateRecipientsInfo}>
                 </ChatPopUp>
             )}
         </div>

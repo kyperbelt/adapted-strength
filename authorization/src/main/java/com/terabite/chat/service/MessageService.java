@@ -74,7 +74,7 @@ public class MessageService {
         }
 
         Map<String, String> body = new HashMap<>();
-        body.put("unreadMessage", Integer.toString(unreadMessages.size()));
+        body.put("unreadMessage", Integer.toString(-unreadMessages.size()));
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
