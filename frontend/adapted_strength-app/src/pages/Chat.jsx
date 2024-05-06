@@ -162,15 +162,15 @@ export default function Chat() {
         registerUser();
     }
 
-    if (chatCSS === "flex flex-col h-screen") {
-        let navigationBar = document.getElementById("navigation-bar").getBoundingClientRect()
-
-        if (!navigationBar) {
-            return <div>Loading...</div>
-        }
-
-        setChatCSS(prevChatCSS => prevChatCSS.substring(0, prevChatCSS.length - "screen".length) + `[calc(100vh-${navigationBar.height}px)]`);
-    }
+    // if (chatCSS === "flex flex-col h-screen") {
+    //     let navigationBar = document.getElementById("navigation-bar").getBoundingClientRect()
+    //
+    //     if (!navigationBar) {
+    //         return <div>Loading...</div>
+    //     }
+    //
+    //     setChatCSS(prevChatCSS => prevChatCSS.substring(0, prevChatCSS.length - "screen".length) + `[calc(100vh-${navigationBar.height}px)]`);
+    // }
 
     const generateChatMap = (messages) => {
         let currentDateFormat;
@@ -265,12 +265,15 @@ export default function Chat() {
                 <ChatList messages={chatInfo}/>
             </div>
             <div id="chat-controls" className="mx-2 mb-2 border border-gray-200 p-4 rounded-b-xl bg-gray-200">
-                <div className="border mb-4 p-2 w-full bg-white text-gray-900 rounded-xl break-words">
+                {/*Re-enable this feature IF file upload is implemented otherwise leave hidden*/}
+                <div className="border mb-4 p-2 w-full bg-white text-gray-900 rounded-xl break-words hidden">
                     {userVideo === "" ? "No files selected." : userVideo}
                 </div>
                 <div className="flex w-full items-center">
+                    {/*DO NOT TOUCH className="hidden" this is intentional by design to show the SVG for the input!! You fool*/}
                     <input id="chat-attach-file" type="file" id="file-input" className="hidden" onChange={handleUserVideo}/>
-                    <label htmlFor="file-input" className="h-8 w-8 rounded-full bg-custom-red mr-2 hover:bg-custom-dark-red cursor-pointer">
+                    {/*Re-enable this feature IF file upload is implemented otherwise leave hidden*/}
+                    <label htmlFor="file-input" className="h-8 w-8 rounded-full bg-custom-red mr-2 hover:bg-custom-dark-red cursor-pointer hidden">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 p-1.5">
                             <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H7.5M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V9.75V12V19C19 20.1046 18.1046 21 17 21H16.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M12 21L12 13M12 13L14.5 15.5M12 13L9.5 15.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
