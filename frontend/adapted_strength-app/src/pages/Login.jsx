@@ -20,7 +20,7 @@ function PasswordField() {
     return <LabeledInputField type="password" id="password" name="password" required={true} placeholder="Password" />
 }
 function NextButton() {
-    return (<button href="./profile" type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >
+    return (<button href="./profile" type="submit" className="border-red-500 border-4 bg-black text-slate-200 rounded-full my-3 px-3 py-1 "  >
         Login
     </button>);
 }
@@ -77,19 +77,19 @@ export default function Login() {
         <div className="bg-[#161A1D] h-full">
             <div className="relative bottom-20">
                 <h1 className="relative mx-0 text-center text-2xl bottom-4">Welcome!</h1>
-                <div className="flex w-full justify-center" >
-                    <form onSubmit={onSubmit} id="login" className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
+                <div className="flex justify-center" >
+                    <form onSubmit={onSubmit} id="login" className="w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-4 mb-2 max-w-xs">
                         <div className="w-full flex flex-col items-center px-0 ">
                             <UserField />
                         </div>
                         <div className="w-full flex flex-col items-center px-0 pt-4">
                             <PasswordField />
                         </div>
-                        <div className="flex justify-center w-full relative top-24">
+                        <div className="flex justify-center w-full">
                             <NextButton />
                         </div>
                         <div>
-                            <input
+                            {/* <input
                                 className="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 
                                 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full 
                                 before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] 
@@ -115,18 +115,16 @@ export default function Login() {
                             <label
                                 className="inline-block pl-[0.15em] hover:cursor-pointer"
                                 htmlFor="flexSwitchCheckDefault"
-                            >Remember me</label>
+                            >Remember me</label> */}
                             <Link
                                 to="/forgot-password"
-                                className="block text-red-500 text-color-white transition duration-150 ease-in-out hover:text-primary-600 
-                                focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 
-                                dark:focus:text-primary-500 dark:active:text-primary-600"
+                                className="block text-red-500"
                             >Forgot Password</Link>
                         </div>
                     </form>
                 </div>
             </div>
-            <button
+            {/* <button     
                 type="button"
                 className="flex flex-row mx-auto items-center rounded bg-gray-500 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white 
                 shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 
@@ -138,8 +136,8 @@ export default function Login() {
                 
                 Login with Google
                 <GoogleLogo className="ml-2" />
-            </button>
-            <p className="relative mx-0 text-white px-3 text-center bottom-4">
+            </button> */}
+            <p className="relative text-white px-1 text-center bottom-6">
                 Dont have an account?
                 <a
                     href="./sign-up"

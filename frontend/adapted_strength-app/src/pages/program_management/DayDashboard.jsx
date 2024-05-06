@@ -436,7 +436,7 @@ function RepCycle({ repCycle, cycleState, onEdit }) {
                                 <RepCycleItem title="Equipment" value={equipment} />
                                 <RepCycleItem title="Sets" value={numSets} />
                                 <RepCycleItem title="Reps" value={numReps} />
-                                <RepCycleItem title="Weight" value={weight} />
+                                <RepCycleItem title="% / RPE" value={weight} />
                                 <RepCycleItem title="Rest Time" value={restTime} />
                                 <RepCycleItem title="Movement ID" value={movementId} />
                                 <RepCycleItem className="grow text-sm col-span-2" title="Coach Notes" value={coachNotes} />
@@ -643,7 +643,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState })
                                         <LabeledInputField className="flex-1" id={`num-reps-${dayId}`} placeholder="Number of Reps" required={true} type="text" />
                                 </div>
                                 <div className="flex flex-row space-x-2">
-                                        <LabeledInputField className="flex-1" id={`weight-${dayId}`} placeholder="Weight" required={true} type="text" />
+                                        <LabeledInputField className="flex-1" id={`weight-${dayId}`} placeholder="% / RPE" required={true} type="text" />
                                         <LabeledInputField className="flex-1" id={`rest-time-${dayId}`} placeholder="Rest Time" required={true} type="text" />
                                 </div>
                                 <LabeledInputField id={`movement-id-${dayId}`} placeholder="Movement ID" required={true} type="number" />
