@@ -687,7 +687,7 @@ return (
     <br></br>
     <hr className = 'border = black'></hr>
     <div>
-      <h1 className="font-bold text-xl"><u>All Gym Records</u></h1> 
+      <h1 className="font-bold text-xl text-center"><u>All Gym Records</u></h1> 
     </div>
 
     {/* Display all gym records in a table */}
@@ -1175,7 +1175,7 @@ return (
     </div>
     {topAthletes.length === 0 && (
       <div>
-      <p>Must search for records first.</p>
+      <p className="text-center">Must search for records first.</p>
       </div>
     )}
 
