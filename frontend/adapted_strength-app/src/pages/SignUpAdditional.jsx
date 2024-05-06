@@ -118,7 +118,7 @@ export default function SignUp() {
         }
     }, []);
 
-    function HandleSubmit(event) {
+    async function HandleSubmit(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = {
@@ -146,49 +146,50 @@ export default function SignUp() {
 
         console.log(data);
         setSigningUp(true);
+        //TODO: validation needs to return what failed so we can display it to the user
+        const responseUserDataValidation = await UserApi.validateProfileInformation(data);
 
-        UserApi.validateProfileInformation(data)
-            .then((response) => {
-                if (response.status == HttpStatus.OK) {
-                    console.log("User information is valid");
-                    return AuthApi.signup(state.email, state.password);
-                } else {
-                    throw new Error("User information is invalid");
-                }
-            }).then((response) => {
-                if (response.status == HttpStatus.CREATED) {
-                    // user is valid 
-                    console.log("User is valid and account is created");
-                    console.log("Token: " + response.data.payload);
-                    // set the user token in local storage
-                    ApiUtils.setAuthToken(response.data.payload);
-                    return UserApi.createProfileInformation(data).then((response) => {
-                        if (response.status == HttpStatus.OK) {
+        if (responseUserDataValidation.status != HttpStatus.OK) {
+            console.error(responseUserDataValidation);
+            console.log("User information is invalid");
+            // TODO: display error to the user
+            setSigningUp(false);
+            return;
+        }
 
-                            return UserApi.submitHealthQuestionnaire(state.healthQuestionnaire);
-                        }
-                        throw new Error("Unable to create user profile");
-                    });
-                } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
-                    throw new Error("Unable to create user account, email is already in use");
-                } else {
-                    console.error(response);
-                    throw new Error("Unable to create user account, unknown error");
-                }
-            }).then((response) => {
-                if (response.status == HttpStatus.OK) {
-                    navigate("/", {}); // redirect to home page
-                } else {
-                    console.error(response);
-                    ApiUtils.removeAuthToken();
-                    throw new Error("Unable to create user profile, unknown error");
-                }
-            }).finally(() => {
-                setSigningUp(false);
-            }).catch((error) => {
-                console.error(`ERROR HAPPENED: ${error}`);
-            });
+        AuthApi.signup(state.email, state.password).then((response) => {
+            if (response.status == HttpStatus.CREATED) {
+                // user is valid 
+                console.log("User is valid and account is created");
+                console.log("Token: " + response.data.payload);
+                // set the user token in local storage
+                ApiUtils.setAuthToken(response.data.payload);
+                return UserApi.createProfileInformation(data).then((response) => {
+                    if (response.status == HttpStatus.OK) {
+
+                        return UserApi.submitHealthQuestionnaire(state.healthQuestionnaire);
+                    }
+                    throw new Error("Unable to create user profile");
+                });
+            } else if (response.status == HttpStatus.CONFLICT) { // conflict means email is already in use 
+                throw new Error("Unable to create user account, email is already in use");
+            } else {
+                console.error(response);
+                throw new Error("Unable to create user account, unknown error");
+            }
+        }).then((response) => {
+            if (response.status == HttpStatus.OK) {
+                navigate("/", {}); // redirect to home page
+            } else {
+                console.error(response);
+                ApiUtils.removeAuthToken();
+                throw new Error("Unable to create user profile, unknown error");
+            }
+        }).finally(() => {
+            setSigningUp(false);
+        });
     }
+
 
     if (signingUp) {
         return (

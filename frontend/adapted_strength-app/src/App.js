@@ -21,8 +21,6 @@ import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
-import Tab from "./components/TabComponents/Tab.jsx";
-import SendNotifications from './pages/SendNotifications.jsx';
 // import firebase utils
 import { fetchToken } from './firebase';
 
@@ -50,6 +48,8 @@ const UserManagement = lazy(() => import('./pages/user_management/UserManagement
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
 const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 const MovementLibrary = lazy(() => import('./pages/MovementLibrary.jsx'));
+const SendNotifications = lazy(() => import('./pages/SendNotifications.jsx'));
+const Tab = lazy(() => import("./components/TabComponents/Tab.jsx"));
 
 // import footer from '../footer'
 
@@ -117,11 +117,11 @@ function App() {
                 <Suspense fallback="...">
                   { /*TODO: check if we want to allow for all users*/}
                   <RouteGuard state={() => true} routeTo="/login">
-                    <MovementLibrary/>
+                    <MovementLibrary />
                   </RouteGuard>
                 </Suspense>
               } />
-          
+
 
             /* ROUTES FOR PROGRAM PAGES */
               //--------------------------------------------------
@@ -150,8 +150,22 @@ function App() {
 
               /* Route for notifications & announcements tabs */
               //-------------------------------------------------
-              <Route path="notifications" element={<Tab />} />
-              <Route path='send_notifications' element={<SendNotifications />} />
+              <Route path="notifications" element={
+                <Suspense fallback="...">
+                  { /*TODO: check if we want to allow for all users*/}
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <Tab />
+                  </RouteGuard>
+                </Suspense>
+              } />
+              <Route path='send_notifications' element={
+                <Suspense fallback="...">
+                  { /*TODO: check if we want to allow for all users*/}
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <SendNotifications />
+                  </RouteGuard>
+                </Suspense>
+              } />
             </Route>
           </Routes>
         </BrowserRouter>
