@@ -1,9 +1,9 @@
 // When deploying use the following URL 
-const BASE_API_URL = 'https://q9jkbki2nc.execute-api.us-east-1.amazonaws.com';
+// const BASE_API_URL = 'https://q9jkbki2nc.execute-api.us-east-1.amazonaws.com';
 // const BASE_API_URL = 'https://api.adaptedstrength.com';
 
 // When developing use the following URL
-// const BASE_API_URL = 'http://localhost:8080';
+const BASE_API_URL = 'http://localhost:8080';
 // const BASE_API_URL = "http://10.0.0.63:8080"; // CASEY's host. Do NOT fkn forget to remove this
 
 export const AUTH_TOKEN_NAME = "adapted-strength_auth-token";
