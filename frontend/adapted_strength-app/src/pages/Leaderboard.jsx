@@ -1016,7 +1016,7 @@ return (
             <option value="Squat">Squat</option>
             <option value="Bench">Bench</option>
             <option value="Deadlift">Deadlift</option>
-            <opiton value="Snatch">Snatch</opiton>
+            <option value="Snatch">Snatch</option>
             <option value="CleanJerk">Clean & Jerk</option>
           </select>
         </div>
