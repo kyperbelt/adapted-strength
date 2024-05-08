@@ -101,6 +101,41 @@ const navigation = [
       });
     },
   },
+  {
+    component: <>Chat</>,
+    to: "/chat",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+              (await AuthApi.hasRole("ROLE_BASE_CLIENT")) ||
+              (await AuthApi.hasRole("ROLE_GENERAL_CLIENT")) ||
+              (await AuthApi.hasRole("ROLE_SPECIFIC_CLIENT"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    }
+  },
+  {
+    component: <>Admin Chat</>,
+    to: "/admin-chat",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+              (await AuthApi.hasRole("ROLE_ADMIN")) ||
+              (await AuthApi.hasRole("ROLE_COACH"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    }
+  }
 ];
 
 export default function NavBar() {
@@ -160,7 +195,7 @@ export default function NavBar() {
   //      certain options when the user is not logged in for example, or if they
   //      dont have the right permissions or are in a wrong state/certain page/step.
   return (
-    <div className={"sticky top-0 w-full bg-primary z-20"} key={loggedIn}>
+    <div id="navigation-bar" className={"sticky top-0 w-full bg-primary z-20"} key={loggedIn}>
       <div
         className={`right-0 bottom-0 left-0 bg-black opacity-50  ${hamburgerOpen ? "flex" : "hidden"
           }`}

@@ -1,4 +1,4 @@
-    package com.terabite.authorization.config;
+package com.terabite.authorization.config;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -51,6 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         Optional<String> token = Optional.ofNullable(request.getHeader("Authorization"))
                 .filter(h -> h.startsWith("Bearer "))
                 .map(h -> h.substring(7));
+
 
         Optional<String> email = Optional.empty();
 

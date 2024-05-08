@@ -1,8 +1,11 @@
 package com.terabite.chat.service;
 
+import com.terabite.common.Roles;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import com.terabite.authorization.model.Login;
@@ -22,7 +25,8 @@ public class ChatUserService {
     }
 
     
-    public void saveChatUser(ChatUser chatUser){
+    public void saveChatUser(ChatUser chatUser)
+    {
         if(chatUser!= null){
             chatUser.setUserType(UserType.CLIENT);
 
@@ -43,8 +47,18 @@ public class ChatUserService {
     }
 
     public ResponseEntity<List<ChatUser>>  findClientChatUsers(ChatUser chatUser){
-        List<ChatUser> chatUsers = chatUserRepository.findAllByUserType(UserType.CLIENT);
-        return new ResponseEntity<>(chatUsers, HttpStatus.OK);
+        List<ChatUser> allChatUsers = chatUserRepository.findAllByUserType(UserType.CLIENT);
+        List<ChatUser> filteredChatUsers = new ArrayList<>();
+        for(ChatUser user : allChatUsers) {
+            Login userLogin = loginRepository.findById(user.getEmail()).orElse(null);
+
+            List<String> roles = userLogin.getRoles();
+
+            if (roles.contains("ROLE_BASE_CLIENT") || roles.contains("ROLE_GENERAL") || roles.contains("ROLE_SPECIFIC_CLIENT")) {
+                filteredChatUsers.add(user);
+            }
+        }
+        return new ResponseEntity<>(filteredChatUsers, HttpStatus.OK);
     }
 
     public ResponseEntity<List<ChatUser>> findCoachChatUsers(ChatUser chatUser){

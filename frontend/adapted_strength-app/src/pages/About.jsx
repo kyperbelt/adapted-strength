@@ -7,24 +7,27 @@ import ContactForm from '../components/ContactForm';
 import { BlankPageContainer } from '../components/PageContainer';
 
 const FounderSection = () => {
+
+    const founderImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237817281103265982/emsfphotos036.jpg?ex=663d06ad&is=663bb52d&hm=edb202c1f7dc2d7c376e6c2f3d87ac851bf43eaa962104e22ec5c40ab289445d&";
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 md:grid-template-rows: repeat(4, auto) gap-4 text-center md:text-left my-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:grid-template-rows: repeat(4, auto) gap-1 md:gap-4 text-center md:text-left my-12">
             <div className="md:col-start-1 md:row-start-1">
                 <h1 className="text-2xl text-accent-dark font-semibold">Founder of Adapted Strength</h1>
             </div>
             <div className="md:col-start-1 md:row-start-2">
                 <h2 className="text-4xl mt-2 font-bold">Coach Alex</h2>
             </div>
-            <img src={teamMemberImage} alt="Coach Alex" className="w-full rounded-lg shadow-lg md:col-start-2 md:row-start-1 md:row-end-5"/>
+            <img src={founderImage} alt="Coach Alex" className="w-full rounded-lg shadow-lg md:col-start-2 md:row-start-1 md:row-end-5"/>
             <p className="text-2xl my-3 text-gray-500 md:col-start-1 md:row-start-3 md:row-end-4">Hello and Welcome! I’m Alex-Andre B. Palting, a fitness coach with a decade worth of experience that is located out in Northern California.</p>
         </div>
     );
 };
 
 const MissionSection = () => {
+    const missionImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237818216634384405/IMG_4699.JPEG?ex=663d078c&is=663bb60c&hm=457a53891dcca003485b399f0d452175ed4e42107688501aafc2c4a447d014f0&";
     return (
         <div className="flex flex-col md:flex-row justify-between items-start my-4 p-6 rounded-lg">
-            <img src={image3} alt="Description of image3" className="md:w-1/2 rounded-lg shadow-lg md:mr-4" />
+            <img src={missionImage} alt="Description of image3" className="md:w-1/2 rounded-lg shadow-lg md:mr-4" />
             <div className="md:w-1/2 mt-4 md:mt-0">
                 <h2 className="text-xl font-semibold text-accent-dark">My Mission</h2>
                 <ul className="list-disc text-left pl-6 space-y-1">
@@ -48,10 +51,11 @@ const MissionSection = () => {
 };
 
 function ExtraSection() {
+    const extraImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237818757595009074/emsfphotos018.jpg?ex=663d080d&is=663bb68d&hm=bbac85248b655c09f383e864136981fe34d99f4b92c21275784715f3317743e0&";
     return (
         <div className="flex flex-col md:flex-row items-center my-12">
             <p className="md:w-1/2 mt-4 md:mt-0"></p>
-            <img src={image2} alt="Description of image2" className="md:w-1/2 rounded-lg shadow-lg md:mr-4" />
+            <img src={extraImage} alt="Description of image2" className="md:w-1/2 rounded-lg shadow-lg md:mr-4" />
         </div>
     );
 }

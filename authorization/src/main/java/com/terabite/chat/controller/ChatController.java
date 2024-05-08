@@ -1,5 +1,6 @@
 package com.terabite.chat.controller;
 
+import com.terabite.authorization.config.JwtAuthFilter;
 import com.terabite.chat.model.ChatRoom;
 import com.terabite.chat.model.ChatUser;
 import com.terabite.chat.model.Message;
@@ -38,6 +39,8 @@ public class ChatController {
     private final MessageService messageService;
     private final ChatUserService chatUserService;
     private final ChatRoomService chatRoomService;
+
+    private static Logger log = LoggerFactory.getLogger(ChatController.class);
     
     public ChatController(MessageService messageService, SimpMessagingTemplate messagingTemplate, ChatUserService chatUserService, ChatRoomService chatRoomService){
         this.messageService=messageService;
@@ -51,7 +54,7 @@ public class ChatController {
         message.setHasBeenRead(false);
         Message savedMessage=messageService.save(message);
         
-        ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent());
+        ChatNotification chatNotification = new ChatNotification(savedMessage.getChatRoomId(), savedMessage.getSenderId(), savedMessage.getRecipientId(), savedMessage.getContent(), savedMessage.getTimeStamp());
         //front end will be subscribing to bob/queue/message where bob is the user
         if(savedMessage.getRecipientId()!= null){
             messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/messages", chatNotification);
@@ -68,7 +71,8 @@ public class ChatController {
     //this is a queue that the front end will need to subscribe to
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_GENERAL CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     @SendTo("/chatUser/topic")
-    public ChatUser addChatUser(@Payload ChatUser chatUser){
+    public ChatUser addChatUser(@Payload ChatUser chatUser)
+    {
         chatUserService.saveChatUser(chatUser);       // this is where chat user role is assigned
         return chatUser;
     }
@@ -107,15 +111,15 @@ public class ChatController {
         return messageService.setMessageReadById(id);
     }
 
-    @GetMapping("/v1/chat/message/getUnreadForUser/{senderId}")
+    @GetMapping("/v1/chat/message/getUnreadForSender/{recipientId}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
-    public ResponseEntity<?> getUnreadMessagesForUser(@PathVariable("senderId") String senderId) {
-        return messageService.getUnreadForUser(senderId);
+    public ResponseEntity<?> getUnreadMessagesForSender(@PathVariable("recipientId") String senderId) {
+        return messageService.getUnreadForSender(senderId);
     }
 
-    @PostMapping("/v1/chat/message/markAsReadBySender/{senderId}")
+    @PostMapping("/v1/chat/message/markAsReadBySender/{recipientId}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
-    public ResponseEntity<?>  markMessagesAsReadBySender(@PathVariable("senderId") String senderId) {
+    public ResponseEntity<?>  markMessagesAsReadBySender(@PathVariable("recipientId") String senderId) {
         return messageService.markMessagesAsReadBySender(senderId);
     }
 }

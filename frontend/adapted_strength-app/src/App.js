@@ -3,7 +3,7 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes, useLocation} from "react-router-dom";
 import { lazy, Suspense, useState, useLayoutEffect} from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
@@ -21,6 +21,7 @@ import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
+import ChatAdmin from "./pages/ChatAdmin"
 // import firebase utils
 import { fetchToken } from './firebase';
 
@@ -53,11 +54,20 @@ const Tab = lazy(() => import("./components/TabComponents/Tab.jsx"));
 
 // import footer from '../footer'
 
+function Wrapper({children}) {
+ const location = useLocation();
+  useLayoutEffect(() => {
+    document.documentElement.scrollTo(0, 0);
+  }, [location.pathname]);
+  return children
+}
+
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
   { !isTokenFound && fetchToken(setTokenFound); }
 
 
+        // <Wrapper>
   return (
     <div id="app" className="flex-1 flex flex-col">
       {
@@ -95,7 +105,12 @@ function App() {
 
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
               <Route path="about" element={<About />} />
-              <Route path="sign-up" element={<SignUp />} />
+            
+              <Route path="sign-up" element={
+                  <RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile">
+                      <SignUp />
+                  </RouteGuard>
+              } />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
               <Route path="user-management/:email?" element={<UserManagement />} />
@@ -116,7 +131,7 @@ function App() {
               <Route path="/movement-library/:movementId?" element={
                 <Suspense fallback="...">
                   { /*TODO: check if we want to allow for all users*/}
-                  <RouteGuard state={() => true} routeTo="/login">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
                     <MovementLibrary />
                   </RouteGuard>
                 </Suspense>
@@ -134,6 +149,7 @@ function App() {
               <Route path="leaderboard" element={<Leaderboard />} />
               // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="chat" element={<Chat />} />
+              <Route path="admin-chat" element={<ChatAdmin />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
               <Route path="payment-checkout/:plan?" element={
@@ -172,5 +188,7 @@ function App() {
     </div >
   );
 }
+
+        // </Wrapper>
 
 export default App;
