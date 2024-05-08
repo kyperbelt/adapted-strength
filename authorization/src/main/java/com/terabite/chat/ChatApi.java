@@ -24,8 +24,5 @@ public class ChatApi {
         user.setUserType(type);
 
         chatUserRepository.save(user);
-
     }
-
-    
 }

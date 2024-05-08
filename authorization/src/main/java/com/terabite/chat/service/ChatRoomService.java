@@ -32,16 +32,18 @@ public class ChatRoomService {
     }
 
     private String createChatId(String senderId, String recipientId) {
-        String chatId=String.format("%s_%s", senderId, recipientId);
-        
+        String chatId = String.format("%s_%s", senderId, recipientId);
+        String chatId2 = String.format("%s_%s", recipientId, senderId);
+
+
         ChatRoom senderRecipient=new ChatRoom(chatId, senderId, recipientId);
 
-        ChatRoom recipientSender=new ChatRoom(chatId, recipientId, senderId);
+        ChatRoom recipientSender=new ChatRoom(chatId2, recipientId, senderId);
 
         chatRoomRepository.save(senderRecipient);
 
         chatRoomRepository.save(recipientSender);
-        
+
         return chatId;
     }
 
@@ -49,6 +51,4 @@ public class ChatRoomService {
     public List<ChatRoom> getAllChatRooms() {
         return chatRoomRepository.findAll();
     }
-
-
 }

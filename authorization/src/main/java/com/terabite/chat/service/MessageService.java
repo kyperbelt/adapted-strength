@@ -1,7 +1,9 @@
 package com.terabite.chat.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,26 +54,28 @@ public class MessageService {
         
     }
 
-    public ResponseEntity<?> getUnreadForUser(String senderId){
+    public ResponseEntity<?> getUnreadForSender(String senderId){
         List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(senderId, false).orElse(null);
 
-        if (unreadMessages.isEmpty()) {
-            return new ResponseEntity<>(Payload.of("false"), HttpStatus.OK);
-        } 
-        else {
-            return new ResponseEntity<>(Payload.of("true"), HttpStatus.OK);
-        }
+        Map<String, String> body = new HashMap<>();
+        body.put("unreadMessage", Integer.toString(unreadMessages.size()));
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> markMessagesAsReadBySender(String senderId){
-        List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(senderId, false).orElse(null);
+    public ResponseEntity<?> markMessagesAsReadBySender(String recipientId){
+        List<Message> unreadMessages = messageRepository.findBySenderIdAndHasBeenRead(recipientId, false).orElse(null);
 
-        for (Message message: unreadMessages){
-            message.setHasBeenRead(true);
-            messageRepository.save(message);
+        if (!unreadMessages.isEmpty()) {
+            for (Message message: unreadMessages){
+                message.setHasBeenRead(true);
+                messageRepository.save(message);
+            }
         }
-        return new ResponseEntity<>(HttpStatus.OK);
-        
-    }
 
+        Map<String, String> body = new HashMap<>();
+        body.put("unreadMessage", Integer.toString(-unreadMessages.size()));
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
 }

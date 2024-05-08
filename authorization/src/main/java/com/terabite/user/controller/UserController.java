@@ -148,7 +148,7 @@ public class UserController {
 
         userRepository.save(userInformation);
         chatApi.createUser(userInformation.getEmail(), userInformation.getFirstName() + " " + userInformation.getLastName(),
-                "USER");
+                "CLIENT");
         return ResponseEntity.ok(Payload.of("Account information created successfully"));
     }
 
