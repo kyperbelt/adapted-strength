@@ -16,7 +16,6 @@ public class ChatApi {
     }
 
     public void createUser(String email, String fullName, String userType) {
-
         UserType type = UserType.valueOf(userType);
 
         ChatUser user = new ChatUser();
@@ -26,6 +25,4 @@ public class ChatApi {
 
         chatUserRepository.save(user);
     }
-
-    
 }
