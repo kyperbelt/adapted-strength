@@ -38,6 +38,6 @@ public class OlympicServiceImpl implements OlympicService {
     public List<Olympic> getTop10FemaleAthletesByWeightClass(String weightClass) {
         // Implement the logic to fetch top 10 female athletes by weight class
         // You can use the repository method here
-        return olympicRepository.findTop10ByWeightClassAndGenderOrderByTotalDesc(weightClass, 'F');
+        return olympicRepository.findTop10ByWeightClassAndGenderOrderByTotalDesc(weightClass, 'W');
     }
 }
