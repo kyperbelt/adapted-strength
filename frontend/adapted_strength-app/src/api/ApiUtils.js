@@ -22,6 +22,10 @@ export class ApiUtils {
     return `${BASE_API_URL}/${version}/${endpoint}`;
   }
 
+  static getBaseUrl() {
+    return BASE_API_URL;
+  }
+
   static apiGet(endpoint, options = {}, version = 'v1') {
     return promiseWrapper(fetch(ApiUtils.getApiUrl(endpoint, version), {
       method: 'GET',
