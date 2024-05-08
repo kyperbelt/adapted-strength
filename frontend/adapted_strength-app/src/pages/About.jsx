@@ -86,7 +86,6 @@ const About = () => {
                 <ExtraSection />
                 <MapSection />
                 <ContactSection />
-                <Footer />
             </div>
         </BlankPageContainer>
     );

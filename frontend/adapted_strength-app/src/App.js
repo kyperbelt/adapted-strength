@@ -4,7 +4,7 @@ Team: TeraBITE
 */
 import './App.css';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useState, useLayoutEffect} from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
 // They are still only react components

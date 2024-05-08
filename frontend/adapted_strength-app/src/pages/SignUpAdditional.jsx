@@ -66,15 +66,11 @@ function StateField() {
 }
 
 function ZipcodeField() {
-    return (<LabeledInputField type="text" placeholder="Zipcode" id="zipcode" name="zipcode" required />);
+    return (<LabeledInputField type="text" placeholder="Zipcode" pattern="\d{5}(-\d{4})?" error="Please enter a valid zipcode." id="zipcode" name="zipcode" required />);
 }
 
 function CellPhoneField() {
-    return (<LabeledInputField type="tel" placeholder="Cellphone" id="cell_phone" name="cell_phone" required />);
-}
-
-function HomePhoneField() {
-    return (<LabeledInputField type="tel" placeholder="Home Phone" id="home_phone" name="home_phone" />);
+    return (<LabeledInputField type="tel" pattern="\(\d{3}\) \d{3}-\d{4}|\d{10}|1\d{10}|\d{3}-\d{3}-\d{4}" placeholder="Cellphone" id="cell_phone" name="cell_phone" required error="You must enter a valid phone number!"/>);
 }
 
 function EmergencyContactFnameField() {
@@ -86,7 +82,7 @@ function EmergencyContactLnameField() {
 }
 
 function EmergencyContactPhoneField() {
-    return (<LabeledInputField type="tel" placeholder="Phone Number" id="emergency_contact_phone" name="emergency_contact_phone" required />);
+    return (<LabeledInputField type="tel" placeholder="Phone Number" pattern="\(\d{3}\) \d{3}-\d{4}|\d{10}|1\d{10}|\d{3}-\d{3}-\d{4}" id="emergency_contact_phone" name="emergency_contact_phone" error="You must enter a valid phone number!" required />);
 }
 
 function HeardField() {
@@ -129,7 +125,7 @@ export default function SignUp() {
             sex: formData.get('sex'),
             shirt_size: formData.get('shirt_size'),
             cell_phone: formData.get('cell_phone'),
-            home_phone: formData.get('home_phone'),
+            home_phone: formData.get('cell_phone'),
             address: {
                 address: formData.get('address'),
                 city: formData.get('city'),
@@ -223,8 +219,6 @@ export default function SignUp() {
                                     <StateField />
                                     <ZipcodeField />
                                     <CellPhoneField />
-                                    <HomePhoneField />
-
                                 </div>
                             </div>
                             <div className="flex flex-col lg:min-w-96">
