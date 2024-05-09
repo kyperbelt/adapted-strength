@@ -98,10 +98,10 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
         }
 
         loadData();
-    }, [recipientInfo.unreadMessage, updateRecipientsInfo])
+    }, [ updateRecipientsInfo])
 
     const registerUser = () => {
-        const socket = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`)
+        const socket = new SockJS(`${ApiUtils.getBaseUrl()}/ws?jwtToken=${ApiUtils.getAuthToken()}`)
         stompClient = Stomp.over(socket);
         stompClient.connect({}, onConnected, onError);
     };
@@ -258,7 +258,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
                     </div>
                     <div className="flex w-full items-center">
                         {/*DO NOT TOUCH className="hidden" this is intentional by design to show the SVG for the input!! You fool*/}
-                        <input id="chat-attach-file" type="file" id="file-input" className="hidden" onChange={handleUserVideo}/>
+                        <input  type="file" id="file-input" className="hidden" onChange={handleUserVideo}/>
                         {/*Re-enable this feature IF file upload is implemented otherwise leave hidden*/}
                         <label htmlFor="file-input" className="h-8 w-8 rounded-full bg-custom-red mr-2 hover:bg-custom-dark-red cursor-pointer hidden">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 p-1.5">
