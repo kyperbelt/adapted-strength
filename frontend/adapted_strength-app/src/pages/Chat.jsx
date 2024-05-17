@@ -1,12 +1,12 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import SockJS from "sockjs-client";
-import {Stomp} from "@stomp/stompjs";
-import {UserApi} from "../api/UserApi";
-import {ChatApi} from "../api/ChatApi";
-import {ApiUtils} from "../api/ApiUtils";
-import {HttpStatus} from "../api/ApiUtils";
+import { Stomp } from "@stomp/stompjs";
+import { UserApi } from "../api/UserApi";
+import { ChatApi } from "../api/ChatApi";
+import { ApiUtils } from "../api/ApiUtils";
+import { HttpStatus } from "../api/ApiUtils";
 
-function MessageConstructor({senderInfo, recipientInfo, chatInfo}) {
+function MessageConstructor({ senderInfo, recipientInfo, chatInfo }) {
     const date = new Date(chatInfo.timeStamp);
     const dateFormat = date.toLocaleTimeString("en-US", {
         hour: "2-digit",
@@ -76,33 +76,33 @@ export default function Chat() {
                         .then(recipientResponse => {
                             if (recipientResponse.status === HttpStatus.OK) {
                                 //TODO: assuming that there is only one coach "Alex Palting"
-                                return {senderData, recipientData: recipientResponse.data[0]};
+                                return { senderData, recipientData: recipientResponse.data[0] };
                             } else {
                                 throw new Error(`Error occurred when fetching a list of coaches\nHTTP Status: ${recipientResponse.status}`)
                             }
                         })
                 })
-                .then(({senderData, recipientData}) => {
+                .then(({ senderData, recipientData }) => {
                     return ChatApi.getChat(senderData.email, recipientData.email)
                         .then(senderChatResponse => {
                             if (senderChatResponse.status === HttpStatus.OK) {
-                                return {senderData, recipientData, senderChatData: senderChatResponse.data}
+                                return { senderData, recipientData, senderChatData: senderChatResponse.data }
                             } else {
                                 throw new Error(`Error occurred when fetching sender's chat information\nHTTP Status: ${senderChatResponse.status}`);
                             }
                         })
                 })
-                .then(({senderData, recipientData, senderChatData}) => {
+                .then(({ senderData, recipientData, senderChatData }) => {
                     return ChatApi.getChat(recipientData.email, senderData.email)
                         .then(recipientChatResponse => {
                             if (recipientChatResponse.status === HttpStatus.OK) {
-                                return {senderData, recipientData, senderChatData, recipientChatData: recipientChatResponse.data}
+                                return { senderData, recipientData, senderChatData, recipientChatData: recipientChatResponse.data }
                             } else {
                                 throw new Error(`Error occurred when fetching recipient's chat information\nHTTP Status: ${recipientChatResponse.status}`)
                             }
                         })
                 })
-                .then(({senderData, recipientData, senderChatData, recipientChatData}) => {
+                .then(({ senderData, recipientData, senderChatData, recipientChatData }) => {
                     setSenderInfo(senderData);
                     setRecipientInfo(recipientData);
 
@@ -198,7 +198,7 @@ export default function Chat() {
         return map;
     };
 
-    const ChatList = ({messages}) => {
+    const ChatList = ({ messages }) => {
         //TODO: make sure that if the data is already sorted just generate on message received
         const chatMap = generateChatMap(messages);
         const chatList = [];
@@ -218,14 +218,14 @@ export default function Chat() {
 
             for (let message of chatMap.get(key)) {
                 chatList.push(<li key={message.id}>
-                    <MessageConstructor senderInfo={senderInfo} recipientInfo={recipientInfo} chatInfo={message}/>
+                    <MessageConstructor senderInfo={senderInfo} recipientInfo={recipientInfo} chatInfo={message} />
                 </li>);
             }
         }
 
         return (<ul>
-                {chatList}
-            </ul>
+            {chatList}
+        </ul>
         );
     };
 
@@ -262,7 +262,7 @@ export default function Chat() {
                 Chatting with {recipientInfo.fullName}
             </div>
             <div id="chat-message" className="mx-2 p-4 bg-white border-x border-gray-200 overflow-auto flex-grow">
-                <ChatList messages={chatInfo}/>
+                <ChatList messages={chatInfo} />
             </div>
             <div id="chat-controls" className="mx-2 mb-2 border border-gray-200 p-4 rounded-b-xl bg-gray-200">
                 {/*Re-enable this feature IF file upload is implemented otherwise leave hidden*/}
@@ -271,18 +271,18 @@ export default function Chat() {
                 </div>
                 <div className="flex w-full items-center">
                     {/*DO NOT TOUCH className="hidden" this is intentional by design to show the SVG for the input!! You fool*/}
-                    <input id="chat-attach-file" type="file" id="file-input" className="hidden" onChange={handleUserVideo}/>
+                    <input  type="file" id="file-input" className="hidden" onChange={handleUserVideo} />
                     {/*Re-enable this feature IF file upload is implemented otherwise leave hidden*/}
                     <label htmlFor="file-input" className="h-8 w-8 rounded-full bg-custom-red mr-2 hover:bg-custom-dark-red cursor-pointer hidden">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 p-1.5">
-                            <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H7.5M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V9.75V12V19C19 20.1046 18.1046 21 17 21H16.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 21L12 13M12 13L14.5 15.5M12 13L9.5 15.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H7.5M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V9.75V12V19C19 20.1046 18.1046 21 17 21H16.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M12 21L12 13M12 13L14.5 15.5M12 13L9.5 15.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </label>
-                    <input id="chat-input-box" type="text" placeholder="Type your message..." className="flex-1 rounded-full px-4 py-2 border border-gray-200 focus:outline-none" value={userMessage.content} onChange={handleUserMessage}/>
+                    <input id="chat-input-box" type="text" placeholder="Type your message..." className="flex-1 rounded-full px-4 py-2 border border-gray-200 focus:outline-none" value={userMessage.content} onChange={handleUserMessage} />
                     <button id="chat-submit" className="h-8 w-8 rounded-full ml-2 bg-custom-red hover:bg-custom-dark-red" onClick={sendUserMessage}>
                         <svg className="fill-current fill-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 7V17M12 7L16 11M12 7L8 11" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 7V17M12 7L16 11M12 7L8 11" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                 </div>

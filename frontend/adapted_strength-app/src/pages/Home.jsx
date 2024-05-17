@@ -13,11 +13,12 @@ export default function Home() {
         document.title = "Adapted Strength";
     }, []);
 
+
     const placeholderImage = "https://placehold.co/300x200";
-    const fitnessJourneyImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237812222638559364/coachMoment5-min.JPEG?ex=663d01f7&is=663bb077&hm=59fda9e269c2579caf58c5ed45101b49226276632e0351e05554afed19fb0b1d&";
-    const powerliftingImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237814047471042641/Promotion_2.jpg?ex=663d03aa&is=663bb22a&hm=1747887e89b9fbad2f02b2c518cb70e05437e220a4804c2e6c2c91b68b07dce6&";
-    const olympicWeightliftingImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237814176248893510/Promotion_2-10.jpg?ex=663d03c9&is=663bb249&hm=1986af909eda446d750b7212f104e23fd4d1eb043f7c41402e72c7034761bb78&";
-    const bodybuildingImage = "https://cdn.discordapp.com/attachments/1237810041701273751/1237814326165897256/IMG_5070.JPEG?ex=663d03ec&is=663bb26c&hm=b397c4a2914e18e4501b9d1accf186f58bb3f2300cf959373f1a00a75f879bb2&";
+    const fitnessJourneyImage = "https://i.ibb.co/0rjhxxF/journey-min.jpg";
+    const powerliftingImage = "https://i.ibb.co/sQP7Jgm/adapteds-powerlifting-min.jpg";
+    const olympicWeightliftingImage ="https://i.ibb.co/VSDXFzd/adapteds-olylifting-min.jpg" ;
+    const bodybuildingImage = "https://i.ibb.co/5sxKS98/adapteds-bodybuilding-min.jpg" ;
 
     return (
         <>
