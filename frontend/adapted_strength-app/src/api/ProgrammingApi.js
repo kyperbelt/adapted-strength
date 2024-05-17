@@ -228,6 +228,7 @@ export class ProgrammingApi {
       dayDescription: description,
       repCycleIds: cycles,
     };
+    console.log("updating day", updateDayRequest);
 
     return ApiUtils.apiPut("programming/day", updateDayRequest)
       .then((r) => {

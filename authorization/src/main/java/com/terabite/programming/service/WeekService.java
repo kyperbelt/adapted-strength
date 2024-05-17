@@ -27,7 +27,7 @@ public class WeekService {
     }
 
     public ResponseEntity<?> createNewWeek(Week week){
-        weekRepository.save(week);
+        log.info("New Week Created {}", weekRepository.save(week).getWeekId());
         return new ResponseEntity<>(week, HttpStatus.OK);
     }
 

@@ -172,6 +172,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
 
                         if (newDayResponse) {
                                 // add (Duplicate) to the name 
+                                console.log("Day duplicated: ", newDayResponse);
                                 const newDay = {
                                         dayId: newDayResponse.dayId,
                                         name: `${day.name} (Duplicate)`,
@@ -180,7 +181,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                         repCycles: newDayResponse.repCycles,
                                 };
                                 const updatedNewDayResponse = await ProgrammingApi.updateDay({
-                                        dayId: newDay.dayId, dayName: newDay.name, dayDescription: newDay.description, cycles: newDay.repCycles.map((cycle) => cycle.repCycleId)
+                                        dayId: newDay.dayId, dayName: newDay.name, description: newDay.description, cycles: newDay.repCycles.map((cycle) => cycle.repCycleId)
                                 }).then((r) => {
                                         if (r.status === HttpStatus.OK) {
                                                 // update week 
@@ -296,7 +297,12 @@ function EditDayDialog({ dayId, dayState, className, ...props }) {
                         return day;
                 });
 
-                await ProgrammingApi.updateDay({ dayId: dayId, dayName: name, dayDescription: description }).then((r) => {
+                const getDay = newDays.find((day) => day.dayId === dayId);
+
+                await ProgrammingApi.updateDay({
+                        dayId: dayId, dayName: name, dayDescription: description,
+                        cycles: getDay.repCycles.map((cycle) => cycle.repCycleId)
+                }).then((r) => {
                         if (r.status === HttpStatus.OK) {
                                 console.log("Day updated: ", name, description);
                                 return r;
