@@ -101,7 +101,7 @@ function ChatPopUp({senderInfo, recipientInfo, className, onCloseDialog, senderM
     }, [recipientInfo.unreadMessage, updateRecipientsInfo])
 
     const registerUser = () => {
-        const socket = new SockJS(`http://localhost:8080/ws?jwtToken=${ApiUtils.getAuthToken()}`)
+        const socket = new SockJS(`${ApiUtils.getBaseUrl()}/ws?jwtToken=${ApiUtils.getAuthToken()}`)
         stompClient = Stomp.over(socket);
         stompClient.connect({}, onConnected, onError);
     };
