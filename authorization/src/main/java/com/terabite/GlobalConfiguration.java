@@ -10,6 +10,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.authorization.service.JwtService;
+import com.terabite.chat.ChatApi;
+import com.terabite.chat.repository.ChatUserRepository;
 import com.terabite.programming.ProgrammingApi;
 import com.terabite.programming.repository.DayRepository;
 import com.terabite.programming.repository.ProgramRepository;
@@ -98,6 +100,11 @@ public class GlobalConfiguration {
 
 	@Bean ProgrammingApi programmingApi(final ProgramRepository programRepository, final WeekRepository weekRepository, final DayRepository dayRepository, final RepCycleRepository repCycleRepository) {
 		return new ProgrammingApi(programRepository, weekRepository, dayRepository, repCycleRepository);
+	}
+
+	@Bean 
+	public ChatApi chatApi(final ChatUserRepository chatUserRepository) {
+		return new ChatApi(chatUserRepository);
 	}
 
 	@Bean

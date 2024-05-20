@@ -9,9 +9,8 @@
 
 The project aims to take existing processes necessary to run the business that require third-party tools and consolidate them into a single and easy-to-use application.
 
-#### Figma Design Mockup
-
-![](https://drive.google.com/uc?export=view&id=16GHbIQdPy5OOJtP7mchi47ctN4BAl0Se)
+#### Page Layout
+![](./docs/media/text93.png)
 
 #### Backend Architecture Diagram
 ![](https://drive.google.com/uc?export=view&id=19TRJgWHKgCtSFHVAdwZX_UsBLFx24M7j)
@@ -19,8 +18,6 @@ The project aims to take existing processes necessary to run the business that r
 #### ERD
 ![](https://drive.google.com/uc?export=view&id=1QwXzT-TkcJQOkByXfeiu-PY5kpEQLR5n)
 
-### Cumulitive Flow Diagram
-![](https://drive.google.com/uc?export=view&id=1HQV8A90qm86nlSK1Er60i-4AGOZCSX9I)
 
 ## Features
 * Modern Mobile Friendly UI
@@ -40,6 +37,28 @@ The project aims to take existing processes necessary to run the business that r
 ## Setup Instructions
 > 🚧 PREREQUISITES 🚧 You need NodeJS>18 and Java>=17.
 
+### Environment Setup
+You need the following Environment variables set.
+```sh 
+export ADAPTED_STRENGTH_WEB_URL="localhost"
+export ADAPTED_STRENGTH_WEB_PORT="3000"
+export ADAPTED_STRENGTH_WEB_PROTOCOL="http"
+export ADAPTED_STRENGTH_EMAIL="<email here>"
+export ADAPTED_STRENGTH_PASSWORD="<password here>"
+
+export AWS_SECRET_KEY=
+export AWS_ACCESS_KEY=
+export AWS_REGION="us-west-2"
+
+export ADAPTED_STRENGTH_STRIPE_SECRET_KEY=<strike secret key here>
+export ADAPTED_STRENGTH_BASE_PRICE_ID=<product price here>
+export ADAPTED_STRENGTH_GENERAL_PRICE_ID=<product price here>
+export ADAPTED_STRENGTH_SPECIFIC_PRICE_ID=<product price here>
+export ADAPTED_STRENGTH_STRIPE_ENDPOINT_SECRET=<stripe endpoint secret here>
+```
+> 🚧 NOTE 🚧 The `ADAPTED_STRENGTH_EMAIL` and `ADAPTED_STRENGTH_PASSWORD` are used for sending emails. 
+> Replace everything in the <> with the actual values.
+
 1. Clone the repository using:
    ```sh
     git clone https://github.com/kyperbelt/adapted-strength.git && cd adapted-strength
@@ -54,16 +73,30 @@ The project aims to take existing processes necessary to run the business that r
    cd ../frontend/adapted_strength-app
    ```
     And then Run `npm install && npm start`
-## Timeline
-![](https://drive.google.com/uc?export=view&id=1fbYiMPkHQYXknti6dgBGD8rmw68XBUmh)
 
+### Testing 
+#### Backend
+1. Move into the authorization folder
+   ```sh
+   cd authorization
+   ```
+    And then Run `./gradlew test`
 
-## Team Tenets
-1. 
-2. 
-3. 
-4. 
-5. 
+#### Frontend
+1. Move into the frontend folder
+   ```sh
+   cd ../frontend/adapted_strength-app
+   ```
+    And then Run `npm test`
+    > 🚧 NOTE 🚧 There is currently not many unit tests for the frontend. 
+2. To run manual functinal tests, first setup the backend by 
+    1. On a separate terminal, move into the authorization folder
+        ```sh
+        cd authorization
+        ```
+        And then Run `./gradlew bootRun`
+    2. Move into the frontend folder in your original terminal and run `npm install && npm start`
+
 
 ## Onboarding Resources
 

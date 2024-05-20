@@ -1,4 +1,3 @@
-
 // When deploying use the following URL 
 // const BASE_API_URL = 'https://q9jkbki2nc.execute-api.us-east-1.amazonaws.com';
 
@@ -418,7 +417,3 @@ export const HttpStatus = {
     */
   NETWORK_AUTHENTICATION_REQUIRED: 511,
 }
-
-
-
-

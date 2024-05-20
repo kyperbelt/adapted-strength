@@ -52,6 +52,7 @@ public class DayService {
     public ResponseEntity<?> getDay(Day day) {
         if(dayRepository.findById(day.getDayId()).isEmpty()){
             log.error("Day {} not found", day.getDayId());
+            log.error("Day {} not found", day.getDayId());
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }
         else{

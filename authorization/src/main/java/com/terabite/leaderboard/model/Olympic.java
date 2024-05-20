@@ -16,6 +16,9 @@ public class Olympic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonAlias("name")
+    private String name;
+
     @JsonAlias("weight_class")
     private String weightClass;
 
@@ -31,15 +34,20 @@ public class Olympic {
     @JsonAlias("total")
     private double total;
 
+    public Olympic() {
+    }
+
     public Long getId() {
         return id;
     }
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
 
     public String getWeightClass() {
         return weightClass;
     }
 
-    public void setWeightClass() {
+    public void setWeightClass(String weightClass) {
         this.weightClass = weightClass;
     }
 
@@ -47,7 +55,7 @@ public class Olympic {
         return gender;
     }
 
-    public void setGender() {
+    public void setGender(char gender) {
         this.gender = gender;
     }
 
@@ -55,7 +63,7 @@ public class Olympic {
         return snatch;
     }
 
-    public void setSnatch() {
+    public void setSnatch(double snatch) {
         this.snatch = snatch;
     }
 
@@ -63,7 +71,7 @@ public class Olympic {
         return cleanJerk;
     }
 
-    public void setCleanJerk() {
+    public void setCleanJerk(double cleanJerk) {
         this.cleanJerk = cleanJerk;
     }
 

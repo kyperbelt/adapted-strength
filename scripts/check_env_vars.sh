@@ -6,9 +6,9 @@
 ## This way we can check if they are set, and if they are not, we can exit the script with an error message 
 ## instead of the vague error message we get from SpringBoot. 
 env_vars=(
-    "ADAPTED_STRENGTH_EMAIL"
-    "ADAPTED_STRENGTH_PASSWORD"
-    "ADAPTED_STRENGTH_WEB_URL"
+    # "ADAPTED_STRENGTH_EMAIL"
+    # "ADAPTED_STRENGTH_PASSWORD"
+    # "ADAPTED_STRENGTH_WEB_URL"
 )
 
 error_count=0
