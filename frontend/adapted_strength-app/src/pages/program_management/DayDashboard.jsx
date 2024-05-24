@@ -1,5 +1,6 @@
 import BreadCrumb from "../../components/BreadCrumb";
 import { ProgrammingApi } from "../../api/ProgrammingApi";
+import { VideoApi } from "../../api/VideoApi";
 import { PrimaryButton, SecondaryButton, IconButton } from "../../components/Button";
 import { CardBack, CardBack1 } from "../../components/Card";
 import { BasicModalDialogue } from "../../components/Dialog";
@@ -10,6 +11,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { BasicTextArea } from '../../components/TextArea';
 
 import { useState, useEffect } from "react";
+import { BasicSelect } from "../../components/forms/Select";
 
 
 export default function DayDashboard({ breadCrumbState, ...props }) {
@@ -21,6 +23,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
         const [days, setDays] = useState([]);
         const [dayEditId, setDayEditId] = useState(null);
         const [selectedWeek, setSelectedWeek] = useState(null);
+        const [movements, setMovements] = useState(null);
 
         const [selectedProgram, setSelectedProgram] = useState(null);
 
@@ -48,6 +51,16 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                 }).catch((error) => {
                         console.error(`Error getting program ${breadcrumb[0]}: ${error}`);
                 });
+
+                VideoApi.getAllMovements()
+                        .then((data) => {
+                                console.log("movements");
+                                console.log(data);
+                                setMovements(data);
+                        })
+                        .catch((error) => {
+                                console.log(error);
+                        });
         }, []);
 
         const OnDayClicked = (day) => {
@@ -261,7 +274,7 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                                                 }}
                                                         />
 
-                                                        {day.open && <RepCycleContainer day={day} dayState={[days, setDays]} />}
+                                                        {day.open && <RepCycleContainer movements={movements} day={day} dayState={[days, setDays]} />}
                                                 </>
                                         ))}
                                 </StyledCheckboxTable>
@@ -339,7 +352,7 @@ function EditDayDialog({ dayId, dayState, className, ...props }) {
 }
 
 
-function RepCycleContainer({ day, dayState }) {
+function RepCycleContainer({ day, dayState, movements }) {
 
         const [mode, setMode] = useState("create");
         const [selectedRepCycle, setSelectedRepCycle] = useState(null);
@@ -373,7 +386,7 @@ function RepCycleContainer({ day, dayState }) {
                                                 <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
                                         </svg> Add RepCycle
                                 </button>
-                                <RepCycleForm day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} dayState={dayState} onClose={() => {
+                                <RepCycleForm movements={movements} day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} dayState={dayState} onClose={() => {
                                         setMode("create");
                                 }} />
                         </td>
@@ -481,7 +494,7 @@ function RepCycleItem({ className, title, value }) {
 
 }
 
-function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState }) {
+function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, movements }) {
 
         const dayId = day.dayId;
         const [days, setDays] = dayState;
@@ -503,6 +516,13 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState })
                 document.getElementById(`movement-id-${dayId}`).value = repCycle.movementId;
         }
 
+        const getMovementOptions = (selectedId) => {
+                return movements.map((movement) => {
+                        return (<option key={movement.id} className="px-6 py-3 text-left font-bold" value={`${movement.id}`}>{movement.title}</option>);
+                });
+
+        }
+
         const onSubmit = async (e) => {
                 e.preventDefault();
                 // get all the form data 
@@ -516,8 +536,9 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState })
                         restTime: dataRaw.get(`rest-time-${dayId}`),
                         coachNotes: "",
                         workoutOrder: dataRaw.get(`workout-order-${dayId}`),
-                        movementId: dataRaw.get(`movement-id-${dayId}`),
+                        movementId: -1
                 };
+                data.movementId =  document.getElementById(`movement-id-${dayId}`).value;
                 data.coachNotes = document.getElementById(`coach-notes-${dayId}`).value;
                 let cycle = null;
 
@@ -652,7 +673,12 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState })
                                         <LabeledInputField className="flex-1" id={`weight-${dayId}`} placeholder="Weight" required={true} type="text" />
                                         <LabeledInputField className="flex-1" id={`rest-time-${dayId}`} placeholder="Rest Time" required={true} type="text" />
                                 </div>
-                                <LabeledInputField id={`movement-id-${dayId}`} placeholder="Movement ID" required={true} type="number" />
+                                <div className="w-full flex flex-col space-y-1">
+                                        <label htmlFor={`movement-id-${dayId}`}>Movement:</label>
+                                        <BasicSelect id={`movement-id-${dayId}`} className={`w-full`}>
+                                                {getMovementOptions(0)}
+                                        </BasicSelect>
+                                </div>
 
                                 {/*TODO: map movement it to movement names and show a dropdown list */}
                                 <BasicTextArea id={`coach-notes-${dayId}`} label="Coach Notes" placeholder="Write your notes here..." />
@@ -664,3 +690,4 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState })
                 </BasicModalDialogue>
         );
 }
+                                // <LabeledInputField id={`movement-id-${dayId}`} placeholder="Movement ID" required={true} type="number" />
