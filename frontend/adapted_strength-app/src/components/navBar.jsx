@@ -15,9 +15,27 @@ const navigation = [
   { component: <> Book Consultation</>, to: "/consultations", selected: false },
   { component: <> About Us</>, to: "/about", selected: false },
   { component: <> Movement Library</>, to: "/movement-library", selected: false },
+
   {
     component: <> Manage Programs</>,
     to: "/program-management",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+            (await AuthApi.hasRole("ROLE_COACH")) ||
+            (await AuthApi.hasRole("ROLE_ADMIN"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    },
+  },
+  {
+    component: <> Manage Users</>,
+    to: "/user-management",
     selected: false,
     state: () => {
       return new Promise(async (resolve, reject) => {
@@ -250,7 +268,7 @@ export default function NavBar() {
           >
             <ul
               id="nav_items"
-              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:space-x-8 rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
+              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:flex-wrap lg:space-x-8 lg:space-y-6 rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
             >
               {navItems.map((item, index) => {
                 return (

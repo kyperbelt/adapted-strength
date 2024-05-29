@@ -3,8 +3,8 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import { BrowserRouter, Link, Route, Routes, useLocation} from "react-router-dom";
-import { lazy, Suspense, useState, useLayoutEffect} from 'react';
+import { BrowserRouter, Link, Route, Routes, useLocation } from "react-router-dom";
+import { lazy, Suspense, useState, useLayoutEffect } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
 // They are still only react components
@@ -54,8 +54,8 @@ const Tab = lazy(() => import("./components/TabComponents/Tab.jsx"));
 
 // import footer from '../footer'
 
-function Wrapper({children}) {
- const location = useLocation();
+function Wrapper({ children }) {
+  const location = useLocation();
   useLayoutEffect(() => {
     document.documentElement.scrollTo(0, 0);
   }, [location.pathname]);
@@ -67,7 +67,7 @@ function App() {
   { !isTokenFound && fetchToken(setTokenFound); }
 
 
-        // <Wrapper>
+  // <Wrapper>
   return (
     <div id="app" className="flex-1 flex flex-col">
       {
@@ -105,15 +105,21 @@ function App() {
 
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
               <Route path="about" element={<About />} />
-            
+
               <Route path="sign-up" element={
-                  <RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile">
-                      <SignUp />
-                  </RouteGuard>
+                <RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile">
+                  <SignUp />
+                </RouteGuard>
               } />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-              <Route path="user-management/:email?" element={<UserManagement />} />
+              <Route path="user-management/:email?" element={
+                <Suspense fallback="...">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <UserManagement />
+                  </RouteGuard>
+                </Suspense>
+              } />
               <Route path="/program-management/:programId?/:weekId?/:dayId?" element={
                 <Suspense fallback="...">
                   <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
@@ -189,6 +195,6 @@ function App() {
   );
 }
 
-        // </Wrapper>
+// </Wrapper>
 
 export default App;
