@@ -20,6 +20,8 @@ import com.terabite.programming.repository.WeekRepository;
 import com.terabite.user.UserApi;
 import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.SubscriptionService;
+import com.terabite.user.service.UnsubscribeService;
 
 @Configuration
 public class GlobalConfiguration {
@@ -98,19 +100,23 @@ public class GlobalConfiguration {
 		return new AuthorizationApi(jwtService, loginRepository);
 	}
 
-	@Bean ProgrammingApi programmingApi(final ProgramRepository programRepository, final WeekRepository weekRepository, final DayRepository dayRepository, final RepCycleRepository repCycleRepository) {
+	@Bean
+	ProgrammingApi programmingApi(final ProgramRepository programRepository, final WeekRepository weekRepository,
+			final DayRepository dayRepository, final RepCycleRepository repCycleRepository) {
 		return new ProgrammingApi(programRepository, weekRepository, dayRepository, repCycleRepository);
 	}
 
-	@Bean 
+	@Bean
 	public ChatApi chatApi(final ChatUserRepository chatUserRepository) {
 		return new ChatApi(chatUserRepository);
 	}
 
 	@Bean
-	public UserApi userApi(final UserRepository userRepository, final UserProgrammingRepository userProgrammingRepository) {
+	public UserApi userApi(final UserRepository userRepository,
+			final UserProgrammingRepository userProgrammingRepository,
+			final SubscriptionService subscriptionService, final UnsubscribeService unsubscribeService) {
 		// SAME AS AUTHAPI above
-		return new UserApi(userRepository, userProgrammingRepository);
+		return new UserApi(userRepository, userProgrammingRepository, unsubscribeService, subscriptionService);
 	}
 
 	@Bean(name = BEAN_NAME_AUTH_COOKIE_NAME)
@@ -135,7 +141,7 @@ public class GlobalConfiguration {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedOriginPatterns("*")
-						.allowedMethods("HEAD" ,"GET", "POST", "PUT", "DELETE");
+						.allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE");
 			}
 		};
 	}

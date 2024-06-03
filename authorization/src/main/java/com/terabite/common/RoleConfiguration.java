@@ -1,3 +1,7 @@
+/**
+ * MIT 
+ * @author Jonathan Camarena Camacho
+ */
 package com.terabite.common;
 
 import java.util.ArrayList;
@@ -5,6 +9,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * RoleConfiguration
+ *
+ * This class can be used to create a configuration of roles that can be used to
+ * validate a list of given roles. These roles are given to a User and the Role
+ * configuration can check if the roles of the user meet the criterion for
+ * validity.
+ *
+ * @example
+ *
+ *          <pre>
+ * <code>
+ * RoleConfiguration coachOrAdminConfig = RoleConfiguration.builder().any(Roles.ROLE_COACH, Roles.ROLE_ADMIN);
+ *
+ * coachOrAdminConfig.validateRolesList(nodAdminUserLogin.getRoles()); // this will be false because the user will not have either the admin or coach role.
+ *
+ * coachOrAdminConfig.validateRolesList(adminUserLogin.getRoles()); // true 
+ *
+ * coachOrAdminConfig.validateRolesList(coachUserLogin.getRoles()); // true 
+ * </code>
+ *          </pre>
+ *
+ */
 public class RoleConfiguration {
 
     /**

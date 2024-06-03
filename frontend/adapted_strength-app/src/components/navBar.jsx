@@ -268,7 +268,7 @@ export default function NavBar() {
           >
             <ul
               id="nav_items"
-              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:flex-wrap lg:space-x-8 lg:space-y-6 rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
+              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:flex-wrap rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
             >
               {navItems.map((item, index) => {
                 return (
@@ -341,7 +341,7 @@ function NavItem({ to, children, onClick, state, className }) {
         <Link
           id="nav-item"
           to={to}
-          className={`${className} text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark lg:hover:bg-transparent lg:border-0 lg:hover:text-accent lg:p-0`}
+          className={`${className} lg:me-4 text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark lg:hover:bg-transparent lg:border-0 lg:hover:text-accent lg:p-0`}
           onClick={onClick}
         >
           {children}

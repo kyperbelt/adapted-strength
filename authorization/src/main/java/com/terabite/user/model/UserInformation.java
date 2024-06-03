@@ -2,6 +2,7 @@ package com.terabite.user.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.terabite.common.SubscriptionStatus;
 import com.terabite.payment.model.Customer;
 
 import jakarta.persistence.*;

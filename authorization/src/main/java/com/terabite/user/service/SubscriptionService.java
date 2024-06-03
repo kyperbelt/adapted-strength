@@ -5,7 +5,7 @@ import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.common.dto.Payload;
 import com.terabite.user.UserApi;
 import com.terabite.user.model.SubscribeRequest;
-import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.common.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 import org.slf4j.Logger;

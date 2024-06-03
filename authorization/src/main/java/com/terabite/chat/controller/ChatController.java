@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,7 +26,6 @@ import com.terabite.chat.service.ChatRoomService;
 import com.terabite.chat.service.ChatUserService;
 import com.terabite.chat.service.MessageService;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -91,14 +89,12 @@ public class ChatController {
     }
     
 
-    //TODO: for testing purposes only, we should not keep this
     @GetMapping("/v1/chat/messages")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<List<Message>> getMessages() {
         return ResponseEntity.ok(messageService.getAllMessages());
     }
 
-    //TODO: for testing purposes only, we should not keep this
     @GetMapping("/v1/chat/chatRooms")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<List<ChatRoom>> getChatRooms() {

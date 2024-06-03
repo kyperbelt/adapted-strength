@@ -3,7 +3,7 @@ package com.terabite.user.service;
 import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.user.UserApi;
-import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.common.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.repository.UserRepository;
 import org.slf4j.Logger;

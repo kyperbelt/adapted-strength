@@ -1,4 +1,4 @@
-package com.terabite.user.model;
+package com.terabite.common;
 
 public enum SubscriptionStatus {
     NO_SUBSCRIPTION,

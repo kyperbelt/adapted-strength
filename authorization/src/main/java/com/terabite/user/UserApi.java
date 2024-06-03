@@ -2,15 +2,18 @@ package com.terabite.user;
 
 import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
+import com.terabite.user.service.SubscriptionService;
+import com.terabite.user.service.UnsubscribeService;
 import com.terabite.authorization.model.Login;
 import com.terabite.common.Roles;
 import com.terabite.user.model.SubscribeRequest;
-import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.common.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
 import com.terabite.user.model.UserProgramming;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,10 +45,15 @@ public class UserApi {
 
     private final UserRepository userRepository;
     private final UserProgrammingRepository userProgrammingRepository;
+    private final UnsubscribeService unsubscribeService;
+    private final SubscriptionService subscriptionService;
 
-    public UserApi(UserRepository userRepository, UserProgrammingRepository userProgrammingRepository) {
+    public UserApi(UserRepository userRepository, UserProgrammingRepository userProgrammingRepository,
+            UnsubscribeService unsubscribeService, SubscriptionService subscriptionService) {
         this.userRepository = userRepository;
         this.userProgrammingRepository = userProgrammingRepository;
+        this.unsubscribeService = unsubscribeService;
+        this.subscriptionService = subscriptionService;
     }
 
     /**
@@ -70,7 +78,45 @@ public class UserApi {
     public List<UserProgramming> getAllUsersForProgram(long programId) {
         return userProgrammingRepository.findByAssignedProgramId(programId);
     }
-    
+
+    /**
+     * Set the subscription for the specified user and set the expiration to the
+     * given expiration date.
+     *
+     * @param userId             - the userID is usually their email.
+     * @param subscriptionStatus - the {@link SubscriptionStatus} (BASE_CLIENT,
+     *                           SPECIFIC_CLIENT)
+     * @param expiration         - when is the expiration set to expire.
+     * @return whether the subscription operation was successful or not.
+     */
+    public boolean setUserSubscription(final String userId, final SubscriptionStatus subscriptionStatus,
+            final Date expiration) {
+        final Optional<UserInformation> userOption = userRepository.findByEmail(userId);
+        if (userOption.isEmpty()) {
+            log.error(
+                    "Tried and Failed to set subscruption for user with email '{}' that did not exist in userInformationTable",
+                    userId);
+            return false;
+        }
+        final UserInformation user = userOption.get();
+
+        switch (subscriptionStatus) {
+            case NO_SUBSCRIPTION:
+                unsubscribeService.unsubscribe(userId);
+                user.setExpirationDate(null);
+                return true;
+            case SPECIFIC_CLIENT:
+            case BASE_CLIENT:
+                subscriptionService.subscribe(new SubscribeRequest(subscriptionStatus), userId);
+                user.setExpirationDate(expiration);
+                return true;
+            default:
+                log.error("'{}' Subscription not supported", subscriptionStatus.name());
+                break;
+        }
+        // unable to set user Subscription
+        return false;
+    }
 
     /**
      * Subscription roles are an important subset of authorization roles that are
@@ -114,13 +160,12 @@ public class UserApi {
      * @return a valid subscription
      */
     public static List<String> getAdditiveRolesFromSubscribeRequest(SubscribeRequest request) {
-        Optional<Roles> roleOption = Roles.getRoleByName("ROLE_"+request.status().name());
+        Optional<Roles> roleOption = Roles.getRoleByName("ROLE_" + request.status().name());
 
         if (roleOption.isEmpty() && request.status() != SubscriptionStatus.NO_SUBSCRIPTION) {
             log.error("Invalid subscription status: {}", request.status());
             return List.of();
         }
-
 
         final Roles role = roleOption.get();
         List<Roles> rolesList = new ArrayList<>();

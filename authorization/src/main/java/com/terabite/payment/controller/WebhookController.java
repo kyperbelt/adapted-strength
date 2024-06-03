@@ -28,7 +28,6 @@ public class WebhookController {
     @PostMapping("/")
     public HttpStatus handleWebhookEvent(@RequestBody String payload,
             @RequestHeader("Stripe-Signature") Map<String, String> stripeSignature) {
-
         return webhookService.handleWebhookEvent(payload, stripeSignature);
     }
 

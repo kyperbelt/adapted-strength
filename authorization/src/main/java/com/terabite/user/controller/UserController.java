@@ -147,7 +147,8 @@ public class UserController {
         }
 
         userRepository.save(userInformation);
-        chatApi.createUser(userInformation.getEmail(), userInformation.getFirstName() + " " + userInformation.getLastName(),
+        chatApi.createUser(userInformation.getEmail(),
+                userInformation.getFirstName() + " " + userInformation.getLastName(),
                 "CLIENT");
         return ResponseEntity.ok(Payload.of("Account information created successfully"));
     }
@@ -216,7 +217,8 @@ public class UserController {
     @PostMapping("/programming")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> addProgramming(@RequestParam("email") String email,
-            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek, @RequestParam("startDate") Long startDate) {
+            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek,
+            @RequestParam("startDate") Long startDate) {
         return userProgrammingService.addProgramming(email, programId, startWeek, startDate);
     }
 
@@ -241,6 +243,14 @@ public class UserController {
         // return new ResponseEntity<>("Endpoint to edit / update comment",
         // HttpStatus.NOT_IMPLEMENTED);
         return userProgrammingService.updateComment(commentId, comment);
+    }
+
+    @PostMapping("subscription")
+    @PreAuthorize("hasAnyAuthoritiy('ROLE_ADMIN')")
+    public ResponseEntity<?> updateSubcription(@RequestParam("email") final String email,
+            @RequestParam("tier") final String subscriptionTier) {
+
+        return ResponseEntity.ok(Payload.of("test"));
     }
 
     @PostMapping("/unsubscribe")

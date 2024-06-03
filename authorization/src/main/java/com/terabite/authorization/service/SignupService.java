@@ -5,7 +5,7 @@ import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.common.Roles;
 import com.terabite.common.model.LoginDetails;
-import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.common.SubscriptionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
