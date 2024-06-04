@@ -66,6 +66,7 @@ export default function UserManagement() {
   const [searchText, setSearchText] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [programs, setPrograms] = useState([]);
+  const [subscriptionTiers, setSubscriptionTiers] = useState([]);
 
   if (!loc.pathname.endsWith("/user-management") && !selectedUser) {
     setTimeout(() => {
@@ -90,6 +91,11 @@ export default function UserManagement() {
   useEffect(() => {
     // // Fetch users here
     // let users = null;
+
+    UserApi.getSubscriptionTiers().then((tiers) => {
+      setSubscriptionTiers(tiers);
+    });
+
     if (programs.length === 0) return;
     UserApi.getAllUsers()
       .then((data) => {
@@ -97,6 +103,7 @@ export default function UserManagement() {
           const programs = await UserApi.getProgramming(userId);
           return programs;
         };
+
 
         // users = data.map((user) => {
         //     return {
@@ -205,19 +212,20 @@ export default function UserManagement() {
         </>
       )}
       {selectedUser && (
-        <UserDashboard selectedUser={selectedUser} programs={programs} />
+        <UserDashboard selectedUser={selectedUser} programs={programs} tiers={subscriptionTiers} />
       )}
     </BlankPageContainer>
   );
 }
 
-function UserDashboard({ selectedUser, programs }) {
+function UserDashboard({ selectedUser, programs, tiers }) {
   const [assignedPrograms, setAssignedPrograms] = useState(
     selectedUser.programs || []
   );
   const [availablePrograms, setAvailablePrograms] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null);
 
   const getFilteredPrograms = (programs, searchText, assignedPrograms) => {
     const assignedIds = new Set(
@@ -243,6 +251,13 @@ function UserDashboard({ selectedUser, programs }) {
   };
 
   useEffect(() => {
+    UserApi.getUserSubscription({ email: selectedUser.email }).then(response => {
+      console.log("USER SUBSCRIBTION:\n", response);
+      setSubscriptionInfo(response);
+    });
+  }, []);
+
+  useEffect(() => {
     // Assuming `programs` includes all programs, we filter out those already assigned
     console.log("Assigned Programs: ", assignedPrograms);
     const assignedIds = new Set(assignedPrograms.map((p) => p.id));
@@ -250,6 +265,11 @@ function UserDashboard({ selectedUser, programs }) {
     const available = programs.filter((p) => !assignedIds.has(p.id));
     setAvailablePrograms(available);
   }, [programs, assignedPrograms]);
+
+  if (subscriptionInfo == null) {
+    return null;
+  }
+
 
   console.log("SelectedPRogram: ", selectedProgram);
   const handleAssignProgram = async (startWeek, startDate) => {
@@ -305,6 +325,7 @@ function UserDashboard({ selectedUser, programs }) {
       <h2 className="text-xl font-semibold text-center text-gray-600">
         {selectedUser.name}
       </h2>
+      <SubscriptionManagement user={selectedUser} tiers={tiers} subscriptionInfo={subscriptionInfo} />
       <div className="w-full p-4 bg-white rounded-lg shadow-sm">
         <h3 className="text-lg font-semibold text-gray-600 mb-2">
           Assigned Programs
@@ -424,6 +445,79 @@ function AssignProgram({ selectedProgram, handleAssignProgram }) {
         className="w-full py-2 px-4 "
       >
         Assign
+      </PrimaryButton>
+    </div>
+  );
+}
+
+function SubscriptionManagement({ user, tiers, subscriptionInfo }) {
+
+  const [subscription, setSubscription] = useState(user.subscription);
+  const [expiration, setExpiration] = useState(subscriptionInfo.expiration);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubscriptionChange = () => {
+    // // Handle subscription change logic
+    console.log("subscribtionStatus = ", subscription);
+    console.log("expiration = ", expiration);
+    // UserApi.updateUserSubscription(user.email, subscription)
+    //   .then(() => {
+    //     console.log("Subscription updated successfully");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error updating subscription: ", error);
+    //   });
+    if (expiration == null && subscription !== tiers[0]) {
+      setErrorMessage(`Expiration Date cannot be null when subscription is not '${tiers[0]}'`);
+      return;
+    }
+
+    UserApi.changeSubscribtionForUser({ email: user.email, status: subscription, expirationDate: expiration }).then(response => {
+      console.log(response);
+      setErrorMessage("");
+    }).catch(e => {
+      console.log(e);
+      setErrorMessage(e.message);
+    });
+  };
+
+  const updateExpiration = (dateString) => {
+    // check that expiration date string is not null
+    if (dateString == null) {
+      return;
+    }
+    const expirationDate = new Date(dateString);
+
+    setExpiration(expirationDate);
+  };
+
+  return (
+    <div className="w-full p-4 bg-white rounded-lg shadow-sm lg:max-w-screen-sm">
+      <h3 className="text-lg font-semibold text-gray-600 mb-2">Subscription Management</h3>
+      <span className={`text-red-500 ${(errorMessage === '' ? 'hidden' : '')}`}>{errorMessage}</span>
+      <div className="mb-4">
+        <label className="block text-gray-700">Current Subscription:</label>
+        <select
+          defaultValue={subscription}
+          onChange={(e) => setSubscription(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        >
+          {tiers.map((tier) => {
+            return (<option key={`tier_${tier}`} value={tier}>{tier}</option>)
+          })}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">Expiration Date:</label>
+        <input
+          type="date"
+          defaultValue={expiration?.slice(0, 10)}
+          onChange={(e) => updateExpiration(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+      <PrimaryButton onClick={handleSubscriptionChange} className="w-full py-2 px-4">
+        Update Subscription
       </PrimaryButton>
     </div>
   );

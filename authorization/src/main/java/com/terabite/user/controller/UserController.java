@@ -1,5 +1,8 @@
 package com.terabite.user.controller;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import com.stripe.exception.StripeException;
@@ -20,6 +23,7 @@ import com.terabite.user.service.SubscriptionService;
 import com.terabite.user.service.UnsubscribeService;
 import com.terabite.user.service.UserProgrammingService;
 
+import io.jsonwebtoken.lang.Maps;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -43,8 +47,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terabite.common.RoleConfiguration;
 import com.terabite.common.Roles;
+import com.terabite.common.SubscriptionStatus;
 import com.terabite.common.dto.Payload;
 import com.terabite.common.model.LoginDetails;
+import com.terabite.user.UserApi;
+import com.terabite.user.dto.SubscribtionRequest;
+import com.terabite.user.dto.SubscribtionResponse;
 import com.terabite.user.dto.UpdateInformationRequestBody;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,6 +68,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final ChatApi chatApi;
+    private final UserApi userApi;
     private final SubscriptionService subscriptionService;
     private final UnsubscribeService unsubscribeService;
     private final HealthQuestionareService healthQuestionareService;
@@ -75,6 +84,7 @@ public class UserController {
 
     public UserController(
             ChatApi chatApi,
+            UserApi userApi,
             UserProgrammingService userProgrammingService,
             SubscriptionService subscriptionService,
             HealthQuestionareService healthQuestionareService,
@@ -83,6 +93,7 @@ public class UserController {
             @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
 
         this.chatApi = chatApi;
+        this.userApi = userApi;
         this.subscriptionService = subscriptionService;
         this.healthQuestionareService = healthQuestionareService;
         this.unsubscribeService = unsubscribeService;
@@ -298,6 +309,54 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> getAllHealthQuestionares() {
         return ResponseEntity.ok(healthQuestionareService.getAllHealthQuestionares());
+    }
+
+    @GetMapping("/tiers")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getSubcriptionTiers() {
+        List<String> tiers = Arrays.stream(SubscriptionStatus.values()).map(Enum::name).toList();
+        log.info("Getting TIERS: {}", tiers.toString());
+
+        return ResponseEntity.ok().body(tiers);
+    }
+
+    @GetMapping("subscribtions/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> getSubcriptionTier(@PathVariable("email") String email) {
+        Optional<UserInformation> userInfoOption = userRepository.findByEmail(email);
+        if (userInfoOption.isEmpty()) {
+            log.info("FAILED to get subscribtion information for user {}", email);
+            return ResponseEntity.badRequest().body(Payload.of("Failed to get subscribtion Information"));
+        }
+
+        UserInformation userInfo = userInfoOption.get();
+        final SubscriptionStatus status = userInfo.getSubscriptionTier();
+        final Date expiration = userInfo.getExpirationDate();
+        // FIXME: this is currently not supported (figure out ohow to hook this up with Stripe)
+        final boolean autoRenew = false;
+
+        return ResponseEntity.ok().body(new SubscribtionResponse(email, status, expiration, autoRenew));
+
+    }
+
+    @PostMapping("subscribtions/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
+    public ResponseEntity<?> changeSubscribtionForUser(@PathVariable("email") String email,
+            @RequestBody SubscribtionRequest subscribeChange) {
+
+        final String userId = email;
+        final SubscriptionStatus subscriptionStatus = subscribeChange.status();
+        final Date expiration = subscribeChange.expiration();
+
+        final boolean changeSubResult = userApi.setUserSubscription(userId, subscriptionStatus, expiration);
+
+
+        if (changeSubResult) {
+            log.info("User {} is changing subscribtion with request {}", email, subscribeChange);
+            return ResponseEntity.ok().body(Payload.of("Successfully updated subscribtion."));
+        }
+        log.info("FAILED to update subscribton for user {}", email);
+        return ResponseEntity.badRequest().body(Payload.of("failed to update subscribtion."));
     }
 
     private static boolean validateUserInfo(UserInformation userInfo) {

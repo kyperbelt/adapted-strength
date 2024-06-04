@@ -4,6 +4,7 @@ import com.terabite.authorization.model.Login;
 import com.terabite.authorization.repository.LoginRepository;
 import com.terabite.common.dto.Payload;
 import com.terabite.user.UserApi;
+import com.terabite.user.dto.SubscribtionRequest;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.common.SubscriptionStatus;
 import com.terabite.user.model.UserInformation;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -27,6 +29,16 @@ public class SubscriptionService {
         this.userRepository = userRepository;
         this.loginRepository = loginRepository;
     }
+
+    // public ResponseEntity<?> changeSubscription(final String email, SubscribtionRequest subChangeRequest){
+    //     Optional<UserInformation> userInfoOption = userRepository.findByEmail(email);
+    //     if (userInfoOption.isEmpty()){
+    //         log.info("Failed to change subcribtion for user with email {}", email);
+    //         return ResponseEntity.badRequest().body(Payload.of("Unable to change subscribtion"));
+    //     }
+    //
+    //
+    // }
 
     public ResponseEntity<?> subscribe(SubscribeRequest request, String email) {
         UserInformation existingUser = userRepository.findByEmail(email).orElse(null);

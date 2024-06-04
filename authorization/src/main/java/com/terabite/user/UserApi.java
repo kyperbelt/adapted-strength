@@ -104,11 +104,13 @@ public class UserApi {
             case NO_SUBSCRIPTION:
                 unsubscribeService.unsubscribe(userId);
                 user.setExpirationDate(null);
+                userRepository.save(user);
                 return true;
             case SPECIFIC_CLIENT:
             case BASE_CLIENT:
                 subscriptionService.subscribe(new SubscribeRequest(subscriptionStatus), userId);
                 user.setExpirationDate(expiration);
+                userRepository.save(user);
                 return true;
             default:
                 log.error("'{}' Subscription not supported", subscriptionStatus.name());

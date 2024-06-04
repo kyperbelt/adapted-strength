@@ -126,6 +126,7 @@ function promiseWrapper(promise) {
       if (status_code == HttpStatus.UNAUTHORIZED || status_code == HttpStatus.FORBIDDEN) {
         ApiUtils.removeAuthToken();
         // TODO: Redirect to login page
+        window.location.replace("/");
       }
 
       return {
