@@ -22,6 +22,7 @@ import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
 import ChatAdmin from "./pages/ChatAdmin"
+import ScrollToTop from './util/ScrollToTop';
 // import firebase utils
 import { fetchToken } from './firebase';
 
@@ -72,6 +73,7 @@ function App() {
     <div id="app" className="flex-1 flex flex-col">
       {
         <BrowserRouter className="">
+          <ScrollToTop />
           <Routes className="">
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />

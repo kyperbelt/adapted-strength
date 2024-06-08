@@ -64,6 +64,7 @@ function ExtraSection() {
 function ContactSection() {
     return (
         <div className="my-12">
+            <span id="contact-section" className="absolute w-full -top-12"></span>
             <h2 className="text-2xl font-semibold text-accent-dark border-b border-accent-dark pb-2">
                 Contact Us</h2>
             <ContactForm />
