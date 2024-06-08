@@ -100,11 +100,11 @@ function VideoCard({ movement }) {
         />
       </div>
 
-      <div className="pt-2 pl-2">
+      <div className="flex flex-wrap pt-2 pl-2">
         {movement.categories.map((category, index) => (
           <span
             key={index + `${category.category}`}
-            className="bg-accent rounded-full px-3 py-1 text-sm font-semibold text-primary me-2 cursor-pointer hover:bg-primary hover:text-primary-dark"
+            className="bg-accent rounded-full px-3 mt-1 py-0 text-sm font-semibold text-primary me-2 cursor-pointer hover:bg-primary hover:text-primary-dark"
           >
             #{category.category}
           </span>
