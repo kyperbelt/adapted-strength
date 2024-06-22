@@ -1,6 +1,7 @@
 export function PencilIcon({ className, ...props }) {
   return (
     <svg
+      {...props}
       className={`w-6 h-6${className}`}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
