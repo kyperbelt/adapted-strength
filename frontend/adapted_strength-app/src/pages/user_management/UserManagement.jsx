@@ -68,6 +68,11 @@ export default function UserManagement() {
   const [programs, setPrograms] = useState([]);
   const [subscriptionTiers, setSubscriptionTiers] = useState([]);
 
+  const userUpdated = (user) => {
+    console.log("User Updated: ", user);
+    setUsers(users.map(u => u.email === user.email ? user : u));
+  }
+
   if (!loc.pathname.endsWith("/user-management") && !selectedUser) {
     setTimeout(() => {
       nav("/user-management");
@@ -96,7 +101,8 @@ export default function UserManagement() {
       setSubscriptionTiers(tiers);
     });
 
-    if (programs.length === 0) return;
+    // if (programs.length === 0) return;
+
     UserApi.getAllUsers()
       .then((data) => {
         const getUserPrograms = async (userId) => {
@@ -212,13 +218,13 @@ export default function UserManagement() {
         </>
       )}
       {selectedUser && (
-        <UserDashboard selectedUser={selectedUser} programs={programs} tiers={subscriptionTiers} />
+        <UserDashboard userUpdatedFunction={userUpdated} selectedUser={selectedUser} programs={programs} tiers={subscriptionTiers} />
       )}
     </BlankPageContainer>
   );
 }
 
-function UserDashboard({ selectedUser, programs, tiers }) {
+function UserDashboard({ userUpdatedFunction, selectedUser, programs, tiers }) {
   const [assignedPrograms, setAssignedPrograms] = useState(
     selectedUser.programs || []
   );
@@ -325,7 +331,7 @@ function UserDashboard({ selectedUser, programs, tiers }) {
       <h2 className="text-xl font-semibold text-center text-gray-600">
         {selectedUser.name}
       </h2>
-      <SubscriptionManagement user={selectedUser} tiers={tiers} subscriptionInfo={subscriptionInfo} />
+      <SubscriptionManagement userUpdatedFunction={userUpdatedFunction} user={selectedUser} tiers={tiers} subscriptionInfo={subscriptionInfo} />
       <div className="w-full p-4 bg-white rounded-lg shadow-sm">
         <h3 className="text-lg font-semibold text-gray-600 mb-2">
           Assigned Programs
@@ -450,7 +456,7 @@ function AssignProgram({ selectedProgram, handleAssignProgram }) {
   );
 }
 
-function SubscriptionManagement({ user, tiers, subscriptionInfo }) {
+function SubscriptionManagement({ user, tiers, subscriptionInfo, userUpdatedFunction}) {
 
   const [subscription, setSubscription] = useState(user.subscription);
   const [expiration, setExpiration] = useState(subscriptionInfo.expiration);
@@ -474,7 +480,13 @@ function SubscriptionManagement({ user, tiers, subscriptionInfo }) {
 
     UserApi.changeSubscribtionForUser({ email: user.email, status: subscription, expirationDate: expiration }).then(response => {
       console.log(response);
-      setErrorMessage("");
+      setErrorMessage("Updated Successfully!");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
+
+      user.subscription = subscription;
+      userUpdatedFunction(user);
     }).catch(e => {
       console.log(e);
       setErrorMessage(e.message);
@@ -486,9 +498,8 @@ function SubscriptionManagement({ user, tiers, subscriptionInfo }) {
     if (dateString == null) {
       return;
     }
-    const expirationDate = new Date(dateString);
 
-    setExpiration(expirationDate);
+    setExpiration(dateString);
   };
 
   return (
