@@ -15,9 +15,27 @@ const navigation = [
   { component: <> Book Consultation</>, to: "/consultations", selected: false },
   { component: <> About Us</>, to: "/about", selected: false },
   { component: <> Movement Library</>, to: "/movement-library", selected: false },
+
   {
     component: <> Manage Programs</>,
     to: "/program-management",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+            (await AuthApi.hasRole("ROLE_COACH")) ||
+            (await AuthApi.hasRole("ROLE_ADMIN"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    },
+  },
+  {
+    component: <> Manage Users</>,
+    to: "/user-management",
     selected: false,
     state: () => {
       return new Promise(async (resolve, reject) => {
@@ -101,6 +119,41 @@ const navigation = [
       });
     },
   },
+  {
+    component: <>Chat</>,
+    to: "/chat",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+              (await AuthApi.hasRole("ROLE_BASE_CLIENT")) ||
+              (await AuthApi.hasRole("ROLE_GENERAL_CLIENT")) ||
+              (await AuthApi.hasRole("ROLE_SPECIFIC_CLIENT"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    }
+  },
+  {
+    component: <>Admin Chat</>,
+    to: "/admin-chat",
+    selected: false,
+    state: () => {
+      return new Promise(async (resolve, reject) => {
+        if (AuthApi.isLoggedIn()) {
+          const hasRole =
+              (await AuthApi.hasRole("ROLE_ADMIN")) ||
+              (await AuthApi.hasRole("ROLE_COACH"));
+          resolve(hasRole);
+        } else {
+          resolve(false);
+        }
+      });
+    }
+  }
 ];
 
 export default function NavBar() {
@@ -160,7 +213,7 @@ export default function NavBar() {
   //      certain options when the user is not logged in for example, or if they
   //      dont have the right permissions or are in a wrong state/certain page/step.
   return (
-    <div className={"sticky top-0 w-full bg-primary z-20"} key={loggedIn}>
+    <div id="navigation-bar" className={"sticky top-0 w-full bg-primary z-20"} key={loggedIn}>
       <div
         className={`right-0 bottom-0 left-0 bg-black opacity-50  ${hamburgerOpen ? "flex" : "hidden"
           }`}
@@ -215,7 +268,7 @@ export default function NavBar() {
           >
             <ul
               id="nav_items"
-              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:space-x-8 rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
+              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:flex-wrap rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
             >
               {navItems.map((item, index) => {
                 return (
@@ -288,7 +341,7 @@ function NavItem({ to, children, onClick, state, className }) {
         <Link
           id="nav-item"
           to={to}
-          className={`${className} text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark lg:hover:bg-transparent lg:border-0 lg:hover:text-accent lg:p-0`}
+          className={`${className} lg:me-4 text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark lg:hover:bg-transparent lg:border-0 lg:hover:text-accent lg:p-0`}
           onClick={onClick}
         >
           {children}

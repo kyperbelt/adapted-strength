@@ -80,5 +80,10 @@ public class Program {
         newProgram.setDescription(new ProgramDescription(this.description.getBody()));
         return newProgram;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Program [id=%d, name=%s, weeks=%s, description=%s]", programId, name, weeks, description);
+    }
     
 }

@@ -304,6 +304,7 @@ public class ProgrammingControler {
             Program program = programOptional.get().duplicate();
             return programService.createNewProgram(program);
         }
+        log.error("Program with id {} not found", programId);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(programId)));
     }
 
@@ -314,6 +315,7 @@ public class ProgrammingControler {
             Week week = weekOptional.get().duplicate();
             return weekService.createNewWeek(week);
         }
+        log.error("Week with id {} not found", weekId);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(weekId)));
     }
 
@@ -324,6 +326,7 @@ public class ProgrammingControler {
             Day day = dayOptional.get().duplicate();
             return dayService.createNewDay(day);
         }
+        log.error("Day with id {} not found", dayId);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(dayId)));
     }
 
@@ -334,6 +337,7 @@ public class ProgrammingControler {
             RepCycle repCycle = repCycleOptional.get().duplicate();
             return repCycleService.createNewRepCycle(repCycle);
         }
+        log.error("RepCycle with id {} not found", repCycleId);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(repCycleId)));
     }
 

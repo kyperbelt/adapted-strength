@@ -9,7 +9,7 @@ export function PrimaryButton({ className, children, ...props }) {
 }
 
 export function SecondaryButton({ className, children, ...props }) {
-  return <BasicButton className={`py-2.5 px-5 me-2 mb-2 text-sm font-medium text-white focus:outline-none bg-secondary-light rounded-lg border border-primary-dark hover:bg-primary-dark hover:text-secondary-dark focus:z-10 focus:ring-4 focus:ring-gray-100  ${className}`} {...props}>{children}</BasicButton>
+  return <BasicButton className={`py-2.5 px-5 me-2 mb-2 text-sm font-medium text-white focus:outline-none bg-secondary-light rounded-lg hover:bg-primary-dark hover:text-secondary-dark focus:z-10 focus:ring-4 focus:ring-gray-100  ${className}`} {...props}>{children}</BasicButton>
 }
 
 export function IconButton({ className, children, ...props }) {

@@ -2,7 +2,7 @@ package com.terabite.user;
 
 import com.terabite.authorization.model.Login;
 import com.terabite.user.model.SubscribeRequest;
-import com.terabite.user.model.SubscriptionStatus;
+import com.terabite.common.SubscriptionStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

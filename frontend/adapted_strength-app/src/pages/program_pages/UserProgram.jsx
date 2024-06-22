@@ -6,6 +6,9 @@ import { CardBack } from "../../components/Card";
 import { ProgrammingApi } from "../../api/ProgrammingApi";
 import { UserApi } from "../../api/UserApi";
 import PageContainer1, { PageContainer2, BlankPageContainer, BlankPageContainer1 } from "../../components/PageContainer";
+import { YoutubeIcon, FilePenIcon } from "../../components/Icons";
+import { useNavigate } from "react-router-dom";
+import { BasicModalDialogue } from "../../components/Dialog";
 
 export default function General() {
   const [userProgramming, setUserProgramming] = useState(null);
@@ -96,13 +99,13 @@ function ProgramPuller({ program, currentWeek }) {
     return (
       <CardBack>
         <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
-        Your Program: {
-          program.name
-        }
-      </p>
-      <h1 className="font-bold text-center">
-      This program is not available to you right now!
-      </h1>
+          Your Program: {
+            program.name
+          }
+        </p>
+        <h1 className="font-bold text-center">
+          This program is not available to you right now!
+        </h1>
       </CardBack>
     )
   }
@@ -116,21 +119,25 @@ function ProgramPuller({ program, currentWeek }) {
     }
     return (
       <div className="pt-4">
-        <button onClick={toggleButt} className="bg-slate-400 animate-slideLeft border-8 border-solid rounded-xl border-black 
-        text-[#161A1D] font-bold text-center w-full py-2">
-          {
-            day.name
-          }
+        <div className="hover:cursor-pointer flex flex-col bg-slate-400 animate-slideLeft border-8 border-solid rounded-xl border-black text-[#161A1D] font-bold text-center w-full py-2" onClick={toggleButt}>
+          <div className="w-full h-full">
+            {
+              day.name
+            }
+          </div>
+
           {showTable &&
-            <table className="w-full text-left">
+            <table className="w-full text-left hover:cursor-default" onClick={(e) => {
+              e.stopPropagation();
+            }}>
               <tbody className="text-[#161A1D] animate-fadeIn">
                 {day.repCycles.map((repCycle) => (
                   <RepCycle repCycle={repCycle} />
                 ))}
               </tbody>
             </table>}
-        </button>
 
+        </div>
       </div>
     );
   }
@@ -184,6 +191,10 @@ function ProgramPuller({ program, currentWeek }) {
 }
 
 function RepCycle({ repCycle }) {
+  const nav = useNavigate();
+  const [notesOpen, setNotesOpen] = useState(false);
+
+
   return (
     <tr key={repCycle.repCycleId} className="text-center h-full m-auto">
       <td className="m-auto min-w-10 justify-center w-10 border-solid border-2 border-black bg-gray-300 font-bold">
@@ -193,7 +204,19 @@ function RepCycle({ repCycle }) {
         scope="col"
         className="p-1.5 w-full border-solid border-2 border-black bg-gray-300"
       >
-        {repCycle.name}
+        <div className="flex flex-row w-full">
+          <span className="text-lg font-bold">{repCycle.name}</span>
+          <button className="ml-auto px-2 pb-1" onClick={() => {
+            setNotesOpen(true);
+          }}>
+            <FilePenIcon className="h-6" />
+          </button>
+          <button className="px-2 pb-1" onClick={() => {
+            repCycle.movementId && nav(`/movement-library/${repCycle.movementId}`);
+          }}>
+            <YoutubeIcon className="h-6 scale-125" />
+          </button>
+        </div>
         <div className="flex justify-center flex-col">
           <table className="w-full h-full">
             <tbody>
@@ -253,6 +276,13 @@ function RepCycle({ repCycle }) {
           </table>
         </div>
       </th>
+      {notesOpen &&
+        <BasicModalDialogue title="Coaches Notes" onCloseDialog={() => setNotesOpen(false)}>
+          <div className="flex flex-col h-32 prose">
+            <p>{repCycle.coachNotes}</p>
+          </div>
+        </BasicModalDialogue>
+      }
     </tr>
   );
 }

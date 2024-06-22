@@ -22,7 +22,7 @@ public class MovementController {
     }
 
     @GetMapping("/movements")
-    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_USER', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<List<Movement>> getMovements(@RequestParam(required = false) String title)
     {
         List<Movement> movements = new ArrayList<Movement>();

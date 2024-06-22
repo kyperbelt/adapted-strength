@@ -23,7 +23,7 @@ public class RepCycleService {
     }
 
     public ResponseEntity<?> createNewRepCycle(RepCycle repCycle) {
-        repCycleRepository.save(repCycle);
+        log.info("New RepCycle Created {}", repCycleRepository.save(repCycle));
         return new ResponseEntity<>(repCycle, HttpStatus.OK);
     }
 

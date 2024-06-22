@@ -52,9 +52,51 @@ export class UserApi {
       zipcode,
       country,
     };
-    console.log(JSON.stringify(profile));
+    // console.log(JSON.stringify(profile));
 
     const promise = ApiUtils.apiPut("user/profile", profile);
+    return promise;
+  }
+
+  static getSubscriptionTiers() {
+    console.log("getting sub tiers");
+    const promise = ApiUtils.apiGet("user/tiers").then(response => {
+      if (response.status == HttpStatus.OK) {
+        return response.data;
+      }
+      else {
+        throw new Error("Unable to get Tiers.");
+      }
+    });
+    return promise;
+  }
+
+  static getUserSubscription({ email }) {
+    const promise = ApiUtils.apiGet(`user/subscribtions/${email}`).then(response => {
+      if (response.status == HttpStatus.OK) {
+        return response.data;
+      }
+      else {
+        throw new Error(`Unable to get subscribtion information for user ${email}. ErrorCode: ${response.status}`);
+      }
+    });
+    return promise;
+  }
+
+  static changeSubscribtionForUser({ email, status, expirationDate }) {
+    const data = {
+      status,
+      expiration: expirationDate
+    }
+    const promise = ApiUtils.apiPost(`user/subscribtions/${email}`, data).then(response => {
+      if (response.status == HttpStatus.OK) {
+        return response.data;
+      }
+      else {
+        throw new Error(`Unable to change subscribtion for user ${email}. ErrorCode: ${response.status}`);
+      }
+    });
+
     return promise;
   }
 

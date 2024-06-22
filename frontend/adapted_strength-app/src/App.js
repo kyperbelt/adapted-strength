@@ -3,8 +3,8 @@ Module: App.js
 Team: TeraBITE
 */
 import './App.css';
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { lazy, Suspense, useState } from 'react';
+import { BrowserRouter, Link, Route, Routes, useLocation } from "react-router-dom";
+import { lazy, Suspense, useState, useLayoutEffect } from 'react';
 import Layout from "./pages/Layout";
 // routes imported from pages folder
 // They are still only react components
@@ -21,8 +21,8 @@ import Login from "./pages/Login";
 import About from "./pages/About.jsx";
 import ManageChats from "./pages/manageChats.jsx";
 import Chat from "./pages/Chat";
-import Tab from "./components/TabComponents/Tab.jsx";
-import SendNotifications from './pages/SendNotifications.jsx';
+import ChatAdmin from "./pages/ChatAdmin"
+import ScrollToTop from './util/ScrollToTop';
 // import firebase utils
 import { fetchToken } from './firebase';
 
@@ -50,18 +50,30 @@ const UserManagement = lazy(() => import('./pages/user_management/UserManagement
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
 const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 const MovementLibrary = lazy(() => import('./pages/MovementLibrary.jsx'));
+const SendNotifications = lazy(() => import('./pages/SendNotifications.jsx'));
+const Tab = lazy(() => import("./components/TabComponents/Tab.jsx"));
 
 // import footer from '../footer'
+
+function Wrapper({ children }) {
+  const location = useLocation();
+  useLayoutEffect(() => {
+    document.documentElement.scrollTo(0, 0);
+  }, [location.pathname]);
+  return children
+}
 
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
   { !isTokenFound && fetchToken(setTokenFound); }
 
 
+  // <Wrapper>
   return (
     <div id="app" className="flex-1 flex flex-col">
       {
         <BrowserRouter className="">
+          <ScrollToTop />
           <Routes className="">
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
@@ -95,10 +107,21 @@ function App() {
 
               <Route path="login" element={<RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile"><Login /></RouteGuard>} />
               <Route path="about" element={<About />} />
-              <Route path="sign-up" element={<SignUp />} />
+
+              <Route path="sign-up" element={
+                <RouteGuard state={() => !AuthApi.isLoggedIn()} routeTo="/profile">
+                  <SignUp />
+                </RouteGuard>
+              } />
               <Route path="sign-up-additional" element={<SignUpAdditional />} />
 
-              <Route path="user-management/:email?" element={<UserManagement />} />
+              <Route path="user-management/:email?" element={
+                <Suspense fallback="...">
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <UserManagement />
+                  </RouteGuard>
+                </Suspense>
+              } />
               <Route path="/program-management/:programId?/:weekId?/:dayId?" element={
                 <Suspense fallback="...">
                   <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
@@ -116,12 +139,12 @@ function App() {
               <Route path="/movement-library/:movementId?" element={
                 <Suspense fallback="...">
                   { /*TODO: check if we want to allow for all users*/}
-                  <RouteGuard state={() => true} routeTo="/login">
-                    <MovementLibrary/>
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <MovementLibrary />
                   </RouteGuard>
                 </Suspense>
               } />
-          
+
 
             /* ROUTES FOR PROGRAM PAGES */
               //--------------------------------------------------
@@ -134,6 +157,7 @@ function App() {
               <Route path="leaderboard" element={<Leaderboard />} />
               // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="chat" element={<Chat />} />
+              <Route path="admin-chat" element={<ChatAdmin />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
               <Route path="payment-checkout/:plan?" element={
@@ -149,8 +173,22 @@ function App() {
 
               /* Route for notifications & announcements tabs */
               //-------------------------------------------------
-              <Route path="notifications" element={<Tab />} />
-              <Route path='send_notifications' element={<SendNotifications />} />
+              <Route path="notifications" element={
+                <Suspense fallback="...">
+                  { /*TODO: check if we want to allow for all users*/}
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <Tab />
+                  </RouteGuard>
+                </Suspense>
+              } />
+              <Route path='send_notifications' element={
+                <Suspense fallback="...">
+                  { /*TODO: check if we want to allow for all users*/}
+                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                    <SendNotifications />
+                  </RouteGuard>
+                </Suspense>
+              } />
             </Route>
           </Routes>
         </BrowserRouter>
@@ -158,5 +196,7 @@ function App() {
     </div >
   );
 }
+
+// </Wrapper>
 
 export default App;

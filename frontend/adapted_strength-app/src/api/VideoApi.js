@@ -26,16 +26,18 @@ export class VideoApi {
   * UserApi.updateProfileInformation({ first_name: 'John', last_name: 'Doe', email: 'example@mail.com', phone: '1234567890', address: '1234 Example St', city: 'Example', state: 'EX', zip: '12345', country: 'USA' })
   * .then(response => console.log(response));
   */
-  static updateVideoInformation({ title, description, category, videoLink }) {
+  static updateVideoInformation({id, title, description, categories, link}) {
     const videoInfo = {
+      id,
       title,
       description,
-      category,
-      link: videoLink
+      categories,
+      link 
     };
+    console.log("UPDATING MOVEMENT");
     console.log(JSON.stringify(videoInfo));
 
-    const promise = ApiUtils.apiPut('movement/update', videoInfo);
+    const promise = ApiUtils.apiPut(`movement/movements/${id}`, videoInfo);
     return promise;
   }
 

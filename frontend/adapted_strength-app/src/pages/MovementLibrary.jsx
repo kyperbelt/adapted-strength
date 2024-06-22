@@ -13,30 +13,30 @@ export default function MovementLibrary() {
 
   const getSelectedMovement = (id, movements) => {
     return movements.find((movement) => movement.id == id);
-  }
+  };
 
   useEffect(() => {
-    VideoApi.getAllMovements().then((data) => {
-      console.log(data);
-      setMovements(data);
-    }).then(() => {
-      if (movementId) {
-        const movement = getSelectedMovement(movementId, movements);
-        console.log("SELECTED MOVEMENT:", movement);
-        console.log("MOVEMENTID:", movementId, "TYPE:", typeof movementId);
-        setSelectedMovement(movement);
-      }
-    }).catch((error) => {
-      console.log(error);
-    });
+    VideoApi.getAllMovements()
+      .then((data) => {
+        console.log(data);
+        setMovements(data);
 
+        if (movementId) {
+          const movement = getSelectedMovement(movementId, data);
+          console.log("SELECTED MOVEMENT:", movement);
+          console.log("MOVEMENTID:", movementId, "TYPE:", typeof movementId);
+          setSelectedMovement(movement);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [movementId]);
 
   const closeModal = () => {
     setSelectedMovement(null);
-    nav("/movement-library");
+    nav(-1);
   };
-
 
   return (
     <PageContainer2>
@@ -49,16 +49,24 @@ export default function MovementLibrary() {
         ))}
       </div>
       {selectedMovement && (
-        <div className="fixed inset-0 bg-white z-50">
+        <div className="fixed inset-0 bg-white z-20">
           <div className="absolute flex flex-row items-center bg-black right-0 top-0 justify-end p-3.5">
-            <button className="bg-white hover:bg-accent p-2 rounded-2xl top-4" onClick={closeModal}>
+            <button
+              className="bg-white hover:bg-accent p-2 rounded-2xl top-4 z-30"
+              onClick={(e)=>{
+                e.stopPropagation();
+                closeModal();
+              }}
+            >
               Back
             </button>
           </div>
           <iframe
             width="100%"
             height="100%"
-            src={`https://www.youtube.com/embed/${VideoApi.getVideoId(selectedMovement.link)}`}
+            src={`https://www.youtube.com/embed/${VideoApi.getVideoId(
+              selectedMovement.link
+            )}`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -92,11 +100,11 @@ function VideoCard({ movement }) {
         />
       </div>
 
-      <div className="pt-2 pl-2">
+      <div className="flex flex-wrap pt-2 pl-2">
         {movement.categories.map((category, index) => (
           <span
             key={index + `${category.category}`}
-            className="bg-accent rounded-full px-3 py-1 text-sm font-semibold text-primary me-2 cursor-pointer hover:bg-primary hover:text-primary-dark"
+            className="bg-accent rounded-full px-3 mt-1 py-0 text-sm font-semibold text-primary me-2 cursor-pointer hover:bg-primary hover:text-primary-dark"
           >
             #{category.category}
           </span>

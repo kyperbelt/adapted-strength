@@ -18,7 +18,6 @@ The project aims to take existing processes necessary to run the business that r
 #### ERD
 ![](https://drive.google.com/uc?export=view&id=1QwXzT-TkcJQOkByXfeiu-PY5kpEQLR5n)
 
-
 ## Features
 * Modern Mobile Friendly UI
 * Chat Capabilities

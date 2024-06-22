@@ -26,8 +26,9 @@ public class DayService {
     }
 
     public ResponseEntity<?> createNewDay(Day day) {
-        dayRepository.save(day);
-        return new ResponseEntity<>(day, HttpStatus.OK);
+        final Day newDay = dayRepository.save(day);
+        log.info("New Day Created {}", newDay.getDayId());
+        return new ResponseEntity<>(newDay, HttpStatus.OK);
     }
 
     public Day getDayById(long id){
@@ -51,7 +52,6 @@ public class DayService {
 
     public ResponseEntity<?> getDay(Day day) {
         if(dayRepository.findById(day.getDayId()).isEmpty()){
-            log.error("Day {} not found", day.getDayId());
             log.error("Day {} not found", day.getDayId());
             return new ResponseEntity<>(day, HttpStatus.NOT_FOUND);
         }

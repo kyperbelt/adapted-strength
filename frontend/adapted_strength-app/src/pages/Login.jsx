@@ -2,11 +2,12 @@
 Module: Login.jsx
 Team: TeraBITE
 */
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import { useEffect } from 'react'; // UNUSED ASSET - Commenting out
 import { useNavigate } from 'react-router-dom';
 import { AuthApi } from '../api/AuthApi';
 import { ApiUtils } from '../api/ApiUtils';
+import { PrimaryButton } from '../components/Button';
 
 import logo from '../assets/logo.png';
 import google from '../assets/google_icon.webp'; // UNUSED ASSET - Commenting out
@@ -20,9 +21,9 @@ function PasswordField() {
     return <LabeledInputField type="password" id="password" name="password" required={true} placeholder="Password" />
 }
 function NextButton() {
-    return (<button href="./profile" type="submit" className="border-slate-50 border-8 bg-black text-slate-200 rounded-full px-3 py-1 "  >
+    return (<PrimaryButton type="submit" className="border-primary border-8  rounded-full px-3 py-1 "  >
         Login
-    </button>);
+    </PrimaryButton>);
 }
 
 function AdaptedStrengthLogo() {
@@ -31,14 +32,14 @@ function AdaptedStrengthLogo() {
     </div>);
 }
 
-function GoogleLogo({...props}) {
+function GoogleLogo({ ...props }) {
     return (<p className={`rounded-full ${props.className}`}>
-        <img src={google} className="w-5" alt= "Google Logo" aria-label="an image of the Google logo" />
+        <img src={google} className="w-5" alt="Google Logo" aria-label="an image of the Google logo" />
     </p>);
 }
 
 export default function Login() {
-    useEffect (() => {
+    useEffect(() => {
         document.title = "Adapted Strength"; // Set the title when the component mounts
         return () => {
             document.title = "Adapted Strength"; // Optionally reset the title when the component unmounts
@@ -72,8 +73,8 @@ export default function Login() {
             <AdaptedStrengthLogo />
         </div>
         <title>
-        Adapted Strength
-      </title>
+            Adapted Strength
+        </title>
         <div className="bg-[#161A1D] h-full">
             <div className="relative bottom-20">
                 <h1 className="relative mx-0 text-center text-2xl bottom-4">Welcome!</h1>
@@ -84,9 +85,6 @@ export default function Login() {
                         </div>
                         <div className="w-full flex flex-col items-center px-0 pt-4">
                             <PasswordField />
-                        </div>
-                        <div className="flex justify-center w-full relative top-24">
-                            <NextButton />
                         </div>
                         <div>
                             <input
@@ -122,23 +120,14 @@ export default function Login() {
                                 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 
                                 dark:focus:text-primary-500 dark:active:text-primary-600"
                             >Forgot Password</Link>
+
+                            <div className="flex justify-center w-full relative top-14">
+                                <NextButton />
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <button
-                type="button"
-                className="flex flex-row mx-auto items-center rounded bg-gray-500 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white 
-                shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 
-                focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 
-                focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 
-                dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 
-                dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-            >
-                
-                Login with Google
-                <GoogleLogo className="ml-2" />
-            </button>
             <p className="relative mx-0 text-white px-3 text-center bottom-4">
                 Dont have an account?
                 <a
