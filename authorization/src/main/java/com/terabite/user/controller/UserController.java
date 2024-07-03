@@ -1,17 +1,24 @@
 package com.terabite.user.controller;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.chat.ChatApi;
+import com.terabite.common.RoleConfiguration;
+import com.terabite.common.Roles;
+import com.terabite.common.SubscriptionStatus;
+import com.terabite.common.dto.Payload;
+import com.terabite.common.model.LoginDetails;
 import com.terabite.payment.model.Customer;
 import com.terabite.payment.service.CustomerService;
+import com.terabite.programming.ProgrammingApi;
+import com.terabite.programming.model.Program;
+import com.terabite.user.UserApi;
+import com.terabite.user.dto.SubscribtionRequest;
+import com.terabite.user.dto.SubscribtionResponse;
+import com.terabite.user.dto.UpdateInformationRequestBody;
 import com.terabite.user.model.HealthQuestionare;
 import com.terabite.user.model.SubscribeRequest;
 import com.terabite.user.model.UserInformation;
@@ -19,13 +26,18 @@ import com.terabite.user.repository.UserRepository;
 import com.terabite.user.service.HealthQuestionareService;
 import com.terabite.user.service.SubscriptionService;
 // import com.terabite.user.service.UserProgrammingService;
-
 import com.terabite.user.service.UnsubscribeService;
 import com.terabite.user.service.UserProgrammingService;
-
 import io.jsonwebtoken.lang.Maps;
 import jakarta.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,27 +56,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terabite.common.RoleConfiguration;
-import com.terabite.common.Roles;
-import com.terabite.common.SubscriptionStatus;
-import com.terabite.common.dto.Payload;
-import com.terabite.common.model.LoginDetails;
-import com.terabite.user.UserApi;
-import com.terabite.user.dto.SubscribtionRequest;
-import com.terabite.user.dto.SubscribtionResponse;
-import com.terabite.user.dto.UpdateInformationRequestBody;
-
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-
 @RestController
 @RequestMapping("/v1/user")
 public class UserController {
-    private static final RoleConfiguration AUTHORIZED_USER_CONFIG = RoleConfiguration.builder()
-            .all(Roles.ROLE_ACCOUNT_SETUP, Roles.ROLE_TERMS_ACCEPTED).any(Roles.ROLE_USER, Roles.ROLE_ADMIN)
-            .except(Roles.ROLE_BANNED).build();
+    private static final RoleConfiguration AUTHORIZED_USER_CONFIG =
+        RoleConfiguration.builder()
+            .all(Roles.ROLE_ACCOUNT_SETUP, Roles.ROLE_TERMS_ACCEPTED)
+            .any(Roles.ROLE_USER, Roles.ROLE_ADMIN)
+            .except(Roles.ROLE_BANNED)
+            .build();
 
     private final UserRepository userRepository;
     private final ChatApi chatApi;
@@ -82,15 +82,17 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(
-            ChatApi chatApi,
-            UserApi userApi,
-            UserProgrammingService userProgrammingService,
-            SubscriptionService subscriptionService,
-            HealthQuestionareService healthQuestionareService,
-            UserRepository userRepository, UnsubscribeService unsubscribeService, AuthorizationApi authorizationApi,
-            CustomerService customerService,
-            @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName, JwtService jwtService) {
+    public UserController(ChatApi chatApi,
+                          UserApi userApi,
+                          UserProgrammingService userProgrammingService,
+                          SubscriptionService subscriptionService,
+                          HealthQuestionareService healthQuestionareService,
+                          UserRepository userRepository,
+                          UnsubscribeService unsubscribeService,
+                          AuthorizationApi authorizationApi,
+                          CustomerService customerService,
+                          @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,
+                          JwtService jwtService) {
 
         this.chatApi = chatApi;
         this.userApi = userApi;
@@ -121,7 +123,10 @@ public class UserController {
     @GetMapping("/get")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> getAllUserInformation() {
-        return ResponseEntity.ok(userRepository.findAll());
+
+        final Iterable<UserInformation> users = userRepository.findAll();
+        log.info("Retrieving Users: {}", users);
+        return ResponseEntity.ok(users);
     }
 
     @DeleteMapping("/delete/{email}")
@@ -140,7 +145,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createAccountInformation(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UserInformation userInformation) {
+                                                      @RequestBody UserInformation userInformation) {
         Optional<UserInformation> existingUser = userRepository.findByEmail(userDetails.getUsername());
 
         if (existingUser.isPresent()) {
@@ -158,15 +163,15 @@ public class UserController {
         }
 
         userRepository.save(userInformation);
-        chatApi.createUser(userInformation.getEmail(),
-                userInformation.getFirstName() + " " + userInformation.getLastName(),
-                "CLIENT");
+        chatApi.createUser(
+            userInformation.getEmail(), userInformation.getFirstName() + " " + userInformation.getLastName(), "CLIENT");
         return ResponseEntity.ok(Payload.of("Account information created successfully"));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<?> updateAccountInformation(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UpdateInformationRequestBody updateInformationRequestBody) {
+    public ResponseEntity<?>
+    updateAccountInformation(@AuthenticationPrincipal UserDetails userDetails,
+                             @RequestBody UpdateInformationRequestBody updateInformationRequestBody) {
         Optional<UserInformation> existingUser = userRepository.findByEmail(userDetails.getUsername());
         // User must already exist to update it
         if (existingUser.isEmpty()) {
@@ -202,7 +207,7 @@ public class UserController {
 
     @PostMapping("/subscribe")
     public ResponseEntity<?> userSubscribePost(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody SubscribeRequest subscribeRequest) {
+                                               @RequestBody SubscribeRequest subscribeRequest) {
         final LoginDetails loginDetails = (LoginDetails) userDetails;
 
         final String email = loginDetails.getUsername();
@@ -228,8 +233,9 @@ public class UserController {
     @PostMapping("/programming")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> addProgramming(@RequestParam("email") String email,
-            @RequestParam("programId") long programId, @RequestParam("startWeek") int startWeek,
-            @RequestParam("startDate") Long startDate) {
+                                            @RequestParam("programId") long programId,
+                                            @RequestParam("startWeek") int startWeek,
+                                            @RequestParam("startDate") Long startDate) {
         return userProgrammingService.addProgramming(email, programId, startWeek, startDate);
     }
 
@@ -241,7 +247,8 @@ public class UserController {
 
     @PostMapping("/programming/{upid}/comment")
     public ResponseEntity<?> addComment(@PathVariable("upid") long userProgrammingId,
-            @RequestParam("comment") String comment, @AuthenticationPrincipal UserDetails userDetails) {
+                                        @RequestParam("comment") String comment,
+                                        @AuthenticationPrincipal UserDetails userDetails) {
         // return new ResponseEntity<>("Endpoint to add comment",
         // HttpStatus.NOT_IMPLEMENTED);
 
@@ -250,7 +257,7 @@ public class UserController {
 
     @PutMapping("/programming/comment/{cid}")
     public ResponseEntity<?> updateComment(@PathVariable("cid") long commentId,
-            @RequestParam("comment") String comment) {
+                                           @RequestParam("comment") String comment) {
         // return new ResponseEntity<>("Endpoint to edit / update comment",
         // HttpStatus.NOT_IMPLEMENTED);
         return userProgrammingService.updateComment(commentId, comment);
@@ -259,7 +266,7 @@ public class UserController {
     @PostMapping("subscription")
     @PreAuthorize("hasAnyAuthoritiy('ROLE_ADMIN')")
     public ResponseEntity<?> updateSubcription(@RequestParam("email") final String email,
-            @RequestParam("tier") final String subscriptionTier) {
+                                               @RequestParam("tier") final String subscriptionTier) {
 
         return ResponseEntity.ok(Payload.of("test"));
     }
@@ -274,8 +281,8 @@ public class UserController {
     @PostMapping("/validate_user_data")
     public ResponseEntity<?> validateUserData(HttpServletRequest request, HttpServletResponse response) {
         ObjectMapper mapper = new ObjectMapper();
-        ResponseEntity<?> badRequest = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Payload.of("Invalid user information"));
+        ResponseEntity<?> badRequest =
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Payload.of("Invalid user information"));
 
         try {
             final UserInformation userInformation = mapper.readValue(request.getInputStream(), UserInformation.class);
@@ -291,7 +298,6 @@ public class UserController {
         }
 
         return ResponseEntity.ok(Payload.of("User information is valid"));
-
     }
 
     @GetMapping("/health_questionare/{email}")
@@ -332,24 +338,23 @@ public class UserController {
         UserInformation userInfo = userInfoOption.get();
         final SubscriptionStatus status = userInfo.getSubscriptionTier();
         final Date expiration = userInfo.getExpirationDate();
-        // FIXME: this is currently not supported (figure out ohow to hook this up with Stripe)
+        // FIXME: this is currently not supported (figure out ohow to hook this up
+        // with Stripe)
         final boolean autoRenew = false;
 
         return ResponseEntity.ok().body(new SubscribtionResponse(email, status, expiration, autoRenew));
-
     }
 
     @PostMapping("subscribtions/{email}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_COACH')")
     public ResponseEntity<?> changeSubscribtionForUser(@PathVariable("email") String email,
-            @RequestBody SubscribtionRequest subscribeChange) {
+                                                       @RequestBody SubscribtionRequest subscribeChange) {
 
         final String userId = email;
         final SubscriptionStatus subscriptionStatus = subscribeChange.status();
         final Date expiration = subscribeChange.expiration();
 
         final boolean changeSubResult = userApi.setUserSubscription(userId, subscriptionStatus, expiration);
-
 
         if (changeSubResult) {
             log.info("User {} is changing subscribtion with request {}", email, subscribeChange);
@@ -360,8 +365,8 @@ public class UserController {
     }
 
     private static boolean validateUserInfo(UserInformation userInfo) {
-        Set<ConstraintViolation<UserInformation>> violations = Validation.buildDefaultValidatorFactory().getValidator()
-                .validate(userInfo);
+        Set<ConstraintViolation<UserInformation>> violations =
+            Validation.buildDefaultValidatorFactory().getValidator().validate(userInfo);
         if (violations.isEmpty()) {
             return true;
         }

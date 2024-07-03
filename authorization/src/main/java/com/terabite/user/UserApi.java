@@ -1,22 +1,21 @@
 package com.terabite.user;
 
+import com.terabite.authorization.model.Login;
+import com.terabite.common.Roles;
+import com.terabite.common.SubscriptionStatus;
+import com.terabite.user.model.SubscribeRequest;
+import com.terabite.user.model.UserInformation;
+import com.terabite.user.model.UserProgramming;
 import com.terabite.user.repository.UserProgrammingRepository;
 import com.terabite.user.repository.UserRepository;
 import com.terabite.user.service.SubscriptionService;
 import com.terabite.user.service.UnsubscribeService;
-import com.terabite.authorization.model.Login;
-import com.terabite.common.Roles;
-import com.terabite.user.model.SubscribeRequest;
-import com.terabite.common.SubscriptionStatus;
-import com.terabite.user.model.UserInformation;
-import com.terabite.user.model.UserProgramming;
-
+import com.terabite.user.service.UserProgrammingService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +46,18 @@ public class UserApi {
     private final UserProgrammingRepository userProgrammingRepository;
     private final UnsubscribeService unsubscribeService;
     private final SubscriptionService subscriptionService;
+    private final UserProgrammingService userProgrammingService;
 
-    public UserApi(UserRepository userRepository, UserProgrammingRepository userProgrammingRepository,
-            UnsubscribeService unsubscribeService, SubscriptionService subscriptionService) {
+    public UserApi(UserRepository userRepository,
+                   UserProgrammingRepository userProgrammingRepository,
+                   UnsubscribeService unsubscribeService,
+                   SubscriptionService subscriptionService,
+                   UserProgrammingService userProgrammingService) {
         this.userRepository = userRepository;
         this.userProgrammingRepository = userProgrammingRepository;
         this.unsubscribeService = unsubscribeService;
         this.subscriptionService = subscriptionService;
+        this.userProgrammingService = userProgrammingService;
     }
 
     /**
@@ -80,6 +84,22 @@ public class UserApi {
     }
 
     /**
+     * Delete all user programmings associated with the given programID.
+     *
+     * @param programId - program id to remove user programming for.
+     * @return return the number of {@link UserProgramming}s that were deleted.
+     */
+    public int deleteAllUserProgrammingsForProgram(long programId) {
+        final List<UserProgramming> userProgrammingsToDelete = getAllUsersForProgram(programId);
+        for (UserProgramming userProgramming : userProgrammingsToDelete) {
+            userProgrammingService.removeProgramming(userProgramming.getId());
+        }
+
+        log.info("Removed {} user programs associated with programId: {}", userProgrammingsToDelete.size(), programId);
+        return userProgrammingsToDelete.size();
+    }
+
+    /**
      * Set the subscription for the specified user and set the expiration to the
      * given expiration date.
      *
@@ -89,13 +109,13 @@ public class UserApi {
      * @param expiration         - when is the expiration set to expire.
      * @return whether the subscription operation was successful or not.
      */
-    public boolean setUserSubscription(final String userId, final SubscriptionStatus subscriptionStatus,
-            final Date expiration) {
+    public boolean
+    setUserSubscription(final String userId, final SubscriptionStatus subscriptionStatus, final Date expiration) {
         final Optional<UserInformation> userOption = userRepository.findByEmail(userId);
         if (userOption.isEmpty()) {
-            log.error(
-                    "Tried and Failed to set subscruption for user with email '{}' that did not exist in userInformationTable",
-                    userId);
+            log.error("Tried and Failed to set subscruption for user with email '{}' that did not exist in "
+                      + "userInformationTable",
+                      userId);
             return false;
         }
         final UserInformation user = userOption.get();
@@ -133,11 +153,11 @@ public class UserApi {
      */
     public static void ResetSubscriptionRoles(Login existingLogin) {
         List<String> roles = existingLogin.getRoles();
-        List<String> filteredRoles = roles.stream()
+        List<String> filteredRoles =
+            roles.stream()
                 .filter(role -> {
                     String strippedRole = role.substring(5); // Remove "ROLE_" prefix for comparison
-                    return Arrays.stream(SubscriptionStatus.values())
-                            .noneMatch(s -> s.name().equals(strippedRole));
+                    return Arrays.stream(SubscriptionStatus.values()).noneMatch(s -> s.name().equals(strippedRole));
                 })
                 .toList();
         existingLogin.setRoles(filteredRoles);
@@ -183,5 +203,4 @@ public class UserApi {
         }
         return rolesList.stream().map(Roles::name).toList();
     }
-
 }

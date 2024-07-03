@@ -1,0 +1,37 @@
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+Language: Java
+ColumnLimit: 120
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentWrappedFunctionNames: false
+ConstructorInitializerIndentWidth: 4
+
+AlignOperands: false
+AlignTrailingComments: true
+
+BinPackArguments: false
+BinPackParameters: false
+
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParens: Never
+SpacesInSquareBrackets: false
+
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: None 
+
+LambdaBodyIndentation: Signature
+
+KeepEmptyLinesAtTheStartOfBlocks: true

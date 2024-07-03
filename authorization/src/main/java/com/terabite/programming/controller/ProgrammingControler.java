@@ -110,7 +110,7 @@ public class ProgrammingControler {
     public ResponseEntity<?> deleteProgram(@PathVariable int id){
         Program program = new Program("name", Lists.newArrayList());
         program.setProgramId(id);   
-
+        userApi.deleteAllUserProgrammingsForProgram(id);
         return programService.deleteProgram(program);
     }
 

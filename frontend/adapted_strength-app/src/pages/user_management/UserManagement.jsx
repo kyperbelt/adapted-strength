@@ -106,8 +106,8 @@ export default function UserManagement() {
     UserApi.getAllUsers()
       .then((data) => {
         const getUserPrograms = async (userId) => {
-          const programs = await UserApi.getProgramming(userId);
-          return programs;
+          const userPrograms = await UserApi.getProgramming(userId);
+          return userPrograms;
         };
 
 
@@ -136,8 +136,7 @@ export default function UserManagement() {
 
                 return {
                   ...program,
-                  name: programs.find((p) => p.id === program.assignedProgramId)
-                    .name,
+                  name: programs.find((p) => p.id === program.assignedProgramId).name,
                 };
               });
             return {
@@ -456,7 +455,7 @@ function AssignProgram({ selectedProgram, handleAssignProgram }) {
   );
 }
 
-function SubscriptionManagement({ user, tiers, subscriptionInfo, userUpdatedFunction}) {
+function SubscriptionManagement({ user, tiers, subscriptionInfo, userUpdatedFunction }) {
 
   const [subscription, setSubscription] = useState(user.subscription);
   const [expiration, setExpiration] = useState(subscriptionInfo.expiration);
