@@ -60,7 +60,7 @@ const CalendlyBooking = () => {
                 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js">
                 </script>
                 <iframe
-                    src="https://calendly.com/alexpalting"
+                    src="https://calendly.com/adaptedstrength"
                     width="100%"
                     height="100%"
                     title="Calendly scheduling link"
