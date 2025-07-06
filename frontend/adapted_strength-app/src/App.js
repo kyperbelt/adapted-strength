@@ -147,7 +147,11 @@ function App() {
             /* ROUTES FOR PROGRAM PAGES */
               //--------------------------------------------------
 
-            // <Route path="user-program" element={<General />} />
+              <Route path="user-programs" element={
+                <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
+                  <General />
+                </RouteGuard>
+              } />
             //--------------------------------------------------
               <Route path="terms-of-service" element={<TermsOfService />} />
               <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
