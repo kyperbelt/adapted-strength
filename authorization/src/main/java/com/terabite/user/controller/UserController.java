@@ -1,7 +1,6 @@
 package com.terabite.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stripe.exception.StripeException;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
@@ -10,8 +9,6 @@ import com.terabite.common.Roles;
 import com.terabite.common.SubscriptionStatus;
 import com.terabite.common.dto.Payload;
 import com.terabite.common.model.LoginDetails;
-import com.terabite.payment.model.Customer;
-import com.terabite.payment.service.CustomerService;
 import com.terabite.programming.ProgrammingApi;
 import com.terabite.programming.model.Program;
 import com.terabite.user.UserApi;
@@ -73,7 +70,6 @@ public class UserController {
 
     private final AuthorizationApi authorizationApi;
     private final UserProgrammingService userProgrammingService;
-    private final CustomerService customerService;
 
     private final String authCookieName;
     private final JwtService jwtService;
@@ -88,7 +84,6 @@ public class UserController {
                           UserRepository userRepository,
                           UnsubscribeService unsubscribeService,
                           AuthorizationApi authorizationApi,
-                          CustomerService customerService,
                           @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,
                           JwtService jwtService) {
 
@@ -101,7 +96,6 @@ public class UserController {
         this.userRepository = userRepository;
         this.userProgrammingService = userProgrammingService;
         this.jwtService = jwtService;
-        this.customerService = customerService;
     }
 
     @GetMapping("/get/{email}")
@@ -148,15 +142,6 @@ public class UserController {
         if (existingUser.isPresent()) {
             log.error("UserInformation for " + userInformation.getEmail() + " already exists");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userInformation);
-        }
-
-        // Create stripe customer with user email
-        Customer customer;
-        try {
-            customer = customerService.createNewCustomer(userInformation);
-            userInformation.setCustomer(customer);
-        } catch (StripeException e) {
-            e.printStackTrace();
         }
 
         userRepository.save(userInformation);

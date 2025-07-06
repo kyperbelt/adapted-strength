@@ -3,7 +3,6 @@ package com.terabite.user.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.terabite.common.SubscriptionStatus;
-import com.terabite.payment.model.Customer;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -55,11 +54,6 @@ public class UserInformation implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    @JsonIgnore
-    private Customer customer;
 
     @JsonAlias("cell_phone")
     @Pattern(regexp = "^1?[-.\\s]?((\\([0-9]{3}\\))|[0-9]{3})[-.\\s]?[0-9]{3}[-.\\s]?[0-9]{4}$")
@@ -188,14 +182,6 @@ public class UserInformation implements Serializable {
 
     public String getEmail() {
         return email;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     @Override

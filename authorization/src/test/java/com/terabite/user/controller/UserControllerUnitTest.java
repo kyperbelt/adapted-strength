@@ -3,7 +3,6 @@ package com.terabite.user.controller;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
 import com.terabite.common.model.LoginDetails;
-import com.terabite.payment.service.CustomerService;
 import com.terabite.user.UserApi;
 import com.terabite.user.dto.UpdateInformationRequestBody;
 import com.terabite.user.model.Address;
@@ -54,9 +53,6 @@ class UserControllerUnitTest {
     private UserProgrammingService userProgrammingService;
 
     @Mock
-    private CustomerService customerService;
-
-    @Mock
     private JwtService jwtService;
 
     @Mock
@@ -76,7 +72,6 @@ class UserControllerUnitTest {
             userRepository,
             unsubscribeService,
             authorizationApi,
-            customerService,
             "authCookie",
             jwtService
         );
