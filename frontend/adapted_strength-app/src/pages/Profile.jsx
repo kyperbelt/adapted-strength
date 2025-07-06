@@ -24,16 +24,13 @@ function SubscriptionField({ tier }) {
   let subscriptionLabel;
   switch (tier) {
     case "BASE_CLIENT":
-      subscriptionLabel = "Base Client";
-      break;
     case "GENERAL_CLIENT":
-      subscriptionLabel = "General Client";
-      break;
     case "SPECIFIC_CLIENT":
-      subscriptionLabel = "Specific Client";
+      subscriptionLabel = "Active";
       break;
+    case "NO_SUBSCRIPTION":
     default:
-      subscriptionLabel = "Not Subscribed";
+      subscriptionLabel = "Inactive";
   }
   return <div className="subscription-tier">{subscriptionLabel}</div>;
 }
