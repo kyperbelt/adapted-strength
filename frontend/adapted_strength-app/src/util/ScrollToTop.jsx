@@ -7,12 +7,13 @@ export default function ScrollToTop() {
   useEffect(() => {
     console.log(`PATHNAME = ${pathname}`);
     if (pathname.includes("#")){
-      console.log("WOAH WOAH");
+      console.log("Skipping scroll to top - hash link detected");
       // if we are linking to a section then we dont want to 
       // alter the behavior.
       return;
     }
-    // window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to top on route change
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [pathname]);
 
   return null;
