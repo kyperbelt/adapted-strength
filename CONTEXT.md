@@ -27,7 +27,7 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - ✅ Remove Leaderboard (COMPLETED) 
 - ✅ Remove Notifications (COMPLETED)
 - ✅ Remove Send Notifications & Admin Chat menu items (COMPLETED)
-- ⏳ Show sex and shirt size in user profiles
+- ✅ Show sex and shirt size in user profiles (COMPLETED)
 - ⏳ Adjust box sizing to fit text properly
 - ⏳ Change "Repcycle" terminology to "movement"
 - ⏳ Change subscription status display to "Active" or "Inactive"
@@ -92,7 +92,23 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - Removed "Admin Chat" menu item (lines 125-138)
 - Admin navigation now only shows supported features
 
-### 6. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
+### 6. Sex and Shirt Size Profile Functionality ✅ RESOLVED
+**Problem**: Sex and shirt size fields were not being collected/displayed properly in user profiles
+**Root Causes**: 
+- Backend validation pattern for shirt_size didn't match frontend values (xxs, xs, s, m, l, xl, xxl, xxxl)
+- UpdateInformationRequestBody DTO missing sex and shirt_size fields
+- UserApi.updateProfileInformation() not sending these fields
+- Form fields missing name attributes for proper submission
+**Solution Applied**:
+- Fixed validation pattern: `@Pattern(regexp = "^(xxs|xs|s|m|l|xl|xxl|xxxl)$", flags = Pattern.Flag.CASE_INSENSITIVE)`
+- Added sex/shirt_size to UpdateInformationRequestBody with proper JSON aliases
+- Updated UserController.updateAccountInformation() to handle these fields
+- Fixed UserApi.updateProfileInformation() to include sex/shirt_size in payload
+- Added name attributes to SexField and ShirtSizeField components
+- Added comprehensive test coverage (13 tests total)
+- Enhanced validation error logging for debugging
+
+### 7. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
 **Problem**: User wanted to remove Leaderboard and Notifications menu items
 **Solution Applied**:
 - Modified `/frontend/adapted_strength-app/src/components/navBar.jsx`
@@ -192,8 +208,8 @@ cd authorization && ./gradlew bootRun --debug
 - Development strategy aligned with realistic timeline constraints
 
 **Progress on Product Owner Roadmap**: 
-- 4 of 8 low-hanging fruit items completed (Chat, Leaderboard, Notifications removal, Admin menu cleanup)
-- 4 remaining items identified for July/August 2025 completion
+- 5 of 8 low-hanging fruit items completed (Chat, Leaderboard, Notifications removal, Admin menu cleanup, Sex/Shirt size profiles)
+- 3 remaining items identified for July/August 2025 completion
 - Long-term goals established for Q1 2026
 
 **User Satisfaction**: High - application now working correctly with desired UI changes and clear development path forward
