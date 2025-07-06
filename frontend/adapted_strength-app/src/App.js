@@ -15,7 +15,7 @@ import ResetLinkSent from './pages/ResetLinkSent';
 import SignUp from './pages/SignUp';
 import SignUpAdditional from './pages/SignUpAdditional.jsx';
 import Memberships from './pages/Memberships.jsx'
-import Leaderboard from './pages/Leaderboard.jsx';
+
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import About from "./pages/About.jsx";
@@ -48,8 +48,6 @@ const UserManagement = lazy(() => import('./pages/user_management/UserManagement
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
 const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 const MovementLibrary = lazy(() => import('./pages/MovementLibrary.jsx'));
-const SendNotifications = lazy(() => import('./pages/SendNotifications.jsx'));
-const Tab = lazy(() => import("./components/TabComponents/Tab.jsx"));
 
 // import footer from '../footer'
 
@@ -152,7 +150,7 @@ function App() {
               <Route path="terms-of-service" element={<TermsOfService />} />
               <Route path="health-questionnaire" element={<HealthQuestionnaire />} />
               <Route path="memberships" element={<Memberships />} />
-              <Route path="leaderboard" element={<Leaderboard />} />
+
               // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
@@ -163,16 +161,6 @@ function App() {
 
 
 
-              /* Route for notifications & announcements tabs */
-              //-------------------------------------------------
-              <Route path="notifications" element={
-                <Suspense fallback="...">
-                  { /*TODO: check if we want to allow for all users*/}
-                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
-                    <Tab />
-                  </RouteGuard>
-                </Suspense>
-              } />
               <Route path='send_notifications' element={
                 <Suspense fallback="...">
                   { /*TODO: check if we want to allow for all users*/}
