@@ -18,6 +18,9 @@ import Memberships from './pages/Memberships.jsx'
 
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+
+// Import the UserProvider for global user state management
+import { UserProvider } from './contexts/UserContext';
 import About from "./pages/About.jsx";
 
 import ScrollToTop from './util/ScrollToTop';
@@ -62,18 +65,18 @@ function App() {
   const [isTokenFound, setTokenFound] = useState(false);
   { !isTokenFound && fetchToken(setTokenFound); }
 
-
   // <Wrapper>
   return (
-    <div id="app" className="flex-1 flex flex-col">
-      {
-        <BrowserRouter className="">
-          <ScrollToTop />
-          <Routes className="">
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              {/* Add more routes here the same way as above */}
-              {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
+    <UserProvider>
+      <div id="app" className="flex-1 flex flex-col">
+        {
+          <BrowserRouter className="">
+            <ScrollToTop />
+            <Routes className="">
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                {/* Add more routes here the same way as above */}
+                {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
 
               {/* When no route available we go to not found */}
               {/*Example:  <Route path="sign-up" element={<SignUp/>} /> */}
@@ -162,6 +165,7 @@ function App() {
         </BrowserRouter>
       }
     </div >
+    </UserProvider>
   );
 }
 

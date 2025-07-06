@@ -3,303 +3,175 @@ Module: navBar.jsx
 Team: TeraBITE
 */
 
-import { AuthApi } from "../api/AuthApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import StateGuard from "../util/StateGuard";
+import { PermissionGuard } from "./PermissionGuard";
+import { useUser } from "../contexts/UserContext";
+import { PERMISSIONS } from "../utils/permissions";
 import Logo from "../assets/logo.png";
 
 const navigation = [
   { component: <> Home</>, to: "/", selected: true },
-  { component: <> Book Consultation</>, to: "/consultations", selected: false },
+  { component: <> Book Consultation</>, to: "/consultations", selected: false, permission: PERMISSIONS.BOOK_CONSULTATIONS },
   { component: <> About Us</>, to: "/about", selected: false },
   { component: <> Movement Library</>, to: "/movement-library", selected: false },
+  { component: <> Manage Programs</>, to: "/program-management", selected: false, permission: PERMISSIONS.MANAGE_PROGRAMS },
+  { component: <> Manage Users</>, to: "/user-management", selected: false, permission: PERMISSIONS.MANAGE_USERS },
+  { component: <> Web Admin</>, to: "/web-admin", selected: false, permission: PERMISSIONS.ACCESS_WEB_ADMIN },
+];
 
-  {
-    component: <> Manage Programs</>,
-    to: "/program-management",
-    selected: false,
-    state: () => {
-      return new Promise(async (resolve, reject) => {
-        if (AuthApi.isLoggedIn()) {
-          const hasRole =
-            (await AuthApi.hasRole("ROLE_COACH")) ||
-            (await AuthApi.hasRole("ROLE_ADMIN"));
-          resolve(hasRole);
-        } else {
-          resolve(false);
-        }
-      });
-    },
-  },
-  {
-    component: <> Manage Users</>,
-    to: "/user-management",
-    selected: false,
-    state: () => {
-      return new Promise(async (resolve, reject) => {
-        if (AuthApi.isLoggedIn()) {
-          const hasRole =
-            (await AuthApi.hasRole("ROLE_COACH")) ||
-            (await AuthApi.hasRole("ROLE_ADMIN"));
-          resolve(hasRole);
-        } else {
-          resolve(false);
-        }
-      });
-    },
-  },
-  {
-    component: <>WebAdmin</>,
-    to: "/web-admin",
-    selected: false,
-    state: () => {
-      return new Promise(async (resolve, reject) => {
-        if (AuthApi.isLoggedIn()) {
-          const hasRole = await AuthApi.hasRole("ROLE_ADMIN");
-          resolve(hasRole);
-        } else {
-          resolve(false);
-        }
-      });
-    },
-  },
-  {
-    component: <> Profile</>,
-    to: "/profile",
-    selected: false,
-    state: () => AuthApi.isLoggedIn(),
-  },
-  {
-    component: <> My Program</>,
-    to: "/user-program",
-    selected: false,
-    state: () => AuthApi.isLoggedIn(),
-  },
-  {
-    component: <span>Login</span>,
-    to: "/login",
-    selected: false,
-    state: () => !AuthApi.isLoggedIn(),
-  },
-  {
-    component: <> Sign Up</>,
-    to: "/sign-up",
-    selected: false,
-    state: () => !AuthApi.isLoggedIn(),
-  },
-  {
-    component: <>Chat</>,
-    to: "/chat",
-    selected: false,
-    state: () => {
-      return new Promise(async (resolve, reject) => {
-        if (AuthApi.isLoggedIn()) {
-          const hasRole =
-              (await AuthApi.hasRole("ROLE_BASE_CLIENT")) ||
-              (await AuthApi.hasRole("ROLE_GENERAL_CLIENT")) ||
-              (await AuthApi.hasRole("ROLE_SPECIFIC_CLIENT"));
-          resolve(hasRole);
-        } else {
-          resolve(false);
-        }
-      });
-    }
-  }
+const profileNavigation = [
+  { component: <> Profile</>, to: "/profile", selected: false, permission: PERMISSIONS.VIEW_OWN_PROFILE },
+  { component: <> Memberships</>, to: "/memberships", selected: false, permission: PERMISSIONS.VIEW_OWN_PROFILE },
+  { component: <> My Programs</>, to: "/user-programs", selected: false, permission: PERMISSIONS.VIEW_OWN_PROGRAMS },
 ];
 
 export default function NavBar() {
-  const nav = useNavigate();
-  const loc = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, logout, isLoading, hasPermission } = useUser();
+  const [navItems, setNavItems] = useState([]);
 
-  const [hamburgerOpen, setHamOpen] = useState(false);
-  const [navItems, setNavItems] = useState(navigation);
-  const [loggedIn, setLoggedIn] = useState(AuthApi.isLoggedIn());
-
-  //check if the url contains one of the navigation items "to" values and if it does, set that item to selected
   useEffect(() => {
-    for (let i = 0; i < navigation.length; i++) {
-      if (
-        !(i !== 0 && navigation[i].to === "/") &&
-        loc.pathname.includes(navigation[i].to)
-      ) {
-        const items = navItems.map((item) => {
-          item.selected = item.to === navigation[i].to;
-          return item;
-        });
+    // Filter navigation items based on user permissions
+    const filteredItems = navigation.filter(item => {
+      // If no permission required, show to everyone
+      if (!item.permission) return true;
+      
+      // If user is not authenticated, don't show protected items
+      if (!isAuthenticated) return false;
+      
+      // Check if user has the required permission
+      return hasPermission(item.permission);
+    });
+    
+    setNavItems(filteredItems);
+  }, [isAuthenticated, hasPermission]);
 
-        setNavItems(items);
-        if (loggedIn != AuthApi.isLoggedIn()) {
-          setLoggedIn(AuthApi.isLoggedIn());
-        }
-      }
-    }
-  }, [loc.pathname, loggedIn]);
-
-  const toggleHammy = (e) => {
-    console.log("toggleHammy:", e.target.id);
-    // list of "nav_item" elements in nav_items emlement
-    if (e.target.id === "nav-item") {
-      const text = e.target.textContent;
-      const items = navItems.map((item) => {
-        item.selected = item.text === text;
-        return item;
-      });
-      setNavItems(items);
-    }
-
-    setHamOpen(!hamburgerOpen);
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
-  const closeHammy = () => {
-    setHamOpen(false);
-  };
-
-  const onLogOut = async () => {
-    // TODO: handle logout errors
-    //      right now we just await and dont do nothing about it
-    await AuthApi.logout();
-    nav("/");
-  };
-  // TODO: We need to use conditional rendering for nav so that we do not show
-  //      certain options when the user is not logged in for example, or if they
-  //      dont have the right permissions or are in a wrong state/certain page/step.
-  return (
-    <div id="navigation-bar" className={"sticky top-0 w-full bg-primary z-20"} key={loggedIn}>
-      <div
-        className={`right-0 bottom-0 left-0 bg-black opacity-50  ${hamburgerOpen ? "flex" : "hidden"
-          }`}
-        onClick={toggleHammy}
-      />
-      <nav className="border-0">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <Link
-            to="/"
-            onClick={() => {
-              setNavItems(navigation);
-            }}
-            className="flex items-center space-x-3 rtl:space-x-reverse"
-          >
-            <img
-              src={Logo}
-              className="w-48 mt-3 "
-              alt="Adapted Strength Logo"
-            />
-            <span
-              className="self-center text-2xl font-semibold whitespace-nowrap " /*TODO add text here and remove text from image logo*/
-            ></span>
-          </Link>
-          <button
-            onClick={toggleHammy}
-            type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
-            aria-controls="navbar-default"
-            aria-expanded="false"
-          >
-            <span className="sr-only">Open menu</span>
-            <svg
-              className="w-5 h-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 17 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
-          </button>
-          <div
-            className={`${hamburgerOpen ? "" : "hidden"
-              } w-full animate-slideLeft lg:block lg:w-auto`}
-            id="navbar-default"
-          >
-            <ul
-              id="nav_items"
-              className="font-medium flex flex-col p-4 lg:p-0 mt-4 rounded-lg bg-gray-50 lg:flex-row lg:flex-wrap rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-white"
-            >
-              {navItems.map((item, index) => {
-                return (
-                  <NavItem
-                    className={`${item.selected
-                      ? "lg:bg-transparent bg-primary-dark lg:text-accent "
-                      : ""
-                      }`}
-                    key={index}
-                    to={item.to}
-                    onClick={() => {
-                      closeHammy();
-                      item.onClick && item.onClick();
-                    }}
-                    state={item.state}
-                  >
-                    {item.component}
-                  </NavItem>
-                );
-              })}
-              <NavItem to="/" selected={false} state={AuthApi.isLoggedIn} onClick={async () => {
-                await AuthApi.logout();
-                closeHammy();
-                setLoggedIn(AuthApi.isLoggedIn());
-              }}>
-                Logout
-              </NavItem>
-            </ul>
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <nav className="bg-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <img className="h-8 w-auto" src={Logo} alt="Adapted Strength" />
+              <span className="ml-2 text-xl font-semibold">Loading...</span>
+            </div>
           </div>
         </div>
       </nav>
-    </div>
-  );
-}
+    );
+  }
 
-function BellIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      className="bi bi-bell-fill"
-      viewBox="0 0 16 16"
-    >
-      <path
-        id="icon-info"
-        d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"
-      />
-    </svg>
-  );
-}
+    <nav className="bg-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <img className="h-8 w-auto" src={Logo} alt="Adapted Strength" />
+              <span className="ml-2 text-xl font-semibold text-gray-800">Adapted Strength</span>
+            </Link>
+          </div>
 
-// <div className="block lg:hidden h-9 w-9 bg-black border-solid border-2 border-red-900 rounded-full content-center fixed top-3 right-3 z-50 cursor-pointer" onClick={toggleHammy}>
-//   <div className={`w-6 h-0.5 bg-white mt-2 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></div>
-//   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'opacity-0' : ''}`} />
-//   <div className={`w-6 h-0.5 bg-white mt-1 ml-1 mb-1 rounded ${hamburgerOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></div>
-// </div>
-function NavItem({ to, children, onClick, state, className }) {
-  return (
-    <StateGuard
-      state={
-        state ??
-        (() => {
-          return true;
-        })
-      }
-    >
-      <li>
-        <Link
-          id="nav-item"
-          to={to}
-          className={`${className} lg:me-4 text-left block py-2 px-3 text-gray-900 rounded hover:bg-primary-dark lg:hover:bg-transparent lg:border-0 lg:hover:text-accent lg:p-0`}
-          onClick={onClick}
-        >
-          {children}
-        </Link>
-      </li>
-    </StateGuard>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                to={item.to}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  location.pathname === item.to
+                    ? 'bg-red-100 text-red-700'
+                    : 'text-gray-700 hover:text-red-600 hover:bg-gray-100'
+                }`}
+              >
+                {item.component}
+              </Link>
+            ))}
+          </div>
+
+          {/* User Menu */}
+          <div className="flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="relative group">
+                <button className="flex items-center space-x-2 text-gray-700 hover:text-red-600">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>Account</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  {profileNavigation.map((item, index) => (
+                    <PermissionGuard key={index} permission={item.permission} requireAuth={true}>
+                      <Link
+                        to={item.to}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {item.component}
+                      </Link>
+                    </PermissionGuard>
+                  ))}
+                  <hr className="my-1" />
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/sign-up"
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="md:hidden">
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          {navItems.map((item, index) => (
+            <Link
+              key={index}
+              to={item.to}
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                location.pathname === item.to
+                  ? 'bg-red-100 text-red-700'
+                  : 'text-gray-700 hover:text-red-600 hover:bg-gray-100'
+              }`}
+            >
+              {item.component}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </nav>
   );
 }

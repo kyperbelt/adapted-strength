@@ -110,4 +110,28 @@ export class AuthApi {
         return false;
       });
   }
+
+  /**
+   * Get current user information including roles
+   * @returns {Promise} Promise that resolves to user data with roles
+   */
+  static getUserInfo() {
+    const loggedIn = AuthApi.isLoggedIn();
+    if (!loggedIn) {
+      return Promise.reject(new Error('User not logged in'));
+    }
+
+    const promise = ApiUtils.apiGet("auth/user-info");
+    return promise
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response;
+        }
+        throw new Error('Failed to fetch user info');
+      })
+      .catch((error) => {
+        console.error('Error fetching user info:', error);
+        throw error;
+      });
+  }
 }

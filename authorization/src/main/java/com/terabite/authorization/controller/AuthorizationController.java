@@ -104,6 +104,30 @@ public class AuthorizationController {
         }
     }
 
+    @GetMapping("/user-info")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        LoginDetails loginDetails = (LoginDetails) userDetails;
+        if (loginDetails != null) {
+            // Create a response with user information and roles
+            var userInfo = new java.util.HashMap<String, Object>();
+            userInfo.put("username", loginDetails.getUsername());
+            userInfo.put("email", loginDetails.getUsername()); // Username is email in this system
+            userInfo.put("roles", loginDetails.getRoles());
+            userInfo.put("authorities", loginDetails.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .toList());
+            
+            log.info("Returning user info for user: {} with roles: {}", 
+                loginDetails.getUsername(), loginDetails.getRoles());
+            
+            return ResponseEntity.ok(userInfo);
+        } else {
+            log.warn("User details are null - user not authenticated");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse("User not authenticated", "Unauthorized"));
+        }
+    }
+
     /**
      *
      * @param login
