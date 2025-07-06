@@ -5,7 +5,6 @@ import com.stripe.exception.StripeException;
 import com.terabite.GlobalConfiguration;
 import com.terabite.authorization.AuthorizationApi;
 import com.terabite.authorization.service.JwtService;
-import com.terabite.chat.ChatApi;
 import com.terabite.common.RoleConfiguration;
 import com.terabite.common.Roles;
 import com.terabite.common.SubscriptionStatus;
@@ -67,7 +66,6 @@ public class UserController {
             .build();
 
     private final UserRepository userRepository;
-    private final ChatApi chatApi;
     private final UserApi userApi;
     private final SubscriptionService subscriptionService;
     private final UnsubscribeService unsubscribeService;
@@ -82,7 +80,7 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(ChatApi chatApi,
+    public UserController(
                           UserApi userApi,
                           UserProgrammingService userProgrammingService,
                           SubscriptionService subscriptionService,
@@ -94,7 +92,6 @@ public class UserController {
                           @Qualifier(GlobalConfiguration.BEAN_NAME_AUTH_COOKIE_NAME) String authCookieName,
                           JwtService jwtService) {
 
-        this.chatApi = chatApi;
         this.userApi = userApi;
         this.subscriptionService = subscriptionService;
         this.healthQuestionareService = healthQuestionareService;
@@ -163,8 +160,6 @@ public class UserController {
         }
 
         userRepository.save(userInformation);
-        chatApi.createUser(
-            userInformation.getEmail(), userInformation.getFirstName() + " " + userInformation.getLastName(), "CLIENT");
         return ResponseEntity.ok(Payload.of("Account information created successfully"));
     }
 
