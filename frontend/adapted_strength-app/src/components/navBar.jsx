@@ -84,20 +84,20 @@ export default function NavBar() {
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
-          {/* Logo - removed redundant text since logo includes the name */}
+          {/* Logo - fixed aspect ratio to prevent squishing */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <img className="h-8 w-auto" src={Logo} alt="Adapted Strength" />
+              <img className="h-8 w-auto object-contain" src={Logo} alt="Adapted Strength" />
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation - show on larger screens to prevent crowding */}
+          <div className="hidden lg:flex items-center space-x-6">
             {navItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.to}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                   location.pathname === item.to
                     ? 'bg-red-100 text-red-700'
                     : 'text-gray-700 hover:text-red-600 hover:bg-gray-100'
@@ -108,7 +108,7 @@ export default function NavBar() {
             ))}
           </div>
 
-          {/* Desktop User Menu */}
+          {/* Desktop User Menu - show on medium screens and up */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="relative group">
@@ -161,11 +161,11 @@ export default function NavBar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile menu button - show when navigation items don't fit */}
+          <div className="lg:hidden flex items-center">
             <button
               onClick={toggleMobileMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500 transition-colors"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -196,8 +196,8 @@ export default function NavBar() {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
-      <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
+      {/* Mobile Navigation Menu - show when hamburger is visible */}
+      <div className={`lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
           {/* Mobile Navigation Items */}
           {navItems.map((item, index) => (

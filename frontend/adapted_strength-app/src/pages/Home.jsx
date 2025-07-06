@@ -1,7 +1,5 @@
-import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import logo from '../assets/logo.png';
-import { PrimaryButton, SecondaryButton } from '../components/Button';
+import { PrimaryButton } from '../components/Button';
 
 import { BlankPageContainer } from '../components/PageContainer';
 import { useNavigate } from 'react-router-dom';
@@ -29,20 +27,11 @@ export default function Home() {
                 <div className="flex md:justify-end max-w-screen-xl pt-8">
                     <PrimaryButton onClick={
                         () => {
-                            nav('/sign-up', {});
+                            nav('/memberships', {});
                         }
-
-                    }>
-                        Sign Up
+                    } className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
+                        Get Started!
                     </PrimaryButton>
-                    <SecondaryButton onClick={
-                        () => {
-                            nav('/login', {});
-                        }
-
-                    }>
-                        Log In
-                    </SecondaryButton>
                 </div>
             </div>
             <BlankPageContainer>
