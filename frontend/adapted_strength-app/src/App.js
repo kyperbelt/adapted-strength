@@ -161,14 +161,6 @@ function App() {
 
 
 
-              <Route path='send_notifications' element={
-                <Suspense fallback="...">
-                  { /*TODO: check if we want to allow for all users*/}
-                  <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login">
-                    <SendNotifications />
-                  </RouteGuard>
-                </Suspense>
-              } />
             </Route>
           </Routes>
         </BrowserRouter>
