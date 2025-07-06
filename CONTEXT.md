@@ -118,7 +118,20 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - Added 7 comprehensive tests to verify display logic
 - Preserved detailed tier information in admin interfaces (UserManagement.jsx)
 
-### 8. Stripe Integration Removal ✅ RESOLVED
+### 9. Subscription System Simplification ✅ RESOLVED
+**Problem**: Inconsistent subscription display between frontend (Active/Inactive) and backend (BASE_CLIENT, GENERAL_CLIENT, SPECIFIC_CLIENT, NO_SUBSCRIPTION)
+**Root Cause**: After Stripe removal, complex tiered system was unnecessary for Alex's manual management approach
+**Solution Applied**:
+- **Backend**: Simplified SubscriptionStatus enum to just ACTIVE/INACTIVE
+- **Backend**: Updated Roles enum to ROLE_ACTIVE/ROLE_INACTIVE
+- **Backend**: Fixed all services (Signup, Unsubscribe, Subscription, UserApi)
+- **Frontend**: Updated all components to use consistent ACTIVE/INACTIVE values
+- **Admin Interface**: Simplified UserManagement dropdown to show Active/Inactive
+- **Removed**: Complex expiration date management (Alex handles manually)
+- **Testing**: Updated all tests - 32 backend tests + 5 frontend tests passing
+- **Database**: Default subscription status now INACTIVE for new users
+
+### 10. Stripe Integration Removal ✅ RESOLVED
 **Problem**: Complex Stripe payment integration was unnecessary as stakeholder prefers manual subscription management
 **Stakeholder Decision**: Alex (Product Owner) will handle all subscription management directly
 **Solution Applied**:
@@ -131,7 +144,7 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - **Admin Functionality**: Preserved detailed subscription management in UserManagement.jsx
 - **Testing**: All existing tests still pass after removal
 
-### 9. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
+### 11. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
 **Problem**: User wanted to remove Leaderboard and Notifications menu items
 **Solution Applied**:
 - Modified `/frontend/adapted_strength-app/src/components/navBar.jsx`
