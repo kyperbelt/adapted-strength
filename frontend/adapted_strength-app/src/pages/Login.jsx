@@ -3,22 +3,27 @@ Module: Login.jsx
 Team: TeraBITE
 */
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react'; // UNUSED ASSET - Commenting out
 import { useNavigate } from 'react-router-dom';
-import { AuthApi } from '../api/AuthApi';
-import { ApiUtils } from '../api/ApiUtils';
+import { useEffect, useState } from 'react';
+import { useUser } from '../contexts/UserContext';
 import { PrimaryButton } from '../components/Button';
 
-import logo from '../assets/logo.png';
-import google from '../assets/google_icon.webp'; // UNUSED ASSET - Commenting out
-import LabeledInputField from '../components/forms/LabeledInputField';
-
 function UserField() {
-    return <LabeledInputField type="email" id="email" name="email" required={true} placeholder="Email" />
+    return (<div className="mb-4 w-full px-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            Email
+        </label>
+        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" />
+    </div>);
 }
 
 function PasswordField() {
-    return <LabeledInputField type="password" id="password" name="password" required={true} placeholder="Password" />
+    return (<div className="mb-6 w-full px-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            Password
+        </label>
+        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************" />
+    </div>);
 }
 function NextButton() {
     return (<PrimaryButton type="submit" className="border-primary border-8  rounded-full px-3 py-1 "  >
@@ -26,56 +31,64 @@ function NextButton() {
     </PrimaryButton>);
 }
 
-function AdaptedStrengthLogo() {
-    return (<div className="flex flex-col items-center mt-12">
-        <img src={logo} className="w-3/4" alt="Company Logo" aria-label="an image of the Adapted Strength logo" />
-    </div>);
+function GoogleLogo() {
+    return (<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19.8055 8.0415H19V8H10V12H15.6515C14.827 14.3285 12.6115 16 10 16C6.6865 16 4 13.3135 4 10C4 6.6865 6.6865 4 10 4C11.5295 4 12.921 4.577 13.9805 5.5195L16.809 2.691C15.023 1.0265 12.634 0 10 0C4.4775 0 0 4.4775 0 10C0 15.5225 4.4775 20 10 20C15.5225 20 20 15.5225 20 10C20 9.3295 19.931 8.675 19.8055 8.0415Z" fill="#FFC107" />
+        <path d="M1.1535 5.3455L4.438 7.797C5.3275 5.592 7.4805 4 10 4C11.5295 4 12.921 4.577 13.9805 5.5195L16.809 2.691C15.023 1.0265 12.634 0 10 0C6.159 0 2.828 2.1685 1.1535 5.3455Z" fill="#FF3D00" />
+        <path d="M10 20C12.583 20 14.93 19.0115 16.7045 17.404L13.6085 14.785C12.5718 15.5742 11.3038 16.001 10 16C7.399 16 5.1910 14.3415 4.3585 12.027L1.0975 14.5395C2.7525 17.778 6.1135 20 10 20Z" fill="#4CAF50" />
+        <path d="M19.8055 8.0415H19V8H10V12H15.6515C15.2571 13.1082 14.5467 14.0766 13.608 14.785L13.6085 14.784L16.7045 17.404C16.4855 17.6025 20 15 20 10C20 9.3295 19.931 8.675 19.8055 8.0415Z" fill="#1976D2" />
+    </svg>);
 }
 
-function GoogleLogo({ ...props }) {
-    return (<p className={`rounded-full ${props.className}`}>
-        <img src={google} className="w-5" alt="Google Logo" aria-label="an image of the Google logo" />
+function ForgotPasswordText() {
+    return (<p className="text-center text-gray-500 text-xs">
+        <Link to="/forgot-password" className="text-blue-500 hover:text-blue-800">Forgot Password?</Link>
     </p>);
 }
 
 export default function Login() {
+    const navigate = useNavigate();
+    const { login } = useUser();
+    const [error, setError] = useState('');
+
     useEffect(() => {
         document.title = "Adapted Strength"; // Set the title when the component mounts
         return () => {
-            document.title = "Adapted Strength"; // Optionally reset the title when the component unmounts
+            document.title = "Adapted Strength"; // Reset the title when the component unmounts
         };
     }, []);
-    const nav = useNavigate();
-    const onSubmit = (e) => {
+
+    const onSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        
         console.log("Logging in");
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        AuthApi.login(email, password)
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log("Logged in");
-                    ApiUtils.setAuthToken(response.data.payload);
-                    nav("/profile");
-                } else {
-                    console.error("Error logging in", response);
-                }
-            }).catch((error) => {
-                console.error("Error logging in", error);
-            });
 
+        if (!email || !password) {
+            setError('Please enter both email and password');
+            return;
+        }
+
+        try {
+            // Use the UserContext login method which will handle token and user data
+            const result = await login({ username: email, password });
+            
+            if (result.success) {
+                console.log("Logged in successfully");
+                navigate("/profile");
+            } else {
+                setError(result.error || 'Login failed');
+            }
+        } catch (error) {
+            console.error("Error logging in", error);
+            setError('Login failed. Please try again.');
+        }
     };
 
-
     return (<div className="h-full my-0 content-center w-full top-[100px]">
-
-        <div className="h-56 bg-header-background1">
-            <AdaptedStrengthLogo />
-        </div>
-        <title>
-            Adapted Strength
-        </title>
-        <div className="bg-[#161A1D] h-full">
+        <div className="flex justify-center items-center h-full">
             <div className="relative bottom-20">
                 <h1 className="relative mx-0 text-center text-2xl bottom-4">Welcome!</h1>
                 <div className="flex w-full justify-center" >
@@ -83,59 +96,23 @@ export default function Login() {
                         <div className="w-full flex flex-col items-center px-0 ">
                             <UserField />
                         </div>
-                        <div className="w-full flex flex-col items-center px-0 pt-4">
+                        <div className="w-full flex flex-col items-center px-0 ">
                             <PasswordField />
                         </div>
-                        <div>
-                            <input
-                                className="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 
-                                before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full 
-                                before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] 
-                                after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 
-                                after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] 
-                                after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] 
-                                checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] 
-                                checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full 
-                                checked:after:border-none checked:after:bg-primary checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] 
-                                checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] 
-                                hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] 
-                                focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] 
-                                focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full 
-                                focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] 
-                                checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] 
-                                checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 
-                                dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] 
-                                dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-                                type="checkbox"
-                                role="switch"
-                                aria-checked="false"
-                                id="flexSwitchCheckDefault" />
-                            <label
-                                className="inline-block pl-[0.15em] hover:cursor-pointer"
-                                htmlFor="flexSwitchCheckDefault"
-                            >Remember me</label>
-                            <Link
-                                to="/forgot-password"
-                                className="block text-red-500 text-color-white transition duration-150 ease-in-out hover:text-primary-600 
-                                focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 
-                                dark:focus:text-primary-500 dark:active:text-primary-600"
-                            >Forgot Password</Link>
-
-                            <div className="flex justify-center w-full relative top-14">
-                                <NextButton />
+                        {error && (
+                            <div className="mb-4 text-red-500 text-sm text-center">
+                                {error}
                             </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                            <NextButton />
+                        </div>
+                        <div className="mt-4">
+                            <ForgotPasswordText />
                         </div>
                     </form>
                 </div>
             </div>
-            <p className="relative mx-0 text-white px-3 text-center bottom-4">
-                Dont have an account?
-                <a
-                    href="./sign-up"
-                    className="text-red-500 text-color-white transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-                > Sign up here</a>
-            </p>
-
         </div>
-    </div>)
-};
+    </div>);
+}

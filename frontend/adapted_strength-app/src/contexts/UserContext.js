@@ -107,17 +107,27 @@ export const UserProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setIsLoading(true);
-      const loginResponse = await AuthApi.login(credentials);
       
-      if (loginResponse.success) {
-        await fetchUserData();
-        return { success: true };
+      // Use the existing AuthApi.login method
+      const loginResponse = await AuthApi.login(credentials.username, credentials.password);
+      
+      if (loginResponse.status === 200) {
+        // Set the auth token
+        const token = loginResponse.data.payload;
+        // The AuthApi.login should already set the token, but let's make sure
+        if (token) {
+          // Token should already be set by AuthApi.login, but we can verify
+          await fetchUserData();
+          return { success: true };
+        } else {
+          return { success: false, error: 'No token received' };
+        }
       } else {
-        return { success: false, error: loginResponse.error };
+        return { success: false, error: 'Invalid credentials' };
       }
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: error.message || 'Login failed' };
     } finally {
       setIsLoading(false);
     }
