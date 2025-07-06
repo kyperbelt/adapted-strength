@@ -211,7 +211,7 @@ public class ProgrammingControler {
         for (int repCycleId : request.repCycleIds()) {
             RepCycle repCycle = repCycleService.getRepCycleById(repCycleId);
             if (repCycle == null) {
-                log.error("RepCycle with id {} not found", repCycleId);
+                log.error("Movement with id {} not found", repCycleId);
                 continue;
             }
             repCycles.add(repCycle);
@@ -337,7 +337,7 @@ public class ProgrammingControler {
             RepCycle repCycle = repCycleOptional.get().duplicate();
             return repCycleService.createNewRepCycle(repCycle);
         }
-        log.error("RepCycle with id {} not found", repCycleId);
+        log.error("Movement with id {} not found", repCycleId);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Payload.of(String.valueOf(repCycleId)));
     }
 

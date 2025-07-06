@@ -405,14 +405,14 @@ function AreYouSureDialog({ onYes, onNo, ...props }) {
 }
 
 function RepCycle({ repCycle, cycleState, onEdit }) {
-        console.log("RepCycle: ", repCycle);
+        console.log("Movement: ", repCycle);
         const [repCycles, setRepCycles] = cycleState;
 
         const onDelete = async () => {
-                console.log("Delete RepCycle: ", repCycle);
+                console.log("Delete Movement: ", repCycle);
                 await ProgrammingApi.deleteCycle(repCycle.repCycleId).then((r) => {
                         if (r.status === HttpStatus.OK) {
-                                console.log("RepCycle deleted: ", repCycle.repCycleId);
+                                console.log("Movement deleted: ", repCycle.repCycleId);
                                 const newCycles = repCycles.filter((cycle) => cycle.repCycleId !== repCycle.repCycleId);
                                 setRepCycles(newCycles);
                                 return r;
@@ -504,7 +504,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, m
 
         if (mode === "edit") {
                 // fill in the form with the rep cycle data
-                console.log("Editing rep cycle: ", repCycle);
+                console.log("Editing movement: ", repCycle);
                 document.getElementById(`rep-cycle-name-${dayId}`).value = repCycle.name;
                 document.getElementById(`equipment-${dayId}`).value = repCycle.equipment;
                 document.getElementById(`num-sets-${dayId}`).value = repCycle.numSets;

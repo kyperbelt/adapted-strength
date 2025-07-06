@@ -23,13 +23,13 @@ public class RepCycleService {
     }
 
     public ResponseEntity<?> createNewRepCycle(RepCycle repCycle) {
-        log.info("New RepCycle Created {}", repCycleRepository.save(repCycle));
+        log.info("New Movement Created {}", repCycleRepository.save(repCycle));
         return new ResponseEntity<>(repCycle, HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateRepCycle(RepCycle repCycle) {
         if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
-            log.error("RepCycle not found {}", repCycle);
+            log.error("Movement not found {}", repCycle);
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
@@ -40,7 +40,7 @@ public class RepCycleService {
 
     public ResponseEntity<?> getRepCycle(RepCycle repCycle) {
         if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
-            log.error("RepCycle not found {}", repCycle);
+            log.error("Movement not found {}", repCycle);
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
@@ -58,7 +58,7 @@ public class RepCycleService {
 
     public ResponseEntity<?> deleteRepCycle(RepCycle repCycle) {
         if(repCycleRepository.findById(repCycle.getRepCycleId()).isEmpty()){
-            log.error("RepCycle not found {}", repCycle);
+            log.error("Movement not found {}", repCycle);
             return new ResponseEntity<>(repCycle, HttpStatus.NOT_FOUND);
         }
         else{
