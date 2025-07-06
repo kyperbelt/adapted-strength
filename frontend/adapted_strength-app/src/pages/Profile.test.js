@@ -6,12 +6,10 @@ import '@testing-library/jest-dom';
 function SubscriptionField({ tier }) {
   let subscriptionLabel;
   switch (tier) {
-    case "BASE_CLIENT":
-    case "GENERAL_CLIENT":
-    case "SPECIFIC_CLIENT":
+    case "ACTIVE":
       subscriptionLabel = "Active";
       break;
-    case "NO_SUBSCRIPTION":
+    case "INACTIVE":
     default:
       subscriptionLabel = "Inactive";
   }
@@ -19,23 +17,13 @@ function SubscriptionField({ tier }) {
 }
 
 describe('SubscriptionField', () => {
-  test('should display "Active" for BASE_CLIENT', () => {
-    render(<SubscriptionField tier="BASE_CLIENT" />);
+  test('should display "Active" for ACTIVE', () => {
+    render(<SubscriptionField tier="ACTIVE" />);
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
 
-  test('should display "Active" for GENERAL_CLIENT', () => {
-    render(<SubscriptionField tier="GENERAL_CLIENT" />);
-    expect(screen.getByText('Active')).toBeInTheDocument();
-  });
-
-  test('should display "Active" for SPECIFIC_CLIENT', () => {
-    render(<SubscriptionField tier="SPECIFIC_CLIENT" />);
-    expect(screen.getByText('Active')).toBeInTheDocument();
-  });
-
-  test('should display "Inactive" for NO_SUBSCRIPTION', () => {
-    render(<SubscriptionField tier="NO_SUBSCRIPTION" />);
+  test('should display "Inactive" for INACTIVE', () => {
+    render(<SubscriptionField tier="INACTIVE" />);
     expect(screen.getByText('Inactive')).toBeInTheDocument();
   });
 

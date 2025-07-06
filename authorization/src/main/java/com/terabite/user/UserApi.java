@@ -121,13 +121,12 @@ public class UserApi {
         final UserInformation user = userOption.get();
 
         switch (subscriptionStatus) {
-            case NO_SUBSCRIPTION:
+            case INACTIVE:
                 unsubscribeService.unsubscribe(userId);
                 user.setExpirationDate(null);
                 userRepository.save(user);
                 return true;
-            case SPECIFIC_CLIENT:
-            case BASE_CLIENT:
+            case ACTIVE:
                 subscriptionService.subscribe(new SubscribeRequest(subscriptionStatus), userId);
                 user.setExpirationDate(expiration);
                 userRepository.save(user);
@@ -184,7 +183,7 @@ public class UserApi {
     public static List<String> getAdditiveRolesFromSubscribeRequest(SubscribeRequest request) {
         Optional<Roles> roleOption = Roles.getRoleByName("ROLE_" + request.status().name());
 
-        if (roleOption.isEmpty() && request.status() != SubscriptionStatus.NO_SUBSCRIPTION) {
+        if (roleOption.isEmpty() && request.status() != SubscriptionStatus.INACTIVE) {
             log.error("Invalid subscription status: {}", request.status());
             return List.of();
         }
@@ -192,12 +191,12 @@ public class UserApi {
         final Roles role = roleOption.get();
         List<Roles> rolesList = new ArrayList<>();
         switch (role) {
-            case ROLE_SPECIFIC_CLIENT:
-                rolesList.add(Roles.ROLE_SPECIFIC_CLIENT);
-            case ROLE_GENERAL_CLIENT:
-                rolesList.add(Roles.ROLE_GENERAL_CLIENT);
-            case ROLE_BASE_CLIENT:
-                rolesList.add(Roles.ROLE_BASE_CLIENT);
+            case ROLE_ACTIVE:
+                rolesList.add(Roles.ROLE_ACTIVE);
+                break;
+            case ROLE_INACTIVE:
+                rolesList.add(Roles.ROLE_INACTIVE);
+                break;
             default:
                 break;
         }

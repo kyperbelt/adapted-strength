@@ -32,7 +32,7 @@ public class UnsubscribeService {
         Login existingLogin = loginRepository.findByEmail(email).orElse(null);
 
         if (existingUser != null && existingLogin != null) {
-            existingUser.setSubscriptionTier(SubscriptionStatus.NO_SUBSCRIPTION);
+            existingUser.setSubscriptionTier(SubscriptionStatus.INACTIVE);
             existingUser.cancelExpirationDate();
 
             // Tricky solution for removing subscription roles in Login
@@ -40,7 +40,7 @@ public class UnsubscribeService {
             // TODO: We should eventually convert Login Roles to a Set instead of it being a list to simplify logic
             UserApi.ResetSubscriptionRoles(existingLogin);
             List<String> resetRoles = new ArrayList<>(List.copyOf(existingLogin.getRoles()));
-            resetRoles.add("ROLE_" + SubscriptionStatus.NO_SUBSCRIPTION.name());
+            resetRoles.add("ROLE_" + SubscriptionStatus.INACTIVE.name());
             existingLogin.setRoles(resetRoles);
 
             // Save the updated user

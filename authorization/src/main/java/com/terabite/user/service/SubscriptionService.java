@@ -98,6 +98,6 @@ public class SubscriptionService {
         // For example, return true if subscription tier is not NO_SUBSCRIPTION
         // This is purely for demonstration; replace it with real Stripe API call logic later
 
-        return request.status() != SubscriptionStatus.NO_SUBSCRIPTION;
+        return request.status() != SubscriptionStatus.INACTIVE;
     }
 }

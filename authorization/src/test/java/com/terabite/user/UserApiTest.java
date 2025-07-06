@@ -52,9 +52,9 @@ class UserApiTest {
 
         @BeforeEach
         void setUp() {
-            tierOne = new SubscribeRequest(SubscriptionStatus.BASE_CLIENT);
-            tierTwo = new SubscribeRequest(SubscriptionStatus.GENERAL_CLIENT);
-            tierThree = new SubscribeRequest(SubscriptionStatus.SPECIFIC_CLIENT);
+            tierOne = new SubscribeRequest(SubscriptionStatus.ACTIVE);
+            tierTwo = new SubscribeRequest(SubscriptionStatus.ACTIVE);
+            tierThree = new SubscribeRequest(SubscriptionStatus.ACTIVE);
         }
 
         @Test
@@ -71,8 +71,8 @@ class UserApiTest {
         void tierTwoTest() {
             List<String> roleList = UserApi.getAdditiveRolesFromSubscribeRequest(tierTwo);
 
-            // Should add first and second tier roles
-            int expected = 2;
+            // Should add only ACTIVE role (simplified system)
+            int expected = 1;
             int result = roleList.size();
             assertEquals(expected, result);
         }
@@ -81,8 +81,8 @@ class UserApiTest {
         void tierThreeTest() {
             List<String> roleList = UserApi.getAdditiveRolesFromSubscribeRequest(tierThree);
 
-            // Should add first, second, and third tier roles
-            int expected = 3;
+            // Should add only ACTIVE role (simplified system)
+            int expected = 1;
             int result = roleList.size();
             assertEquals(expected, result);
         }

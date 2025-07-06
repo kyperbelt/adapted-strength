@@ -19,12 +19,10 @@ function AdaptedStrengthLogo() {
 function SubscriptionField({ tier }) {
   let subscriptionLabel;
   switch (tier) {
-    case "BASE_CLIENT":
-    case "GENERAL_CLIENT":
-    case "SPECIFIC_CLIENT":
+    case "ACTIVE":
       subscriptionLabel = "Active";
       break;
-    case "NO_SUBSCRIPTION":
+    case "INACTIVE":
     default:
       subscriptionLabel = "Inactive";
   }

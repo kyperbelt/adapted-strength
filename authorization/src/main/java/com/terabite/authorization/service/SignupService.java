@@ -49,7 +49,7 @@ public class SignupService {
             login.setPassword(authRequest.getPassword());
 
             // Adding No Subscription role here
-            String roleNoSub = "ROLE_" + SubscriptionStatus.NO_SUBSCRIPTION.name();
+            String roleNoSub = "ROLE_" + SubscriptionStatus.INACTIVE.name();
             login.setRoles(List.of(Roles.ROLE_USER.name(), Roles.ROLE_TERMS_ACCEPTED.name(), roleNoSub));
 
             loginRepository.save(login);

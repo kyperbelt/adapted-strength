@@ -142,7 +142,7 @@ export default function UserManagement() {
             return {
               email: user.email,
               name: `${user.firstName} ${user.lastName}`,
-              subscription: user.subscriptionTier,
+              subscription: user.subscriptionTier === "ACTIVE" ? "Active" : "Inactive",
               programs: userPrograms,
             };
           });
@@ -456,49 +456,39 @@ function AssignProgram({ selectedProgram, handleAssignProgram }) {
 }
 
 function SubscriptionManagement({ user, tiers, subscriptionInfo, userUpdatedFunction }) {
+  // Convert display value back to enum value for backend
+  const getEnumValue = (displayValue) => {
+    return displayValue === "Active" ? "ACTIVE" : "INACTIVE";
+  };
 
-  const [subscription, setSubscription] = useState(user.subscription);
-  const [expiration, setExpiration] = useState(subscriptionInfo.expiration);
+  const getDisplayValue = (enumValue) => {
+    return enumValue === "ACTIVE" ? "Active" : "Inactive";
+  };
+
+  const [subscription, setSubscription] = useState(getEnumValue(user.subscription));
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubscriptionChange = () => {
-    // // Handle subscription change logic
-    console.log("subscribtionStatus = ", subscription);
-    console.log("expiration = ", expiration);
-    // UserApi.updateUserSubscription(user.email, subscription)
-    //   .then(() => {
-    //     console.log("Subscription updated successfully");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error updating subscription: ", error);
-    //   });
-    if (expiration == null && subscription !== tiers[0]) {
-      setErrorMessage(`Expiration Date cannot be null when subscription is not '${tiers[0]}'`);
-      return;
-    }
-
-    UserApi.changeSubscribtionForUser({ email: user.email, status: subscription, expirationDate: expiration }).then(response => {
+    console.log("Updating subscription status to:", subscription);
+    
+    UserApi.changeSubscribtionForUser({ 
+      email: user.email, 
+      status: subscription, 
+      expirationDate: null // No longer using expiration dates
+    }).then(response => {
       console.log(response);
       setErrorMessage("Updated Successfully!");
       setTimeout(() => {
         setErrorMessage("");
       }, 2000);
 
-      user.subscription = subscription;
+      // Update the user object with display value
+      user.subscription = getDisplayValue(subscription);
       userUpdatedFunction(user);
     }).catch(e => {
       console.log(e);
-      setErrorMessage(e.message);
+      setErrorMessage("Failed to update subscription");
     });
-  };
-
-  const updateExpiration = (dateString) => {
-    // check that expiration date string is not null
-    if (dateString == null) {
-      return;
-    }
-
-    setExpiration(dateString);
   };
 
   return (
@@ -508,23 +498,26 @@ function SubscriptionManagement({ user, tiers, subscriptionInfo, userUpdatedFunc
       <div className="mb-4">
         <label className="block text-gray-700">Current Subscription:</label>
         <select
-          defaultValue={subscription}
+          value={subscription}
           onChange={(e) => setSubscription(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         >
-          {tiers.map((tier) => {
-            return (<option key={`tier_${tier}`} value={tier}>{tier}</option>)
-          })}
+          {tiers.map((tier) => (
+            <option key={tier} value={tier}>
+              {getDisplayValue(tier)}
+            </option>
+          ))}
         </select>
       </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Expiration Date:</label>
-        <input
-          type="date"
-          defaultValue={expiration?.slice(0, 10)}
-          onChange={(e) => updateExpiration(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+        <div className="flex">
+          <div className="ml-3">
+            <p className="text-sm text-blue-700">
+              <strong>Note:</strong> Subscription management is now simplified to Active/Inactive status only. 
+              No expiration dates are required as Alex handles subscription details manually.
+            </p>
+          </div>
+        </div>
       </div>
       <PrimaryButton onClick={handleSubscriptionChange} className="w-full py-2 px-4">
         Update Subscription

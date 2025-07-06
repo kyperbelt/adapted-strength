@@ -45,11 +45,9 @@ export default function Memberships() {
 function MembershipStatus({ tier, nav }) {
   const getStatusDisplay = (tier) => {
     switch (tier) {
-      case "BASE_CLIENT":
-      case "GENERAL_CLIENT":
-      case "SPECIFIC_CLIENT":
+      case "ACTIVE":
         return "Active";
-      case "NO_SUBSCRIPTION":
+      case "INACTIVE":
       default:
         return "Inactive";
     }
