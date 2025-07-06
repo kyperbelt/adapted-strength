@@ -87,32 +87,28 @@ export default function Login() {
         }
     };
 
-    return (<div className="h-full my-0 content-center w-full top-[100px]">
-        <div className="flex justify-center items-center h-full">
-            <div className="relative bottom-20">
-                <h1 className="relative mx-0 text-center text-2xl bottom-4">Welcome!</h1>
-                <div className="flex w-full justify-center" >
-                    <form onSubmit={onSubmit} id="login" className="p-0 w-full flex flex-col items-center bg-slate-50 shadow-md rounded-3xl px-0 pt-8 pb-8 mb-4 max-w-xs">
-                        <div className="w-full flex flex-col items-center px-0 ">
-                            <UserField />
-                        </div>
-                        <div className="w-full flex flex-col items-center px-0 ">
-                            <PasswordField />
-                        </div>
+    return (
+        <div className="min-h-screen pt-16 flex items-center justify-center bg-gray-50">
+            <div className="max-w-md w-full space-y-8 p-8">
+                <div>
+                    <h1 className="text-center text-2xl font-bold text-gray-900 mb-8">Welcome!</h1>
+                    <form onSubmit={onSubmit} className="bg-white shadow-md rounded-3xl px-8 pt-8 pb-8 space-y-6">
+                        <UserField />
+                        <PasswordField />
                         {error && (
-                            <div className="mb-4 text-red-500 text-sm text-center">
+                            <div className="text-red-500 text-sm text-center bg-red-50 p-3 rounded-md">
                                 {error}
                             </div>
                         )}
-                        <div className="flex items-center justify-between">
+                        <div className="flex justify-center">
                             <NextButton />
                         </div>
-                        <div className="mt-4">
+                        <div className="text-center">
                             <ForgotPasswordText />
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </div>);
+    );
 }

@@ -7,6 +7,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AuthApi } from '../api/AuthApi';
+import { ApiUtils } from '../api/ApiUtils';
 import { getUserPermissions } from '../utils/permissions';
 
 // Create the context
@@ -112,11 +113,12 @@ export const UserProvider = ({ children }) => {
       const loginResponse = await AuthApi.login(credentials.username, credentials.password);
       
       if (loginResponse.status === 200) {
-        // Set the auth token
+        // Set the auth token manually (AuthApi.login doesn't do this automatically)
         const token = loginResponse.data.payload;
-        // The AuthApi.login should already set the token, but let's make sure
         if (token) {
-          // Token should already be set by AuthApi.login, but we can verify
+          ApiUtils.setAuthToken(token);
+          
+          // Now fetch user data with the token
           await fetchUserData();
           return { success: true };
         } else {
