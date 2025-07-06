@@ -94,8 +94,8 @@ export default function NavBar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation - show on larger screens to prevent crowding */}
-          <div className="hidden lg:flex items-center space-x-6">
+          {/* Desktop Navigation - show on larger screens, hide when space is limited */}
+          <div className="hidden xl:flex items-center space-x-6 flex-1 justify-center max-w-4xl">
             {navItems.map((item, index) => (
               <Link
                 key={index}
@@ -111,8 +111,8 @@ export default function NavBar() {
             ))}
           </div>
 
-          {/* Desktop User Menu - only show on large screens to match navigation */}
-          <div className="hidden lg:flex items-center space-x-4">
+          {/* Desktop User Menu - show on medium screens and up, right-aligned */}
+          <div className="hidden md:flex items-center space-x-4 ml-auto">
             {isAuthenticated ? (
               <div className="relative group">
                 <button className="flex items-center space-x-2 text-gray-700 hover:text-red-600">
@@ -164,8 +164,8 @@ export default function NavBar() {
             )}
           </div>
 
-          {/* Mobile menu button - show when navigation items don't fit */}
-          <div className="lg:hidden flex items-center">
+          {/* Mobile menu button - show when desktop navigation is hidden */}
+          <div className="xl:hidden flex items-center">
             <button
               onClick={toggleMobileMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500 transition-colors"
@@ -199,8 +199,8 @@ export default function NavBar() {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu - show when hamburger is visible */}
-      <div className={`lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
+      {/* Mobile Navigation Menu - show when desktop navigation is hidden */}
+      <div className={`xl:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
           {/* Mobile Navigation Items */}
           {navItems.map((item, index) => (
