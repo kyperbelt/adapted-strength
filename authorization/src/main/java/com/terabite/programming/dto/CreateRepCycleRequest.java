@@ -3,7 +3,7 @@ package com.terabite.programming.dto;
 import java.util.Optional;
 
 /**
- * CreateRepCycleRequest
+ * CreateMovementRequest
  *
     long repCycleId;
 

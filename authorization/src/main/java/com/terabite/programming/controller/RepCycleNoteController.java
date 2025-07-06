@@ -73,7 +73,7 @@ public class RepCycleNoteController {
      * Method for converting notes into serializable objects for a ResponseEntity
      *
      * @param notes a list of notes returned from some repository action
-     * @return the corresponding ResponseEntity with a serializable version of RepCycleNote
+     * @return the corresponding ResponseEntity with a serializable version of MovementNote
      */
     private ResponseEntity<?> getResponseEntity(List<RepCycleNote> notes) {
         if (notes != null) {
@@ -99,7 +99,7 @@ public class RepCycleNoteController {
      * Creates a Movement note for given user ID and repCycle ID
      *
      * @param noteRequest the DTO for passing in user_id, rep_cycle_id, and the note's string
-     * @return the ResponseEntity with the newly created and saved RepCycleNote
+     * @return the ResponseEntity with the newly created and saved MovementNote
      */
     @PostMapping("/notes")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
@@ -126,11 +126,11 @@ public class RepCycleNoteController {
     }
 
     /**
-     * Barebones put for updating notes. Must pass in a full RepCycleNote in JSON to update
+     * Barebones put for updating notes. Must pass in a full MovementNote in JSON to update
      * Not technically complete - purely for completed CRUD
      *
-     * @param note the exact RepCycleNote object needed to update
-     * @return the ResponseEntity containing the updated RepCycleNote
+     * @param note the exact MovementNote object needed to update
+     * @return the ResponseEntity containing the updated MovementNote
      */
     @PutMapping("/notes")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")

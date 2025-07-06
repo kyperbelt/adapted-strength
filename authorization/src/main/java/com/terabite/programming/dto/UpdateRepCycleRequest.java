@@ -3,7 +3,7 @@ package com.terabite.programming.dto;
 import java.util.Optional;
 
 /**
- * CreateRepCycleRequest
+ * CreateMovementRequest
  *
     long id;
 
@@ -26,7 +26,7 @@ import java.util.Optional;
     long movementId;
  */
 /**
- * UpdateRepCycleRequest
+ * UpdateMovementRequest
  */
 public record UpdateRepCycleRequest(long id, Optional<String> repCycleName, Optional<String> equipment, Optional<String> numSets, Optional<String> numReps, Optional<String> weight, Optional<String> restTime, Optional<String> coachNotes, Optional<String> workoutOrder, Optional<Long> movementId) {
 

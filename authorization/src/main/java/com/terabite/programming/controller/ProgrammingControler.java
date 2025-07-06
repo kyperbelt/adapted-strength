@@ -241,7 +241,7 @@ public class ProgrammingControler {
     }
 
 
-    //RepCycle endpoints
+    //Movement endpoints
     @PostMapping("/rep_cycle")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> createRepCycle(@RequestBody CreateRepCycleRequest request) {
