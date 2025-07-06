@@ -96,7 +96,7 @@ public class RepCycleNoteController {
     }
 
     /**
-     * Creates a Rep-cycle note for given user ID and repCycle ID
+     * Creates a Movement note for given user ID and repCycle ID
      *
      * @param noteRequest the DTO for passing in user_id, rep_cycle_id, and the note's string
      * @return the ResponseEntity with the newly created and saved RepCycleNote

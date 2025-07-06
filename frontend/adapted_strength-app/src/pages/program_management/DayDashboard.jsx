@@ -384,7 +384,7 @@ function RepCycleContainer({ day, dayState, movements }) {
                                 <button className="mt-2 flex flex-row items-center italic text-secondary-dark hover:text-accent" onClick={addCycle}>
                                         <svg className="w-6 h-6 me-2 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                                 <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
-                                        </svg> Add RepCycle
+                                        </svg> Add Movement
                                 </button>
                                 <RepCycleForm movements={movements} day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} dayState={dayState} onClose={() => {
                                         setMode("create");
@@ -498,7 +498,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, m
 
         const dayId = day.dayId;
         const [days, setDays] = dayState;
-        const title = mode === "create" ? "Create RepCycle" : "Edit RepCycle";
+        const title = mode === "create" ? "Create Movement" : "Edit Movement";
         const buttonText = mode === "create" ? "Create" : "Save";
         const [repCycles, setRepCycles] = repCycleState;
 
@@ -660,7 +660,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, m
                 <BasicModalDialogue title={title} onCloseDialog={onCloseHere} className="hidden" id={`rep-cycle-form-${dayId}`} >
                         <form onSubmit={onSubmit} className="space-y-4 pt-2 ">
 
-                                <LabeledInputField id={`rep-cycle-name-${dayId}`} placeholder="RepCycle Name" required={true} type="text" />
+                                <LabeledInputField id={`rep-cycle-name-${dayId}`} placeholder="Movement Name" required={true} type="text" />
                                 <div className="flex flex-row space-x-2">
                                         <LabeledInputField className="flex-1" id={`workout-order-${dayId}`} placeholder="Workout Order" required={true} type="text" />
                                         <LabeledInputField className="flex-1" id={`equipment-${dayId}`} placeholder="Equipment" required={true} type="text" />

@@ -77,7 +77,6 @@ const navigation = [
     selected: false,
     state: () => AuthApi.isLoggedIn(),
   },
-  { component: <> Leaderboard</>, to: "/leaderboard", selected: false },
   {
     component: <span>Login</span>,
     to: "/login",
@@ -89,20 +88,6 @@ const navigation = [
     to: "/sign-up",
     selected: false,
     state: () => !AuthApi.isLoggedIn(),
-  },
-  {
-    component: <> Notifications</>,
-    to: "/notifications",
-    selected: false,
-    state: () => {
-      return new Promise(async (resolve, reject) => {
-        if (AuthApi.isLoggedIn()) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      })
-    }
   },
   {
     component: <>SendNotifications</>,
