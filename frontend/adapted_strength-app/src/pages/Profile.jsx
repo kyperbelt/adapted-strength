@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserApi } from "../api/UserApi";
 import { HttpStatus } from "../api/ApiUtils";
-import Footer from "../components/footer";
 import logo from "../assets/logo.png";
 import { AuthApi } from "../api/AuthApi";
-import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { PrimaryButton } from "../components/Button";
 import { startTransition } from "react";
-import { SubscriptionApi } from "../api/SubscriptionApi";
-import { BasicModalDialogue } from "../components/Dialog";
-import StateGuard from "../util/StateGuard";
 import { PencilIcon } from "../components/Icons";
 
 function AdaptedStrengthLogo() {
@@ -48,18 +44,6 @@ export default function Profile() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [profileInfo, setProfileInfo] = useState([]);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleCancelSubscription = async () => {
-    await SubscriptionApi.cancelSub();
-    setShowConfirmation(false);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -88,7 +72,6 @@ export default function Profile() {
   }
   const formattedCellPhone = formatPhoneNumber(profileInfo.cellPhone);
   const formattedHomePhone = formatPhoneNumber(profileInfo.homePhone);
-  const tier = profileInfo.subscriptionTier;
   console.log(profileInfo);
   return (
     <div>
@@ -212,50 +195,6 @@ export default function Profile() {
         >
           Edit Profile
         </PrimaryButton>
-
-        <StateGuard state={() => tier !== "NO_SUBSCRIPTION"}>
-          <SecondaryButton onClick={() => setShowConfirmation(true)}>
-            <>Cancel Subscription</>
-          </SecondaryButton>
-        </StateGuard>
-
-        {showConfirmation && (
-          <BasicModalDialogue
-            title="Confirm Unsubscribe"
-            onCloseDialog={() => setShowConfirmation(false)}
-          >
-            <p>
-              Are you sure you want to unsubscribe? Please note that you'll
-              continue to enjoy your benefits until the end of the current
-              billing cycle. Changes to your account will take effect after the
-              cycle concludes.
-            </p>
-            <div className="flex justify-end">
-              <SecondaryButton onClick={() => handleCancelSubscription()}>
-                <>Yes</>
-              </SecondaryButton>
-              <PrimaryButton onClick={() => setShowConfirmation(false)}>
-                <>No</>
-              </PrimaryButton>
-            </div>
-          </BasicModalDialogue>
-        )}
-        {showModal && (
-          <BasicModalDialogue
-            title="Subscription Cancelled"
-            onCloseDialog={handleCloseModal}
-          >
-            <p>
-              Subscription successfully cancelled! You will not see a change in
-              your account until the end of the current billing cycle.
-            </p>
-            <div className="flex justify-end">
-              <PrimaryButton onClick={() => handleCloseModal()}>
-                <>Close</>
-              </PrimaryButton>
-            </div>
-          </BasicModalDialogue>
-        )}
       </div>
     </div>
   );

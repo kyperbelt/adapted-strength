@@ -46,7 +46,6 @@ const EditProfile = lazy(() => import('./pages/EditProfile.jsx'));
 const ProgramManagement = lazy(() => import('./pages/program_management/ProgramManagement.jsx'));
 const UserManagement = lazy(() => import('./pages/user_management/UserManagement.jsx'));
 const WebAdmin = lazy(() => import('./pages/web_admin/WebAdmin.jsx'));
-const PaymentCheckout = lazy(() => import('./pages/PaymentCheckout.jsx'));
 const MovementLibrary = lazy(() => import('./pages/MovementLibrary.jsx'));
 
 // import footer from '../footer'
@@ -154,9 +153,6 @@ function App() {
               // <Route path='video-library' element={<VideoLibrary />} />
               <Route path="consultations" element={<Booking />} />
               <Route path="*" element={<NotFound />} />
-              <Route path="payment-checkout/:plan?" element={
-                <RouteGuard state={() => AuthApi.isLoggedIn()} routeTo="/login"> <PaymentCheckout /> </RouteGuard>
-              } />
 
 
 
