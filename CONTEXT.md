@@ -28,9 +28,9 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - ✅ Remove Notifications (COMPLETED)
 - ✅ Remove Send Notifications & Admin Chat menu items (COMPLETED)
 - ✅ Show sex and shirt size in user profiles (COMPLETED)
+- ✅ Change subscription status display to "Active" or "Inactive" (COMPLETED)
 - ⏳ Adjust box sizing to fit text properly
 - ⏳ Change "Repcycle" terminology to "movement"
-- ⏳ Change subscription status display to "Active" or "Inactive"
 
 **Long Poles (Target: Q1 2026)**:
 - Web admin updates and improvements
@@ -108,7 +108,17 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - Added comprehensive test coverage (13 tests total)
 - Enhanced validation error logging for debugging
 
-### 7. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
+### 7. Subscription Status Display Simplification ✅ RESOLVED
+**Problem**: User profile showed detailed subscription tier names (Base Client, General Client, Specific Client, Not Subscribed)
+**Product Owner Requirement**: Simplify to just "Active" or "Inactive" for better user experience
+**Solution Applied**:
+- Updated SubscriptionField component in Profile.jsx
+- "Active" for: BASE_CLIENT, GENERAL_CLIENT, SPECIFIC_CLIENT
+- "Inactive" for: NO_SUBSCRIPTION, null, undefined, or unknown values
+- Added 7 comprehensive tests to verify display logic
+- Preserved detailed tier information in admin interfaces (UserManagement.jsx)
+
+### 8. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
 **Problem**: User wanted to remove Leaderboard and Notifications menu items
 **Solution Applied**:
 - Modified `/frontend/adapted_strength-app/src/components/navBar.jsx`
@@ -208,8 +218,8 @@ cd authorization && ./gradlew bootRun --debug
 - Development strategy aligned with realistic timeline constraints
 
 **Progress on Product Owner Roadmap**: 
-- 5 of 8 low-hanging fruit items completed (Chat, Leaderboard, Notifications removal, Admin menu cleanup, Sex/Shirt size profiles)
-- 3 remaining items identified for July/August 2025 completion
+- 6 of 8 low-hanging fruit items completed (Chat, Leaderboard, Notifications removal, Admin menu cleanup, Sex/Shirt size profiles, Subscription status display)
+- 2 remaining items identified for July/August 2025 completion
 - Long-term goals established for Q1 2026
 
 **User Satisfaction**: High - application now working correctly with desired UI changes and clear development path forward
