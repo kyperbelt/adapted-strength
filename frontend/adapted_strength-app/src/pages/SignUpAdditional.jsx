@@ -26,7 +26,7 @@ function SexField() {
     return (
         <div className="w-72 px-6">
             <label htmlFor="sex" className="text-sm text-secondary-dark">Sex</label>
-            <BasicSelect className="w-full" id="sex" required>
+            <BasicSelect className="w-full" id="sex" name="sex" required>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
                 <option value="N">Prefer not to answer</option>
@@ -39,7 +39,7 @@ function ShirtSizeField() {
     return (
         <div className="w-72 px-6">
             <label htmlFor="shirt_size" className="text-sm text-secondary-dark">Shirt Size</label>
-            <BasicSelect className="w-full" id="shirt_size" required>
+            <BasicSelect className="w-full" id="shirt_size" name="shirt_size" required>
                 <option value="xxs">XXS</option>
                 <option value="xs">XS</option>
                 <option value="s">S</option>

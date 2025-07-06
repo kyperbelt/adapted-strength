@@ -26,6 +26,7 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - ✅ Remove Chat (COMPLETED)
 - ✅ Remove Leaderboard (COMPLETED) 
 - ✅ Remove Notifications (COMPLETED)
+- ✅ Remove Send Notifications & Admin Chat menu items (COMPLETED)
 - ⏳ Show sex and shirt size in user profiles
 - ⏳ Adjust box sizing to fit text properly
 - ⏳ Change "Repcycle" terminology to "movement"
@@ -63,7 +64,35 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - Used placeholder values for local testing (Stripe keys, AWS credentials, email config)
 - User can now run: `source .env && ./gradlew bootRun`
 
-### 3. UI Navigation Cleanup ✅ RESOLVED
+### 3. Database Configuration Mismatch ✅ RESOLVED
+**Problem**: Unable to connect to development database locally
+**Root Cause**: Mismatch between `compose.yaml` and `application.properties` database configuration
+- `compose.yaml` was creating database `mydatabase` with root password `verysecret`
+- `application.properties` expected database `adapteds-db` with password `secret`
+**Solution Applied**:
+- Updated `compose.yaml` to match expected configuration:
+  - MYSQL_DATABASE: `adapteds-db`
+  - MYSQL_ROOT_PASSWORD: `secret`
+- Restarted database container with `docker compose down && docker compose up -d`
+- Database now accessible with credentials: user=`myuser`, password=`secret`, database=`adapteds-db`
+
+### 4. Admin User Setup ✅ RESOLVED
+**Problem**: User needed admin privileges to access admin menu features
+**Solution Applied**:
+- Connected to database and added `ROLE_ADMIN` to `jonathancamarenacamacho@gmail.com`
+- User now has roles: `ROLE_ADMIN`, `ROLE_USER`, `ROLE_TERMS_ACCEPTED`, `ROLE_NO_SUBSCRIPTION`
+- Can now access admin menu items and functionality
+
+### 5. UI Navigation Cleanup (Notifications) ✅ RESOLVED
+**Problem**: Admin menu still showed "Send Notifications" and "Admin Chat" menu items for removed features
+**Root Cause**: These were working features that were strategically removed per Product Owner roadmap
+**Solution Applied**:
+- Modified `/frontend/adapted_strength-app/src/components/navBar.jsx`
+- Removed "SendNotifications" menu item (lines 89-102)
+- Removed "Admin Chat" menu item (lines 125-138)
+- Admin navigation now only shows supported features
+
+### 6. UI Navigation Cleanup (Leaderboard) ✅ RESOLVED
 **Problem**: User wanted to remove Leaderboard and Notifications menu items
 **Solution Applied**:
 - Modified `/frontend/adapted_strength-app/src/components/navBar.jsx`
@@ -77,7 +106,8 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 - `/CONTEXT.md` - This progress report
 
 ### Modified:
-- `/frontend/adapted_strength-app/src/components/navBar.jsx` - Removed leaderboard and notifications menu items
+- `/frontend/adapted_strength-app/src/components/navBar.jsx` - Removed leaderboard, notifications, and admin chat menu items
+- `/authorization/compose.yaml` - Fixed database configuration mismatch (database name and passwords)
 
 ## Current Application State
 - **Backend**: ✅ Running successfully on port 8080
@@ -90,8 +120,10 @@ This document tracks the AI assistant's work on the Adapted Strength project for
 ### Database Configuration:
 - Container: `authorization-mysql-1` 
 - Credentials: `myuser/secret`
+- Root credentials: `root/secret`
 - Database: `adapteds-db`
 - Port: 3306 (no longer conflicting)
+- Connection: `docker compose exec mysql mysql -u myuser -psecret adapteds-db`
 
 ### Environment Variables Set:
 ```bash
@@ -160,7 +192,7 @@ cd authorization && ./gradlew bootRun --debug
 - Development strategy aligned with realistic timeline constraints
 
 **Progress on Product Owner Roadmap**: 
-- 3 of 7 low-hanging fruit items completed (Chat, Leaderboard, Notifications removal)
+- 4 of 8 low-hanging fruit items completed (Chat, Leaderboard, Notifications removal, Admin menu cleanup)
 - 4 remaining items identified for July/August 2025 completion
 - Long-term goals established for Q1 2026
 

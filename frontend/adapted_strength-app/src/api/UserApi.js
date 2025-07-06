@@ -18,6 +18,8 @@ export class UserApi {
   /**
    * @param {string} first_name
    * @param {string} last_name
+   * @param {string} sex
+   * @param {string} shirt_size
    * @param {string} email
    * @param {string} phone
    * @param {string} address
@@ -29,12 +31,14 @@ export class UserApi {
    * @memberof UserApi
    * @description This method will update the user's profile information with the specified data
    * @example
-   * UserApi.updateProfileInformation({ first_name: 'John', last_name: 'Doe', email: 'example@mail.com', phone: '1234567890', address: '1234 Example St', city: 'Example', state: 'EX', zip: '12345', country: 'USA' })
+   * UserApi.updateProfileInformation({ first_name: 'John', last_name: 'Doe', sex: 'M', shirt_size: 'L', email: 'example@mail.com', phone: '1234567890', address: '1234 Example St', city: 'Example', state: 'EX', zip: '12345', country: 'USA' })
    * .then(response => console.log(response));
    */
   static updateProfileInformation({
     first_name,
     last_name,
+    sex,
+    shirt_size,
     phone,
     address,
     city,
@@ -45,6 +49,8 @@ export class UserApi {
     const profile = {
       first_name,
       last_name,
+      sex,
+      shirt_size,
       cell_phone: phone,
       address,
       city,

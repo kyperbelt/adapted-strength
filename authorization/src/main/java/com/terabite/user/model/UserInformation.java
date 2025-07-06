@@ -49,7 +49,7 @@ public class UserInformation implements Serializable {
     private String sex;
 
     @JsonAlias("shirt_size")
-    @Pattern(regexp = "^[2-5]*[LMSX]+$")
+    @Pattern(regexp = "^(xxs|xs|s|m|l|xl|xxl|xxxl)$", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String shirtSize;
 
     @OneToOne(cascade = CascadeType.ALL)

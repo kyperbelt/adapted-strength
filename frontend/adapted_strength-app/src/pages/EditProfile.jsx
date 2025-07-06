@@ -10,6 +10,7 @@ import SubmitButton from "../components/forms/SubmitButton";
 import { HttpStatus } from "../api/ApiUtils";
 import { PrimaryButton } from "../components/Button";
 import { Link, useNavigate } from "react-router-dom";
+import { BasicSelect } from "../components/forms/Select";
 
 
 export default function EditProfile() {
@@ -51,6 +52,8 @@ function EditProfileContent({ info }) {
     const data = {
       first_name: formData.get("fname"),
       last_name: formData.get("lname"),
+      sex: formData.get("sex"),
+      shirt_size: formData.get("shirt_size"),
       address: formData.get("address1"),
       city: formData.get("city"),
       state: formData.get("state"),
@@ -67,6 +70,8 @@ function EditProfileContent({ info }) {
 
   const fname = info.firstName ?? "";
   const lname = info.lastName ?? "";
+  const sex = info.sex ?? "";
+  const shirtSize = info.shirtSize ?? "";
   const address1 = info.address.address ?? "";
   const city = info.address.city ?? "";
   const state = info.address.state ?? "";
@@ -117,6 +122,29 @@ function EditProfileContent({ info }) {
               placeholder="Last Name"
               defaultValue={lname}
             />
+            <div className="w-full px-6">
+              <label htmlFor="sex" className="text-sm text-secondary-dark">Sex</label>
+              <BasicSelect className="w-full" id="sex" name="sex" defaultValue={sex} required>
+                <option value="">Select...</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="N">Prefer not to answer</option>
+              </BasicSelect>
+            </div>
+            <div className="w-full px-6">
+              <label htmlFor="shirt_size" className="text-sm text-secondary-dark">Shirt Size</label>
+              <BasicSelect className="w-full" id="shirt_size" name="shirt_size" defaultValue={shirtSize} required>
+                <option value="">Select...</option>
+                <option value="xxs">XXS</option>
+                <option value="xs">XS</option>
+                <option value="s">S</option>
+                <option value="m">M</option>
+                <option value="l">L</option>
+                <option value="xl">XL</option>
+                <option value="xxl">XXL</option>
+                <option value="xxxl">XXXL</option>
+              </BasicSelect>
+            </div>
             <LabeledInputField
               className=""
               type="text"

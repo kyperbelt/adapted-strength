@@ -16,6 +16,12 @@ public class UpdateInformationRequestBody {
         @JsonAlias("last_name")
         private String lastName;
 
+        @JsonAlias("sex")
+        private String sex;
+
+        @JsonAlias("shirt_size")
+        private String shirtSize;
+
         @JsonAlias("cell_phone")
         private String cellPhone;
 
@@ -45,6 +51,22 @@ public class UpdateInformationRequestBody {
 
         public void setLastName(String lastName) {
                 this.lastName = lastName;
+        }
+
+        public String getSex() {
+                return sex;
+        }
+
+        public void setSex(String sex) {
+                this.sex = sex;
+        }
+
+        public String getShirtSize() {
+                return shirtSize;
+        }
+
+        public void setShirtSize(String shirtSize) {
+                this.shirtSize = shirtSize;
         }
 
         public String getCellPhone() {

@@ -178,6 +178,8 @@ public class UserController {
         UserInformation toUpdate = existingUser.get();
         toUpdate.setFirstName(updateInformationRequestBody.getFirstName());
         toUpdate.setLastName(updateInformationRequestBody.getLastName());
+        toUpdate.setSex(updateInformationRequestBody.getSex());
+        toUpdate.setShirtSize(updateInformationRequestBody.getShirtSize());
         toUpdate.setCellPhone(updateInformationRequestBody.getCellPhone());
         toUpdate.getAddress().setAddress(updateInformationRequestBody.getAddress());
         toUpdate.getAddress().setCity(updateInformationRequestBody.getCity());
@@ -365,6 +367,16 @@ public class UserController {
         if (violations.isEmpty()) {
             return true;
         }
+        
+        // Log specific validation errors for debugging
+        log.error("User information validation failed with {} violations:", violations.size());
+        for (ConstraintViolation<UserInformation> violation : violations) {
+            log.error("  - Field '{}' with value '{}': {}", 
+                violation.getPropertyPath(), 
+                violation.getInvalidValue(), 
+                violation.getMessage());
+        }
+        
         return false;
     }
 }
