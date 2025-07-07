@@ -378,7 +378,7 @@ function RepCycleContainer({ day, dayState, movements }) {
                         <td className="px-6 py-3" colSpan="4">
                                 <div className="flex flex-col p-0 w-full">
                                         {repCycles.map((repCycle) => {
-                                                return <RepCycle repCycle={repCycle} cycleState={[repCycles, setRepCycles]} onEdit={() => editCycle(repCycle)} />
+                                                return <RepCycle key={repCycle.repCycleId} repCycle={repCycle} cycleState={[repCycles, setRepCycles]} onEdit={() => editCycle(repCycle)} />
                                         })}
                                 </div>
                                 <button className="mt-2 flex flex-row items-center italic text-secondary-dark hover:text-accent" onClick={addCycle}>
