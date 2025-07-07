@@ -3,14 +3,38 @@ Module: Booking.jsx - Consultations Page
 Team: TeraBITE
 */
 import { useEffect } from 'react';
+import { PrimaryButton } from '../components/Button';
 
 const CalendlyBooking = () => {
     useEffect(() => {
         document.title = "Book Consultation - Adapted Strength";
+        
+        // Load Calendly widget script
+        const script = document.createElement('script');
+        script.src = 'https://assets.calendly.com/assets/external/widget.js';
+        script.async = true;
+        document.head.appendChild(script);
+
         return () => {
             document.title = "Adapted Strength";
+            // Clean up script if component unmounts
+            const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
+            if (existingScript) {
+                existingScript.remove();
+            }
         };
     }, []);
+
+    const openCalendlyPopup = () => {
+        if (window.Calendly) {
+            window.Calendly.initPopupWidget({
+                url: 'https://calendly.com/adaptedstrength'
+            });
+        } else {
+            // Fallback if Calendly hasn't loaded yet
+            window.open('https://calendly.com/adaptedstrength', '_blank');
+        }
+    };
 
     return (
         <div className="min-h-screen pt-16 bg-gray-50">
@@ -63,34 +87,33 @@ const CalendlyBooking = () => {
                     </div>
                 </div>
 
-                {/* Calendly Embed Section */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    {/* Embed Header */}
-                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                        <h2 className="text-xl font-semibold text-gray-900">Select Your Preferred Time</h2>
-                        <p className="text-gray-600 text-sm mt-1">
-                            Choose a time that works best for your schedule. All consultations are conducted by Coach Alex.
+                {/* Main CTA Section */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
+                    <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-center">
+                        <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Started?</h2>
+                        <p className="text-red-100 text-lg mb-8 max-w-2xl mx-auto">
+                            Click the button below to open our scheduling system and choose a time that works best for you. 
+                            All consultations are conducted personally by Coach Alex.
                         </p>
-                    </div>
-                    
-                    {/* Calendly Container */}
-                    <div className="p-6">
-                        <div className="bg-gray-50 rounded-lg overflow-hidden" style={{ minHeight: '700px' }}>
-                            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
-                            <iframe
-                                src="https://calendly.com/adaptedstrength"
-                                width="100%"
-                                height="700"
-                                title="Schedule consultation with Adapted Strength"
-                                className="rounded-lg"
-                                frameBorder="0"
-                            />
-                        </div>
+                        
+                        <PrimaryButton
+                            onClick={openCalendlyPopup}
+                            className="bg-white text-red-600 hover:bg-gray-50 text-lg px-8 py-4 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                        >
+                            <svg className="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Schedule Your Consultation
+                        </PrimaryButton>
+                        
+                        <p className="text-red-100 text-sm mt-4">
+                            Free consultation • No commitment required • 30-45 minutes
+                        </p>
                     </div>
                 </div>
 
                 {/* Additional Information */}
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
                         <h3 className="text-lg font-semibold text-blue-900 mb-3">What to Expect</h3>
                         <ul className="space-y-2 text-blue-800 text-sm">
@@ -142,6 +165,21 @@ const CalendlyBooking = () => {
                             </li>
                         </ul>
                     </div>
+                </div>
+
+                {/* Alternative Access */}
+                <div className="mt-8 text-center">
+                    <p className="text-gray-600 text-sm mb-4">
+                        Having trouble with the popup? You can also schedule directly:
+                    </p>
+                    <a 
+                        href="https://calendly.com/adaptedstrength" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                        Open Calendly in a new tab
+                    </a>
                 </div>
             </div>
         </div>
