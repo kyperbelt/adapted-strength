@@ -1,15 +1,27 @@
 import { useEffect } from 'react';
 import { PrimaryButton } from '../components/Button';
-
 import { BlankPageContainer } from '../components/PageContainer';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 
 // <img src={logo} alt="Adapted Strength Logo" className="mx-auto" />
 export default function Home() {
-    const nav = useNavigate();
+    const navigate = useNavigate();
+    const { user } = useUser();
+
     useEffect(() => {
         document.title = "Adapted Strength";
     }, []);
+
+    const handleGetStarted = () => {
+        if (user) {
+            // User is logged in, take them to memberships
+            navigate('/memberships');
+        } else {
+            // User is not logged in, take them to login
+            navigate('/login');
+        }
+    };
 
 
     const placeholderImage = "https://placehold.co/300x200";
@@ -25,11 +37,7 @@ export default function Home() {
                 <h1 className="text-6xl font-bold mb-2">Adapted Strength</h1>
                 <p className="mb-4">In Vacaville, CA, Adapted Strength is an upcoming gym that offers numerous opportunities in strength training disciplines.</p>
                 <div className="flex md:justify-end max-w-screen-xl pt-8">
-                    <PrimaryButton onClick={
-                        () => {
-                            nav('/memberships', {});
-                        }
-                    } className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
+                    <PrimaryButton onClick={handleGetStarted} className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
                         Get Started!
                     </PrimaryButton>
                 </div>
@@ -69,11 +77,7 @@ export default function Home() {
                                 <li>Strength Gain</li>
                                 <li>Self-Paced Environment</li>
                             </ul>
-                            <PrimaryButton onClick={
-                                () => {
-                                    nav('/consultations', {});
-                                }
-                            }>
+                            <PrimaryButton onClick={() => navigate('/consultations')}>
                                 Book a Consultation
                             </PrimaryButton>
                         </div>

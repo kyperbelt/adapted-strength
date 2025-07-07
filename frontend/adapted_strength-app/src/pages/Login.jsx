@@ -37,6 +37,12 @@ function ForgotPasswordText() {
     </p>);
 }
 
+function CreateAccountText() {
+    return (<p className="text-center text-gray-500 text-xs">
+        Don't have an account? <Link to="/sign-up" className="text-blue-500 hover:text-blue-800">Create Account</Link>
+    </p>);
+}
+
 export default function Login() {
     const navigate = useNavigate();
     const { login } = useUser();
@@ -94,8 +100,9 @@ export default function Login() {
                         <div className="flex justify-center">
                             <NextButton />
                         </div>
-                        <div className="text-center">
+                        <div className="text-center space-y-2">
                             <ForgotPasswordText />
+                            <CreateAccountText />
                         </div>
                     </form>
                 </div>
