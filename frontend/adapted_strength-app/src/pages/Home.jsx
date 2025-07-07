@@ -15,8 +15,8 @@ export default function Home() {
 
     const handleGetStarted = () => {
         if (user) {
-            // User is logged in, take them to memberships
-            navigate('/memberships');
+            // User is logged in, take them to consultations
+            navigate('/consultations');
         } else {
             // User is not logged in, take them to login
             navigate('/login');

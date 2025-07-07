@@ -166,13 +166,6 @@ export default function Profile() {
             label="Shirt Size" 
             value={profileInfo.shirtSize} 
           />
-          
-          <div className="md:col-span-2 lg:col-span-3">
-            <ProfileField 
-              label="How Did You Hear About Us?" 
-              value={profileInfo.howDidYouHear} 
-            />
-          </div>
         </div>
 
         {/* Action Buttons */}
