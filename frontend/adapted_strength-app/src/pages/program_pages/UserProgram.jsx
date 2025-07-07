@@ -1,19 +1,21 @@
 /*
-Module: General.jsx
+Module: UserProgram.jsx - My Programs Page
 */
 import React, { useEffect, useState } from "react";
-import { CardBack } from "../../components/Card";
 import { ProgrammingApi } from "../../api/ProgrammingApi";
 import { UserApi } from "../../api/UserApi";
-import PageContainer1, { PageContainer2, BlankPageContainer, BlankPageContainer1 } from "../../components/PageContainer";
 import { YoutubeIcon, FilePenIcon } from "../../components/Icons";
 import { useNavigate } from "react-router-dom";
 import { BasicModalDialogue } from "../../components/Dialog";
 
 export default function General() {
   const [userProgramming, setUserProgramming] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "My Programs - Adapted Strength";
+    setIsLoading(true);
+    
     UserApi.getUserProgramming()
       .then((data) => {
         return data.subscribed_programs;
@@ -41,248 +43,232 @@ export default function General() {
         let userProgramming = programs;
         console.log("User Programming: ", userProgramming);
         setUserProgramming(userProgramming);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error loading programs:", error);
+        setIsLoading(false);
       });
   }, []);
 
-  // TO GET THE PROGRAMMING use userProgramming to get the programming for this user. 
-
-  // Steps 
-  // Check that userProgramming is not null
-  // If it is null, return a loading screen
-  // If it is not null, render the user programming 
-  // The userProgramming Structure is an Array of all the programs assigned to that user. 
-  //
-  // Each program contains the following fields:
-  // startDate: The date the program started
-  // startWeek: The week the program started
-  // currentWeek: The current week of the program
-  // userProgram: The actual program object that contains the program information 
-  //
-  // To access the first program for example you would do userProgramming[0].userProgram
-  //
-  // to get the current week for the first program you would do userProgramming[0].weeks[userProgramming[0].currentWeek]
-  //
-  // to get all the current weeks you would do const weeks = userProgramming.map(program => program.weeks[program.currentWeek])
-
-  if (!userProgramming || userProgramming.length === 0) {
+  if (isLoading) {
     return (
-      <PageContainer2>
-        <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
-          Your Program: NONE
-        </p>
-        <h1 className="font-bold flex justify-center">
-          Looks like you don't have a program yet!
-        </h1>
-        <h2 className="font-bold flex justify-center">
-          Contact Coach Alex for help!
-        </h2>
-      </PageContainer2>
-    );
-  }
-
-  return <BlankPageContainer>
-    {
-      userProgramming.map((userProgram) => {
-        return (
-          <ProgramPuller program={userProgram.userProgram}
-            currentWeek={userProgram.currentWeek}
-          />
-        )
-      }
-      )
-    }
-  </BlankPageContainer>;
-}
-
-function ProgramPuller({ program, currentWeek }) {
-  if (currentWeek <= 0 || currentWeek > program.weeks.length) {
-    return (
-      <CardBack>
-        <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
-          Your Program: {
-            program.name
-          }
-        </p>
-        <h1 className="font-bold text-center">
-          This program is not available to you right now!
-        </h1>
-      </CardBack>
-    )
-  }
-
-  const week = program.weeks[currentWeek - 1];
-
-  function PullProgram({ day }) {
-    const [showTable, setShowTable] = useState(false);
-    const toggleButt = () => {
-      setShowTable(!showTable);
-    }
-    return (
-      <div className="pt-4">
-        <div className="hover:cursor-pointer flex flex-col bg-slate-400 animate-slideLeft border-8 border-solid rounded-xl border-black text-[#161A1D] font-bold text-center w-full py-2" onClick={toggleButt}>
-          <div className="w-full h-full">
-            {
-              day.name
-            }
-          </div>
-
-          {showTable &&
-            <table className="w-full text-left hover:cursor-default" onClick={(e) => {
-              e.stopPropagation();
-            }}>
-              <tbody className="text-[#161A1D] animate-fadeIn">
-                {day.repCycles.map((repCycle) => (
-                  <RepCycle repCycle={repCycle} />
-                ))}
-              </tbody>
-            </table>}
-
+      <div className="min-h-screen pt-16 flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your programs...</p>
         </div>
       </div>
     );
   }
 
-  // -----This is the old code we deved together--------
-  // const getTable = (day) => {
-  //   return (
-  //     <div className="pt-4">
-  //       <h1 className="bg-[#161A1D] text-white font-bold text-center w-full py-2">
-  //         {day.name}
-  //       </h1>
-  //       <table className="w-full text-left">
-  //         <tbody className="text-[#161A1D]">
-  //           {day.repCycles.map((repCycle) => (
-  //             <RepCycle repCycle={repCycle} />
-  //           ))}
-  //         </tbody>
-  //       </table>
-  //     </div>
-  //   );
-  // };
-
+  if (!userProgramming || userProgramming.length === 0) {
+    return (
+      <div className="min-h-screen pt-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">No Programs Assigned</h1>
+                <p className="text-gray-600 mb-6">
+                  You don't have any training programs assigned yet. Contact Coach Alex to get started with your personalized training program.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-blue-800 text-sm">
+                    <strong>Need help?</strong> Reach out to Coach Alex to discuss your fitness goals and get a customized program designed just for you.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <p className="bg-[#161A1D] text-white flex justify-center bottom-3 px-0 pt-8 pb-8">
-        Your Program: {
-          program.name
-        }
-      </p>
-      <h1 className="font-bold flex justify-center uppercase">
-        {week.name}
-      </h1>
-      <div>
-        <CardBack className="xl:w-11/12 xl:mx-auto w-full h-full">
-
-          <div className="overflow-x-auto flex flex-col text-left justify-center space-y-2 h-full">
-            {
-              week.days.map((day) => {
-                return (
-                  <PullProgram day={day} />
-                );
-              }
-              )
-            }
-          </div>
-        </CardBack>
+    <div className="min-h-screen pt-16 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Programs</h1>
+          <p className="text-gray-600">Your personalized training programs</p>
+        </div>
+        
+        <div className="space-y-8">
+          {userProgramming.map((userProgram, index) => (
+            <ProgramPuller 
+              key={index}
+              program={userProgram.userProgram}
+              currentWeek={userProgram.currentWeek}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function RepCycle({ repCycle }) {
-  const nav = useNavigate();
-  const [notesOpen, setNotesOpen] = useState(false);
+function ProgramPuller({ program, currentWeek }) {
+  if (currentWeek <= 0 || currentWeek > program.weeks.length) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">{program.name}</h2>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800">
+              This program is not available to you right now. Please contact your coach for assistance.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  const week = program.weeks[currentWeek - 1];
 
   return (
-    <tr key={repCycle.repCycleId} className="text-center h-full m-auto">
-      <td className="m-auto min-w-10 justify-center w-10 border-solid border-2 border-black bg-gray-300 font-bold">
-        {repCycle.workoutOrder}
-      </td>
-      <th
-        scope="col"
-        className="p-1.5 w-full border-solid border-2 border-black bg-gray-300"
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      {/* Program Header */}
+      <div className="bg-gray-900 text-white px-6 py-4">
+        <h2 className="text-xl font-bold">{program.name}</h2>
+        <p className="text-gray-300">Week {currentWeek}: {week.name}</p>
+      </div>
+
+      {/* Days */}
+      <div className="p-6">
+        <div className="space-y-4">
+          {week.days.map((day, index) => (
+            <DayComponent key={index} day={day} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DayComponent({ day }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left flex items-center justify-between"
       >
-        <div className="flex flex-row w-full">
-          <span className="text-lg font-bold">{repCycle.name}</span>
-          <button className="ml-auto px-2 pb-1" onClick={() => {
-            setNotesOpen(true);
-          }}>
-            <FilePenIcon className="h-6" />
-          </button>
-          <button className="px-2 pb-1" onClick={() => {
-            repCycle.movementId && nav(`/movement-library/${repCycle.movementId}`);
-          }}>
-            <YoutubeIcon className="h-6 scale-125" />
-          </button>
+        <h3 className="font-semibold text-gray-900">{day.name}</h3>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-500">
+            {day.repCycles.length} exercise{day.repCycles.length !== 1 ? 's' : ''}
+          </span>
+          <svg 
+            className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </div>
-        <div className="flex justify-center flex-col">
-          <table className="w-full h-full">
-            <tbody>
-              <tr>
-                <td
-                  scope="col"
-                  className="px-1 w-auto text-xs bg-gray-200 text-center"
-                >
-                  Equipment
-                </td>
-                <td
-                  scope="col"
-                  className="px-1 w-auto text-xs bg-gray-100 text-center"
-                >
-                  Sets
-                </td>
-                <td
-                  scope="col"
-                  className="px-1 w-auto text-xs bg-gray-200 text-center"
-                >
-                  Reps/Time
-                </td>
-                <td
-                  scope="col"
-                  className="px-1 w-auto text-xs bg-gray-100 text-center"
-                >
-                  % / RPE
-                </td>
-                <td
-                  scope="col"
-                  className="p-1.5 w-auto text-xs bg-gray-200 text-center"
-                >
-                  Rest
-                </td>
-              </tr>
-              <tr
-                key={repCycle.repCycleId}
-                className="text-s text-[#161A1D] bg-gray-100"
-              >
-                <td className="border text-center min-w-10 max-w-16 bg-gray-200 px-1.5 py-2">
-                  {repCycle.equipment}
-                </td>
-                <td className="border text-center px-1.5 py-2">
-                  {repCycle.numSets}
-                </td>
-                <td className="border text-center bg-gray-200 px-1.5 py-2">
-                  {repCycle.numReps}
-                </td>
-                <td className="border text-center px-1.5 py-2">
-                  {repCycle.weight}
-                </td>
-                <td className="border text-center min-w-10 max-w-16 bg-gray-200 px-1.5 py-2">
-                  {repCycle.restTime}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      </button>
+
+      {isExpanded && (
+        <div className="border-t border-gray-200">
+          <div className="p-4 space-y-4">
+            {day.repCycles.map((repCycle, index) => (
+              <RepCycle key={index} repCycle={repCycle} />
+            ))}
+          </div>
         </div>
-      </th>
-      {notesOpen &&
-        <BasicModalDialogue title="Coaches Notes" onCloseDialog={() => setNotesOpen(false)}>
-          <div className="flex flex-col h-32 prose">
-            <p>{repCycle.coachNotes}</p>
+      )}
+    </div>
+  );
+}
+
+function RepCycle({ repCycle }) {
+  const navigate = useNavigate();
+  const [notesOpen, setNotesOpen] = useState(false);
+
+  return (
+    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+      {/* Exercise Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold">
+            {repCycle.workoutOrder}
+          </div>
+          <h4 className="font-semibold text-gray-900">{repCycle.name}</h4>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          {repCycle.coachNotes && (
+            <button
+              onClick={() => setNotesOpen(true)}
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="View Coach Notes"
+            >
+              <FilePenIcon className="h-5 w-5" />
+            </button>
+          )}
+          
+          {repCycle.movementId && (
+            <button
+              onClick={() => navigate(`/movement-library/${repCycle.movementId}`)}
+              className="p-2 text-red-600 hover:text-red-700 transition-colors"
+              title="Watch Exercise Video"
+            >
+              <YoutubeIcon className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Exercise Details */}
+      <div className="bg-white rounded border border-gray-200 overflow-hidden">
+        <div className="grid grid-cols-5 gap-0 text-xs font-medium text-gray-500 bg-gray-100">
+          <div className="px-3 py-2 text-center border-r border-gray-200">Equipment</div>
+          <div className="px-3 py-2 text-center border-r border-gray-200">Sets</div>
+          <div className="px-3 py-2 text-center border-r border-gray-200">Reps/Time</div>
+          <div className="px-3 py-2 text-center border-r border-gray-200">% / RPE</div>
+          <div className="px-3 py-2 text-center">Rest</div>
+        </div>
+        
+        <div className="grid grid-cols-5 gap-0 text-sm text-gray-900">
+          <div className="px-3 py-3 text-center border-r border-gray-200 bg-gray-50">
+            {repCycle.equipment || "—"}
+          </div>
+          <div className="px-3 py-3 text-center border-r border-gray-200">
+            {repCycle.numSets || "—"}
+          </div>
+          <div className="px-3 py-3 text-center border-r border-gray-200 bg-gray-50">
+            {repCycle.numReps || "—"}
+          </div>
+          <div className="px-3 py-3 text-center border-r border-gray-200">
+            {repCycle.weight || "—"}
+          </div>
+          <div className="px-3 py-3 text-center bg-gray-50">
+            {repCycle.restTime || "—"}
+          </div>
+        </div>
+      </div>
+
+      {/* Coach Notes Modal */}
+      {notesOpen && (
+        <BasicModalDialogue 
+          title="Coach Notes" 
+          onCloseDialog={() => setNotesOpen(false)}
+        >
+          <div className="p-4">
+            <p className="text-gray-700 whitespace-pre-wrap">
+              {repCycle.coachNotes || "No notes available for this exercise."}
+            </p>
           </div>
         </BasicModalDialogue>
-      }
-    </tr>
+      )}
+    </div>
   );
 }
