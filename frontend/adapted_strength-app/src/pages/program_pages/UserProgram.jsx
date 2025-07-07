@@ -163,7 +163,7 @@ function DayComponent({ day }) {
         <h3 className="font-semibold text-gray-900">{day.name}</h3>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-500">
-            {day.repCycles.length} exercise{day.repCycles.length !== 1 ? 's' : ''}
+            {day.repCycles.length} movement{day.repCycles.length !== 1 ? 's' : ''}
           </span>
           <svg 
             className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -195,7 +195,7 @@ function RepCycle({ repCycle }) {
 
   return (
     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-      {/* Exercise Header */}
+      {/* Movement Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold">
@@ -219,7 +219,7 @@ function RepCycle({ repCycle }) {
             <button
               onClick={() => navigate(`/movement-library/${repCycle.movementId}`)}
               className="p-2 text-red-600 hover:text-red-700 transition-colors"
-              title="Watch Exercise Video"
+              title="Watch Movement Video"
             >
               <YoutubeIcon className="h-5 w-5" />
             </button>
@@ -227,7 +227,7 @@ function RepCycle({ repCycle }) {
         </div>
       </div>
 
-      {/* Exercise Details */}
+      {/* Movement Details */}
       <div className="bg-white rounded border border-gray-200 overflow-hidden">
         <div className="grid grid-cols-5 gap-0 text-xs font-medium text-gray-500 bg-gray-100">
           <div className="px-3 py-2 text-center border-r border-gray-200">Equipment</div>
@@ -264,7 +264,7 @@ function RepCycle({ repCycle }) {
         >
           <div className="p-4">
             <p className="text-gray-700 whitespace-pre-wrap">
-              {repCycle.coachNotes || "No notes available for this exercise."}
+              {repCycle.coachNotes || "No notes available for this movement."}
             </p>
           </div>
         </BasicModalDialogue>
