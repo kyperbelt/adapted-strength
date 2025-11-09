@@ -193,7 +193,7 @@ export default function UserManagement() {
         <>
           <SearchBar onSearch={onSearch} />
           <StyledCheckboxTable
-            headers={["Email", "Name", "Subcription", "Program(s)"]}
+            headers={["Email", "Name", "Subscription", "Program(s)"]}
             options={["Nuffin"]}
             onAllSelected={onAllSelected}
             onOptionsClick={OptionSelected}

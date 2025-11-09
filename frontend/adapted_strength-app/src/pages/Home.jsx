@@ -1,110 +1,119 @@
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PrimaryButton } from '../components/Button';
 import { BlankPageContainer } from '../components/PageContainer';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { WebAdminApi } from '../api/WebAdminApi';
 
-// <img src={logo} alt="Adapted Strength Logo" className="mx-auto" />
 export default function Home() {
     const navigate = useNavigate();
     const { user } = useUser();
+    const [content, setContent] = useState(null);
 
     useEffect(() => {
         document.title = "Adapted Strength";
+        WebAdminApi.getPublicHomePage()
+            .then((data) => {
+                setContent(data);
+            })
+            .catch((error) => {
+                console.error('Error loading Home Page content:', error);
+            });
     }, []);
 
     const handleGetStarted = () => {
         if (user) {
-            // User is logged in, take them to consultations
             navigate('/consultations');
         } else {
-            // User is not logged in, take them to login
-            navigate('/login');
+            navigate('/memberships');
         }
     };
 
-
-    const placeholderImage = "https://placehold.co/300x200";
-    const fitnessJourneyImage = "https://i.ibb.co/0rjhxxF/journey-min.jpg";
-    const powerliftingImage = "https://i.ibb.co/sQP7Jgm/adapteds-powerlifting-min.jpg";
-    const olympicWeightliftingImage ="https://i.ibb.co/VSDXFzd/adapteds-olylifting-min.jpg" ;
-    const bodybuildingImage = "https://i.ibb.co/5sxKS98/adapteds-bodybuilding-min.jpg" ;
+    if (!content) return <div className="p-6">Loading...</div>;
 
     return (
         <>
             {/* Hero Section */}
             <div className="text-left md:text-center text-primary p-12 bg-secondary space-y-5">
-                <h1 className="text-6xl font-bold mb-2">Adapted Strength</h1>
-                <p className="mb-4">In Vacaville, CA, Adapted Strength is an upcoming gym that offers numerous opportunities in strength training disciplines.</p>
+                <h1 className="text-6xl font-bold mb-2">{content.heroTitle}</h1>
+                <p className="mb-4">{content.heroSubtitle}</p>
                 <div className="flex md:justify-end max-w-screen-xl pt-8">
                     <PrimaryButton onClick={handleGetStarted} className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-                        Get Started!
+                        {content.ctaButtonText}
                     </PrimaryButton>
                 </div>
             </div>
             <BlankPageContainer>
                 <div className="px-4 space-y-12 xl:pt-12">
-                    {/* Testimonials Section */}
-                    <div className="bg-primary py-10">
-                        <div className="text-center">
-                            <h2 className="text-2xl font-bold mb-3">What our clients say about Adapted Strength?</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                                <div className="bg-primary p-6 shadow rounded">
-                                    <p className="text-sm italic font-semibold text-gray-500">"I was recommended to try a cycle with the program and loved it!"</p>
-                                    <span className="block mt-2 font-bold">Recommend</span>
-                                </div>
-                                <div className="bg-primary p-6 shadow rounded">
-                                    <p className="text-sm italic font-semibold text-gray-500">"I used to hate going to the gym and now I look forward to it every day."</p>
-                                    <span className="block mt-2 font-bold">Patient</span>
-                                </div>
-                                <div className="bg-primary p-6 shadow rounded prose">
-                                    <p className="text-sm italic font-semibold text-gray-500">"The head coach, Alex Palting, is amazing. I feel so supported."</p>
-                                    <span className="block mt-2 font-bold">Beginner-Friendly</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* New to Fitness Section */}
-                    <div className="flex flex-wrap items-center justify-center py-10">
-                        <img src={fitnessJourneyImage} alt="Fitness Journey" className="w-full sm:w-1/2 p-4 max-h-96 object-contain" />
-                        <div className="w-full sm:w-1/2 p-4">
-                            <h2 className="text-2xl font-bold mb-2">New to fitness? Start Here!</h2>
-                            <p className="mb-4">This facility offers an opportunity that will help set everyone up for goals that range from basic motor learning to advanced technical aptitude.</p>
-                            <ul className="list-disc pl-5 mb-4">
-                                <li>Fat Loss</li>
-                                <li>Muscle Building</li>
-                                <li>Strength Gain</li>
-                                <li>Self-Paced Environment</li>
-                            </ul>
-                            <PrimaryButton onClick={() => navigate('/consultations')}>
-                                Book a Consultation
-                            </PrimaryButton>
-                        </div>
-                    </div>
-
-                    {/* Competitive Section */}
-                    <div className="text-center pt-12 bg-primary border-t-2">
-                        <h2 className="text-3xl font-bold mb-2">Are you looking to compete?</h2>
-                        <p className="mb-4">We are looking for athletes to compete in powerlifting, olympic weightlifting, and bodybuilding.</p>
-                        <div className="flex flex-wrap justify-center gap-6">
-                            <div className="bg-white p-6 shadow rounded text-center">
-                                <img src={powerliftingImage} alt="Powerlifting" className="w-full object-contain max-h-64" />
-                                <h3 className="font-bold mt-2">Powerlifting</h3>
-                            </div>
-                            <div className="bg-white p-6 shadow rounded text-center">
-                                <img src={olympicWeightliftingImage} alt="Olympic Weightlifting" className="w-full object-contain max-h-64" />
-                                <h3 className="font-bold mt-2">Olympic Weightlifting</h3>
-                            </div>
-                            <div className="bg-white p-6 shadow rounded text-center">
-                                <img src={bodybuildingImage} alt="Bodybuilding" className="w-full object-contain max-h-64" />
-                                <h3 className="font-bold mt-2">Bodybuilding</h3>
-                            </div>
-                        </div>
-                    </div>
+                    {content.sections && content.sections
+                        .filter(section => section.visible !== false)
+                        .sort((a, b) => a.displayOrder - b.displayOrder)
+                        .map((section, index) => (
+                            <SectionRenderer key={index} section={section} />
+                        ))}
                 </div>
-
             </BlankPageContainer>
         </>
+    );
+}
+
+function SectionRenderer({ section }) {
+    if (section.sectionType === 'testimonials') {
+        return <TestimonialsSection section={section} />;
+    } else if (section.sectionType === 'sports') {
+        return <SportsSection section={section} />;
+    } else if (section.sectionType === 'simple') {
+        return <SimpleSection section={section} />;
+    }
+    return null;
+}
+
+function TestimonialsSection({ section }) {
+    const testimonials = section.data ? JSON.parse(section.data) : [];
+    
+    return (
+        <div className="bg-gray-50 py-16 -mx-4 px-4">
+            <div className="text-center max-w-6xl mx-auto">
+                <h2 className="text-3xl font-bold mb-8">{section.title}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {testimonials.map((testimonial, index) => (
+                        <div key={index} className="bg-white p-8 shadow-lg rounded-lg hover:shadow-xl transition-shadow">
+                            <p className="text-base italic text-gray-600 mb-4">"{testimonial.quote}"</p>
+                            <span className="block text-lg font-bold text-accent">{testimonial.author}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function SimpleSection({ section }) {
+    return (
+        <div className="text-center py-12 max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4">{section.title}</h2>
+            <p className="text-xl text-gray-600">{section.content}</p>
+        </div>
+    );
+}
+
+function SportsSection({ section }) {
+    const sports = section.data ? JSON.parse(section.data) : [];
+    
+    return (
+        <div className="text-center py-12">
+            <h2 className="text-3xl font-bold mb-10">{section.title}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {sports.map((sport, index) => (
+                    <div key={index} className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        <img src={sport.image} alt={sport.title} className="w-full h-64 object-cover" />
+                        <div className="p-6">
+                            <h3 className="text-2xl font-bold mb-3">{sport.title}</h3>
+                            <p className="text-gray-600">{sport.description}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 }

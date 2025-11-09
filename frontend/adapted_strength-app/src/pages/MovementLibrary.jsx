@@ -9,29 +9,99 @@ export default function MovementLibrary() {
   const url = loc.pathname;
   const { movementId } = useParams();
   const [movements, setMovements] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedMovement, setSelectedMovement] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [sortBy, setSortBy] = useState('alpha');
 
   const getSelectedMovement = (id, movements) => {
     return movements.find((movement) => movement.id == id);
   };
 
-  useEffect(() => {
-    VideoApi.getAllMovements()
-      .then((data) => {
-        console.log(data);
-        setMovements(data);
+  const fetchMovements = () => {
+    const categoryId = selectedCategory ? parseInt(selectedCategory) : null;
+    
+    // If searching, fetch all and filter client-side for fuzzy matching
+    if (searchTerm && searchTerm.length > 0) {
+      VideoApi.getAllMovements(null, categoryId, sortBy)
+        .then((data) => {
+          // Fuzzy filter on client side
+          const filtered = data.filter(movement => 
+            fuzzyMatch(movement.title.toLowerCase(), searchTerm.toLowerCase())
+          );
+          setMovements(filtered);
+          if (movementId) {
+            const movement = getSelectedMovement(movementId, filtered);
+            setSelectedMovement(movement);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      // No search term, use backend filtering
+      VideoApi.getAllMovements(null, categoryId, sortBy)
+        .then((data) => {
+          setMovements(data);
+          if (movementId) {
+            const movement = getSelectedMovement(movementId, data);
+            setSelectedMovement(movement);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
-        if (movementId) {
-          const movement = getSelectedMovement(movementId, data);
-          console.log("SELECTED MOVEMENT:", movement);
-          console.log("MOVEMENTID:", movementId, "TYPE:", typeof movementId);
-          setSelectedMovement(movement);
-        }
+  // Simple fuzzy matching function
+  const fuzzyMatch = (text, search) => {
+    // Direct substring match (fast path)
+    if (text.includes(search)) return true;
+    
+    // Fuzzy match: allow 1-2 character differences
+    const threshold = search.length <= 4 ? 1 : 2;
+    return levenshteinDistance(text, search) <= threshold || 
+           text.split(' ').some(word => levenshteinDistance(word, search) <= threshold);
+  };
+
+  // Levenshtein distance calculation
+  const levenshteinDistance = (str1, str2) => {
+    const len1 = str1.length;
+    const len2 = str2.length;
+    const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(0));
+
+    for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+    for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+    for (let j = 1; j <= len2; j++) {
+      for (let i = 1; i <= len1; i++) {
+        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1,
+          matrix[j - 1][i] + 1,
+          matrix[j - 1][i - 1] + cost
+        );
+      }
+    }
+
+    return matrix[len2][len1];
+  };
+
+  useEffect(() => {
+    VideoApi.getCategories()
+      .then((data) => {
+        setCategories(data);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [movementId]);
+  }, []);
+
+  useEffect(() => {
+    fetchMovements();
+  }, [movementId, searchTerm, selectedCategory, sortBy]);
 
   const closeModal = () => {
     setSelectedMovement(null);
@@ -43,9 +113,42 @@ export default function MovementLibrary() {
       <h1 className="relative text-4xl font-bold mb-8 bottom-14 text-center">
         Movement Library
       </h1>
+      
+      <div className="mb-6 px-3 lg:px-10 flex flex-col md:flex-row gap-4">
+        <input
+          type="text"
+          placeholder="Search movements..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+        />
+        
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <option value="">All Categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.category}
+            </option>
+          ))}
+        </select>
+        
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <option value="alpha">Alphabetical</option>
+          <option value="default">Default</option>
+        </select>
+      </div>
+
       <div className="pl-3 lg:pl-10 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-3">
         {movements.map((movement, index) => (
-          <VideoCard key={index} movement={movement} />
+          <VideoCard key={index} movement={movement} onCategoryClick={setSelectedCategory} />
         ))}
       </div>
       {selectedMovement && (
@@ -78,7 +181,7 @@ export default function MovementLibrary() {
   );
 }
 
-function VideoCard({ movement }) {
+function VideoCard({ movement, onCategoryClick }) {
   const nav = useNavigate();
 
   console.log("MOVEMENT:", movement);
@@ -104,6 +207,10 @@ function VideoCard({ movement }) {
         {movement.categories.map((category, index) => (
           <span
             key={index + `${category.category}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCategoryClick(category.id.toString());
+            }}
             className="bg-accent rounded-full px-3 mt-1 py-0 text-sm font-semibold text-primary me-2 cursor-pointer hover:bg-primary hover:text-primary-dark"
           >
             #{category.category}

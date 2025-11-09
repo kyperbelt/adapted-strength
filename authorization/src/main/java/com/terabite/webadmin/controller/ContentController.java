@@ -29,4 +29,14 @@ public class ContentController{
                 return webContentService.getCurrentTermsOfService();
         }
 
+        @GetMapping("/about-us")
+        public ResponseEntity<?> getAboutUsContent() {
+                return webContentService.getAboutUsContent();
+        }
+
+        @GetMapping("/home-page")
+        public ResponseEntity<?> getHomePageContent() {
+                return webContentService.getHomePageContent();
+        }
+
 }

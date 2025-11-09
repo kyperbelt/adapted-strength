@@ -3,13 +3,31 @@ import { ApiUtils, HttpStatus } from './ApiUtils';
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class VideoApi {
 
-
-  static getAllMovements() {
-    const promise = ApiUtils.apiGet('movement/movements').then((res) => {
+  static getAllMovements(searchTerm = null, categoryId = null, sortBy = 'alpha') {
+    let url = 'movement/movements?';
+    const params = [];
+    
+    if (searchTerm) params.push(`search=${encodeURIComponent(searchTerm)}`);
+    if (categoryId) params.push(`categoryId=${categoryId}`);
+    if (sortBy) params.push(`sort=${sortBy}`);
+    
+    url += params.join('&');
+    
+    const promise = ApiUtils.apiGet(url).then((res) => {
       if (res.status === HttpStatus.OK) {
         return res.data;
       }
       throw new Error('Error getting content');
+    });
+    return promise;
+  }
+
+  static getCategories() {
+    const promise = ApiUtils.apiGet('movement/categories').then((res) => {
+      if (res.status === HttpStatus.OK) {
+        return res.data;
+      }
+      throw new Error('Error getting categories');
     });
     return promise;
   }

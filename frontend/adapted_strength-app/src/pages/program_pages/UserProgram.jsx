@@ -229,29 +229,56 @@ function RepCycle({ repCycle }) {
 
       {/* Movement Details */}
       <div className="bg-white rounded border border-gray-200 overflow-hidden">
-        <div className="grid grid-cols-5 gap-0 text-xs font-medium text-gray-500 bg-gray-100">
-          <div className="px-3 py-2 text-center border-r border-gray-200">Equipment</div>
-          <div className="px-3 py-2 text-center border-r border-gray-200">Sets</div>
-          <div className="px-3 py-2 text-center border-r border-gray-200">Reps/Time</div>
-          <div className="px-3 py-2 text-center border-r border-gray-200">% / RPE</div>
-          <div className="px-3 py-2 text-center">Rest</div>
+        {/* Desktop: Table layout */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-5 gap-0 text-xs font-medium text-gray-500 bg-gray-100">
+            <div className="px-3 py-2 text-center border-r border-gray-200">Equipment</div>
+            <div className="px-3 py-2 text-center border-r border-gray-200">Sets</div>
+            <div className="px-3 py-2 text-center border-r border-gray-200">Reps/Time</div>
+            <div className="px-3 py-2 text-center border-r border-gray-200">% / RPE</div>
+            <div className="px-3 py-2 text-center">Rest</div>
+          </div>
+          
+          <div className="grid grid-cols-5 gap-0 text-sm text-gray-900">
+            <div className="px-3 py-3 text-center border-r border-gray-200 bg-gray-50">
+              {repCycle.equipment || "—"}
+            </div>
+            <div className="px-3 py-3 text-center border-r border-gray-200">
+              {repCycle.numSets || "—"}
+            </div>
+            <div className="px-3 py-3 text-center border-r border-gray-200 bg-gray-50">
+              {repCycle.numReps || "—"}
+            </div>
+            <div className="px-3 py-3 text-center border-r border-gray-200">
+              {repCycle.weight || "—"}
+            </div>
+            <div className="px-3 py-3 text-center bg-gray-50">
+              {repCycle.restTime || "—"}
+            </div>
+          </div>
         </div>
-        
-        <div className="grid grid-cols-5 gap-0 text-sm text-gray-900">
-          <div className="px-3 py-3 text-center border-r border-gray-200 bg-gray-50">
-            {repCycle.equipment || "—"}
+
+        {/* Mobile: Stacked layout */}
+        <div className="md:hidden divide-y divide-gray-200">
+          <div className="flex justify-between px-4 py-2">
+            <span className="text-sm font-medium text-gray-500">Equipment</span>
+            <span className="text-sm text-gray-900">{repCycle.equipment || "—"}</span>
           </div>
-          <div className="px-3 py-3 text-center border-r border-gray-200">
-            {repCycle.numSets || "—"}
+          <div className="flex justify-between px-4 py-2 bg-gray-50">
+            <span className="text-sm font-medium text-gray-500">Sets</span>
+            <span className="text-sm text-gray-900">{repCycle.numSets || "—"}</span>
           </div>
-          <div className="px-3 py-3 text-center border-r border-gray-200 bg-gray-50">
-            {repCycle.numReps || "—"}
+          <div className="flex justify-between px-4 py-2">
+            <span className="text-sm font-medium text-gray-500">Reps/Time</span>
+            <span className="text-sm text-gray-900">{repCycle.numReps || "—"}</span>
           </div>
-          <div className="px-3 py-3 text-center border-r border-gray-200">
-            {repCycle.weight || "—"}
+          <div className="flex justify-between px-4 py-2 bg-gray-50">
+            <span className="text-sm font-medium text-gray-500">% / RPE</span>
+            <span className="text-sm text-gray-900">{repCycle.weight || "—"}</span>
           </div>
-          <div className="px-3 py-3 text-center bg-gray-50">
-            {repCycle.restTime || "—"}
+          <div className="flex justify-between px-4 py-2">
+            <span className="text-sm font-medium text-gray-500">Rest</span>
+            <span className="text-sm text-gray-900">{repCycle.restTime || "—"}</span>
           </div>
         </div>
       </div>

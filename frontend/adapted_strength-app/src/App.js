@@ -24,8 +24,6 @@ import { UserProvider } from './contexts/UserContext';
 import About from "./pages/About.jsx";
 
 import ScrollToTop from './util/ScrollToTop';
-// import firebase utils
-import { fetchToken } from './firebase';
 
 /*
 IMPORTS FOR PROGRAM PAGES
@@ -62,9 +60,6 @@ function Wrapper({ children }) {
 }
 
 function App() {
-  const [isTokenFound, setTokenFound] = useState(false);
-  { !isTokenFound && fetchToken(setTokenFound); }
-
   // <Wrapper>
   return (
     <UserProvider>

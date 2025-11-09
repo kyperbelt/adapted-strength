@@ -14,6 +14,7 @@ export default function MovementLibrarySection() {
     title: "",
     description: "",
     link: "",
+    categoriesInput: "", // Store as string for input
   });
   const [preview, setPreview] = useState(null);
 
@@ -48,11 +49,20 @@ export default function MovementLibrarySection() {
 
   const handleAdd = async () => {
     try {
-      const movement = await VideoApi.createVideoInformation(newMovement);
+      const movementData = {
+        ...newMovement,
+        categories: newMovement.categoriesInput
+          .split(/,\s*/)
+          .map(cat => ({ category: cat.trim() }))
+          .filter(item => item.category !== '')
+      };
+      delete movementData.categoriesInput;
+      
+      const movement = await VideoApi.createVideoInformation(movementData);
       const newMovements = [...movements];
       newMovements.push(movement);
       setMovements(newMovements);
-      setNewMovement({ title: "", description: "", link: "", categories: [] });
+      setNewMovement({ title: "", description: "", link: "", categoriesInput: "" });
       setPreview(null);
     } catch (e) {
       console.error("Error creating movement:", e);
@@ -98,16 +108,9 @@ export default function MovementLibrarySection() {
             <LabeledInputField
               type="text"
               placeholder="Categories (comma-separated)"
-              value={newMovement.categories && newMovement.categories.map((item) => item.category).join(", ")}
+              value={newMovement.categoriesInput}
               onChange={(e) =>
-                setNewMovement({
-                  ...newMovement,
-                  categories: e.target.value.split(", ").map((item) => {
-                    return {
-                      category: item.trim()
-                    };
-                  }),
-                })
+                setNewMovement({ ...newMovement, categoriesInput: e.target.value })
               }
             />
             <PrimaryButton onClick={handleAdd}>Add Movement</PrimaryButton>

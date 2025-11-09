@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.terabite.programming.model.Program;
 import com.terabite.programming.model.ProgramDescription;
 import com.terabite.programming.model.RepCycle;
-import com.google.api.client.util.Lists;
+import java.util.ArrayList;
 import com.terabite.common.dto.Payload;
 import com.terabite.programming.dto.CreateDayRequest;
 import com.terabite.programming.dto.CreateProgramRequest;
@@ -69,7 +69,7 @@ public class ProgrammingControler {
     @PostMapping("/program")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> createProgram(@RequestBody CreateProgramRequest request) {
-        Program program = new Program(request.programName(), Lists.newArrayList());
+        Program program = new Program(request.programName(), new ArrayList<>());
         program.setDescription(new ProgramDescription(request.programDescription()));
         return programService.createNewProgram(program);
     }
@@ -77,7 +77,7 @@ public class ProgrammingControler {
     @PutMapping("/program")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> updateProgram(@RequestBody UpdateProgramRequest program) {
-        List<Week> weeks = Lists.newArrayList();
+        List<Week> weeks = new ArrayList<>();
         for (int weekId : program.weekIds()) {
             final Week week = weekService.getWeekById(weekId);
             if (week == null) {
@@ -93,7 +93,7 @@ public class ProgrammingControler {
     @GetMapping("/program/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> getProgram(@PathVariable int id) {
-        Program program = new Program("name", Lists.newArrayList());
+        Program program = new Program("name", new ArrayList<>());
         program.setProgramId(id);
 
         return programService.getProgram(program);
@@ -108,7 +108,7 @@ public class ProgrammingControler {
     @DeleteMapping("/program/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> deleteProgram(@PathVariable int id){
-        Program program = new Program("name", Lists.newArrayList());
+        Program program = new Program("name", new ArrayList<>());
         program.setProgramId(id);   
         userApi.deleteAllUserProgrammingsForProgram(id);
         return programService.deleteProgram(program);
@@ -126,7 +126,7 @@ public class ProgrammingControler {
     @PostMapping("/week")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> createWeek(@RequestBody CreateWeekRequest request) {
-        Week week = new Week(request.weekName(), Lists.newArrayList());
+        Week week = new Week(request.weekName(), new ArrayList<>());
 
         return weekService.createNewWeek(week);
     }
@@ -145,7 +145,7 @@ public class ProgrammingControler {
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> updateWeek(@RequestBody UpdateWeekRequest request) {
         
-        List<Day> days = Lists.newArrayList();
+        List<Day> days = new ArrayList<>();
         log.info("Day ids: {}", request.dayIds());
         for (int dayId : request.dayIds()) {
             final Day day = dayService.getDayById(dayId);
@@ -162,7 +162,7 @@ public class ProgrammingControler {
     @GetMapping("/week/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> getWeek(@PathVariable long id) {
-        Week week = new Week("name", Lists.newArrayList());
+        Week week = new Week("name", new ArrayList<>());
         week.setWeekId(id);
         return weekService.getWeek(week);
     }
@@ -175,7 +175,7 @@ public class ProgrammingControler {
 
     @GetMapping("/week/all_weeks/{programId}")
     public ResponseEntity<?> getAllWeeksByProgramId(@PathVariable long programId) {
-        List<Week> weeks = Lists.newArrayList();
+        List<Week> weeks = new ArrayList<>();
 
         Optional<Program> programOptional = programService.getProgramById(programId);
 
@@ -198,7 +198,7 @@ public class ProgrammingControler {
     @PostMapping("/day")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> createDay(@RequestBody CreateDayRequest request) {
-        Day day = new Day(request.dayName(), Lists.newArrayList());
+        Day day = new Day(request.dayName(), new ArrayList<>());
 
         return dayService.createNewDay(day);
     }
@@ -207,7 +207,7 @@ public class ProgrammingControler {
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> updateDay(@RequestBody UpdateDayRequest request) {
 
-        List<RepCycle> repCycles = Lists.newArrayList();
+        List<RepCycle> repCycles = new ArrayList<>();
         for (int repCycleId : request.repCycleIds()) {
             RepCycle repCycle = repCycleService.getRepCycleById(repCycleId);
             if (repCycle == null) {
@@ -222,7 +222,7 @@ public class ProgrammingControler {
     @GetMapping("/day/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
     public ResponseEntity<?> getDay(@PathVariable long id) {
-        Day day = new Day("name", Lists.newArrayList());
+        Day day = new Day("name", new ArrayList<>());
         return dayService.getDay(day);
     }
 
@@ -235,7 +235,7 @@ public class ProgrammingControler {
     @DeleteMapping("/day/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
     public ResponseEntity<?> deleteDay(@PathVariable long id){
-        Day day = new Day("name", Lists.newArrayList());
+        Day day = new Day("name", new ArrayList<>());
         day.setDayId(id);
         return dayService.deleteDay(day);
     }

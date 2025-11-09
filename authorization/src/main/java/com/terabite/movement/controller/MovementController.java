@@ -2,7 +2,9 @@ package com.terabite.movement.controller;
 
 import com.terabite.common.dto.Payload;
 import com.terabite.movement.model.Movement;
+import com.terabite.movement.model.Category;
 import com.terabite.movement.repository.MovementRepository;
+import com.terabite.movement.repository.CategoryRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,28 +17,46 @@ import java.util.List;
 @RequestMapping("/v1/movement")
 public class MovementController {
     private final MovementRepository movementRepository;
+    private final CategoryRepository categoryRepository;
 
-    public MovementController(MovementRepository movementRepository)
+    public MovementController(MovementRepository movementRepository, CategoryRepository categoryRepository)
     {
         this.movementRepository = movementRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping("/movements")
     @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_USER', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
-    public ResponseEntity<List<Movement>> getMovements(@RequestParam(required = false) String title)
+    public ResponseEntity<List<Movement>> getMovements(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "alpha") String sort)
     {
-        List<Movement> movements = new ArrayList<Movement>();
-        if(title == null)
-        {
+        List<Movement> movements = new ArrayList<>();
+        
+        if (categoryId != null) {
+            Category category = categoryRepository.findById(categoryId.intValue()).orElse(null);
+            if (category != null) {
+                movementRepository.findByCategoriesOrderByTitleAsc(category).forEach(movements::add);
+            }
+        } else if (search != null && !search.isEmpty()) {
+            movementRepository.findByTitleContainingIgnoreCaseOrderByTitleAsc(search).forEach(movements::add);
+        } else if ("alpha".equals(sort)) {
+            movementRepository.findAllByOrderByTitleAsc().forEach(movements::add);
+        } else {
             movementRepository.findAll().forEach(movements::add);
-        }
-        else
-        {
-            movementRepository.findByTitleContaining(title).forEach(movements::add);
         }
 
         return new ResponseEntity<>(movements, HttpStatus.OK);
+    }
 
+    @GetMapping("/categories")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN', 'ROLE_USER', 'ROLE_NO_SUBSCRIPTION', 'ROLE_BASE_CLIENT', 'ROLE_SPECIFIC_CLIENT')")
+    public ResponseEntity<List<Category>> getCategories()
+    {
+        List<Category> categories = new ArrayList<>();
+        categoryRepository.findAll().forEach(categories::add);
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @GetMapping("/movements/{id}")

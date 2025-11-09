@@ -4,6 +4,7 @@ import { WebAdminApi } from "../../api/WebAdminApi";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FrontPageSection from "./FrontPageSection";
+import AboutUsSection from "./AboutUsSection";
 import MovementLibrarySection from "./MovementLibrarySection";
 
 const showdown = window.showdown;
@@ -66,22 +67,13 @@ export default function WebAdmin() {
       {activeTab === "termsOfService" && (
         <TermsOfServiceSection content={content} />
       )}
-      {activeTab === "aboutUs" && <AboutUsSection content={content} />}
+      {activeTab === "aboutUs" && <AboutUsSection />}
       {activeTab === "movementLibrary" && <MovementLibrarySection />}
-      {activeTab === "frontPage" && <FrontPageSection content={content} />}
+      {activeTab === "frontPage" && <FrontPageSection />}
     </div>
   );
 }
 
-
-
-function AboutUsSection({ content }) {
-  return (
-    <div>
-      <h2>About Us</h2>
-    </div>
-  );
-}
 
 function TermsOfServiceSection({ content }) {
   const [termsOfService, setTermsOfService] = useState(content.termsOfService);

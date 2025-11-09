@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.terabite.webadmin.model.TermsOfService;
+import com.terabite.webadmin.model.AboutUsContent;
+import com.terabite.webadmin.model.HomePageContent;
 import com.terabite.webadmin.service.WebContentService;
 
 /**
@@ -42,6 +44,32 @@ public class WebAdminController {
         @PreAuthorize("hasAuthority('ROLE_ADMIN')")
         public ResponseEntity<?> createTermsOfService(@RequestBody TermsOfService termsOfService) {
                 return webContentService.createTermsOfService(termsOfService);
+        }
+
+        // About Us Endpoints
+        @GetMapping("/about-us")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+        public ResponseEntity<?> getAboutUsContent() {
+                return webContentService.getAboutUsContent();
+        }
+
+        @PostMapping("/about-us")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+        public ResponseEntity<?> saveAboutUsContent(@RequestBody AboutUsContent content) {
+                return webContentService.saveAboutUsContent(content);
+        }
+
+        // Home Page Endpoints
+        @GetMapping("/home-page")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+        public ResponseEntity<?> getHomePageContent() {
+                return webContentService.getHomePageContent();
+        }
+
+        @PostMapping("/home-page")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+        public ResponseEntity<?> saveHomePageContent(@RequestBody HomePageContent content) {
+                return webContentService.saveHomePageContent(content);
         }
 
 
