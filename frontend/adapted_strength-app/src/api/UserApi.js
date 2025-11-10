@@ -479,4 +479,66 @@ export class UserApi {
   static deleteUser(email) {
     return ApiUtils.apiDelete(`user/delete/${email}`);
   }
+
+  // Progress Tracking
+
+  static markMovementComplete(repCycleId) {
+    return ApiUtils.apiPost(`user/progress/movement/${repCycleId}/complete`)
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response.data;
+        }
+        throw new Error(`Failed to mark complete: ${response.status}`);
+      });
+  }
+
+  static unmarkMovementComplete(repCycleId) {
+    return ApiUtils.apiDelete(`user/progress/movement/${repCycleId}/complete`)
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response.data;
+        }
+        throw new Error(`Failed to unmark complete: ${response.status}`);
+      });
+  }
+
+  static getUserProgressSummary() {
+    return ApiUtils.apiGet("user/progress/summary")
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response.data;
+        }
+        throw new Error(`Failed to get progress: ${response.status}`);
+      });
+  }
+
+  static getCompletedRepCycleIds() {
+    return ApiUtils.apiGet("user/progress/completed")
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response.data;
+        }
+        throw new Error(`Failed to get completed IDs: ${response.status}`);
+      });
+  }
+
+  static getProgramCompletionDetails(userProgrammingId, email) {
+    return ApiUtils.apiGet(`user/progress/program/${userProgrammingId}/details?email=${email}`)
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response.data;
+        }
+        throw new Error(`Failed to get completion details: ${response.status}`);
+      });
+  }
+
+  static getAllUsersProgress() {
+    return ApiUtils.apiGet("user/progress/dashboard")
+      .then((response) => {
+        if (response.status === HttpStatus.OK) {
+          return response.data;
+        }
+        throw new Error(`Failed to get dashboard progress: ${response.status}`);
+      });
+  }
 }

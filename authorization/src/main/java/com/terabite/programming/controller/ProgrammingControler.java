@@ -351,4 +351,48 @@ public class ProgrammingControler {
         return ResponseEntity.ok(payload);
     }
 
+    @GetMapping("/program/{programId}/user-distribution")
+    @PreAuthorize("hasAnyAuthority('ROLE_COACH', 'ROLE_ADMIN')")
+    public ResponseEntity<?> getProgramUserDistribution(@PathVariable long programId) {
+        List<UserProgramming> userProgrammings = userApi.getAllUsersForProgram(programId);
+        
+        Map<Integer, Map<String, Object>> usersByWeek = new HashMap<>();
+        int totalUsers = userProgrammings.size();
+        
+        for (UserProgramming up : userProgrammings) {
+            // Calculate current week for this user
+            long daysSinceStart = (System.currentTimeMillis() - up.getStartDate().getTime()) / (1000 * 60 * 60 * 24);
+            int weeksSinceStart = (int) Math.floor(daysSinceStart / 7.0);
+            int currentWeek = weeksSinceStart + up.getStartWeek();
+            
+            // Get or create week entry
+            usersByWeek.putIfAbsent(currentWeek, new HashMap<>());
+            Map<String, Object> weekData = usersByWeek.get(currentWeek);
+            
+            // Initialize list if needed
+            if (!weekData.containsKey("users")) {
+                weekData.put("users", new ArrayList<Map<String, Object>>());
+                weekData.put("count", 0);
+            }
+            
+            // Add user to this week
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("email", up.getUserInfo().getEmail());
+            userData.put("name", up.getUserInfo().getFirstName() + " " + up.getUserInfo().getLastName());
+            userData.put("currentWeek", currentWeek);
+            userData.put("userProgrammingId", up.getUserProgrammingId());
+            
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> users = (List<Map<String, Object>>) weekData.get("users");
+            users.add(userData);
+            weekData.put("count", users.size());
+        }
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalUsers", totalUsers);
+        response.put("usersByWeek", usersByWeek);
+        
+        return ResponseEntity.ok(response);
+    }
+
 }

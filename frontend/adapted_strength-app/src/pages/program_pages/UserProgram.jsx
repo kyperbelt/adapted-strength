@@ -7,10 +7,27 @@ import { UserApi } from "../../api/UserApi";
 import { YoutubeIcon, FilePenIcon } from "../../components/Icons";
 import { useNavigate } from "react-router-dom";
 import { BasicModalDialogue } from "../../components/Dialog";
+import ProgressBar from "../../components/ProgressBar";
 
 export default function General() {
   const [userProgramming, setUserProgramming] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [progressData, setProgressData] = useState(null);
+  const [completedRepCycleIds, setCompletedRepCycleIds] = useState(new Set());
+
+  const loadProgressData = () => {
+    Promise.all([
+      UserApi.getUserProgressSummary(),
+      UserApi.getCompletedRepCycleIds()
+    ])
+      .then(([progressData, completedData]) => {
+        setProgressData(progressData);
+        setCompletedRepCycleIds(new Set(completedData.completedRepCycleIds || []));
+      })
+      .catch((error) => {
+        console.error("Error loading progress:", error);
+      });
+  };
 
   useEffect(() => {
     document.title = "My Programs - Adapted Strength";
@@ -27,6 +44,7 @@ export default function General() {
               return {
                 startDate: program.startDate,
                 startWeek: program.startWeek,
+                userProgrammingId: program.userProgrammingId,
                 currentWeek: ProgrammingApi.getCurrentWeek(
                   program.startDate,
                   program.startWeek
@@ -44,12 +62,28 @@ export default function General() {
         console.log("User Programming: ", userProgramming);
         setUserProgramming(userProgramming);
         setIsLoading(false);
+        loadProgressData();
       })
       .catch((error) => {
         console.error("Error loading programs:", error);
         setIsLoading(false);
       });
   }, []);
+
+  const handleComplete = (repCycleId, isCurrentlyCompleted) => {
+    const apiCall = isCurrentlyCompleted 
+      ? UserApi.unmarkMovementComplete(repCycleId)
+      : UserApi.markMovementComplete(repCycleId);
+    
+    apiCall
+      .then(() => {
+        loadProgressData();
+      })
+      .catch((error) => {
+        console.error("Error toggling completion:", error);
+        alert("Failed to update completion status. Please try again.");
+      });
+  };
 
   if (isLoading) {
     return (
@@ -100,20 +134,30 @@ export default function General() {
         </div>
         
         <div className="space-y-8">
-          {userProgramming.map((userProgram, index) => (
-            <ProgramPuller 
-              key={index}
-              program={userProgram.userProgram}
-              currentWeek={userProgram.currentWeek}
-            />
-          ))}
+          {userProgramming.map((userProgram, index) => {
+            const programProgress = progressData?.programs?.find(
+              p => p.userProgrammingId === userProgram.userProgrammingId
+            );
+            
+            return (
+              <ProgramPuller 
+                key={index}
+                program={userProgram.userProgram}
+                currentWeek={userProgram.currentWeek}
+                userProgrammingId={userProgram.userProgrammingId}
+                progressData={programProgress}
+                onComplete={handleComplete}
+                completedRepCycleIds={completedRepCycleIds}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
 
-function ProgramPuller({ program, currentWeek }) {
+function ProgramPuller({ program, currentWeek, userProgrammingId, progressData, onComplete, completedRepCycleIds }) {
   if (currentWeek <= 0 || currentWeek > program.weeks.length) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -135,15 +179,27 @@ function ProgramPuller({ program, currentWeek }) {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       {/* Program Header */}
       <div className="bg-gray-900 text-white px-6 py-4">
-        <h2 className="text-xl font-bold">{program.name}</h2>
-        <p className="text-gray-300">Week {currentWeek}: {week.name}</p>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-bold">{program.name}</h2>
+          {progressData && (
+            <span className="text-sm text-gray-300">
+              {progressData.completedMovements} / {progressData.totalMovements} completed
+            </span>
+          )}
+        </div>
+        <p className="text-gray-300 mb-3">Week {currentWeek}: {week.name}</p>
+        {progressData && (
+          <ProgressBar 
+            percentage={progressData.completionPercentage} 
+          />
+        )}
       </div>
 
       {/* Days */}
       <div className="p-6">
         <div className="space-y-4">
           {week.days.map((day, index) => (
-            <DayComponent key={index} day={day} />
+            <DayComponent key={index} day={day} onComplete={onComplete} completedRepCycleIds={completedRepCycleIds} />
           ))}
         </div>
       </div>
@@ -151,7 +207,7 @@ function ProgramPuller({ program, currentWeek }) {
   );
 }
 
-function DayComponent({ day }) {
+function DayComponent({ day, onComplete, completedRepCycleIds }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -180,7 +236,12 @@ function DayComponent({ day }) {
         <div className="border-t border-gray-200">
           <div className="p-4 space-y-4">
             {day.repCycles.map((repCycle, index) => (
-              <RepCycle key={index} repCycle={repCycle} />
+              <RepCycle 
+                key={index} 
+                repCycle={repCycle} 
+                onComplete={onComplete} 
+                isCompleted={completedRepCycleIds.has(repCycle.repCycleId)}
+              />
             ))}
           </div>
         </div>
@@ -189,19 +250,32 @@ function DayComponent({ day }) {
   );
 }
 
-function RepCycle({ repCycle }) {
+function RepCycle({ repCycle, onComplete, isCompleted }) {
   const navigate = useNavigate();
   const [notesOpen, setNotesOpen] = useState(false);
 
+  const handleCheckboxChange = () => {
+    onComplete(repCycle.repCycleId, isCompleted);
+  };
+
   return (
-    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+    <div className={`bg-gray-50 rounded-lg p-4 border border-gray-200 ${isCompleted ? 'opacity-60' : ''}`}>
       {/* Movement Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
+          <input 
+            type="checkbox" 
+            checked={isCompleted} 
+            onChange={handleCheckboxChange}
+            className="w-5 h-5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
+            title={isCompleted ? "Uncheck to mark incomplete" : "Mark as complete"}
+          />
           <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold">
             {repCycle.workoutOrder}
           </div>
-          <h4 className="font-semibold text-gray-900">{repCycle.name}</h4>
+          <h4 className={`font-semibold text-gray-900 ${isCompleted ? 'line-through' : ''}`}>
+            {repCycle.name}
+          </h4>
         </div>
         
         <div className="flex items-center space-x-2">

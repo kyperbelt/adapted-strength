@@ -475,6 +475,22 @@ export class ProgrammingApi {
       });
   }
 
+  static getProgramUserDistribution(programId) {
+    return ApiUtils.apiGet(`programming/program/${programId}/user-distribution`)
+      .then((r) => {
+        if (r.status === HttpStatus.OK) {
+          return r.data;
+        }
+        throw new Error(
+          `Error getting program user distribution: ${r.status}`
+        );
+      })
+      .catch((error) => {
+        console.error("Error getting program user distribution:", error);
+        throw error;
+      });
+  }
+
   static getCurrentWeek(startDate, startWeek) {
     return (
       Math.floor(

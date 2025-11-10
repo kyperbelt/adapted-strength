@@ -24,10 +24,16 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
         const [dayEditId, setDayEditId] = useState(null);
         const [selectedWeek, setSelectedWeek] = useState(null);
         const [movements, setMovements] = useState(null);
-
         const [selectedProgram, setSelectedProgram] = useState(null);
+        const [usersOnWeek, setUsersOnWeek] = useState([]);
+        const [showUsers, setShowUsers] = useState(false);
 
         useEffect(() => {
+                // Get user data from navigation state
+                if (loc.state?.usersOnWeek) {
+                        setUsersOnWeek(loc.state.usersOnWeek);
+                }
+                
                 ProgrammingApi.getProgram(breadcrumb[0]).then((data) => {
                         setSelectedProgram(data);
                         console.log("Program data: ", data);
@@ -234,6 +240,50 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                 { name: selectedWeek.name, to: `/program-management/${selectedProgram.programId}/${selectedWeek.weekId}` }
                         ]} />
                         <CardBack className="">
+                                {/* User Stats Header */}
+                                {usersOnWeek.length > 0 && (
+                                        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                                <div className="flex items-center justify-between">
+                                                        <div>
+                                                                <h3 className="text-lg font-semibold text-gray-900">
+                                                                        {selectedWeek.name}
+                                                                </h3>
+                                                                <button
+                                                                        onClick={() => setShowUsers(!showUsers)}
+                                                                        className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                                                                >
+                                                                        👥 {usersOnWeek.length} user{usersOnWeek.length !== 1 ? 's' : ''} on this week
+                                                                        <svg 
+                                                                                className={`w-4 h-4 transition-transform ${showUsers ? 'rotate-180' : ''}`}
+                                                                                fill="none" 
+                                                                                stroke="currentColor" 
+                                                                                viewBox="0 0 24 24"
+                                                                        >
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                                        </svg>
+                                                                </button>
+                                                        </div>
+                                                </div>
+                                                
+                                                {showUsers && (
+                                                        <div className="mt-3 pt-3 border-t border-blue-300">
+                                                                <h4 className="text-sm font-medium text-gray-700 mb-2">Users on this week:</h4>
+                                                                <div className="space-y-1">
+                                                                        {usersOnWeek.map((user, idx) => (
+                                                                                <button
+                                                                                        key={idx}
+                                                                                        onClick={() => nav(`/user-management/${user.email}`)}
+                                                                                        className="block w-full text-left text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-100 px-2 py-1 rounded"
+                                                                                >
+                                                                                        • {user.name} ({user.email})
+                                                                                </button>
+                                                                        ))}
+                                                                </div>
+                                                        </div>
+                                                )}
+                                        </div>
+                                )}
+                                
                                 <div className="flex flex-col sm:flex-row mt-2">
                                         <PrimaryButton
                                                 className="sm:ml-auto w-32"
@@ -241,43 +291,111 @@ export default function DayDashboard({ breadCrumbState, ...props }) {
                                                 Add Day
                                         </PrimaryButton>
                                 </div>
-                                <StyledCheckboxTable headers={["Name", "Rep Cycles"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
-                                        {days.map((day) => (
-                                                <>
-                                                        <CustomTableRow
-                                                                key={day.dayId}
-                                                                data={[
-                                                                        day.name,
-                                                                        day.repCycles.length,
-                                                                ]}
-                                                                onOptionClick={(option) => {
-                                                                        if (option === 'Delete') {
-                                                                                DeleteDay([day]);
-                                                                        } else if (option === 'Edit') {
-                                                                                document.getElementById("edit-day").classList.remove("hidden");
-                                                                                setDayEditId(day.dayId);
-                                                                        } else if (option === 'Duplicate') {
-                                                                                DuplicateDay(day);
-                                                                        }
-                                                                }}
-                                                                selected={day.selected}
-                                                                onRowClick={() => OnDayClicked(day)}
-                                                                onClick={() => {
-                                                                        const newDays = days.map((b) => {
-                                                                                if (b.dayId === day.dayId) {
-                                                                                        return { ...b, selected: !b.selected };
+                                
+                                {/* Desktop: Table view */}
+                                <div className="hidden lg:block">
+                                        <StyledCheckboxTable headers={["Name", "Rep Cycles"]} onAllSelected={onAllSelected} onOptionsClick={OptionSelected}>
+                                                {days.map((day) => (
+                                                        <>
+                                                                <CustomTableRow
+                                                                        key={day.dayId}
+                                                                        data={[
+                                                                                day.name,
+                                                                                day.repCycles.length,
+                                                                        ]}
+                                                                        onOptionClick={(option) => {
+                                                                                if (option === 'Delete') {
+                                                                                        DeleteDay([day]);
+                                                                                } else if (option === 'Edit') {
+                                                                                        document.getElementById("edit-day").classList.remove("hidden");
+                                                                                        setDayEditId(day.dayId);
+                                                                                } else if (option === 'Duplicate') {
+                                                                                        DuplicateDay(day);
                                                                                 }
-                                                                                return b;
-                                                                        });
-                                                                        setDays(newDays);
-                                                                        console.log(`Day ${day.dayId} selected: ${day.selected}`);
-                                                                }}
-                                                        />
+                                                                        }}
+                                                                        selected={day.selected}
+                                                                        onRowClick={() => OnDayClicked(day)}
+                                                                        onClick={() => {
+                                                                                const newDays = days.map((b) => {
+                                                                                        if (b.dayId === day.dayId) {
+                                                                                                return { ...b, selected: !b.selected };
+                                                                                        }
+                                                                                        return b;
+                                                                                });
+                                                                                setDays(newDays);
+                                                                                console.log(`Day ${day.dayId} selected: ${day.selected}`);
+                                                                        }}
+                                                                />
 
-                                                        {day.open && <RepCycleContainer movements={movements} day={day} dayState={[days, setDays]} />}
-                                                </>
+                                                                {day.open && <RepCycleContainer movements={movements} day={day} dayState={[days, setDays]} />}
+                                                        </>
+                                                ))}
+                                        </StyledCheckboxTable>
+                                </div>
+
+                                {/* Mobile/Tablet: Card view */}
+                                <div className="lg:hidden space-y-3 mt-4">
+                                        {days.map((day) => (
+                                                <div key={day.dayId} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                                                        <div
+                                                                onClick={() => OnDayClicked(day)}
+                                                                className="p-4 active:bg-gray-50"
+                                                        >
+                                                                <div className="flex items-start justify-between mb-2">
+                                                                        <h3 className="font-semibold text-gray-900">{day.name}</h3>
+                                                                        <div className="flex gap-1">
+                                                                                <button
+                                                                                        onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                document.getElementById("edit-day").classList.remove("hidden");
+                                                                                                setDayEditId(day.dayId);
+                                                                                        }}
+                                                                                        className="text-blue-600 text-xs px-2 py-1 hover:bg-blue-50 rounded"
+                                                                                >
+                                                                                        Edit
+                                                                                </button>
+                                                                                <button
+                                                                                        onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                DuplicateDay(day);
+                                                                                        }}
+                                                                                        className="text-green-600 text-xs px-2 py-1 hover:bg-green-50 rounded"
+                                                                                >
+                                                                                        Duplicate
+                                                                                </button>
+                                                                                <button
+                                                                                        onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                DeleteDay([day]);
+                                                                                        }}
+                                                                                        className="text-red-600 text-xs px-2 py-1 hover:bg-red-50 rounded"
+                                                                                >
+                                                                                        Delete
+                                                                                </button>
+                                                                        </div>
+                                                                </div>
+                                                                
+                                                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                                        <span>Movements: {day.repCycles.length}</span>
+                                                                        <svg 
+                                                                                className={`w-4 h-4 transition-transform ${day.open ? 'rotate-180' : ''}`}
+                                                                                fill="none" 
+                                                                                stroke="currentColor" 
+                                                                                viewBox="0 0 24 24"
+                                                                        >
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                                        </svg>
+                                                                </div>
+                                                        </div>
+                                                        
+                                                        {day.open && (
+                                                                <div className="border-t border-gray-200">
+                                                                        <RepCycleContainer movements={movements} day={day} dayState={[days, setDays]} inTable={false} />
+                                                                </div>
+                                                        )}
+                                                </div>
                                         ))}
-                                </StyledCheckboxTable>
+                                </div>
                         </CardBack>
                         <EditDayDialog dayId={dayEditId} dayState={[days, setDays]} id="edit-day" className="hidden" title="Edit Day" onClose={() => { document.getElementById("edit-day").classList.add("hidden") }} />
 
@@ -352,45 +470,68 @@ function EditDayDialog({ dayId, dayState, className, ...props }) {
 }
 
 
-function RepCycleContainer({ day, dayState, movements }) {
+function RepCycleContainer({ day, dayState, movements, inTable = true }) {
 
         const [mode, setMode] = useState("create");
         const [selectedRepCycle, setSelectedRepCycle] = useState(null);
         const [repCycles, setRepCycles] = useState(day.repCycles);
+        const [showForm, setShowForm] = useState(false);
 
         const addCycle = () => {
                 console.log("Add Cycle");
-                const form = document.getElementById(`rep-cycle-form-${day.dayId}`);
-                form.classList.remove("hidden");
                 setMode("create");
+                setShowForm(true);
         }
 
         const editCycle = (repCycle) => {
                 console.log("Edit Cycle: ", repCycle);
-                const form = document.getElementById(`rep-cycle-form-${day.dayId}`);
                 setMode("edit");
                 setSelectedRepCycle(repCycle);
-                form.classList.remove("hidden");
+                setShowForm(true);
         }
 
-        return (
-                <tr className="bg-gray-200 w-full">
-                        <td className="px-6 py-3" colSpan="4">
-                                <div className="flex flex-col p-0 w-full">
-                                        {repCycles.map((repCycle) => {
-                                                return <RepCycle key={repCycle.repCycleId} repCycle={repCycle} cycleState={[repCycles, setRepCycles]} onEdit={() => editCycle(repCycle)} />
-                                        })}
-                                </div>
-                                <button className="mt-2 flex flex-row items-center italic text-secondary-dark hover:text-accent" onClick={addCycle}>
-                                        <svg className="w-6 h-6 me-2 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
-                                        </svg> Add Movement
-                                </button>
-                                <RepCycleForm movements={movements} day={day} mode={mode} repCycle={selectedRepCycle} repCycleState={[repCycles, setRepCycles]} dayState={dayState} onClose={() => {
-                                        setMode("create");
-                                }} />
-                        </td>
-                </tr>);
+        const closeForm = () => {
+                setShowForm(false);
+                setMode("create");
+        }
+
+        const content = (
+                <>
+                        <div className="flex flex-col p-6 w-full">
+                                {repCycles.map((repCycle) => {
+                                        return <RepCycle key={repCycle.repCycleId} repCycle={repCycle} cycleState={[repCycles, setRepCycles]} onEdit={() => editCycle(repCycle)} />
+                                })}
+                        </div>
+                        <button className="mt-2 ml-6 flex flex-row items-center italic text-secondary-dark hover:text-accent" onClick={addCycle}>
+                                <svg className="w-6 h-6 me-2 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z" clipRule="evenodd" />
+                                </svg> Add Movement
+                        </button>
+                        {showForm && (
+                                <RepCycleForm 
+                                        movements={movements} 
+                                        day={day} 
+                                        mode={mode} 
+                                        repCycle={selectedRepCycle} 
+                                        repCycleState={[repCycles, setRepCycles]} 
+                                        dayState={dayState} 
+                                        onClose={closeForm} 
+                                />
+                        )}
+                </>
+        );
+
+        if (inTable) {
+                return (
+                        <tr className="bg-gray-200">
+                                <td className="p-0" colSpan="4">
+                                        {content}
+                                </td>
+                        </tr>
+                );
+        }
+
+        return <div className="bg-gray-200 w-full">{content}</div>;
 }
 
 function AreYouSureDialog({ onYes, onNo, ...props }) {
@@ -438,30 +579,36 @@ function RepCycle({ repCycle, cycleState, onEdit }) {
                 e.target.closest("#are-you-sure").classList.add("hidden");
         }
 
-        const { name, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder, movementId } = repCycle;
+        const { name, equipment, numSets, numReps, weight, restTime, coachNotes, workoutOrder } = repCycle;
         return (
 
-                <CardBack1 className={`flex flex-col px-6 py-2 mb-2`}>
+                <CardBack1 className={`w-full flex flex-col px-4 py-3 mb-3 border border-gray-200 shadow-sm`}>
                         <AreYouSureDialog id="delete-rep-cycle" onYes={onDelete} onNo={closeAreYouSure} />
-                        <div className="flex flex-row items-center justify-items-center">
-                                <div className="text-lg font-semibold mr-auto">{name}</div>
-                                <IconButton className="p-2 bg-secondary-light me-2" onClick={editClicked}>
-                                        <PencilIcon />
-                                </IconButton>
-                                <IconButton className="p-2" onClick={deleteClicked}><TrashIcon /></IconButton>
+                        <div className="flex flex-row items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                        <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">#{workoutOrder}</span>
+                                        <div className="text-lg font-semibold text-gray-900">{name}</div>
+                                </div>
+                                <div className="flex gap-2">
+                                        <IconButton className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700" onClick={editClicked}>
+                                                <PencilIcon />
+                                        </IconButton>
+                                        <IconButton className="p-2 bg-red-100 hover:bg-red-200 text-red-700" onClick={deleteClicked}><TrashIcon /></IconButton>
+                                </div>
                         </div>
-                        <div className="grid grid-cols-2 md:flex md:flex-row ">
-                                <RepCycleItem title="Order" value={workoutOrder} />
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
                                 <RepCycleItem title="Equipment" value={equipment} />
                                 <RepCycleItem title="Sets" value={numSets} />
                                 <RepCycleItem title="Reps" value={numReps} />
                                 <RepCycleItem title="Weight" value={weight} />
-                                <RepCycleItem title="Rest Time" value={restTime} />
-                                <RepCycleItem title="Movement ID" value={movementId} />
-                                <RepCycleItem className="grow text-sm col-span-2" title="Coach Notes" value={coachNotes} />
-
+                                <RepCycleItem title="Rest" value={restTime} />
                         </div>
-
+                        {coachNotes && (
+                                <div className="pt-2 border-t border-gray-200">
+                                        <div className="text-xs font-semibold text-gray-500 mb-1">Coach Notes</div>
+                                        <div className="text-sm text-gray-700">{coachNotes}</div>
+                                </div>
+                        )}
                 </CardBack1>
         );
 }
@@ -485,9 +632,9 @@ function TrashIcon({ className, ...props }) {
 function RepCycleItem({ className, title, value }) {
 
         return (
-                <div className={`text-2xl border-primary-dark last:border-transparent border-2 flex flex-col bg-primary-dark even:bg-primary ${className} px-2`}>
-                        <div className="text-sm font-semibold text-nowrap">{title}</div>
-                        <div className="align-bottom">{value}</div>
+                <div className={`flex flex-col ${className}`}>
+                        <div className="text-xs font-medium text-gray-500 mb-1">{title}</div>
+                        <div className="text-base font-semibold text-gray-900">{value}</div>
                 </div>
 
         );
@@ -502,19 +649,21 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, m
         const buttonText = mode === "create" ? "Create" : "Save";
         const [repCycles, setRepCycles] = repCycleState;
 
-        if (mode === "edit") {
-                // fill in the form with the rep cycle data
-                console.log("Editing movement: ", repCycle);
-                document.getElementById(`rep-cycle-name-${dayId}`).value = repCycle.name;
-                document.getElementById(`equipment-${dayId}`).value = repCycle.equipment;
-                document.getElementById(`num-sets-${dayId}`).value = repCycle.numSets;
-                document.getElementById(`num-reps-${dayId}`).value = repCycle.numReps;
-                document.getElementById(`weight-${dayId}`).value = repCycle.weight;
-                document.getElementById(`rest-time-${dayId}`).value = repCycle.restTime;
-                document.getElementById(`coach-notes-${dayId}`).value = repCycle.coachNotes;
-                document.getElementById(`workout-order-${dayId}`).value = repCycle.workoutOrder;
-                document.getElementById(`movement-id-${dayId}`).value = repCycle.movementId;
-        }
+        useEffect(() => {
+                if (mode === "edit") {
+                        // fill in the form with the rep cycle data
+                        console.log("Editing movement: ", repCycle);
+                        document.getElementById(`rep-cycle-name-${dayId}`).value = repCycle.name;
+                        document.getElementById(`equipment-${dayId}`).value = repCycle.equipment;
+                        document.getElementById(`num-sets-${dayId}`).value = repCycle.numSets;
+                        document.getElementById(`num-reps-${dayId}`).value = repCycle.numReps;
+                        document.getElementById(`weight-${dayId}`).value = repCycle.weight;
+                        document.getElementById(`rest-time-${dayId}`).value = repCycle.restTime;
+                        document.getElementById(`coach-notes-${dayId}`).value = repCycle.coachNotes;
+                        document.getElementById(`workout-order-${dayId}`).value = repCycle.workoutOrder;
+                        document.getElementById(`movement-id-${dayId}`).value = repCycle.movementId;
+                }
+        }, [mode, repCycle, dayId]);
 
         const getMovementOptions = (selectedId) => {
                 return movements.map((movement) => {
@@ -628,8 +777,6 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, m
         }
 
         const onCloseHere = () => {
-                const form = document.getElementById(`rep-cycle-form-${dayId}`);
-                form.classList.add("hidden");
                 // clear form 
                 document.getElementById(`rep-cycle-name-${dayId}`).value = "";
                 document.getElementById(`equipment-${dayId}`).value = "";
@@ -657,7 +804,7 @@ function RepCycleForm({ day, mode, repCycle, repCycleState, onClose, dayState, m
         // }
 
         return (
-                <BasicModalDialogue title={title} onCloseDialog={onCloseHere} className="hidden" id={`rep-cycle-form-${dayId}`} >
+                <BasicModalDialogue title={title} onCloseDialog={onCloseHere} id={`rep-cycle-form-${dayId}`} >
                         <form onSubmit={onSubmit} className="space-y-4 pt-2 ">
 
                                 <LabeledInputField id={`rep-cycle-name-${dayId}`} placeholder="Movement Name" required={true} type="text" />

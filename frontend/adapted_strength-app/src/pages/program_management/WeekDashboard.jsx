@@ -24,6 +24,8 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
   const [weeks, setWeeks] = useState([]);
   const [weekEditId, setWeekEditId] = useState(null);
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const [userDistribution, setUserDistribution] = useState(null);
+  const [showAllUsers, setShowAllUsers] = useState(false);
 
   useEffect(() => {
     ProgrammingApi.getProgram(breadcrumb[0])
@@ -43,13 +45,25 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
       .catch((error) => {
         console.error(`Error getting program ${breadcrumb[0]}: ${error}`);
       });
+    
+    // Fetch user distribution
+    ProgrammingApi.getProgramUserDistribution(breadcrumb[0])
+      .then((data) => {
+        setUserDistribution(data);
+      })
+      .catch((error) => {
+        console.error(`Error getting user distribution: ${error}`);
+      });
   }, []);
 
-  const OnWeekClicked = (week) => {
+  const OnWeekClicked = (week, weekNumber) => {
     console.log("Week Clicked clicked: ", week);
-    // TODO: add the week to the state and navigate to the week page
-    // this way we dont have to fetch the week again from the week page
-    nav(`${url}/${week.weekId}`, { relative: true });
+    const usersOnWeek = userDistribution?.usersByWeek?.[weekNumber]?.users || [];
+    // Pass user data via navigation state
+    nav(`${url}/${week.weekId}`, { 
+      relative: true,
+      state: { usersOnWeek, weekNumber }
+    });
   };
 
   const DeleteWeek = async (weeksToDelete) => {
@@ -231,48 +245,164 @@ export default function WeekDashboard({ breadCrumbState, ...props }) {
           ]}
         />
         <CardBack className="">
+          {/* User Stats Header */}
+          {userDistribution && (
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {selectedProgram.name}
+                  </h3>
+                  <button
+                    onClick={() => setShowAllUsers(!showAllUsers)}
+                    className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                  >
+                    👥 {userDistribution.totalUsers} user{userDistribution.totalUsers !== 1 ? 's' : ''} currently assigned
+                    <svg 
+                      className={`w-4 h-4 transition-transform ${showAllUsers ? 'rotate-180' : ''}`}
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              {showAllUsers && userDistribution.totalUsers > 0 && (
+                <div className="mt-3 pt-3 border-t border-blue-300">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">All Users:</h4>
+                  <div className="space-y-1">
+                    {Object.values(userDistribution.usersByWeek).flatMap(week => week.users).map((user, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => nav(`/user-management/${user.email}`)}
+                        className="block w-full text-left text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-100 px-2 py-1 rounded"
+                      >
+                        • {user.name} ({user.email}) - Week {user.currentWeek}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="flex flex-col sm:flex-row mt-2">
             <PrimaryButton className="sm:ml-auto w-32" onClick={onAddWeek}>
               Add Week
             </PrimaryButton>
           </div>
-          <StyledCheckboxTable
-            headers={["Name", "Days"]}
-            onAllSelected={onAllSelected}
-            onOptionsClick={OptionSelected}
-          >
-            {weeks.map((week, index) => (
-              <CustomTableRow
-                key={`${week.weekId}_${index}`}
-                data={[week.name, week.days.length]}
-                onOptionClick={(option) => {
-                  if (option === "Delete") {
-                    DeleteWeek([week]);
-                  } else if (option === "Edit") {
-                    document
-                      .getElementById("edit-week")
-                      .classList.remove("hidden");
-                    setWeekEditId(week.weekId);
-                    console.log(`Edit week ${JSON.stringify(week)}`);
-                  } else if (option === "Duplicate") {
-                    DuplicateWeek(week);
-                  }
-                }}
-                selected={week.selected}
-                onRowClick={() => OnWeekClicked(week)}
-                onClick={() => {
-                  const newWeeks = weeks.map((b) => {
-                    if (b.weekId === week.weekId) {
-                      return { ...b, selected: !b.selected };
-                    }
-                    return b;
-                  });
-                  setWeeks(newWeeks);
-                  console.log(`Week ${week.weekId} selected: ${week.selected}`);
-                }}
-              />
-            ))}
-          </StyledCheckboxTable>
+          
+          {/* Desktop: Table view */}
+          <div className="hidden lg:block">
+            <StyledCheckboxTable
+              headers={["Name", "Days", "Users"]}
+              onAllSelected={onAllSelected}
+              onOptionsClick={OptionSelected}
+            >
+              {weeks.map((week, index) => {
+                const weekNumber = index + 1;
+                const usersOnWeek = userDistribution?.usersByWeek?.[weekNumber]?.count || 0;
+                
+                return (
+                  <CustomTableRow
+                    key={`${week.weekId}_${index}`}
+                    data={[week.name, week.days.length, `${usersOnWeek} user${usersOnWeek !== 1 ? 's' : ''}`]}
+                    onOptionClick={(option) => {
+                      if (option === "Delete") {
+                        DeleteWeek([week]);
+                      } else if (option === "Edit") {
+                        document
+                          .getElementById("edit-week")
+                          .classList.remove("hidden");
+                        setWeekEditId(week.weekId);
+                        console.log(`Edit week ${JSON.stringify(week)}`);
+                      } else if (option === "Duplicate") {
+                        DuplicateWeek(week);
+                      }
+                    }}
+                    selected={week.selected}
+                    onRowClick={() => OnWeekClicked(week, weekNumber)}
+                    onClick={() => {
+                      const newWeeks = weeks.map((b) => {
+                        if (b.weekId === week.weekId) {
+                          return { ...b, selected: !b.selected };
+                        }
+                        return b;
+                      });
+                      setWeeks(newWeeks);
+                      console.log(`Week ${week.weekId} selected: ${week.selected}`);
+                    }}
+                  />
+                );
+              })}
+            </StyledCheckboxTable>
+          </div>
+
+          {/* Mobile/Tablet: Card view */}
+          <div className="lg:hidden space-y-3 mt-4">
+            {weeks.map((week, index) => {
+              const weekNumber = index + 1;
+              const usersOnWeek = userDistribution?.usersByWeek?.[weekNumber]?.count || 0;
+              
+              return (
+                <div
+                  key={week.weekId}
+                  onClick={() => OnWeekClicked(week, weekNumber)}
+                  className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm active:bg-gray-50"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-semibold text-gray-900">{week.name}</h3>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          document.getElementById("edit-week").classList.remove("hidden");
+                          setWeekEditId(week.weekId);
+                        }}
+                        className="text-blue-600 text-xs px-2 py-1 hover:bg-blue-50 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          DuplicateWeek(week);
+                        }}
+                        className="text-green-600 text-xs px-2 py-1 hover:bg-green-50 rounded"
+                      >
+                        Duplicate
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          DeleteWeek([week]);
+                        }}
+                        className="text-red-600 text-xs px-2 py-1 hover:bg-red-50 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4 text-sm">
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-600">Days:</span>
+                      <span className="font-medium text-gray-900">{week.days.length}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-600">👥</span>
+                      <span className="font-medium text-gray-900">
+                        {usersOnWeek} user{usersOnWeek !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </CardBack>
         <EditBlockDIalog
           blockId={weekEditId}

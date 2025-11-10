@@ -225,6 +225,7 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
           description: newProgramResponse.description.body,
           selected: false,
           weeks: newProgramResponse.weeks,
+          users: [], // New duplicated program has no users assigned yet
         };
         // static updateProgram({ programId, name, description, weekIds = [] }) {
         const updatedNewProgramResponse = await ProgrammingApi.updateProgram({
@@ -269,48 +270,110 @@ export default function ProgramDashboard({ breadCrumbState, ...props }) {
             Add Program
           </PrimaryButton>
         </div>
-        <StyledCheckboxTable
-          headers={["Name", "Description", "Weeks", "Users"]}
-          onAllSelected={onAllSelected}
-          onOptionsClick={OptionSelected}
-        >
-          {getFilteredPrograms(programs, searchText).map((program, index) => (
-            <CustomTableRow
-              key={`${program.id}_${index}`}
-              data={[
-                program.name,
-                program.description,
-                program.weeks.length,
-                program.users.length,
-              ]}
-              onOptionClick={(option) => {
-                if (option === "Delete") {
-                  DeleteProgram([program]);
-                } else if (option === "Edit") {
-                  document
-                    .getElementById("edit-program")
-                    .classList.remove("hidden");
-                  setEditProgramId(program.id);
-                } else if (option === "Duplicate") {
-                  console.log(`Duplicating program ${program.id}`);
-                  DuplicateProgram(program);
-                }
-              }}
-              selected={program.selected}
-              onClick={() => {
-                const newPrograms = programs.map((p) => {
-                  if (p.id === program.id) {
-                    return { ...p, selected: !p.selected };
+        
+        {/* Desktop: Table view */}
+        <div className="hidden lg:block overflow-x-auto">
+          <StyledCheckboxTable
+            headers={["Name", "Description", "Weeks", "Users"]}
+            onAllSelected={onAllSelected}
+            onOptionsClick={OptionSelected}
+          >
+            {getFilteredPrograms(programs, searchText).map((program, index) => (
+              <CustomTableRow
+                key={`${program.id}_${index}`}
+                data={[
+                  program.name,
+                  program.description,
+                  program.weeks.length,
+                  program.users.length,
+                ]}
+                onOptionClick={(option) => {
+                  if (option === "Delete") {
+                    DeleteProgram([program]);
+                  } else if (option === "Edit") {
+                    document
+                      .getElementById("edit-program")
+                      .classList.remove("hidden");
+                    setEditProgramId(program.id);
+                  } else if (option === "Duplicate") {
+                    console.log(`Duplicating program ${program.id}`);
+                    DuplicateProgram(program);
                   }
-                  return p;
-                });
-                setPrograms(newPrograms);
-                console.log(`Program ${program.id} clicked`);
-              }}
-              onRowClick={() => OnProgramClicked(program)}
-            ></CustomTableRow>
+                }}
+                selected={program.selected}
+                onClick={() => {
+                  const newPrograms = programs.map((p) => {
+                    if (p.id === program.id) {
+                      return { ...p, selected: !p.selected };
+                    }
+                    return p;
+                  });
+                  setPrograms(newPrograms);
+                  console.log(`Program ${program.id} clicked`);
+                }}
+                onRowClick={() => OnProgramClicked(program)}
+              ></CustomTableRow>
+            ))}
+          </StyledCheckboxTable>
+        </div>
+
+        {/* Mobile/Tablet: Card view */}
+        <div className="lg:hidden space-y-3 mt-4">
+          {getFilteredPrograms(programs, searchText).map((program) => (
+            <div
+              key={program.id}
+              onClick={() => OnProgramClicked(program)}
+              className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm active:bg-gray-50"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="font-semibold text-gray-900">{program.name}</h3>
+                <div className="flex gap-1">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      document.getElementById("edit-program").classList.remove("hidden");
+                      setEditProgramId(program.id);
+                    }}
+                    className="text-blue-600 text-xs px-2 py-1 hover:bg-blue-50 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      DuplicateProgram(program);
+                    }}
+                    className="text-green-600 text-xs px-2 py-1 hover:bg-green-50 rounded"
+                  >
+                    Duplicate
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      DeleteProgram([program]);
+                    }}
+                    className="text-red-600 text-xs px-2 py-1 hover:bg-red-50 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{program.description}</p>
+              
+              <div className="flex gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-600">Weeks:</span>
+                  <span className="font-medium text-gray-900">{program.weeks.length}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-600">Users:</span>
+                  <span className="font-medium text-gray-900">{program.users.length}</span>
+                </div>
+              </div>
+            </div>
           ))}
-        </StyledCheckboxTable>
+        </div>
       </CardBack>
       <EditProgramsDialog
         programId={programEditId}

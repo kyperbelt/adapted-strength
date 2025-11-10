@@ -108,7 +108,7 @@ export function CustomTableRow({ children, selectedOrUnselected, onRowClick, onO
       {children}
       <td className="relative">
         <HamburgerButton onBlur={onFocusLost} className="ml-auto" onClick={(e) => { whenOptionsClicked(e) }} />
-        <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={options} className="absolute hidden right-0" />
+        <DropDownMenu id="dropdown" onOptionClick={onOptionClick} options={options} className="absolute hidden right-0 z-50" />
       </td>
     </tr>
   );

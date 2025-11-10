@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import BreadCrumb from "../../components/BreadCrumb";
 import { PrimaryButton } from "../../components/Button";
 import { TrashIcon } from "../../components/Icons";
+import ProgressBar from "../../components/ProgressBar";
 
 function getAllPrograms() {
   try {
@@ -67,6 +68,7 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [programs, setPrograms] = useState([]);
   const [subscriptionTiers, setSubscriptionTiers] = useState([]);
+  const [usersProgress, setUsersProgress] = useState([]);
 
   const userUpdated = (user) => {
     console.log("User Updated: ", user);
@@ -134,9 +136,10 @@ export default function UserManagement() {
                 console.log("UserProgram: ", program);
                 console.log("Programs: ", programs);
 
+                const foundProgram = programs.find((p) => p.id === program.assignedProgramId);
                 return {
                   ...program,
-                  name: programs.find((p) => p.id === program.assignedProgramId).name,
+                  name: foundProgram ? foundProgram.name : "Unknown Program",
                 };
               });
             return {
@@ -151,6 +154,15 @@ export default function UserManagement() {
       .then((users) => {
         setUsers(users);
         console.log("Users: ", users);
+        
+        // Fetch progress data for all users
+        UserApi.getAllUsersProgress()
+          .then((progressData) => {
+            setUsersProgress(progressData);
+          })
+          .catch((error) => {
+            console.error("Error fetching progress: ", error);
+          });
       })
       .catch((error) => {
         console.error("Error fetching users: ", error);
@@ -192,28 +204,88 @@ export default function UserManagement() {
       {!selectedUser && (
         <>
           <SearchBar onSearch={onSearch} />
-          <StyledCheckboxTable
-            headers={["Email", "Name", "Subscription", "Program(s)"]}
-            options={["Nuffin"]}
-            onAllSelected={onAllSelected}
-            onOptionsClick={OptionSelected}
-          >
-            {getFilteredUsers(users, searchText).map((user, index) => {
+          
+          {/* Desktop: Table view */}
+          <div className="hidden lg:block overflow-x-auto">
+            <StyledCheckboxTable
+              headers={["Email", "Name", "Subscription", "Program(s)", "Progress", "Last Activity"]}
+              options={["Nuffin"]}
+              onAllSelected={onAllSelected}
+              onOptionsClick={OptionSelected}
+            >
+              {getFilteredUsers(users, searchText).map((user, index) => {
+                const userProgress = usersProgress.find(p => p.email === user.email);
+                const progressPercent = userProgress?.overallProgress || 0;
+                const lastActivity = userProgress?.lastActivity 
+                  ? new Date(userProgress.lastActivity).toLocaleDateString() 
+                  : "Never";
+                
+                return (
+                  <CustomTableRow
+                    options={["Edit"]}
+                    key={user.email}
+                    data={[
+                      user.email,
+                      user.name,
+                      user.subscription,
+                      user.programs.length,
+                      `${progressPercent}%`,
+                      lastActivity,
+                    ]}
+                    onRowClick={() => onUserClicked(user)}
+                  />
+                );
+              })}
+            </StyledCheckboxTable>
+          </div>
+
+          {/* Mobile/Tablet: Card view */}
+          <div className="lg:hidden space-y-3 p-4">
+            {getFilteredUsers(users, searchText).map((user) => {
+              const userProgress = usersProgress.find(p => p.email === user.email);
+              const progressPercent = userProgress?.overallProgress || 0;
+              const lastActivity = userProgress?.lastActivity 
+                ? new Date(userProgress.lastActivity).toLocaleDateString() 
+                : "Never";
+              
               return (
-                <CustomTableRow
-                  options={["Edit"]}
+                <div 
                   key={user.email}
-                  data={[
-                    user.email,
-                    user.name,
-                    user.subscription,
-                    user.programs.length,
-                  ]}
-                  onRowClick={() => onUserClicked(user)}
-                />
+                  onClick={() => onUserClicked(user)}
+                  className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm active:bg-gray-50"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{user.name}</h3>
+                      <p className="text-sm text-gray-600">{user.email}</p>
+                    </div>
+                    <span className={`px-2 py-1 text-xs rounded ${
+                      user.subscription === 'Active' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {user.subscription}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Programs:</span>
+                      <span className="text-gray-900 font-medium">{user.programs.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Progress:</span>
+                      <span className="text-gray-900 font-medium">{progressPercent}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Last Activity:</span>
+                      <span className="text-gray-900 font-medium">{lastActivity}</span>
+                    </div>
+                  </div>
+                </div>
               );
             })}
-          </StyledCheckboxTable>
+          </div>
         </>
       )}
       {selectedUser && (
@@ -231,6 +303,7 @@ function UserDashboard({ userUpdatedFunction, selectedUser, programs, tiers }) {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
+  const [userProgress, setUserProgress] = useState(null);
 
   const getFilteredPrograms = (programs, searchText, assignedPrograms) => {
     const assignedIds = new Set(
@@ -260,7 +333,21 @@ function UserDashboard({ userUpdatedFunction, selectedUser, programs, tiers }) {
       console.log("USER SUBSCRIBTION:\n", response);
       setSubscriptionInfo(response);
     });
-  }, []);
+    
+    // Fetch user progress
+    UserApi.getUserProgressSummary()
+      .then((data) => {
+        // Filter for this user's programs
+        const userProgramIds = assignedPrograms.map(p => p.userProgrammingId);
+        const filteredProgress = data.programs?.filter(p => 
+          userProgramIds.includes(p.userProgrammingId)
+        );
+        setUserProgress(filteredProgress);
+      })
+      .catch((error) => {
+        console.error("Error fetching user progress:", error);
+      });
+  }, [assignedPrograms]);
 
   useEffect(() => {
     // Assuming `programs` includes all programs, we filter out those already assigned
@@ -331,61 +418,122 @@ function UserDashboard({ userUpdatedFunction, selectedUser, programs, tiers }) {
         {selectedUser.name}
       </h2>
       <SubscriptionManagement userUpdatedFunction={userUpdatedFunction} user={selectedUser} tiers={tiers} subscriptionInfo={subscriptionInfo} />
+      
+      {/* Progress Overview Section */}
+      {userProgress && userProgress.length > 0 && (
+        <div className="w-full p-4 bg-white rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-600 mb-4">Progress Overview</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {userProgress.map((programProgress) => {
+              const program = assignedPrograms.find(p => p.userProgrammingId === programProgress.userProgrammingId);
+              return (
+                <ProgramProgressCard 
+                  key={programProgress.userProgrammingId}
+                  programProgress={programProgress}
+                  program={program}
+                  userEmail={selectedUser.email}
+                  programs={programs}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
+      
       <div className="w-full p-4 bg-white rounded-lg shadow-sm">
         <h3 className="text-lg font-semibold text-gray-600 mb-2">
           Assigned Programs
         </h3>
-        <table className="w-full table-fixed">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="w-1/3 px-4 py-2">Program</th>
-              <th className="w-1/3 px-4 py-2">Start Date</th>
-              <th className="w-1/3 px-4 py-2">Start Week</th>
-              <th className="w-1/3 px-4 py-2">Current Week</th>
-              <th className="w-1/3 px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assignedPrograms.map((program, index) => (
-              <tr
-                key={program.id}
-                className={index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}
-              >
-                <td className="border px-4 py-2">{program.name}</td>
-                <td className="border px-4 py-2">
-                  {new Date(program.startDate).toLocaleDateString(undefined, {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </td>
-                <td className="border px-4 py-2">{program.startWeek}</td>
-                <td className="border px-4 py-2">
-                  {
-                    ProgrammingApi.getCurrentWeek(
-                      program.startDate,
-                      program.startWeek
-                    )
-                  }
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  <button
-                    className="text-red-500 hover:text-accent-light focus:text-accent-dark"
-                    onClick={() => onRemoveProgram(program)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </td>
+        
+        {/* Desktop: Table view */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full table-fixed">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="w-1/5 px-4 py-2">Program</th>
+                <th className="w-1/5 px-4 py-2">Start Date</th>
+                <th className="w-1/5 px-4 py-2">Start Week</th>
+                <th className="w-1/5 px-4 py-2">Current Week</th>
+                <th className="w-1/5 px-4 py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {assignedPrograms.map((program, index) => (
+                <tr
+                  key={program.id}
+                  className={index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}
+                >
+                  <td className="border px-4 py-2">{program.name}</td>
+                  <td className="border px-4 py-2">
+                    {new Date(program.startDate).toLocaleDateString(undefined, {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </td>
+                  <td className="border px-4 py-2">{program.startWeek}</td>
+                  <td className="border px-4 py-2">
+                    {
+                      ProgrammingApi.getCurrentWeek(
+                        program.startDate,
+                        program.startWeek
+                      )
+                    }
+                  </td>
+                  <td className="border px-4 py-2 text-center">
+                    <button
+                      className="text-red-500 hover:text-accent-light focus:text-accent-dark"
+                      onClick={() => onRemoveProgram(program)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile: Card view */}
+        <div className="md:hidden space-y-3">
+          {assignedPrograms.map((program) => (
+            <div key={program.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex items-start justify-between mb-3">
+                <h4 className="font-semibold text-gray-900">{program.name}</h4>
+                <button
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => onRemoveProgram(program)}
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Start Date:</span>
+                  <span className="text-gray-900">
+                    {new Date(program.startDate).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Start Week:</span>
+                  <span className="text-gray-900">{program.startWeek}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Current Week:</span>
+                  <span className="text-gray-900">
+                    {ProgrammingApi.getCurrentWeek(program.startDate, program.startWeek)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="flex flex-row w-full">
-        <div className="w-full p-4 bg-white rounded-lg shadow-sm grow">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+      <div className="flex flex-col md:flex-row w-full gap-4">
+        <div className="w-full md:flex-1 p-4 bg-white rounded-lg shadow-sm">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+            <h3 className="text-lg font-semibold text-gray-600">
               Available Programs
             </h3>
             <SearchBar onSearch={onSearch} />
@@ -420,7 +568,7 @@ function AssignProgram({ selectedProgram, handleAssignProgram }) {
   const [startDate, setStartDate] = useState(new Date());
 
   return (
-    <div className="w-fit p-4 bg-white rounded-lg shadow-sm">
+    <div className="w-full md:w-80 p-4 bg-white rounded-lg shadow-sm">
       <h4 className="text-lg font-semibold text-gray-600 mb-2">
         Assign Program: {selectedProgram.name}
       </h4>
@@ -522,6 +670,110 @@ function SubscriptionManagement({ user, tiers, subscriptionInfo, userUpdatedFunc
       <PrimaryButton onClick={handleSubscriptionChange} className="w-full py-2 px-4">
         Update Subscription
       </PrimaryButton>
+    </div>
+  );
+}
+
+function ProgramProgressCard({ programProgress, program, userEmail, programs }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [completionDetails, setCompletionDetails] = useState(null);
+  const [programData, setProgramData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleExpand = () => {
+    if (!isExpanded && !completionDetails) {
+      setIsLoading(true);
+      Promise.all([
+        UserApi.getProgramCompletionDetails(programProgress.userProgrammingId, userEmail),
+        ProgrammingApi.getProgram(programProgress.programId)
+      ])
+        .then(([details, programData]) => {
+          setCompletionDetails(details.completions);
+          setProgramData(programData);
+          setIsExpanded(true);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error loading completion details:", error);
+          setIsLoading(false);
+        });
+    } else {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={handleExpand}
+        className="w-full p-4 text-left hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="font-medium text-gray-900">{programProgress.programName}</h4>
+          <svg 
+            className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+        <div className="mb-3">
+          <ProgressBar 
+            percentage={programProgress.completionPercentage || 0} 
+            label="Progress"
+          />
+        </div>
+        <div className="text-sm text-gray-600 space-y-1">
+          <p>Completed: {programProgress.completedMovements} / {programProgress.totalMovements} movements</p>
+          <p className="text-xs text-gray-500">
+            Last activity: {programProgress.lastActivity 
+              ? new Date(programProgress.lastActivity).toLocaleDateString() 
+              : "Never"}
+          </p>
+        </div>
+      </button>
+
+      {isExpanded && (
+        <div className="border-t border-gray-200 p-4 bg-gray-50">
+          {isLoading ? (
+            <p className="text-sm text-gray-500">Loading details...</p>
+          ) : programData && completionDetails ? (
+            <div className="space-y-3">
+              {programData.weeks.map((week, weekIdx) => (
+                <div key={weekIdx} className="bg-white rounded p-3">
+                  <h5 className="font-medium text-sm text-gray-700 mb-2">{week.name}</h5>
+                  {week.days.map((day, dayIdx) => (
+                    <div key={dayIdx} className="ml-2 mb-2">
+                      <p className="text-xs font-medium text-gray-600 mb-1">{day.name}</p>
+                      <div className="ml-2 space-y-1">
+                        {day.repCycles.map((repCycle, rcIdx) => {
+                          const completion = completionDetails[repCycle.repCycleId];
+                          return (
+                            <div key={rcIdx} className="flex items-center justify-between text-xs">
+                              <span className={completion ? "text-green-600" : "text-gray-400"}>
+                                {completion ? "✓" : "○"} {repCycle.name}
+                              </span>
+                              {completion && (
+                                <span className="text-gray-500">
+                                  {new Date(completion.completedAt).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No details available</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
